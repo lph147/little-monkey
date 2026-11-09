@@ -95,7 +95,7 @@ function sleptOrWoke(n, was){
   if (was.here) ghosts.push({n, x:was.x, y:was.y, dir:was.dir, asleep:was.asleep, bed:was.bed, t0:now});
   if (n.place === PLACE) n.fadeIn = now;
 }
-function asleepNote(n){ const c = CHARACTER.get(n.id), en = c && c.name ? c.name.en : 'monkey'; return `The ${en.charAt(0).toLowerCase() + en.slice(1)} is fast asleep. Shh!`; }
+function asleepNote(n){ const c = CHARACTER.get(n.id), en = c && c.name ? c.name.en : 'monkey'; return LEARN === 'en' ? ui('The {who} is fast asleep. Shh!', {who:c && c.name ? c.name.zh : '猴子'}) : `The ${en.charAt(0).toLowerCase() + en.slice(1)} is fast asleep. Shh!`; }
 const fadeOf = (n, now) => n.fadeIn && now - n.fadeIn < NIGHT_FADE_MS ? (now - n.fadeIn) / NIGHT_FADE_MS : 1;
 // Asleep: lying in a bed, under a blanket, or curled up on the floor, eyes shut, little Zs floating up from them; a little
 // one smaller. A at them: they're fast asleep (interact, js/world.js).
@@ -285,8 +285,8 @@ function today(){
   return {words:(c.caught || []).filter(w => WORDS[w] && lvl(w) >= 1), questions:Math.max(0, (S.turn || 0) - (c.turn0 || 0)), friends:S.friends.filter(f => !(c.friends0 || []).includes(f))};
 }
 const friendText = id => { const a = ANIMALS.find(x => x.id === id), c = CHARACTER.get(id);
-  return a && WORDS[a.hz] ? chipHTML(a.hz) : c && c.name ? `<span class="fname">${c.name.zh} <span class="small">${esc(c.name.en)}</span></span>` : ''; };
-const plural = (n, one, many = one + 's') => `${n} ${n === 1 ? one : many}`;
+  const cn = c && nameShown(c.name); return a && WORDS[a.hz] ? chipHTML(a.hz) : cn ? `<span class="fname"${cn.lang ? LANG : ''}>${cn.zh} <span class="small">${esc(cn.en)}</span></span>` : ''; };
+const plural = (n, one, many = one + 's') => ui(n === 1 ? `{n} ${one}` : `{n} ${many}`, {n});   // (learning English, in Chinese: ZH_UI has '{n} new word' and so on)
 // Before you sleep, the day's recap (decided 7 November 2026, the owner's idea: going to bed is a moment to look back on
 // what you've learned): today's new words, to tap and hear, how many questions you answered and your new friends; and a
 // quick review, REVIEW questions on today's words, if you like. Gives false for Not now (you don't go to sleep), true to
@@ -297,12 +297,12 @@ function bedtimeCard(){
   if (!d.words.length && !d.questions && !d.friends.length) return Promise.resolve(true);
   return new Promise(res => {
     const show = () => {
-      openCard(`<div class="who" aria-hidden="true">🌙</div><p class="label">Time for bed</p>
-        <p>What you did today:</p>
-        <div class="stats"><span>${plural(d.words.length, 'new word')}</span><span>${plural(d.questions, 'question')} answered</span>${d.friends.length ? `<span>${plural(d.friends.length, 'new friend')}</span>` : ''}</div>
-        ${d.words.length ? `<div class="chips">${d.words.map(chipHTML).join('')}</div><div class="gloss">Tap a word to hear it.</div>` : ''}
-        ${d.friends.length ? `<p class="small">New friends: ${d.friends.map(friendText).join(' ')}</p>` : ''}
-        <div class="actions"><button class="btn" data-a="no" data-b data-label="Not now">Not now</button>${reviewable(d).length ? `<button class="btn" data-a="review" data-label="Review">Quick review</button>` : ''}<button class="btn primary" data-a="sleep">Sleep</button></div>`);
+      openCard(`<div class="who" aria-hidden="true">🌙</div><p class="label">${ui('Time for bed')}</p>
+        <p>${ui('What you did today:')}</p>
+        <div class="stats"><span>${plural(d.words.length, 'new word')}</span><span>${ui('{q} answered', {q:plural(d.questions, 'question')})}</span>${d.friends.length ? `<span>${plural(d.friends.length, 'new friend')}</span>` : ''}</div>
+        ${d.words.length ? `<div class="chips">${d.words.map(chipHTML).join('')}</div><div class="gloss">${ui('Tap a word to hear it.')}</div>` : ''}
+        ${d.friends.length ? `<p class="small">${ui('New friends: {list}', {list:d.friends.map(friendText).join(' ')})}</p>` : ''}
+        <div class="actions"><button class="btn" data-a="no" data-b data-label="${ui('Not now')}">${ui('Not now')}</button>${reviewable(d).length ? `<button class="btn" data-a="review" data-label="${ui('Review')}">${ui('Quick review')}</button>` : ''}<button class="btn primary" data-a="sleep">${ui('Sleep')}</button></div>`);
       bindMissed();
       on('[data-a=no]', () => { closeCard(); res(false); });
       on('[data-a=sleep]', () => { closeCard(); res(true); });
@@ -321,7 +321,7 @@ async function reviewToday(d){
   const words = reviewable(d);
   let right = 0;
   for (const [i, w] of words.entries()){
-    lessonBar = `Today’s words · ${i + 1} of ${words.length}`;
+    lessonBar = ui('Today’s words · {i} of {n}', {i:i + 1, n:words.length});
     const q = wordQuestion(w);
     if (await pictureQ({head:'', body:q.body, word:w, type:q.type, options:q.options, text:q.text, answerIdx:q.answerIdx,
       onShow:() => { if (q.type !== 'read') setTimeout(() => say(w), 300); }})) right++;
@@ -332,8 +332,8 @@ async function reviewToday(d){
 function reviewDone(r){
   SFX.fanfare();
   return new Promise(res => {
-    openCard(`<div class="who" aria-hidden="true">🌙</div><p class="label">Review done!</p><p>You got <b>${r.right} of ${r.asked}</b> right first time. Now, time to sleep.</p>
-      <div class="actions"><button class="btn primary" data-a="sleep">Sleep</button></div>`);
+    openCard(`<div class="who" aria-hidden="true">🌙</div><p class="label">${ui('Review done!')}</p><p>${ui('You got <b>{n} of {of}</b> right first time. Now, time to sleep.', {n:r.right, of:r.asked})}</p>
+      <div class="actions"><button class="btn primary" data-a="sleep">${ui('Sleep')}</button></div>`);
     on('[data-a=sleep]', () => { closeCard(); res(); });
   });
 }

@@ -24,7 +24,7 @@ const TIPS = {
   english: {at:'#talk [data-a=en]', once:true, text:'A line’s English shows the first few times you hear it. Tap <b>English</b> to see it again.', when:() => !!talkNext && !talkMove},
   // food in your bag that does something as you walk about, such as honey, the first time you have some: how to eat it
   // (decided 26 October 2026: honey made you faster, but nothing said so where you'd see it)
-  eat: {at:'#bagBtn', lasts:9000, text:() => { const w = walkFood(); return `Eat the ${esc(wz(w))} in your bag to ${esc(FOOD[w].does.toLowerCase())}: press <b>BAG</b>, and tap it.`; },
+  eat: {at:'#bagBtn', lasts:9000, text:() => { const w = walkFood(); return ui('Eat the {w} in your bag to {does}: press <b>BAG</b>, and tap it.', {w:esc(wz(w)), does:esc(ui(FOOD[w].does).toLowerCase())}); },
     when:() => canAct() && !!walkFood()},
   // running, once you can (the area's running, such as once PE has taught you 跑): hold B (decided 28 October 2026)
   run: {at:'#btnB', lasts:9000, text:'Hold <b>B</b> as you walk, to run.', when:() => canAct() && canRun()}
@@ -73,7 +73,7 @@ function updateTips(now){
     const target = inside.length ? box0el && box0el.querySelector(inside.join(' ')) : box0el;
     if (!target || target.offsetParent === null) continue;
     tip = {id, target, lit:t.all ? [...box0el.querySelectorAll(inside.join(' '))] : [target], until:t.lasts ? now + t.lasts : 0};
-    const box = tipBox(); box.innerHTML = typeof t.text === 'function' ? t.text() : t.text; box.hidden = false;
+    const box = tipBox(); box.innerHTML = typeof t.text === 'function' ? t.text() : ui(t.text); box.hidden = false;   // (learning English, in Chinese)
     tip.lit.forEach(el => el.classList.add('tipglow')); placeTip();
     if (t.after) tipThen = null;
     if (t.once){ S.tips[id] = 1; save(); }

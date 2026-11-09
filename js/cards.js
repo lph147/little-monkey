@@ -3,22 +3,30 @@
 
 /* ================= TOKENS (English on first sight, tap after) ================= */
 let markGloss = [];
-function info(t){ if (WORDS[t]) return [WORDS[t].py, WORDS[t].en]; if (GLOSS[t]) return GLOSS[t]; return ['','']; }
+function info(t){
+  if (LEARN === 'en'){   // learning English: its 音标 and what it means in Chinese (a word in a sentence, or a word's name)
+    const id = EN[t] ? t : idOf(t), h = !id && EN_HEARD[lc(t)];
+    return id ? [enIpa(id), enZh(id)] : h ? [h[0], h[1]] : ['', ''];
+  }
+  if (WORDS[t]) return [WORDS[t].py, WORDS[t].en]; if (GLOSS[t]) return GLOSS[t]; return ['',''];
+}
 let teachWord = null;
 const GAP = '＿';   // the missing word in a story question
 function tokHTML(t){
-  if (PUNCT.has(t)) return `<span class="punct">${t}</span>`;
+  if (t === GAP && LEARN === 'en') return '<span class="gap" aria-label="missing word">？</span>';
+  if (isPunct(t)) return `<span class="punct">${t}</span>`;
   if (t === GAP) return '<span class="gap" aria-label="missing word">？</span>';
-  const [py] = info(t);
-  const cls = t === teachWord ? 'learn teach' : (WORDS[t] && lvl(t) >= 1 ? 'learn' : 'listen');
+  const [py] = info(t), id = tokId(t);
+  const cls = id === teachWord ? 'learn teach' : (WORDS[id] && lvl(id) >= 1 ? 'learn' : 'listen');
   // (its characters in a box of their own, so a wider pinyin over them never spreads them apart: 动 物)
-  return `<button class="tok ${cls}" data-t="${esc(t)}"><ruby><span class="rb">${esc(t)}</span><rt class="${S.pinyin ? '' : 'hid'}">${esc(py)}</rt></ruby></button>`;
+  return `<button class="tok ${cls}" data-t="${esc(t)}"${LANG}><ruby><span class="rb">${esc(t)}</span><rt class="${showPy() ? '' : 'hid'}">${esc(py)}</rt></ruby></button>`;
 }
-// A sentence's words in a row that wraps, with each punctuation mark kept on the same line as the word before it.
+// A sentence's words in a row that wraps, with each punctuation mark kept on the same line as the word before it (and
+// learning English, a space between its words).
 function lineOf(toks, html){
   const out = [];
-  for (const t of toks){ const h = html(t); if (PUNCT.has(t) && out.length) out.push(`<span class="nb">${out.pop()}${h}</span>`); else out.push(h); }
-  return `<div class="line">${out.join('')}</div>`;
+  for (const t of toks){ const h = html(t); if (isPunct(t) && t !== GAP && out.length && !/^[“‘(]$/.test(t)) out.push(`<span class="nb">${out.pop()}${h}</span>`); else out.push(h); }
+  return `<div class="line">${out.join(LEARN === 'en' ? ' ' : '')}</div>`;
 }
 const lineHTML = (toks, teach) => { teachWord = teach || null; const h = lineOf(toks, tokHTML); teachWord = null; return h; };
 function bindTokens(root){
@@ -28,7 +36,7 @@ function bindTokens(root){
     root.querySelectorAll('.tok.on').forEach(x => x.classList.remove('on'));
     b.classList.add('on'); const rt = b.querySelector('rt'); if (rt) rt.classList.remove('hid');
     if (tip && tip.id === 'tap') tipDone('tap');   // (you've found out)
-    if (g){ g.classList.remove('tip'); g.innerHTML = `<b>${esc(t)}</b> ${esc(py)} · ${esc(en)}${b.classList.contains('listen') ? ' <span class="small">(just listen)</span>' : ''}`; }   // (no longer a tip: shown on every phone)
+    if (g){ g.classList.remove('tip'); g.innerHTML = `<b${LANG}>${esc(t)}</b> ${py ? esc(LEARN === 'en' ? `/${py}/` : py) + ' · ' : LEARN === 'en' ? '' : ' · '}${esc(en)}${b.classList.contains('listen') ? ` <span class="small">${esc(ui('(just listen)'))}</span>` : ''}`; }   // (no longer a tip: shown on every phone)
     say(t);
   });
 }
@@ -128,9 +136,9 @@ const LABEL_MAX = 13;
 function btnLabel(f){
   if (!f) return '';
   if (f.dataset.label) return f.dataset.label;
-  if (f.classList.contains('opt') || f.classList.contains('mw') || f.classList.contains('mp')) return 'Choose';
-  if (f.classList.contains('sayBig')) return 'Hear it';
-  if (f.classList.contains('card') || f.classList.contains('chip')) return 'Hear';
+  if (f.classList.contains('opt') || f.classList.contains('mw') || f.classList.contains('mp')) return ui('Choose');
+  if (f.classList.contains('sayBig')) return ui('Hear it');
+  if (f.classList.contains('card') || f.classList.contains('chip')) return ui('Hear');
   const t = f.textContent.replace(/[^\p{L}\p{N}'’ ]/gu, '').replace(/\s+/g, ' ').trim();
   return t.length <= LABEL_MAX ? t : t.split(' ')[0].slice(0, LABEL_MAX);
 }
@@ -201,15 +209,16 @@ async function showDialog(who, line, opts = {}){
   await showNarration(hint, said.last, {ok:said.ok, note:true});
 }
 function sayLine(who, line, opts){
+  line = asLine(line);   // (learning English, its English: js/lang.js)
   return new Promise(res => {
     const enNow = heardLine(line.t);   // (its English the first three times, and after a day away: heardLine, js/state.js)
     const again = !talkBox.hidden;   // again: the box is still up from the last line
     const enShows = (enNow && !opts.noEn) || !!opts.clue;   // (a clue: its English every time, the place's word in Chinese, js/hide.js; noEn: never shown at first, such as something to fetch by its word)
     const id = (who.match(/data-id="([^"]*)"/) || [])[1];   // who's speaking (from speaker()), for their own voice, and so the box doesn't cover them
     const plate = id ? who.replace(/<img class="portrait"[^>]*>/, `<span class="face">${bustHTML(id)}</span>`) : who;   // (their name plate: their face in a circle, css .talkhead .face)
-    talkBox.innerHTML = pixelIcons(`<div class="talkhead">${plate}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${enShows ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
+    talkBox.innerHTML = pixelIcons(`<div class="talkhead">${plate}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="${ui('Hear it again')}">🔊</button>${enShows ? '' : `<button class="tbtn" data-a="en">${ui('English')}</button>`}</div>
       <div class="talkline">${lineHTML(line.t, opts.teach)}<div class="gloss"></div></div><div class="sentence-en${opts.clue ? ' clue' : ''}" ${enShows ? '' : 'hidden'}>${opts.clue ? cluedEn(line.en, opts.clue) : esc(line.en)}</div>
-      ${opts.turn ? `<p class="turnhint"><img class="turnme" alt="" src="${youFacing()}">${esc(opts.turn)}</p>` : ''}<button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button>`);
+      ${opts.turn ? `<p class="turnhint"><img class="turnme" alt="" src="${youFacing()}">${esc(ui(opts.turn))}</p>` : ''}<button class="btn primary next" data-a="ok" data-label="${esc(ui(opts.ok || (opts.last ? 'Done' : 'Next')))}">${opts.ok ? esc(ui(opts.ok)) + ' ▼' : opts.last ? ui('Done') : '▼'}</button>`);
     bindTurtles(talkBox);
     talkBox.classList.toggle('again', again);
     talkWho = id;
@@ -217,7 +226,7 @@ function sayLine(who, line, opts){
     $('#saybox').hidden = true;   // the box covers the message spot
     held = null; queued = null; document.querySelectorAll('.held').forEach(b => b.classList.remove('held'));
     bindTokens(talkBox);
-    const text = line.t.join(''), q = sel => talkBox.querySelector(sel);
+    const text = lineSay(line), q = sel => talkBox.querySelector(sel);
     lastLine = id && id !== 'player' ? {id, line} : null;
     say(text, null, id);
     q('[data-a=say]').onclick = () => say(text, null, id);
@@ -245,10 +254,11 @@ function noteHTML(text){
   return `<div class="talknote">${icon ? `<span class="noteicon">${pixelIcons(icon.trim())}</span>` : ''}<p><b>${pixelIcons(esc(head))}</b>${more ? ` <span>${pixelIcons(esc(more))}</span>` : ''}</p></div>`;
 }
 function showNarration(text, last, {ok, note} = {}){
+  text = ui(text);   // (learning English, in Chinese: js/lang.js)
   if (!note) lastLine = null;   // (the story has moved on)
   return new Promise(res => {
     talkBox.innerHTML = `${note ? noteHTML(text) : `<p class="narration">${pixelIcons(esc(text))}</p>`}
-      <button class="btn primary next" data-a="ok" data-label="${esc(ok || (last ? 'Done' : 'Next'))}">${ok ? esc(ok) + ' ▼' : last ? 'Done' : '▼'}</button>`;
+      <button class="btn primary next" data-a="ok" data-label="${esc(ui(ok || (last ? 'Done' : 'Next')))}">${ok ? esc(ui(ok)) + ' ▼' : last ? ui('Done') : '▼'}</button>`;
     talkBox.classList.toggle('again', !talkBox.hidden);
     talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk(); shown();
     $('#saybox').hidden = true;
@@ -266,11 +276,12 @@ function showNarration(text, last, {ok, note} = {}){
 // you chose. The box stays up for your line, which comes next. With only one phrase to say (your very first reply), it
 // isn't a choice: you're asked to say it.
 function chooseReply(choices, {id, line, pic, ask, best} = {}){
+  line = asLine(line);
   return new Promise(res => {
     let sel = 0;
     talkBox.innerHTML = `<div class="replyto">${id ? portrait(id) : ''}${line ? lineHTML(line.t) : ''}${pic ? `<span class="gift">${picHTML(pic)}</span>` : ''}</div>
-      <p class="ask">${esc(ask || '')}</p>
-      <div class="replies">${choices.map((p, i) => `<button class="reply" data-i="${i}"><span class="rzh">${p}</span><span class="rpy">${WORDS[p].py}</span>${S.replyEn ? `<span class="ren">${esc(WORDS[p].en)}</span>` : ''}</button>`).join('')}</div>
+      <p class="ask">${esc(ui(ask || ''))}</p>
+      <div class="replies">${choices.map((p, i) => `<button class="reply" data-i="${i}"><span class="rzh"${LANG}>${wd(p)}</span><span class="rpy">${wpy(p)}</span>${S.replyEn ? `<span class="ren">${esc(wmean(p))}</span>` : ''}</button>`).join('')}</div>
       <div class="whyfoot"></div>`;
     talkBox.classList.toggle('again', !talkBox.hidden);
     talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk(); shown();
@@ -285,8 +296,8 @@ function chooseReply(choices, {id, line, pic, ask, best} = {}){
       btns.forEach((b, j) => { b.disabled = true; b.classList.remove('sel'); b.classList.toggle('no', j === i); b.classList.toggle('yes', choices[j] === best); });
       const not = choices[i];
       talkBox.querySelector('.ask').hidden = true;   // (what to do: done; why takes its place, so the box is no taller)
-      talkBox.querySelector('.whyfoot').innerHTML = `<p class="why">${esc(`${wz(not)} is for ${WORDS[not].use}. ${cap(WORDS[best].use)}, you say ${wz(best)}.`)}</p>
-        <button class="btn primary next" data-a="ok" data-label="Next">▼</button>`;   // (beside why, to keep the box short)
+      talkBox.querySelector('.whyfoot').innerHTML = `<p class="why">${esc(ui('{not} is for {use}. {Use}, you say {best}.', {not:wz(not), use:ui(WORDS[not].use), Use:cap(ui(WORDS[best].use)), best:wz(best)}))}</p>
+        <button class="btn primary next" data-a="ok" data-label="${ui('Next')}">▼</button>`;   // (beside why, to keep the box short)
       const next = () => { talkNext = null; SFX.blip(); res(not); };
       talkBox.querySelector('[data-a=ok]').onclick = next;
       talkNext = next; placeTalk(); shown();
@@ -306,7 +317,7 @@ talkBox.addEventListener('pointerdown', e => { if (e.target.closest && e.target.
 // Chinese is logical.) Or a character it shares with a word you know (same), such as the 果 of 苹果 and 水果. A name can
 // have its own, such as your home's on the sign (nameCard).
 const madeParts = m => !m ? [] : m.parts || (m.clue ? [m.clue] : m.same ? [[...m.same, m.as]] : []);
-const hasMade = w => !!MADE[w] && (!MADE[w].as || lvl(MADE[w].as) >= 1);   // (one it shares with another word: once you know that word)
+const hasMade = w => LEARN === 'en' ? !!EN_MADE[w] : !!MADE[w] && (!MADE[w].as || lvl(MADE[w].as) >= 1);   // (one it shares with another word: once you know that word; learning English, EN_MADE)
 const PART_IN = {};   // each part, such as 果, to the words made with it (水果, 苹果), and others a part names (学: 学校)
 for (const [w, m] of Object.entries(MADE)) for (const [zh, , , also] of madeParts(m))
   for (const o of [w, ...[].concat(also || [])]) if (!(PART_IN[zh] = PART_IN[zh] || []).includes(o)) PART_IN[zh].push(o);
@@ -367,6 +378,18 @@ function madeStage(w){
   return `<div class="madestage drawn"><div class="mcol mdrawn"><div class="mcpic" aria-hidden="true">${PICTURES[w] ? picHTML(w) : ''}</div></div><div class="mcol mop" aria-hidden="true"><span class="mchz">▸</span></div>${col(w, d.py, d.en.split(',')[0], 'mword big')}</div>`
     + `<p class="mwhy">${esc(m.why)}</p>${links}`;
 }
+// How a word is made, learning English (EN_MADE, content/english.js): the words inside it, each with its picture if it's a
+// word with one, and what it means in Chinese (green if it's a word you know), then = the word, with its picture and its
+// Chinese; it comes together as you watch, as a Chinese word does (madeAnim).
+function enMadeStage(w){
+  const m = EN_MADE[w], col = (en, zh, cls, pic, i) => `<div${i === undefined ? '' : ` data-i="${i}"`} class="mcol ${cls}"><div class="mcpic" aria-hidden="true">${pic}</div><span class="mcpy"></span> <span class="mchz"${LANG}>${esc(en)}</span> <span class="mcen">${esc(zh)}</span></div>`;
+  const op = c => `<div class="mcol mop" aria-hidden="true"><div class="mcpic"></div><span class="mcpy"></span><span class="mchz">${c}</span></div>`;
+  const parts = m.parts.map(([en, zh], i) => { const id = idOf(en), known = !!id && id !== w && !!WORDS[id] && lvl(id) >= 1;
+    return col(en, zh, `mpart${known ? ' known' : ''}`, id && id !== w && PICTURES[id] && WORDS[id] ? picHTML(id) : '', i); });
+  const word = `<div class="mcol mword"><div class="mcpic" aria-hidden="true">${PICTURES[w] ? picHTML(w) : ''}</div><span class="mcpy"></span> `
+    + `<span class="mchz"${LANG}>${m.parts.map(([en], i) => `<span class="mch" data-i="${i}">${esc(en)}</span>`).join(m.joined === false ? ' ' : '')}</span> <span class="mcen">${esc(enZh(w))}</span></div>`;
+  return `<div class="madestage parts">${parts.join(op('+'))}${op('=')}${word}</div>${m.why ? `<p class="mwhy">${esc(m.why)}</p>` : ''}`;
+}
 // Watching a word made of parts come together (decided 24 October 2026): the parts come in one by one, with + between
 // them; a part you know from another word lifts out of it; then each flies into the word, whose picture and meaning come
 // last. Playing: the stage has anim, and each thing shows as it gets in. Stopping shows it all at once.
@@ -411,9 +434,11 @@ function madeAnim(stage){
 // Back is A's too (from a word's page). A word made of parts comes together as you watch (Watch again plays it again);
 // A while it's moving shows the end at once, and a moment later it's Got it.
 function madeCard(w, back, done, doneLabel){
-  const m = MADE[w], parts = !!m.parts;
-  openCard(`<p class="label">${m.same ? `<span class="mhzlabel">${w}</span> and <span class="mhzlabel">${m.as}</span>` : `How <span class="mhzlabel">${w}</span> is made`}</p>${madeStage(w)}
-    <div class="actions"><button class="btn${done ? '' : ' primary'}" data-a="back" data-b>◂ Back</button>${parts ? '<button class="btn" data-a="again">↻ Watch again</button>' : ''}${done ? `<button class="btn primary" data-a="ok">${doneLabel}</button>` : ''}</div>`);
+  const m = LEARN === 'en' ? EN_MADE[w] : MADE[w], parts = !!m.parts;
+  const label = LEARN === 'en' ? ui('How {w} is made', {w:`<span class="mhzlabel"${LANG}>${esc(wd(w))}</span>`})
+    : m.same ? `<span class="mhzlabel">${w}</span> and <span class="mhzlabel">${m.as}</span>` : `How <span class="mhzlabel">${w}</span> is made`;
+  openCard(`<p class="label">${label}</p>${LEARN === 'en' ? enMadeStage(w) : madeStage(w)}
+    <div class="actions"><button class="btn${done ? '' : ' primary'}" data-a="back" data-b>${ui('◂ Back')}</button>${parts ? `<button class="btn" data-a="again">${ui('↻ Watch again')}</button>` : ''}${done ? `<button class="btn primary" data-a="ok">${doneLabel}</button>` : ''}</div>`);
   const anim = parts ? madeAnim(sheet.querySelector('.madestage')) : null;
   if (anim && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) anim.play();
   on('[data-a=back]', () => { if (anim) anim.finish(); back(); });
@@ -427,11 +452,16 @@ function madeCard(w, back, done, doneLabel){
 // time, and from the same place as How it's made after that. Back (B) goes back; done is A's, or none, when Back is A's too.
 const TONE_MARKS = {'̄':1, '́':2, '̌':3, '̀':4};
 const tonesOf = py => [...py.normalize('NFD')].filter(c => TONE_MARKS[c]).map(c => TONE_MARKS[c]);
-const soundsLike = w => (WORDS[w] && Object.keys(WORDS).find(x => x !== w && lvl(x) > 0 && toneless(x) === toneless(w))) || null;   // (toneless, js/quiz.js: as listening questions keep them apart)
+const soundsLike = w => LEARN === 'en' ? enSoundsLike(w) : (WORDS[w] && Object.keys(WORDS).find(x => x !== w && lvl(x) > 0 && toneless(x) === toneless(w))) || null;   // (toneless, js/quiz.js: as listening questions keep them apart)
+// Learning English: a word in a pair that sounds the same, or that Chinese ears find hard to tell apart (EN_SOUNDS,
+// content/english.js), the other once you know it.
+const enSoundsPair = w => EN_SOUNDS.find(p => p.words.includes(w)) || null;
+const enSoundsLike = w => { const p = enSoundsPair(w), o = p && p.words.find(x => x !== w); return o && WORDS[o] && lvl(o) > 0 ? o : null; };
 const TONES = [{n:'Neutral tone', how:'short and light', d:'M14 15 L26 15', hear:'is short and light'},
   {n:'1st tone', how:'high and flat', d:'M4 6 L36 6', hear:'stays high'}, {n:'2nd tone', how:'rising', d:'M4 22 L36 5', hear:'goes up'},
   {n:'3rd tone', how:'low, dipping', d:'M4 12 Q16 32 36 6', hear:'dips down'}, {n:'4th tone', how:'falling', d:'M4 4 L36 25', hear:'falls'}];
 function soundsCard(w, back, done, doneLabel){
+  if (LEARN === 'en') return enSoundsCard(w, back, done, doneLabel);
   const other = soundsLike(w), tones = x => { const t = tonesOf(WORDS[x].py); return t.length ? t : [0]; };
   const side = x => { const t = tones(x), one = t.length === 1 ? TONES[t[0]] : null;
     return `<button class="sa-side" data-w="${x}" aria-label="Hear ${x}"><div class="sa-top"><div class="pic" aria-hidden="true">${picHTML(x)}</div><div><div class="big">${x}</div><div class="py">${WORDS[x].py}</div><div class="en">${esc(WORDS[x].en)}</div></div></div>
@@ -450,13 +480,29 @@ function soundsCard(w, back, done, doneLabel){
   on('[data-a=back]', back);
   if (done) on('[data-a=ok]', done);
 }
+// Learning English, two words that sound alike side by side (EN_SOUNDS): each with its picture, its English, its 音标 if
+// Settings shows them, and its Chinese; under them, what tells them apart (the pair's note), or that they sound the same.
+// Hear both says one, then the other, as the Chinese card does.
+function enSoundsCard(w, back, done, doneLabel){
+  const other = soundsLike(w), p = enSoundsPair(w);
+  const side = x => `<button class="sa-side" data-w="${x}" aria-label="${esc(wd(x))}"><div class="sa-top"><div class="pic" aria-hidden="true">${picHTML(x)}</div><div><div class="big"${LANG}>${esc(wd(x))}</div><div class="py">${S.ipa ? '/' + esc(enIpa(x)) + '/' : ''}</div><div class="en">${esc(enZh(x))}</div></div></div></button>`;
+  openCard(`<p class="label">${ui(p.same ? 'Sounds the same' : 'Sounds alike')}</p><div class="sa">${side(other)}${side(w)}</div><p class="small sa-note">${esc(ui(p.note || 'Exactly the same sound: how they’re spelt, and what’s being said, tell them apart.'))}</p>
+    <div class="actions"><button class="btn${done ? '' : ' primary'}" data-a="back" data-b>${ui('◂ Back')}</button><button class="btn" data-a="both">${ui('🔊 Hear both')}</button>${done ? `<button class="btn primary" data-a="ok">${doneLabel}</button>` : ''}</div>`);
+  const card = sheet.querySelector('.sa'), lit = x => card.querySelectorAll('.sa-side').forEach(b => b.classList.toggle('playing', b.dataset.w === x));
+  const open = () => sheet.querySelector('.sa') === card;
+  const hear = (x, then) => { if (!open()) return; lit(x); say(x, () => { if (!open()) return; lit(null); if (then) setTimeout(then, 250); }); };
+  card.querySelectorAll('.sa-side').forEach(b => b.onclick = () => hear(b.dataset.w));
+  on('[data-a=both]', () => hear(other, () => hear(w)));
+  on('[data-a=back]', back);
+  if (done) on('[data-a=ok]', done);
+}
 // Two words easily mixed up, side by side (SIDE_BY_SIDE, content/words.js; decided 9 November 2026: 二 is for counting, 两
 // for two of something): each with its picture, characters, pinyin and English (tap it to hear it), what it's for, and an
 // example or two (tap one to hear it), under a line to remember, at the top so it's seen even on the smallest phones;
 // Hear both says one, then the other, the one being said lit up. It comes after the newer word's card, the first time (its title ▸, after How it's made and Sounds like), and
 // from either word's page in the Word Scroll, from its English, once you know both. Back (B) goes back; done is A's, or
 // none, when Back is A's too.
-const sideBySide = w => SIDE_BY_SIDE.find(p => p.words.includes(w) && p.words.every(x => WORDS[x] && (x === w || lvl(x) > 0))) || null;
+const sideBySide = w => LEARN === 'en' ? null : SIDE_BY_SIDE.find(p => p.words.includes(w) && p.words.every(x => WORDS[x] && (x === w || lvl(x) > 0))) || null;
 function sideCard(w, back, done, doneLabel){
   const p = sideBySide(w);
   const ex = e => { const t = e.zh.split(' ');
@@ -478,7 +524,7 @@ function sideCard(w, back, done, doneLabel){
 // sounds like it, and the word it's shown side by side with (the first time, one after another; from its English after).
 function moreCards(w){
   const pair = sideBySide(w);
-  return [hasMade(w) && {label:'How it’s made', card:madeCard}, soundsLike(w) && {label:'Sounds like', card:soundsCard}, pair && {label:pair.title, card:sideCard}].filter(Boolean);
+  return [hasMade(w) && {label:ui('How it’s made'), card:madeCard}, soundsLike(w) && {label:ui('Sounds like'), card:soundsCard}, pair && {label:pair.title, card:sideCard}].filter(Boolean);
 }
 // A name you can read now, such as your home's on the sign (says: its Chinese and English; m: how it's made, with its
 // title, parts and what they add up to). A name isn't a word to learn, so nothing is caught. Its characters are tiles to
@@ -490,15 +536,17 @@ function nameCard(says, m){
   return new Promise(res => {
     const zh = says.zh, seen = new Set();
     const parts = m.parts.map(([c, py, en]) => {
+      if (LEARN === 'en'){ const id = idOf(en); return {c:cap(en), py:'', en:c, from:null, pic:id && PICTURES[id] ? picHTML(id) : ''}; }   // (learning English, each word in it, with what it means: Flower, 花)
       const from = PICTURES[c] && WORDS[c] ? null : (PART_IN[c] || []).find(o => knownWord(o, zh) && PICTURES[o]);
       return {c, py, en, from, pic:from ? picHTML(from) : partPic(c)};
     });
+    const name = LEARN === 'en' ? says.en : zh;   // (what's heard)
     SFX.word();
-    openCard(`<div class="namehead"><p class="label">${esc(m.title)}</p><span class="namechip">${info(zh)[0]} · ${esc(says.en)}</span></div>
+    openCard(`<div class="namehead"><p class="label">${esc(ui(m.title))}</p><span class="namechip">${LEARN === 'en' ? `<span${LANG}>${esc(says.en)}</span> · ${zh}` : `${info(zh)[0]} · ${esc(says.en)}`}</span></div>
       <div class="namerow"><div class="pic" aria-hidden="true">${picHTML(zh)}</div><div class="ntiles">${parts.map((p, i) =>
-        `<div class="ncol"><button class="ntile" data-i="${i}" aria-label="What does ${p.c} mean?"><span class="npy">${p.py}</span> <span class="nhz">${p.c}</span> <span class="nmark" aria-hidden="true"></span></button><div class="nbox"></div></div>`).join('')}</div></div>
+        `<div class="ncol"><button class="ntile" data-i="${i}" aria-label="${ui('What does {x} mean?', {x:p.c})}"><span class="npy">${p.py}</span> <span class="nhz"${LANG}>${p.c}</span> <span class="nmark" aria-hidden="true"></span></button><div class="nbox"></div></div>`).join('')}</div></div>
       <p class="nsum"></p>
-      <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button><button class="btn primary" data-a="ok"></button></div>`);
+      <div class="actions"><button class="btn grow" data-a="say">${ui('🔊 Hear it')}</button><button class="btn primary" data-a="ok"></button></div>`);
     const tiles = [...sheet.querySelectorAll('.ntile')], boxes = [...sheet.querySelectorAll('.nbox')], ok = sheet.querySelector('[data-a=ok]');
     const show = () => {
       const next = parts.findIndex((p, i) => !seen.has(i));
@@ -507,20 +555,20 @@ function nameCard(says, m){
         tiles[i].classList.toggle('found', found); tiles[i].classList.toggle('next', i === next);
         tiles[i].querySelector('.nmark').textContent = found ? '✓' : '?';
         boxes[i].classList.toggle('found', found);
-        boxes[i].innerHTML = found ? `<div class="npic" aria-hidden="true">${p.pic}</div><span class="nen">${esc(p.en)}${p.from ? `,</span> <span class="nfrom">as in ${p.from}</span>` : '</span>'}`
-          : i === next ? `<span class="ntap">▲ Tap <span class="nhzs">${p.c}</span></span>` : '<span class="nq" aria-hidden="true">?</span>';
+        boxes[i].innerHTML = found ? `<div class="npic" aria-hidden="true">${p.pic}</div><span class="nen">${esc(p.en)}${p.from ? `,</span> <span class="nfrom">${ui('as in {w}', {w:p.from})}</span>` : '</span>'}`
+          : i === next ? `<span class="ntap">${ui('▲ Tap {x}', {x:`<span class="nhzs"${LANG}>${p.c}</span>`})}</span>` : '<span class="nq" aria-hidden="true">?</span>';
       });
       const all = next < 0, sum = sheet.querySelector('.nsum');
       sum.classList.toggle('all', all);
-      sum.textContent = all ? `= ${m.why}` : 'Each character means something. Tap one, or press A.';
-      ok.textContent = all ? 'OK' : 'Next part';
+      sum.textContent = all ? `= ${ui(m.why)}` : ui(LEARN === 'en' ? 'Each word means something. Tap one, or press A.' : 'Each character means something. Tap one, or press A.');
+      ok.textContent = ui(all ? 'OK' : 'Next part');
       return next;
     };
     const find = i => { if (seen.has(i)) return; seen.add(i); if (show() < 0) shown(); };   // (all found: A is OK, a moment later)
     show();
-    say(zh);
+    say(name);
     tiles.forEach((t, i) => t.onclick = () => find(i));
-    on('[data-a=say]', () => say(zh));
+    on('[data-a=say]', () => say(name));
     ok.onclick = () => { const next = parts.findIndex((p, i) => !seen.has(i)); if (next >= 0) return find(next); closeCard(); res(); };
   });
 }
@@ -533,16 +581,16 @@ function showNotice(w, opts = {}){
     const d = WORDS[w], isNew = lvl(w) === 0;
     if (isNew) SFX.word(); else SFX.blip();
     const done = () => { closeCard(); if (isNew) setSeen(w); res(); };   // (no message or glow: it's new in your Word Scroll, which the menu's 词 tile says, js/scrolls.js; decided 9 November 2026)
-    const extras = moreCards(w), label = isNew ? 'Got it' : 'OK', more = extras.length ? extras[0].label : '';   // (what the English button becomes, and a new word's card goes on to: how it's made, sounds like, side by side)
+    const extras = moreCards(w), label = ui(isNew ? 'Got it' : 'OK'), more = extras.length ? extras[0].label : '';   // (what the English button becomes, and a new word's card goes on to: how it's made, sounds like, side by side)
     let en = isNew;   // the English shows (seen again: once you've pressed English)
     const front = () => {   // the word's card: a new word with how it's made goes on to it (How it's made ▸), not Got it
       const howFirst = isNew && more, howBtn = `<button class="btn" data-a="made">${more}</button>`;
-      openCard(`${isNew ? '<p class="label">⭐ New word to learn</p>' : `<p class="label">Word ${pips(w)}</p>`}
+      openCard(`${isNew ? `<p class="label">${ui('⭐ New word to learn')}</p>` : `<p class="label">${ui('Word')} ${pips(w)}</p>`}
 
-        <div class="word side"><div class="pic" aria-hidden="true">${picHTML(opts.pic || w)}</div><div class="big">${w}</div><div class="py">${d.py}</div>
-        <div class="en" ${en ? '' : 'hidden'}>${esc(d.en)}</div>${opts.note ? `<p class="note">${esc(opts.note)}</p>` : ''}</div>
-        <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${howFirst ? `<button class="btn primary" data-a="made">${more} ▸</button>`
-          : `${isNew ? '' : en ? (more ? howBtn : '') : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">${label}</button>`}</div>`);
+        <div class="word side"><div class="pic" aria-hidden="true">${picHTML(opts.pic || w)}</div><div class="big"${LANG}>${esc(wd(w))}</div><div class="py">${LEARN === 'en' ? (S.ipa ? '/' + esc(enIpa(w)) + '/' : '') : d.py}</div>
+        <div class="en" ${en ? '' : 'hidden'}>${esc(wmean(w))}</div>${opts.note ? `<p class="note">${esc(ui(opts.note))}</p>` : ''}</div>
+        <div class="actions"><button class="btn grow" data-a="say">${ui('🔊 Hear it')}</button>${howFirst ? `<button class="btn primary" data-a="made">${more} ▸</button>`
+          : `${isNew ? '' : en ? (more ? howBtn : '') : `<button class="btn" data-a="en">${ui('English')}</button>`}<button class="btn primary" data-a="ok">${label}</button>`}</div>`);
       on('[data-a=say]', () => say(w));
       on('[data-a=en]', e => {   // the English, and then how it's made from the same place
         en = true; sheet.querySelector('.word .en').hidden = false;
@@ -564,11 +612,11 @@ function showNotice(w, opts = {}){
 // (label), such as a red flower you look at, with a picture of another name (pic), such as 花's own for a pink one.
 function showPicked(f, note, {label = 'You picked', pic = f.zh} = {}){
   return new Promise(res => {
-    const t = toks(f.zh), text = t.join('');
-    openCard(`<p class="label">${esc(label)}</p>
-      <div class="word side"><div class="pic" aria-hidden="true">${picHTML(pic)}</div><div class="big">${text}</div><div class="py">${t.map(w => info(w)[0]).join(' ')}</div>
-      <div class="en">${esc(f.en)}</div>${note ? `<p class="note">${esc(note)}</p>` : ''}</div>
-      <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button><button class="btn primary" data-a="ok">OK</button></div>`);
+    const p = sent(f.zh, f.en), t = p.t, text = lineSay(p);
+    openCard(`<p class="label">${esc(ui(label))}</p>
+      <div class="word side"><div class="pic" aria-hidden="true">${picHTML(pic)}</div><div class="big"${LANG}>${LEARN === 'en' ? esc(text) : text}</div><div class="py">${LEARN === 'en' ? '' : t.map(w => info(w)[0]).join(' ')}</div>
+      <div class="en">${esc(p.en)}</div>${note ? `<p class="note">${esc(ui(note))}</p>` : ''}</div>
+      <div class="actions"><button class="btn grow" data-a="say">${ui('🔊 Hear it')}</button><button class="btn primary" data-a="ok">${ui('OK')}</button></div>`);
     say(text);
     on('[data-a=say]', () => say(text));
     on('[data-a=ok]', () => { closeCard(); res(); });
@@ -582,16 +630,16 @@ function feastCard(){
   return new Promise(res => {
     const list = AREA.feastList;
     const rows = list.foods.filter(f => !f.show || matches(f.show)).map(f => {
-      const have = !!f.have && matches(f.have), s = have ? f.yes : f.no, t = toks(s.zh);
-      return {w:f.word, have, t, en:s.en, seen:!!S.lines[t.join('')]};
+      const have = !!f.have && matches(f.have), s = have ? f.yes : f.no, p = sent(s.zh, s.en), t = p.t;
+      return {w:f.word, have, t, en:p.en, say:lineSay(p), seen:!!S.lines[t.join('')]};
     });
     rows.forEach(r => { const k = r.t.join(''); S.lines[k] = S.lines[k] || 1; hear(r.t); }); save();
     openCard(`<p class="label">${esc(fill(list.label))}</p><div class="flist">${rows.map((r, i) => `<div class="frow${r.have ? ' have' : ''}" data-i="${i}">
         <div class="fpic${r.have ? '' : ' sil'}" aria-hidden="true">${picHTML(r.w)}</div>
         <div class="fline">${lineHTML(r.t)}<div class="sentence-en"${r.seen ? ' hidden' : ''}>${esc(r.en)}</div></div>
-        <span class="fmark" aria-label="${r.have ? 'We have it' : 'Not yet'}">${r.have ? '✓' : ''}</span></div>`).join('')}</div>
+        <span class="fmark" aria-label="${ui(r.have ? 'We have it' : 'Not yet')}">${r.have ? '✓' : ''}</span></div>`).join('')}</div>
       ${list.note ? `<p class="small fnote">${esc(fill(list.note))}</p>` : ''}<div class="gloss"></div>
-      <div class="actions"><button class="btn grow" data-a="read">🔊 Hear it</button>${rows.some(r => r.seen) ? '<button class="btn" data-a="en">English</button>' : ''}<button class="btn primary" data-a="ok" data-b>OK</button></div>`);
+      <div class="actions"><button class="btn grow" data-a="read">${ui('🔊 Hear it')}</button>${rows.some(r => r.seen) ? `<button class="btn" data-a="en">${ui('English')}</button>` : ''}<button class="btn primary" data-a="ok" data-b>${ui('OK')}</button></div>`);
     bindTokens(sheet);
     on('[data-a=en]', e => { sheet.querySelectorAll('.frow .sentence-en').forEach(x => x.hidden = false); e.currentTarget.remove(); });
     on('[data-a=read]', () => {   // (as the Story Scroll reads its story)
@@ -600,7 +648,7 @@ function feastCard(){
         sheet.querySelectorAll('.frow').forEach(x => x.classList.remove('reading'));
         if (i >= rows.length || modal.hidden) return;
         const el = sheet.querySelector(`.frow[data-i="${i}"]`); if (el){ el.classList.add('reading'); el.scrollIntoView({block:'nearest'}); }
-        const text = rows[i].t.join(''); i++;
+        const text = rows[i].say; i++;
         say(text, () => setTimeout(next, 250));
       };
       next();
@@ -610,7 +658,7 @@ function feastCard(){
 }
 function confirmBox(who, html, yes, no){
   return new Promise(res => {
-    openCard(`<div class="who" aria-hidden="true">${who}</div><p>${html}</p><div class="actions"><button class="btn" data-a="no" data-b>${no}</button><button class="btn primary" data-a="yes">${yes}</button></div>`);
+    openCard(`<div class="who" aria-hidden="true">${who}</div><p>${ui(html)}</p><div class="actions"><button class="btn" data-a="no" data-b>${ui(no)}</button><button class="btn primary" data-a="yes">${ui(yes)}</button></div>`);
     on('[data-a=no]', () => { closeCard(); res(false); });
     on('[data-a=yes]', () => { closeCard(); res(true); });
   });

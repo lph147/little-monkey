@@ -11,3 +11,119 @@ function ui(text, vars){
   if (vars) s = String(s).replace(/\{(\w+)\}/g, (m, k) => Object.hasOwn(vars, k) ? String(vars[k]) : m);
   return s;
 }
+
+/* ================= LEARNING ENGLISH: THE WORDS ================= */
+// Each word keeps its Chinese as its name (WORDS, saves, pictures, the story's steps); learning English, what you see
+// and hear of it is its English (EN_WORDS, content/english.js).
+const EN = typeof EN_WORDS === 'undefined' ? {} : EN_WORDS;
+const enW = w => (EN[w] && EN[w].w) || w;   // a word's English, as it's learned ('stone'), or its name if it has none
+const pluralOf = s => /(s|x|z|ch|sh)$/i.test(s) ? s + 'es' : /[^aeiou]y$/i.test(s) ? s.slice(0, -1) + 'ies' : s + 's';
+const enPlural = w => (EN[w] && EN[w].pl) || pluralOf(enW(w));
+// A verb's -ing and -ed, with the usual spelling changes (running, jogged, making, cried): only to know a word in a
+// sentence as one you've learned, so a form no one says does no harm.
+function verbForms(s){
+  const cvc = /^[^aeiou]*[aeiou][bdgmnprt]$/i.test(s);   // (run, stop, jog: a short word ending in one vowel and a consonant)
+  const ing = /ie$/.test(s) ? s.slice(0, -2) + 'ying' : /[^e]e$/.test(s) ? s.slice(0, -1) + 'ing' : cvc ? s + s.slice(-1) + 'ing' : s + 'ing';
+  const ed = /e$/.test(s) ? s + 'd' : /[^aeiou]y$/.test(s) ? s.slice(0, -1) + 'ied' : cvc ? s + s.slice(-1) + 'ed' : s + 'ed';
+  return [ing, ed];
+}
+const lc = s => s.toLowerCase().replace(/'/g, '’');
+// Every form of every word, in lower case (several words with spaces between, a comma its own), to the word it belongs
+// to: 'peaches' to 桃子, 'ran' to 跑, 'thank you' to 谢谢. A word that's the same in English as another (两, two: same)
+// leaves it to that one.
+const EN_FORMS = new Map();
+for (const [w, e] of Object.entries(EN)){
+  if (e.same) continue;
+  const base = e.w, one = !/\s/.test(base) && base.length > 2;   // (no endings on I: I with -s would make is; no -ing or -ed on a phrase)
+  const forms = [base, ...(e.pl ? [e.pl] : base.length > 2 ? [pluralOf(base)] : []), ...(one ? verbForms(base) : []), ...(e.also || [])];
+  for (const f of forms) { const k = lc(f).replace(/,/g, ' ,').replace(/\s+/g, ' '); if (!EN_FORMS.has(k)) EN_FORMS.set(k, w); }
+}
+const EN_LONGEST = Math.max(1, ...[...EN_FORMS.keys()].map(k => k.split(' ').length));
+// An English word, as it's written in a sentence, to the word it belongs to (its Chinese), or null: 'Peaches' → 桃子;
+// one with an ending added to it, I’m or it’s, as the word before it (I, it).
+function idOf(tok){
+  if (!tok || !/[A-Za-z]/.test(tok)) return null;
+  const k = lc(tok);
+  if (EN_FORMS.has(k)) return EN_FORMS.get(k);
+  const stem = k.replace(/’(m|s|re|ll|ve|d|t)$/, '');
+  return stem !== k && EN_FORMS.has(stem) ? EN_FORMS.get(stem) : null;
+}
+// An English sentence as its words and punctuation, each word as written: 'I’m hungry.' → ['I’m', 'hungry', '.']. Words
+// that are one word together, a phrase (thank you) or two words (queen bee), stay together as one.
+function enToks(en){
+  const raw = String(en).replace(/'/g, '’').match(/[A-Za-z0-9]+(?:[’-][A-Za-z]+)*|…|\.\.\.|[^\sA-Za-z0-9]/g) || [];
+  const out = [];
+  for (let i = 0; i < raw.length;){
+    let took = 1;
+    for (let n = Math.min(EN_LONGEST, raw.length - i); n > 1; n--){
+      const k = lc(raw.slice(i, i + n).join(' '));
+      if (EN_FORMS.has(k) && /[A-Za-z]/.test(raw[i]) && /[A-Za-z]/.test(raw[i + n - 1])){ out.push(raw.slice(i, i + n).join(' ').replace(/ ,/g, ',')); took = n; break; }
+    }
+    if (took === 1) out.push(raw[i]);
+    i += took;
+  }
+  return out;
+}
+const EN_PUNCT = new Set(['.', '!', '?', ',', '…', '...', ':', ';', '“', '”', '‘', '’', '(', ')', '—', '–']);
+const isEnWord = t => /[A-Za-z0-9]/.test(t);
+// Chinese written as the content writes it, with spaces between its words ('我 饿 了 。'), as it's read: '我饿了。'
+const zhText = zh => String(zh).replace(/ /g, '');
+
+/* ================= WHAT A WORD SHOWS ================= */
+// Learning Chinese, each of these gives just what the game always showed; learning English, its English side.
+const LANG = LEARN === 'en' ? ' lang="en"' : '';   // on what shows the language being learned, learning English (so it's told apart from the rest)
+const enIpa = w => (EN[w] && EN[w].ipa) || '';
+const enZh = w => (EN[w] && EN[w].zh) || w;
+const wd = w => LEARN === 'en' ? enW(w) : w;   // a word as you learn it: its characters, or its English
+const wpy = w => LEARN === 'en' ? (S.ipa ? enIpa(w) : '') : WORDS[w].py;   // what's over it: its pinyin, or its 音标 if Settings shows them
+const wmean = w => LEARN === 'en' ? enZh(w) : WORDS[w].en;   // what it means: its English, or its Chinese
+const wmean1 = w => LEARN === 'en' ? enZh(w) : WORDS[w].en.split(',')[0];   // (the first of its meanings)
+const showPy = () => LEARN === 'en' ? !!S.ipa : S.pinyin;   // is what goes over words shown? (Settings)
+// A sentence the content writes as Chinese (with spaces between its words) and English, as the engine shows it: its words,
+// t, what it means, en, and (learning English) what's said, say.
+const sent = (zh, en) => LEARN === 'en' ? {t:enToks(en), en:zhText(zh), say:en} : {t:toks(zh), en};
+const isPunct = t => LEARN === 'en' ? !isEnWord(t) : PUNCT.has(t);
+// Learning English, what sounds the same to anyone just hearing it (as toneless does for Chinese, js/quiz.js): a word in a
+// pair that sounds alike (EN_SOUNDS), or two words that are the same in English (二 and 两, two).
+const enSoundKey = w => { const i = EN_SOUNDS.findIndex(p => p.words.includes(w)); return i >= 0 ? 'pair' + i : lc(enW(w)); };
+// Learning English, a sentence with a word missing (gapQ, js/quiz.js): the English sentence's words (toks), with the gap's
+// own word as a gap (gapped), what it means (zh), and each choice in the form the sentence needs (form): peaches, not
+// peach, if it says I have two ＿. (Never a grammar test: every choice has the same ending.)
+function enGap(t, en, gap){
+  const toks = enToks(en), at = toks.findIndex(x => idOf(x) === gap), said = at >= 0 ? toks[at] : enW(gap), base = enW(gap);
+  const ending = lc(said) === lc(base) ? '' : lc(said) === lc(enPlural(gap)) ? 'pl' : /ing$/i.test(said) ? 'ing' : /ed$/i.test(said) ? 'ed' : '';
+  const capital = at === 0 || (at > 0 && /^[.!?]$/.test(toks[at - 1]));
+  const form = w => { const b = enW(w), [ing, ed] = /\s/.test(b) ? [b, b] : verbForms(b), f = ending === 'pl' ? enPlural(w) : ending === 'ing' ? ing : ending === 'ed' ? ed : b; return capital ? cap(f) : f; };
+  return {toks, gapped:at >= 0 ? toks.map((x, i) => i === at ? GAP : x) : [...toks, GAP], zh:zhText(t.join(' ')), form};
+}
+// Learning English, the child's game's question about w (Is this a peach? Are these grapes? Is this water?).
+const enIsIt = w => { const e = EN[w] || {}, x = enW(w); return e.many ? `Are these ${x}?` : e.mass ? `Is this ${x}?` : ['海', '河'].includes(w) ? `Is this the ${x}?` : `Is this ${/^[aeiou]/i.test(x) ? 'an' : 'a'} ${x}?`; };
+// A scene's captions, as the engine shows them (sceneCaps, js/data.js): learning English, in English, with their Chinese.
+const capsOf = list => LEARN === 'en' ? list.map(c => ({t:c.at, words:enToks(c.en), en:zhText(c.zh), say:c.en, teach:c.teach})) : sceneCaps(list);
+// How wide some words are, counting a Chinese character as two letters (a button's label, on one line or two).
+const wide = s => [...String(s)].reduce((n, c) => n + (/[⺀-鿿＀-￯]/.test(c) ? 2 : 1), 0);
+// A name as names are shown (a place's, the game's): its Chinese, pinyin and English; learning English, its English, then
+// its Chinese (names aren't words to learn, so both are always there).
+const placeNameHTML = n => LEARN === 'en' ? `<span class="pzh"${LANG}>${esc(n.en)}</span> <span class="ppy"></span><span class="pen">${n.zh}</span>`
+  : `<span class="pzh">${n.zh}</span> <span class="ppy">${n.py}</span><span class="pen">${esc(n.en)}</span>`;
+// A character's name, for the speech box's name plate (speaker, js/art.js): {zh, py, en}, or learning English, its English
+// first (or the word's, for an animal), then its Chinese.
+const nameShown = n => LEARN !== 'en' || !n ? n : / \(you\)$/.test(n.en || '') ? {zh:n.en.replace(/ \(you\)$/, ''), py:'', en:`${n.zh}（你）`, lang:true}
+  : {zh:n.en || enW(n.zh), py:'', en:n.en ? n.zh : '', lang:true};
+const tokId = t => LEARN === 'en' ? idOf(t) : t;   // the word a word in a sentence is
+const lineHas = (line, w) => line.t.some(x => tokId(x) === w);
+// A line the engine has made from the content's Chinese ({t: its words, en: its English}), as it's shown: learning English,
+// turned round, as every line is (its English words, its Chinese, and the English to hear); one already in English (say)
+// as it is. Learning Chinese, just as it was.
+const asLine = line => LEARN === 'en' && line && !line.say ? sent(line.t.join(' '), line.en) : line;
+
+// Learning English, what the characters say is their English (each line's en), and what it means is its Chinese, so
+// every line the engine shows (L, the story's sentences and the opening's captions, js/data.js) is turned round:
+// t, its English words; en, its Chinese; say, the English to hear.
+if (LEARN === 'en'){
+  for (const [k, line] of Object.entries(AREA.lines)) L[k] = {t:enToks(line.en), en:zhText(line.zh), say:line.en};
+  STORY.forEach((s, i) => Object.assign(s, {t:enToks(AREA.story[i].en), en:zhText(AREA.story[i].zh), say:AREA.story[i].en}));
+  CAPS.forEach((c, i) => Object.assign(c, {words:enToks(AREA.intro[i].en), en:zhText(AREA.intro[i].zh), say:AREA.intro[i].en}));
+}
+// The words of a line, as said aloud: its English learning English, or its characters run together.
+const lineSay = line => line.say || line.t.join('');

@@ -320,8 +320,8 @@ const animalOf = id => ANIMALS.find(x => x.id === id) || ANIMALS.find(x => x.hz 
 const creatureWord = id => { const a = animalOf(id); return a ? a.hz : WORD_BANK[lookOf(id)] && PICTURES[lookOf(id)] ? lookOf(id) : PICTURES[PAST_FRIENDS[id]] ? PAST_FRIENDS[id] : null; };
 const animalName = id => { const w = creatureWord(id); return w && {zh:w, py:WORD_BANK[w].py}; };
 function speaker(id){
-  const n = id === 'player' ? yourName() : NAMES[id] || animalName(id);
-  return `<div class="speaker" data-id="${esc(id)}">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div>${n.en ? `<div class="spk-en">${n.en}</div>` : ''}</div>` : ''}</div>`;
+  const n = nameShown(id === 'player' ? yourName() : NAMES[id] || animalName(id));   // (learning English, its English first: js/lang.js)
+  return `<div class="speaker" data-id="${esc(id)}">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh"${n.lang ? LANG : ''}>${n.zh} <span class="spk-py">${n.py}</span></div>${n.en ? `<div class="spk-en">${n.en}</div>` : ''}</div>` : ''}</div>`;
 }
 function portraitCanvas(id){
   if (PALS[id]) return monkeySprite(id, 'down', false, 0);

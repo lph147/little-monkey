@@ -37,7 +37,7 @@ function tickStink(now){
   const shown = Math.ceil(stinkLeft / 1000);
   stinkLeft = Math.max(0, stinkLeft - dt);
   if (Math.ceil(stinkLeft / 1000) !== shown) drawHUD();   // (the time left, by your health: each second)
-  if (!stinkLeft && !pl.mv && !busy){ toast(`The smell of the ${wz(stinkFood)} wears off.`); stinkFood = null; drawHUD(); }   // (once you've stopped)
+  if (!stinkLeft && !pl.mv && !busy){ toast(ui('The smell of the {w} wears off.', {w:wz(stinkFood)})); stinkFood = null; drawHUD(); }   // (once you've stopped)
 }
 // Running: holding B as you walk, once you can (the area's running: its if, such as once PE has taught you 跑; decided 28
 // October 2026), each step takes RUN_STEP of the time, a third faster; with energy from food too, both, about twice as fast
@@ -101,7 +101,7 @@ function update(now){
   tickClock(now);   // (the time of day: js/daynight.js)
   tickStink(now);   // (smelling of durian: no wild creatures)
   scuttle(now);   // (crabs, on the shore: js/world.js)
-  if (fastFood && !isFast(now) && !pl.mv && modal.hidden && !talkNext){ toast(`The energy from the ${wz(fastFood)} wears off.`); fastFood = null; }   // (once you've stopped)
+  if (fastFood && !isFast(now) && !pl.mv && modal.hidden && !talkNext){ toast(ui('The energy from the {w} wears off.', {w:wz(fastFood)})); fastFood = null; }   // (once you've stopped)
   if (pl.mv && pl.mv.slip){   // trying to climb a ledge: up a little, and sliding back down where you were (not a step: nothing happens there)
     const m = pl.mv, p = Math.min(1, (now - m.t0) / SLIP_MS);
     pl.px = m.fx * T; pl.py = m.fy * T - slipLift(p);

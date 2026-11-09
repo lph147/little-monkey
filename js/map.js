@@ -121,8 +121,9 @@ function openMap(chosen = PLACE){
   const show = id => {   // the chosen place's name in the corner (a name: Chinese, pinyin and English together)
     const n = PLACES[id].name, box = sheet.querySelector('.mapname');
     if (!box) return;   // (gone: a close-up, or the map closed)
-    box.innerHTML = `<div><span class="mapzh">${n.zh}</span> <span class="mappy">${n.py}</span></div>
-      <div class="mapen">${esc(n.en)}</div>${id === PLACE ? `<div class="maphere">${PIN_SVG}You are here</div>` : ''}`;
+    const nn = LEARN === 'en' ? {zh:esc(n.en), py:'', en:n.zh} : n;   // (learning English, its English first)
+    box.innerHTML = `<div><span class="mapzh"${LANG}>${nn.zh}</span> <span class="mappy">${nn.py}</span></div>
+      <div class="mapen">${LEARN === 'en' ? nn.en : esc(nn.en)}</div>${id === PLACE ? `<div class="maphere">${PIN_SVG}${ui('You are here')}</div>` : ''}`;
   };
   sheet.querySelectorAll('.mapplace').forEach(b => { b.onclick = () => closeUp(b.dataset.place); });   // (A, or a tap: a closer look)
   // The D-pad moves the gold outline (navsel, js/cards.js) from place to place: the box follows it (not the keyboard's
@@ -175,8 +176,8 @@ function stillHere(id){
 function toFindHTML(id){
   const left = stillHere(id); if (!left.length) return '';
   const day = left.filter(x => x.time === 'day').length, night = left.filter(x => x.time === 'night').length;
-  const when = [day ? `☀️ ${day} only by day` : '', night ? `🌙 ${night} only at night` : ''].filter(Boolean).join(', ');
-  return `<p class="tofind"><b>？</b> ${left.length} more to find here${when ? ` (${when})` : ''}</p>`;
+  const when = [day ? ui('☀️ {n} only by day', {n:day}) : '', night ? ui('🌙 {n} only at night', {n:night}) : ''].filter(Boolean).join(ui(', '));
+  return `<p class="tofind"><b>？</b> ${ui('{n} more to find here', {n:left.length})}${when ? ui(' ({when})', {when}) : ''}</p>`;
 }
 // The place you're in, as it's drawn now: its ground and big objects, and its shade if it's gloomy, with no one on it.
 function drawPlaceNow(){
@@ -236,10 +237,10 @@ function closeUp(id){
   openCard(`<div class="mapview closeup"><div class="maparea">
       <canvas class="mapart" width="${MAP_W}" height="${MAP_H}" aria-hidden="true"></canvas>
       <div class="closepic" style="left:${pct(x, MAP_W)};top:${pct(y, MAP_H)};width:${pct(w, MAP_W)};height:${pct(h, MAP_H)}" aria-hidden="true"></div>
-      <p class="maptitle closename"><span class="mapzh">${n.zh}</span> <span class="mappy">${n.py}</span> <span class="mapen">${esc(n.en)}</span>${id === PLACE ? `<span class="maphere">${PIN_SVG}You are here</span>` : ''}</p>
-      <div class="mapwords"><div class="gloss">${words.length ? 'Found here: tap a word to hear it.' : 'No words found here yet.'}</div>
-        <div class="stickers" data-nav>${words.map(w => `<button class="sticker" data-w="${w}" data-label="Hear">${WORDS[w].pic ? `<span class="c" aria-hidden="true">${picHTML(w)}</span>` : ''}<span class="hz">${w}</span>${S.pinyin ? `<span class="p">${WORDS[w].py}</span>` : ''}</button>`).join('')}</div>${toFindHTML(id)}</div>
-      <div class="mapback actions">${canFly() && id !== PLACE && landingIn(id) ? '<button class="btn primary" data-a="fly">Fly here</button>' : ''}<button class="btn" data-a="back" data-b>Back</button></div>
+      <p class="maptitle closename">${LEARN === 'en' ? `<span class="mapzh"${LANG}>${esc(n.en)}</span> <span class="mapen">${n.zh}</span>` : `<span class="mapzh">${n.zh}</span> <span class="mappy">${n.py}</span> <span class="mapen">${esc(n.en)}</span>`}${id === PLACE ? `<span class="maphere">${PIN_SVG}${ui('You are here')}</span>` : ''}</p>
+      <div class="mapwords"><div class="gloss">${ui(words.length ? 'Found here: tap a word to hear it.' : 'No words found here yet.')}</div>
+        <div class="stickers" data-nav>${words.map(w => `<button class="sticker" data-w="${w}" data-label="${ui('Hear')}">${WORDS[w].pic ? `<span class="c" aria-hidden="true">${picHTML(w)}</span>` : ''}<span class="hz"${LANG}>${wd(w)}</span>${showPy() ? `<span class="p">${wpy(w)}</span>` : ''}</button>`).join('')}</div>${toFindHTML(id)}</div>
+      <div class="mapback actions">${canFly() && id !== PLACE && landingIn(id) ? `<button class="btn primary" data-a="fly">${ui('Fly here')}</button>` : ''}<button class="btn" data-a="back" data-b>${ui('Back')}</button></div>
     </div></div>`);
   on('[data-a=fly]', () => { closeCard(); flyTo(id); });   // (by cloud, once you can: flyTo, js/world.js)
   const paper = sheet.querySelector('.mapart'), g = paper.getContext && paper.getContext('2d');

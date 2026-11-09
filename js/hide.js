@@ -24,11 +24,12 @@ function hideClue(p){ return showDialog(speaker(HIDE.by), L[p.say], {clue:p.word
 // A line's English with {word} (or {word|its English here}) as the word itself, in Chinese with its pinyin, to tap (the
 // clue's English).
 function cluedEn(en, word){
+  if (LEARN === 'en') return `<span>${esc(en)}</span>`;   // (learning English, the clue's Chinese, the place's word in English already: hideLine)
   const [a, b] = en.split(new RegExp(`\\{${word}(?:\\|[^}]*)?\\}`));
   return `<span>${esc(a.trim())}</span>${lineHTML([word], word)}<span>${esc((b || '').trim())}</span>`;
 }
 // The clue on your Tasks page while it's hiding (a task with clue), to read and hear again.
-const clueTaskHTML = p => `<div class="taskclue">${lineHTML(L[p.say].t, p.word)}<div class="gloss"></div><div class="sentence-en clue">${cluedEn(L[p.say].en, p.word)}</div><button class="tbtn" data-a="clue">🔊 Hear it</button></div>`;
+const clueTaskHTML = p => `<div class="taskclue">${lineHTML(L[p.say].t, p.word)}<div class="gloss"></div><div class="sentence-en clue">${cluedEn(L[p.say].en, p.word)}</div><button class="tbtn" data-a="clue">${ui('🔊 Hear it')}</button></div>`;
 // Talking to the little monkey: it asks you to play (Play or Not now), hides while you count, and calls out where it is.
 async function hideSeek(who, last){
   const spots = hideSpots();
