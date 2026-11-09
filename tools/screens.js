@@ -564,8 +564,10 @@ const SCREENS = [
     S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(100); toast('New task: Find some fruit for the hungry monkey'); clearTimeout(msgT); await wait(400); }},
   {id: 'hello-card', title: 'A new word in a conversation', save: 'born', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(400); }},
-  {id: 'scroll-glow', title: 'A word goes into your scroll', save: 'middle', why: 'After a new word’s card, no message saying it’s in your Word Scroll (41 of them in the prologue): the MENU button glows a moment, where your scroll is (the gentler prologue, 8 November 2026).', run: async () => {
-    play(); await wait(100); scrollGlow(); await wait(600); }},
+  {id: 'menu-new', title: 'New in your scroll: the menu', save: 'middle', why: 'No message or glow after a new word’s card: open the menu, and the 词 tile says how many words are new since you last looked in your Word Scroll (9 November 2026, after playing it: the MENU button glowed after every word, and the menu showed nothing new).', run: async () => {
+    play(); await wait(100); S.scrollNew = ['苹果', '兔子']; openMenu(); await wait(300); }},
+  {id: 'scroll-new', title: 'New in your scroll: the words', save: 'middle', why: 'The Word Scroll opens on the page with your newest word, each new one tagged, and a gold dot on the other tabs with new words, till you’ve seen their page.', run: async () => {
+    play(); await wait(100); S.scrollNew = ['苹果', '兔子']; openScroll(() => openMenu()); await wait(300); }},
   {id: 'first-reply', title: 'Your first reply', save: 'born', why: 'His line stays in sight: The old monkey says hello. Now you say it!', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(400); }},
   {id: 'reply-thanks', title: 'Replying to thanks', save: 'phrases', why: 'What you’re answering stays in sight (his line, 谢谢你！), with what’s happening in plain English: The hungry monkey thanks you. What do you say back?', run: async () => {

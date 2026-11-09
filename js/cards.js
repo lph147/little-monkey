@@ -502,7 +502,7 @@ function showNotice(w, opts = {}){
   return new Promise(res => {
     const d = WORDS[w], isNew = lvl(w) === 0, made = hasMade(w);
     if (isNew) SFX.word(); else SFX.blip();
-    const done = () => { closeCard(); if (isNew){ setSeen(w); scrollGlow(); } res(); };   // (no message: the menu's button glows, where your scroll is: decided 8 November 2026, the gentler prologue)
+    const done = () => { closeCard(); if (isNew) setSeen(w); res(); };   // (no message or glow: it's new in your Word Scroll, which the menu's 词 tile says, js/scrolls.js; decided 9 November 2026)
     const alike = !!soundsLike(w), label = isNew ? 'Got it' : 'OK', more = made ? 'How it’s made' : alike ? 'Sounds like' : '';   // (what the English button becomes, and a new word's card goes on to)
     let en = isNew;   // the English shows (seen again: once you've pressed English)
     const front = () => {   // the word's card: a new word with how it's made goes on to it (How it's made ▸), not Got it

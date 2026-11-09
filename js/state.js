@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 39;
+const SAVE_VERSION = 40;
 const HEALTH = 50;   // your health in battles at the start, and the most you can have (the save's maxHealth: the story can raise it)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing,
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
@@ -24,7 +24,7 @@ function placesOnWayTo(place){
   for (let p = (place in from) ? place : FIRST_PLACE; p; p = from[p]) way.unshift(p);
   return way;
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, voiceSpeed:1, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0, clock:{t:0, n:0, turn0:0, friends0:[], caught:[]}, scroll:{has:false, sealed:[]}, tools:[], decor:[], decorNew:[], jarFish:false, helpLeft:0}; }   // (clock: the time of day, and what you've done today: js/daynight.js; scroll: the old monkey's, once he's given it you, and its pages sealed, js/scrolls.js)
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, voiceSpeed:1, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0, clock:{t:0, n:0, turn0:0, friends0:[], caught:[]}, scroll:{has:false, sealed:[]}, tools:[], decor:[], decorNew:[], jarFish:false, helpLeft:0, scrollNew:[]}; }   // (clock: the time of day, and what you've done today: js/daynight.js; scroll: the old monkey's, once he's given it you, and its pages sealed, js/scrolls.js)
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -258,6 +258,10 @@ function upgradeSave(s){
     s.jarFish = !!s.jarFish; s.helpLeft = s.helpLeft || 0;                                // nothing was bought before, so all
     s.version = 39;                                                                       // start empty
   }
+  if (s.version === 39){   // version 39: no new words marked in the Word Scroll (js/scrolls.js, 9 November 2026). A game from
+    if (!Array.isArray(s.scrollNew)) s.scrollNew = [];   // before has seen what it has: nothing new till its next word
+    s.version = 40;
+  }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   // A save from another area than the one this page plays (such as a game in Area 2, shown on the title screen while the page
   // plays Area 1) is only filled in with what every save has: what's kept for its own area waits till it's played there
@@ -285,6 +289,7 @@ function upgradeSave(s){
   s.following = Array.isArray(s.following) ? s.following.filter(id => AREA.characters.some(c => c.id === id)) : [];   // who's following you (characters still here)
   s.scroll = {has:!!(s.scroll || {}).has, sealed:Array.isArray((s.scroll || {}).sealed) ? s.scroll.sealed : []};
   for (const k of ['tools', 'decor', 'decorNew']) if (!Array.isArray(s[k])) s[k] = [];   // (the shop's tools and things for the cave: js/trade.js)
+  if (!Array.isArray(s.scrollNew)) s.scrollNew = [];   // (words caught but not seen in your Word Scroll yet: js/scrolls.js)
   const clothes = w => [...(w || [])].filter(i => CLOTHES.some(c => c.item === i));   // only what the wardrobe has now
   s.wardrobe = {owned:clothes((s.wardrobe || {}).owned), wearing:clothes((s.wardrobe || {}).wearing)};
   return s;
@@ -407,7 +412,8 @@ function todayKey(){ const d = new Date(); return d.getFullYear()+'-'+(d.getMont
 function addToday(w){ const k = todayKey(); if (S.today.d !== k) S.today = {d:k, ids:[]}; if (!S.today.ids.includes(w)) S.today.ids.push(w); }
 // A sentence was shown: each word in it (not punctuation) counts as heard once more.
 function hear(words, heard = S.heard){ for (const t of words) if (WORDS[t] || GLOSS[t]) heard[t] = (heard[t] || 0) + 1; }
-function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.ok = 0; slotIn(w, NEW_PLACE); if (S.areas[AREA.number]) here().wordTurn = S.turn || 0; noteCaught(w); } addToday(w); save(); }   // a new word goes near the front of the review list (wordTurn: when you caught it, for the area's wordGap)
+function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.ok = 0; slotIn(w, NEW_PLACE); if (S.areas[AREA.number]) here().wordTurn = S.turn || 0; noteCaught(w); markNew(w); } addToday(w); save(); }   // a new word goes near the front of the review list (wordTurn: when you caught it, for the area's wordGap), and is new in your Word Scroll till you've seen it there
+function markNew(w){ if (!Array.isArray(S.scrollNew)) S.scrollNew = []; if (!S.scrollNew.includes(w)) S.scrollNew.push(w); }   // (the newest last: js/scrolls.js)
 // You used w in a sentence (a request or a shop order). It's Used once you can read it as well.
 function useWord(w){ const r = rec(w); r.used = 1; if (r.lv === 3) r.lv = 4; addToday(w); save(); }
 // Questions get harder slowly. A word moves up from Caught to Recognised after STEP_UP right answers in a

@@ -1214,8 +1214,14 @@ rt.hid{visibility:hidden}
 .ss.bm .sswrap{transform:rotate(22deg)}
 .pill{position:relative;width:50px;height:16px;border-radius:9px;background:var(--pad);border:none;box-shadow:0 2px 0 rgba(0,0,0,.35);touch-action:none}
 .pill:active{transform:translateY(2px);box-shadow:0 0 0 rgba(0,0,0,.35)}
-.pill.glow{animation:scrollglow 2.1s ease-out}   /* a word just caught, gone into your scroll (scrollGlow, js/scrolls.js) */
-@keyframes scrollglow{0%,100%{box-shadow:0 2px 0 rgba(0,0,0,.35)}15%,55%{box-shadow:0 2px 0 rgba(0,0,0,.35),0 0 0 3px #F2C14E,0 0 12px 4px rgba(242,193,78,.85)}}
+/* new words in your Word Scroll (js/scrolls.js): the menu's 词 tile says how many, each word's card is tagged new, and each
+   tab with some has a gold dot, till you've seen the page they're on */
+.mtile{position:relative}
+.mtile .mnew{position:absolute;top:-9px;right:-7px;min-width:1.5em;text-align:center;font:600 max(.66rem,10.5px)/1.3 var(--pixel);background:#F2C14E;color:#3D2A00;border:2px solid var(--ink);border-radius:8px;padding:0 4px;white-space:nowrap}
+@media (max-width:700px){.mtile .mnew .w{display:none}}   /* the smallest phones: just how many, clear of the tile's A badge */
+.card.new{position:relative;border-color:#D9A82E}
+.card .newtag{position:absolute;top:-8px;right:-5px;font:600 max(.62rem,10.5px)/1.25 var(--pixel);background:#F2C14E;color:#3D2A00;border:1px solid #9A7414;border-radius:4px;padding:0 3px}
+.tab .newdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#F2C14E;box-shadow:0 0 0 1px #9A7414;margin-left:4px;vertical-align:middle}
 .sslabel{font:600 .72rem var(--pixel);color:var(--muted);letter-spacing:.08em}
 .pill .dot{position:absolute;top:-7px;right:-7px;width:13px;height:13px;border-radius:50%;background:#E0443C;border:2px solid var(--shell)}   /* (not How to play's 字 dots) */
 .pill .dot[hidden]{display:none}

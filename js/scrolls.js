@@ -315,7 +315,7 @@ async function nextArea(){
 }
 const todaysWords = () => S.today.d === todayKey() ? S.today.ids.filter(w => WORDS[w] && lvl(w) > 0) : [];   // not words since removed from the game
 function scrollCard(w){   // a word in the Word Scroll: caught, heard (a shadow of its picture, not giving it away) or not met yet
-  if (lvl(w) > 0) return `<button class="card" data-w="${w}" data-label="Open">${WORDS[w].pic ? `<div class="c" aria-hidden="true">${picHTML(w)}</div><div class="hz">${w}</div>` : `<div class="c hz">${w}</div>`}<div class="p">${WORDS[w].py}</div>${pips(w)}</button>`;
+  if (lvl(w) > 0) return `<button class="card${isNewWord(w) ? ' new' : ''}" data-w="${w}" data-label="Open">${isNewWord(w) ? '<span class="newtag">new</span>' : ''}${WORDS[w].pic ? `<div class="c" aria-hidden="true">${picHTML(w)}</div><div class="hz">${w}</div>` : `<div class="c hz">${w}</div>`}<div class="p">${WORDS[w].py}</div>${pips(w)}</button>`;
   const faded = S.scroll.has && WORDS[w].pic;   // (in the old monkey's scroll, its picture faded, till you catch it: js/scrolls.js)
   if (S.heard[w]) return `<div class="card heard" aria-label="Heard ${S.heard[w]} times, not caught yet"><div class="c ${faded ? 'faded' : 'sil'}" aria-hidden="true">${WORDS[w].pic ? picHTML(w) : '？'}</div><div class="p">heard ${S.heard[w]}×</div></div>`;
   return `<div class="card unseen"><div class="c${faded ? ' faded' : ''}" aria-hidden="true">${faded ? picHTML(w) : '？'}</div><div class="p"></div></div>`;
@@ -437,7 +437,7 @@ function scrollGift(p){
 async function scrollGiven(who){
   const has = SCROLL_WORDS().filter(w => WORDS[w].pic), known = has.filter(w => lvl(w) >= 1).slice(0, 8);   // (one row of eight)
   const more = has.filter(w => lvl(w) === 0 && WORD_BANK[w].area === AREA.number).slice(0, Math.max(0, 8 - known.length));
-  S.scroll.has = true; save();
+  S.scroll.has = true; S.scrollNew = (S.scrollNew || []).filter(w => !known.includes(w)); save();   // (the words it shows you, seen)
   const shown = infoBox(null, `<p class="label">The old scroll</p>
     <div class="oldscroll"><div class="grid">${[...known, ...more].map(w => `<div class="card${lvl(w) ? ' back' : ''}"><div class="c faded" aria-hidden="true">${picHTML(w)}</div><div class="hz">${lvl(w) ? w : ''}</div></div>`).join('')}</div></div>
     <p>${esc(cap(theName(who)))} gives you a very old scroll. Long ago, someone drew everything on the mountain in it, with its name, but the pictures have faded. Every word you catch brings one back!</p>
@@ -458,12 +458,19 @@ async function sealCard(p, who){
   setTimeout(() => { SFX.tock(); SFX.right(); }, 450);   // (the stamp coming down: its look, css/game.css)
   await shown;
 }
-// A word just caught goes into your scroll: the MENU button glows a moment, where it is, instead of a message saying so
-// (decided 8 November 2026, the gentler prologue: 41 such messages in the prologue alone).
-function scrollGlow(){
-  const b = $('#startBtn'); if (!b || !b.classList) return;
-  b.classList.remove('glow'); void b.offsetWidth; b.classList.add('glow');
-  clearTimeout(scrollGlow.t); scrollGlow.t = setTimeout(() => b.classList.remove('glow'), 2200);
+// New in your Word Scroll: the words you've caught but not seen there yet (S.scrollNew, the newest last, noted as you catch
+// each: setSeen in js/state.js). No message says a word's gone into your scroll (decided 8 November 2026, the gentler
+// prologue: 41 of them in the prologue alone), and no glow either (decided 9 November 2026, after playing it: the MENU
+// button glowed after every word, and the menu then showed nothing new): the menu's 词 tile says how many words are new,
+// and the scroll opens on the page with the newest, each tagged new, with a gold dot on each other tab that has some, till
+// you've seen the page it's on (Today's page too).
+const scrollNew = () => (S.scrollNew || []).filter(w => WORDS[w] && lvl(w) >= 1 && SCROLL_WORDS().includes(w));
+const isNewWord = w => (S.scrollNew || []).includes(w);
+const tabWords = tab => tab === 'today' ? todaysWords() : tab === 'heard' ? [] : SCROLL_WORDS().filter(w => WORDS[w].category === tab);
+function seenOn(tab){   // the page you're looking at: its new words seen, tagged new this once
+  const there = new Set(tabWords(tab));
+  if (!(S.scrollNew || []).some(w => there.has(w))) return;
+  S.scrollNew = S.scrollNew.filter(w => !there.has(w)); save();
 }
 async function sealPages(who){   // every full page, sealed one after another, each with its present
   for (const p of sealsWaiting()){
@@ -473,15 +480,18 @@ async function sealPages(who){   // every full page, sealed one after another, e
   }
 }
 function openScroll(back, top, tab){   // top: where to scroll to, to come back to the same place. tab: the tab to open at
-  const tabs = scrollTabs();
+  const tabs = scrollTabs(), fresh = scrollNew();
   if (tab) scrollTab = tab;
+  else if (fresh.length) scrollTab = WORDS[fresh[fresh.length - 1]].category;   // (new words: the page with the newest)
   if (!tabs.some(([id]) => id === scrollTab)) scrollTab = tabs[0][0];
+  const dots = new Set(fresh.map(w => WORDS[w].category));   // (each other tab with new words: a gold dot)
   openCard(`<p class="label">Word Scroll · ${wordsCaught()} of ${ORDER.length} caught</p>
-    <div class="scrolltabs" role="tablist">${tabs.map(([id, name]) => `<button class="tab" role="tab" data-tab="${id}" aria-selected="${id === scrollTab}">${name}</button>`).join('')}</div>
+    <div class="scrolltabs" role="tablist">${tabs.map(([id, name]) => `<button class="tab" role="tab" data-tab="${id}" aria-selected="${id === scrollTab}">${name}${dots.has(id) && id !== scrollTab ? '<span class="newdot" aria-hidden="true"></span>' : ''}</button>`).join('')}</div>
     ${scrollPage(scrollTab)}
     <div class="gloss">${scrollTab === 'heard' ? 'Tap a word to hear it.' : 'Tap a word to see its page.'}</div>
     <p class="small">Gold squares show how well you know a word: caught, recognised, read, used. Shadows are words you've heard but not caught yet.</p>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>${back ? 'Back' : 'Close'}</button></div>`);
+  seenOn(scrollTab);   // (its new words, seen: tagged this once)
   if (top) sheet.scrollTop = top;
   const chosen = sheet.querySelector('.tab[aria-selected="true"]'), row = sheet.querySelector('.scrolltabs');
   if (chosen && row) row.scrollLeft = Math.max(0, chosen.offsetLeft - row.offsetLeft - 24) || 0;   // the tabs are one row: the chosen one in view
@@ -489,7 +499,7 @@ function openScroll(back, top, tab){   // top: where to scroll to, to come back 
   sheet.querySelectorAll('.card[data-w]').forEach(b => b.onclick = () => {
     const at = sheet.scrollTop;
     SFX.blip(); wordPage(b.dataset.w, () => {   // back from its page, still on the same word
-      openScroll(back, at); const c = sheet.querySelector(`.card[data-w="${b.dataset.w}"]`); if (c){ markNav(c); c.focus({preventScroll:true}); }
+      openScroll(back, at, scrollTab); const c = sheet.querySelector(`.card[data-w="${b.dataset.w}"]`); if (c){ markNav(c); c.focus({preventScroll:true}); }
     });
   });
   sheet.querySelectorAll('.chip[data-h]').forEach(b => b.onclick = () => {

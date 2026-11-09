@@ -11,9 +11,10 @@ const MENU_TILES = [
   {m:'wardrobe', icon:'👕', zh:'衣服', py:'yīfu', en:'Clothes'}
 ];   // (Save is a small button by Settings since 30 October 2026, so the tiles fit one row on a phone: it saves by itself anyway)
 function openMenu(focusId){
+  const fresh = scrollNew().length;   // (words new in your Word Scroll: the 词 tile says how many, js/scrolls.js)
   openCard(`<p class="label">Menu</p>${statsHTML()}
     <div class="menu">
-      <div class="tiles">${MENU_TILES.map(t => `<button class="mtile" data-m="${t.m}" data-label="${t.en}"><span class="micon" aria-hidden="true">${t.icon}</span><span class="mzh">${t.zh}</span><span class="mpy">${t.py}</span><span class="men">${t.en}</span></button>`).join('')}</div>
+      <div class="tiles">${MENU_TILES.map(t => `<button class="mtile" data-m="${t.m}" data-label="${t.en}">${t.m === 'words' && fresh ? `<span class="mnew" aria-label="${fresh} new words">${fresh}<span class="w"> new</span></span>` : ''}<span class="micon" aria-hidden="true">${t.icon}</span><span class="mzh">${t.zh}</span><span class="mpy">${t.py}</span><span class="men">${t.en}</span></button>`).join('')}</div>
       <div class="menurow"><button class="btn" data-m="settings">⚙ Settings</button><button class="btn" data-m="save">💾 Save</button></div>
     </div>
     <div class="actions"><button class="btn" data-a="close" data-b>Close</button></div>`);

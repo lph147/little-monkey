@@ -399,3 +399,12 @@ test('a version 37 save: a hungry monkey already fed has had his second wish too
   const waiting = saveOf(loadGame({save: {...fed, areas: {1: {...fed.areas[1], hungry: 'asked', holding: {hungry: '桃子'}}}}}));
   assert.deepEqual([waiting.areas[1].hungry, waiting.areas[1].hungry2, waiting.areas[1].holding], ['asked', 'not asked', {hungry: '桃子'}], 'any fruit will do now: the peach you hold, then his second wish');
 });
+
+test('a version 39 save has no new words marked in its Word Scroll: nothing new till its next word (version 40)', () => {
+  const old = {version: 39, started: true, area: 1, w: {'山': {lv: 1, ok: 0}, '树': {lv: 2, ok: 1}}, pos: {place: 'meadow', x: 13, y: 7, dir: 'up'}, areas: {1: {elder: 2}}};
+  const s = saveOf(loadGame({save: old}));
+  assert.equal(s.version, VERSION);
+  assert.deepEqual(s.scrollNew, [], 'what it has, it’s seen');
+  assert.deepEqual([s.w['山'], s.w['树']], [{lv: 1, ok: 0}, {lv: 2, ok: 1}], 'its words as they were');
+  assert.deepEqual(saveOf(loadGame()).scrollNew, [], 'a new game starts with nothing new');
+});
