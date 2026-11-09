@@ -36,6 +36,13 @@ I'm new to coding. Please:
 - The game must work on a phone browser held sideways (touch) and on desktop (keyboard). Held upright, it asks you to turn the phone.
 - Build tools are fine where they clearly help; agree them first. Prefer tools that make files we commit (like `npm run pictures`), so the game still runs straight from its files: plain HTML, CSS and JavaScript, loadable from a static web host (GitHub Pages).
 - Keep DESIGN.md's "Next steps" checklist up to date when a step is finished.
+- **Both ways, always** (decided 9 November 2026): every change to the game learning Chinese (English to learn Chinese, the main game) is matched learning English, in the same change, so the two never drift apart. In practice:
+  - New or changed text in your own language (a task, message, note, label, card or button) goes through `ui()`, or `fill` for the content's text, and gets its Chinese in content/chinese-ui.js: `node tools/ui-strings.js --missing` lists any without, and tests/chinese-ui.test.js fails till each has one. Built from pieces, it's one whole sentence with named gaps (`ui('Lesson {n} again', {n})`), never pieces joined in English word order.
+  - A new word gets its English in `EN_WORDS` (content/english.js: `w`, `ipa`, its plural or other forms if irregular, and `zh` if its Chinese meaning isn't the word itself); where it helps, `EN_MADE` or `EN_SOUNDS` too, as `MADE` and the Sounds like cards have it learning Chinese.
+  - A new line, sentence or caption: its English says the word it teaches, and a gap sentence's English has the gap word in it (checked as the playthrough runs, and by the line's own English or an `EN_LINES` override); a word in braces in its English, such as hide and seek's `{桌子}`, comes out right both ways.
+  - Something only Chinese has (pinyin, tones, characters, measure words, a card such as 二 or 两?) gets its English side, or is left out learning English on purpose, and said so in a comment (such as `sideBySide`, null learning English, and `SAME`, 两 the same as 二).
+  - Any new Chinese character shown learning English goes in content/traditional.js, for Traditional Chinese (with its word, if its form depends on the word).
+  - Then `npm run voices` (it makes the English clips with the Chinese) and `npm run chinese` (CHINESE.md, CHINESE-UI.md and ENGLISH.md), and both checks: the playthrough plays both ways, and the screens gallery shows every screen learning English with `?learn=en`. New Chinese for the player learning English is flagged for the native speaker's check, in CHINESE-UI.md, as the game's Chinese is.
 
 ## Tools
 - `npm test` runs the automated tests (Node's built-in test runner; there are no packages to install).
