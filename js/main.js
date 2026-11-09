@@ -220,7 +220,7 @@ function toTitle(){
   const tb = $('#titleButtons');
   if (g) tb.querySelector('#contBtn').onclick = go(() => continueGame(n));
   if (qp) tb.querySelector('#pracBtn').onclick = () => { getAC(); unlockSpeech(); keepSaves(); SFX.blip(); if (slotArea(n) !== AREA.number || slotLearn(n) !== LEARN) return toArea(slotArea(n), n, 'practise', slotLearn(n)); if (n !== SLOT){ useSlot(n); setUpGame(); } practiseFromTitle(); };   // (no music: it's not the game)
-  tb.querySelector('#newBtn').onclick = () => { SFX.blip(); if (empty) go(() => newGame(empty))(); else filesCard('full'); };
+  tb.querySelector('#newBtn').onclick = () => { SFX.blip(); if (empty) go(() => chooseLearn(learn => newGame(empty, learn)))(); else filesCard('full'); };
   tb.querySelector('#filesBtn').onclick = () => { SFX.blip(); filesCard(); };
   titleSel = 0; markTitle();
   titleText();
@@ -257,7 +257,7 @@ function slotCard(n){
       <input type="file" accept=".json,application/json" hidden>
       <div class="actions" data-nav><button class="btn" data-a="back" data-b>${ui('Back')}</button><button class="btn" data-a="load">${ui('Load from a file')}</button><button class="btn primary" id="newBtn">${ui('New game')}</button></div>`);
     on('[data-a=back]', () => filesCard(null, n));
-    sheet.querySelector('#newBtn').onclick = go(() => { closeCard(); newGame(n); });
+    sheet.querySelector('#newBtn').onclick = go(() => { closeCard(); chooseLearn(learn => newGame(n, learn), () => slotCard(n)); });
     sheet.querySelector('#newBtn').focus();
     const pick = sheet.querySelector('input[type=file]');
     on('[data-a=load]', () => pick.click());
@@ -274,9 +274,9 @@ function slotCard(n){
   const practise = g.practise ? `<p>${ui(g.practise === 1 ? '{n} word needs practice: practise {where}, or meet animals in the tall grass.' : '{n} words need practice: practise {where}, or meet animals in the tall grass.', {n:g.practise, where:esc(ui(g.where))})}</p>` : '';
   const friends = ui(g.friends === 1 ? '{n} friend' : '{n} friends', {n:g.friends});
   // how full your scroll is, each area's (the old monkey's scroll: decided 8 November 2026), with a gold seal once it's full
-  const scroll = `<div class="scrollfill">${g.scroll.map(a => `<span class="sf"><span>${esc(ui(a.area.en))}</span><span class="bar"><i style="width:${Math.round(a.found / Math.max(1, a.of) * 100)}%"></i></span><span>${a.found}/${a.of}</span>${a.found >= a.of ? ` <span class="goldseal" role="img" aria-label="${ui('Every word found')}">好</span>` : ''}</span>`).join('')}</div>`;
+  const scroll = `<div class="scrollfill">${g.scroll.map(a => `<span class="sf"><span>${LEARN === 'en' ? a.area.zh : esc(a.area.en)}</span><span class="bar"><i style="width:${Math.round(a.found / Math.max(1, a.of) * 100)}%"></i></span><span>${a.found}/${a.of}</span>${a.found >= a.of ? ` <span class="goldseal" role="img" aria-label="${ui('Every word found')}">好</span>` : ''}</span>`).join('')}</div>`;
   openCard(`<p class="label">${ui('Game {n}', {n})}</p><div class="slotcard">${faceHTML()}<div><p><b>${ui(g.words === 1 ? '{n} word' : '{n} words', {n:g.words})}</b> · ${friends} · ${g.shells} 🐚${g.coins ? ` · ${g.coins} 🪙` : ''}</p>
-      <p>${esc(ui(g.area.en))} · ${esc(ui(g.chapter.name))}: ${esc(ui(g.chapter.title))}</p>${scroll}${practise}${g.played ? `<p class="small played">${ui('Last played {when}. It saves by itself as you play.', {when:ago(g.played)})}</p>` : ''}</div></div>
+      <p>${LEARN === 'en' ? g.area.zh : esc(g.area.en)} · ${esc(ui(g.chapter.name))}${ui(': ')}${esc(ui(g.chapter.title))}</p>${scroll}${practise}${g.played ? `<p class="small played">${ui('Last played {when}. It saves by itself as you play.', {when:ago(g.played)})}</p>` : ''}</div></div>
     <div class="actions" data-nav><button class="btn danger" data-a="del">${ui('Delete')}</button><button class="btn" data-a="copy">${ui('Copy to a file')}</button><button class="btn" data-a="back" data-b>${ui('Back')}</button><button class="btn primary" id="contBtn">${ui('Continue')}</button></div>`);
   on('[data-a=back]', () => filesCard(null, n));
   sheet.querySelector('#contBtn').focus();   // the arrows move from here
@@ -288,7 +288,7 @@ function slotCard(n){
     toast(ui('Copied Game {n} to {file}', {n, file:f.name}));
   });
   on('[data-a=del]', () => {
-    openCard(`<p class="label">${ui('Delete Game {n}?', {n})}</p><div class="slotcard">${faceHTML()}<div><p>${ui(g.words === 1 ? '{n} word' : '{n} words', {n:g.words})} · ${friends}</p><p>${esc(ui(g.area.en))} · ${esc(ui(g.chapter.name))}</p>
+    openCard(`<p class="label">${ui('Delete Game {n}?', {n})}</p><div class="slotcard">${faceHTML()}<div><p>${ui(g.words === 1 ? '{n} word' : '{n} words', {n:g.words})} · ${friends}</p><p>${LEARN === 'en' ? g.area.zh : esc(g.area.en)} · ${esc(ui(g.chapter.name))}</p>
         <p class="small">${ui('Everything in this game is erased from this phone. To keep a copy, copy it to a file first.')}</p></div></div>
       <div class="actions"><button class="btn danger" data-a="yes">${ui('Delete it')}</button><button class="btn primary" data-a="no" data-b>${ui('Keep it')}</button></div>`);
     on('[data-a=no]', () => slotCard(n));
@@ -401,6 +401,22 @@ async function startGame(){
 
 // A new game, in game n, learning learn: the story starts in the first area (if this page plays another, or learns the other
 // language, it loads again for the new game).
+// Which language a new game learns (Both ways, decided 9 November 2026: a choice for each game, as it starts): Chinese,
+// played in English, as every game always has, or English, played in Chinese. Written in both, as nothing's chosen yet; A
+// is the one this device's language suggests (a phone set to Chinese suggests learning English; ?learn=en on the address
+// too), on the right; B goes back (back: where to, the title screen unless it says).
+function chooseLearn(then, back = toTitle){
+  const first = wantLearn() === 'en' || /^zh/i.test((typeof navigator !== 'undefined' && navigator.language) || '') ? 'en' : 'zh';
+  const opt = l => l === 'zh' ? `<button class="btn${first === l ? ' primary' : ''}" data-learn="zh" data-label="Learn Chinese"><span lang="en">Learn Chinese</span><span class="sub" lang="zh">学中文</span></button>`
+    : `<button class="btn${first === l ? ' primary' : ''}" data-learn="en" data-label="学英语" lang="zh">学英语<span class="sub" lang="en">Learn English</span></button>`;
+  openCard(`<p class="label"><span lang="en">What do you want to learn?</span> <span lang="zh">你想学什么？</span></p>
+    <p class="small" lang="en">Each game learns one language: Chinese, played in English, or English, played in Chinese.</p>
+    <p class="small" lang="zh">每个游戏学一种语言：用英语玩，学中文；或者用中文玩，学英语。</p>
+    <div class="actions learnpick" data-nav><button class="btn" data-a="back" data-b><span lang="en">Back</span> <span lang="zh">返回</span></button>${(first === 'zh' ? ['en', 'zh'] : ['zh', 'en']).map(opt).join('')}</div>`);
+  sheet.querySelectorAll('[data-learn]').forEach(b => b.onclick = () => { SFX.blip(); closeCard(); then(b.dataset.learn); });
+  on('[data-a=back]', () => { closeCard(); back(); });
+  const p = sheet.querySelector('.primary'); if (p) p.focus();
+}
 function newGame(n, learn = wantLearn()){
   if (AREA.number !== AREAS[0].number || learn !== LEARN) return toArea(AREAS[0].number, n, 'new', learn);
   newGameIn(n); setUpGame(); playIntro();
@@ -442,6 +458,7 @@ function doGoAction(go){
 // The game as S has it (at the start, or after switching games): where everyone is, the place you're in and its map.
 function setUpGame(){
   wordsForGame(); redress();   // its words, and your monkey in what you wear in it (decided 22 October 2026: the last game's showed)
+  writeChinese();   // (learning English, its Chinese as it chooses: simplified or traditional)
   if (!PLACES[S.pos.place]) S.pos.place = FIRST_PLACE;   // a place that's gone
   placeCharacters();   // where the story has put everyone
   enterPlace(S.pos.place);
@@ -458,7 +475,7 @@ window.addEventListener('resize', fit);
 // Then the start-up screen (in index.html) goes, and the console shows, its full size, with the whole title. (It goes even
 // if setting up fails, so it never says the connection is slow when it isn't.)
 try { setUpGame(); fit(); toTitle(); const g = goAction(); if (g) doGoAction(g); }
-finally { if (document.documentElement) document.documentElement.classList.remove('loading'); }
+finally { if (document.documentElement) document.documentElement.classList.remove('loading'); writeChinese(); }   // (learning English, in traditional characters if the game says: js/lang.js)
 requestAnimationFrame(frame);
 // The app (sw.js): lets the game be installed on a phone's home screen, full screen, and played offline.
 // Once it's ready, it's given the game's own files to keep (the first time, the page loaded before it was there to
@@ -467,7 +484,9 @@ if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(() => {});
   const ownFiles = () => ['./', ...[...document.querySelectorAll('script[src], link[href]')].map(el => el.src || el.href)
     .filter(u => new URL(u, location.href).origin === location.origin)];   // the page, its scripts, styles, icons and app description
-  const clips = () => typeof VOICE_CLIPS === 'undefined' ? [] : Object.entries(VOICE_CLIPS).flatMap(([v, c]) => Object.values(c).map(code => `audio/${v}/${code}.mp3`));
+  // (only the voices of the language this game learns: learning English, the English voices, VOICE_OF_EN)
+  const ours = () => new Set(Object.values(LEARN === 'en' ? (typeof VOICE_OF_EN === 'undefined' ? {} : VOICE_OF_EN) : VOICE_OF));
+  const clips = () => typeof VOICE_CLIPS === 'undefined' ? [] : Object.entries(VOICE_CLIPS).filter(([v]) => ours().has(v)).flatMap(([v, c]) => Object.values(c).map(code => `audio/${v}/${code}.mp3`));
   const keep = () => navigator.serviceWorker.ready.then(r => r.active && r.active.postMessage({keepFiles:ownFiles(), keepClips:clips()})).catch(() => {});
   keep(); navigator.serviceWorker.addEventListener('controllerchange', keep);   // and again when a new version takes over
 }

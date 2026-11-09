@@ -1,0 +1,3096 @@
+# The game in Chinese, learning English
+
+Everything the game says in Chinese to a player learning English, for a native speaker to check. Made by
+`npm run chinese` (tools/both-ways-sheets.js) from content/chinese-ui.js and content/english.js: don't edit it here.
+
+In the Chinese, {…} is something put in as it's shown: a number ({n}), a name ({who}), or a word in braces ({水}), which
+shows as the English word being learned with its Chinese, such as water（水）. Keep each one as it is. Written by Claude:
+please correct anything that isn't natural, simple Chinese for a child.
+
+## The game itself (js/)
+
+| English | 中文 |
+|---|---|
+| Caught | 抓到了 |
+| Recognised | 认得了 |
+| Read | 会读了 |
+| Used | 会用了 |
+| A practice post. | 一个练习木桩。 |
+| Training | 练习 |
+| Training done | 练习完了 |
+| A lesson. | 一节课。 |
+| Lesson | 上课 |
+| Lesson over | 下课了 |
+| A {w} blocks your way! | {w}挡住了你的路！ |
+| You run away from the {w}. | 你从{w}那里逃走了。 |
+| The {w} hides! | {w}躲起来了！ |
+| The {w} attacks! | {w}发起了攻击！ |
+| The {w} runs away. | {w}逃走了。 |
+| The {w} sniffs the air, and runs off! | {w}闻了闻空气，跑掉了！ |
+| The {w} is angry! | {w}生气了！ |
+| The {w} is too strong for you this time. | 这次{w}太厉害了。 |
+| Snacks | 零食 |
+| Tools | 工具 |
+| Pick | 摘 |
+| Take | 拿 |
+| Treasures | 宝贝 |
+| Hold an arrow to walk. / Tap to turn. | 按住方向键走路。 / 点一下就转身。 |
+| Press <b>A</b> to talk | 按<b>A</b>说话 |
+| Press <b>A</b> to hop onto a stepping stone | 按<b>A</b>跳上踏脚石 |
+| Grey words are just for listening. You don’t need to know them yet. | 灰色的单词只是听一听。你现在还不需要认识它们。 |
+| Tap a word to see what it means | 点一个单词，看看它的意思 |
+| A line’s English shows the first few times you hear it. Tap <b>English</b> to see it again. | 一句话的中文意思，在你最初几次听到时会显示出来。点<b>中文</b>就能再看一遍。 |
+| Hold <b>B</b> as you walk, to run. | 走路时按住<b>B</b>，就能跑。 |
+| For someone | 给别人的 |
+| To fight with | 打架用的 |
+| For fishing | 钓鱼用的 |
+| Carry two more of every snack | 每种零食都能多带两个 |
+| A light round you at night | 晚上照亮你身边 |
+| Dig up roots | 挖出地下的根 |
+| This browser can’t speak, so you won’t hear any Chinese. | 这个浏览器不能说话，所以你听不到任何英语。 |
+| Your device has no Chinese voice yet, so you won’t hear the words. | 你的设备还没有英语语音，所以你听不到单词。 |
+| This browser can’t speak, so you won’t hear any Chinese. Try Safari on an iPhone, or Chrome on Android or a computer. | 这个浏览器不能说话，所以你听不到任何英语。试试 iPhone 上的 Safari，或者安卓手机、电脑上的 Chrome。 |
+| Your device has no Chinese voice yet, so you won’t hear the words. On an iPhone: Settings, Accessibility, Spoken Content, Voices, Chinese, then download a voice. On Android: in Settings, search for Text-to-speech, open Speech Services by Google, Install voice data, and add Chinese (Mandarin). Then reload the game. | 你的设备还没有英语语音，所以你听不到单词。在 iPhone 上：设置、辅助功能、朗读内容、声音、英语，然后下载一个声音。在安卓手机上：在设置里搜索“文字转语音”，打开 Google 语音服务，安装语音数据，加上英语（英国）。然后重新加载游戏。 |
+| Talk | 说话 |
+| Meet | 见面 |
+| Hop | 跳 |
+| Fish | 钓鱼 |
+| Say it | 说 |
+| Skip | 跳过 |
+| Hook it | 拉钩 |
+| Run | 跑 |
+| Slow connection, still loading… | 网络很慢，还在加载…… |
+| TASKS | 任务 |
+| MENU | 菜单 |
+| BAG | 背包 |
+| MAP | 地图 |
+| Arrow keys or WASD to move · Space or Enter for A · X for B (back) · M or Esc for the menu · T for your tasks · I for your bag · P for the map | 方向键或WASD移动 · 空格或回车键是A · X是B（返回） · M或Esc打开菜单 · T看任务 · I打开背包 · P看地图 |
+| Turn your phone sideways to play | 把手机横过来玩 |
+| On a computer, make the window wider. | 在电脑上，把窗口拉宽一点。 |
+| Loading | 正在加载 |
+| Game screen | 游戏画面 |
+| Your health | 你的体力 |
+| Direction pad | 方向键 |
+| Walk up | 往上走 |
+| Walk left | 往左走 |
+| Walk right | 往右走 |
+| Walk down | 往下走 |
+| Your tasks | 你的任务 |
+| The menu | 菜单 |
+| Back or menu | 返回或者菜单 |
+| Talk or look | 说话或者看看 |
+| Your bag | 你的背包 |
+| The map | 地图 |
+| Health: {n} of {max} | 体力：{n}/{max} |
+| Angry! | 生气了！ |
+| You | 你 |
+| Your {weapon} glows: your next hit counts ×{n}! | 你的{weapon}发光了：下一次打中算×{n}！ |
+| You eat a {food}: {heal}. | 你吃了一个{food}：{heal}。 |
+| Your {weapon} glows! Swing it: ×{n}! | 你的{weapon}发光了！挥起来：×{n}！ |
+| You swing your {weapon}! | 你挥起了你的{weapon}！ |
+| Power hit! ×{n} | 超级一击！×{n} |
+| Hit! | 打中了！ |
+| Miss! | 没打中！ |
+| A power hit! | 超级一击！ |
+| A hit! | 打中了！ |
+| You miss. | 你没打中。 |
+| {who} dodges. | {who}躲开了。 |
+| You win! | 你赢了！ |
+| Ouch! | 哎哟！ |
+| You’re worn out, and go back to rest. | 你累坏了，回去休息了。 |
+| Hit | 打 |
+| Eat: {food} ×{n} | 吃：{food} ×{n} |
+| Run away | 逃跑 |
+| Your turn | 轮到你了 |
+| What will you do? | 你要做什么？ |
+| Next | 下一个 |
+| Attack {i} of {n} | 第{i}次攻击，共{n}次 |
+| Listen. Where is it coming from? Pick it to jump aside. | 仔细听。它从哪里来？选中它，就能跳开。 |
+| Play the word again | 再听一遍这个词 |
+| Missed you! | 没打中你！ |
+| You jump aside! | 你跳开了！ |
+| Right in a row: {n} of {of} | 连续答对：{n}/{of} |
+| When your health is low, {吃\|eat} something from your bag on your turn. | 体力低的时候，轮到你时从背包里拿点东西{吃\|eat}。 |
+|  Your health is full again. | 你的体力又满了。 |
+| Not now | 先不了 |
+| Try again | 再试一次 |
+| Hear it again | 再听一遍 |
+| English | 中文 |
+| Boss fight! | 头目战！ |
+| (just listen) | （听一听就好） |
+| Choose | 选择 |
+| Hear it | 听一听 |
+| Hear | 听 |
+| Done | 完成 |
+| {not} is for {use}. {Use}, you say {best}. | {not}是{use}说的。{Use}，要说{best}。 |
+| How {w} is made | {w}是怎么组成的 |
+| ◂ Back | ◂ 返回 |
+| ↻ Watch again | ↻ 再看一遍 |
+| Sounds the same | 发音一样 |
+| Sounds alike | 发音很像 |
+| Exactly the same sound: how they’re spelt, and what’s being said, tell them apart. | 发音一模一样：要靠拼写和整句话的意思来区分它们。 |
+| 🔊 Hear both | 🔊 两个都听 |
+| How it’s made | 它是怎么组成的 |
+| Sounds like | 发音很像 |
+| What does {x} mean? | {x}是什么意思？ |
+| 🔊 Hear it | 🔊 听一听 |
+| as in {w} | 就像在{w}里 |
+| ▲ Tap {x} | ▲ 点{x} |
+| Each word means something. Tap one, or press A. | 每个单词都有意思。点一个，或者按A。 |
+| Each character means something. Tap one, or press A. | 每个字都有意思。点一个，或者按A。 |
+| OK | 好的 |
+| Next part | 下一部分 |
+| Got it | 知道了 |
+| ⭐ New word to learn | ⭐ 新单词 |
+| Word | 单词 |
+| You picked | 你摘到了 |
+| We have it | 我们有了 |
+| Not yet | 还没有 |
+| The {who} is fast asleep. Shh! | {who}睡得正香。嘘！ |
+| Time for bed | 该睡觉了 |
+| What you did today: | 你今天做了什么： |
+| {q} answered | 答了{q}道题 |
+| Tap a word to hear it. | 点一个单词就能听。 |
+| New friends: {list} | 新朋友：{list} |
+| Review | 复习 |
+| Quick review | 快速复习 |
+| Sleep | 睡觉 |
+| Today’s words · {i} of {n} | 今天的单词 · {i}/{n} |
+| Review done! | 复习完了！ |
+| You got <b>{n} of {of}</b> right first time. Now, time to sleep. | 你第一次就答对了<b>{n}/{of}</b>。现在，该睡觉了。 |
+| Good morning! You wake up with your health full. | 早上好！你醒来了，体力全满。 |
+|  ({i} of {n}) | （{i}/{n}） |
+| Listen. | 听一听。 |
+| Read it. | 读一读。 |
+| Which is it? | 是哪一个？ |
+| You have the app: open 小猴子 from your home screen.  | 你有这个应用了：从主屏幕打开小猴子吧。 |
+| Keep your games safe | 保护好你的游戏 |
+| Play full screen | 全屏玩 |
+| Install the app | 安装应用 |
+| ⛶ Add to your home screen | ⛶ 添加到主屏幕 |
+| On your home screen, 小猴子 plays full screen and offline, and your games are safe: Safari can delete them after a week away. | 放在主屏幕上，小猴子能全屏玩、不联网也能玩，你的游戏也很安全：要是一个星期不玩，Safari可能会把它们删掉。 |
+| On your home screen, 小猴子 plays full screen and offline, and your games are safe. | 放在主屏幕上，小猴子能全屏玩、不联网也能玩，你的游戏也很安全。 |
+| Tap Share 📤 (or ⋯ first). | 点“分享”📤（或者先点 ⋯）。 |
+| Tap Share 📤, beside the address. | 点地址旁边的“分享”📤。 |
+| Tap ➕ Add to Home Screen (scroll down for it). | 点 ➕“添加到主屏幕”（往下滑就能找到）。 |
+| Open {icon} 小猴子 from your home screen. | 从主屏幕打开{icon}小猴子。 |
+| To bring this game across: Copy to a file here, Load from a file there. | 要把这个游戏带过去：在这里“复制到文件”，在那里“从文件读取”。 |
+| I’ve added it | 我已经添加了 |
+| Play | 玩 |
+| The smell of the {w} wears off. | {w}的味道散了。 |
+| The way is shut. | 路被挡住了。 |
+| The energy from the {w} wears off. | {w}给你的力气用完了。 |
+| Your map doesn’t show this place. | 你的地图上没有这个地方。 |
+| There’s no map here. | 这里没有地图。 |
+| You smell of {food}: {n} seconds left | 你身上有{food}的味道：还剩{n}秒 |
+| durian | 榴莲 |
+| New task: {task} | 新任务：{task} |
+|  (and {n} more) | （还有{n}个） |
+| Turn your sound on: every word is spoken aloud. | 打开声音：每个单词都会读出来。 |
+| How to fix it | 怎么解决 |
+| Hearing Chinese | 听英语 |
+| today | 今天 |
+| yesterday | 昨天 |
+| {n} days ago | {n}天前 |
+| Continue | 继续 |
+| Game {n} · {w} word | 游戏{n} · {w}个单词 |
+| Game {n} · {w} words | 游戏{n} · {w}个单词 |
+|  · played {when} |  · {when}玩过 |
+| Practise | 练习 |
+| {n} word needs it | {n}个单词需要练习 |
+| {n} words need it | {n}个单词需要练习 |
+| Your words | 你的单词 |
+| New game | 新游戏 |
+| Start the story | 开始故事 |
+| In an empty game | 在一个空的游戏位里 |
+| Your 3 games are in use | 你的3个游戏位都用了 |
+| Save files | 存档文件 |
+| Your 3 games | 你的3个游戏 |
+| Load a game from a file | 从文件读取游戏 |
+| Game {n} | 游戏{n} |
+| {n} word | {n}个单词 |
+| {n} words | {n}个单词 |
+| {n} friend | {n}个朋友 |
+| {n} friends | {n}个朋友 |
+| A full scroll | 卷轴满了 |
+| Empty | 空的 |
+| : start a new game here, or load one | ：在这里开始新游戏，或者读取一个 |
+| All three games are in use. To start a new one, choose a game and delete it (copy it to a file first if you want to keep it). | 三个游戏位都用了。要开始新游戏，先选一个游戏把它删掉（想留着的话，先把它复制到文件里）。 |
+| Choose a game to play it, copy it to a file or delete it. An empty one starts a new game, or loads one from a file. | 选一个游戏来玩，或者把它复制到文件里，或者删掉。空的游戏位可以开始新游戏，或者从文件读取游戏。 |
+| Back | 返回 |
+| Game {n} · empty | 游戏{n} · 空的 |
+| Start a new game here, or load one from a file: a game copied from another phone, or a backup. | 在这里开始新游戏，或者从文件读取游戏：从另一部手机复制来的游戏，或者备份。 |
+| Load from a file | 从文件读取 |
+| Loaded into Game {n}. | 已读取到游戏{n}。 |
+| {n} word needs practice: practise {where}, or meet animals in the tall grass. | {n}个单词需要练习：{where}练习，或者到高草丛里见见动物。 |
+| {n} words need practice: practise {where}, or meet animals in the tall grass. | {n}个单词需要练习：{where}练习，或者到高草丛里见见动物。 |
+| Every word found | 单词都找到了 |
+| Last played {when}. It saves by itself as you play. | 上次玩是{when}。玩的时候会自动保存。 |
+| Delete | 删除 |
+| Copy to a file | 复制到文件 |
+| Copied Game {n} to {file} | 已把游戏{n}复制到{file} |
+| Delete Game {n}? | 删除游戏{n}？ |
+| Everything in this game is erased from this phone. To keep a copy, copy it to a file first. | 这个游戏里的一切都会从这部手机上删掉。想留一份的话，先把它复制到文件里。 |
+| Delete it | 删掉它 |
+| Keep it | 留着它 |
+| Game {n} is deleted. | 游戏{n}已经删掉了。 |
+| :  | ： |
+| Look | 看看 |
+| You are here | 你在这里 |
+| ☀️ {n} only by day | ☀️ {n}个只在白天 |
+| 🌙 {n} only at night | 🌙 {n}个只在晚上 |
+| {n} more to find here | 这里还有{n}个要找 |
+|  ({when}) | （{when}） |
+| Found here: tap a word to hear it. | 在这里找到的：点一个单词就能听。 |
+| No words found here yet. | 这里还没有找到单词。 |
+| Fly here | 飞到这里 |
+| ,  | 、 |
+| Menu | 菜单 |
+| {n} new words | {n}个新单词 |
+|  new | 个新 |
+| 💾 Save | 💾 保存 |
+| Open | 打开 |
+| Not a friend yet | 还不是朋友 |
+| Where? | 在哪里？ |
+| Friends | 朋友 |
+| {n} of {of} animals | {n}/{of}种动物 |
+| The troop and others | 猴群和其他朋友 |
+| People | 人 |
+| A friend to find | 一个还没找到的朋友 |
+| Find it, and answer its questions to make friends. | 找到它，回答它的问题，和它交朋友。 |
+| Eat | 吃 |
+| For {who} | 给{who}的 |
+| Hits for {n} | 打中算{n}点 |
+| A at water with fish in it | 在有鱼的水边按A |
+| A big fish bites next | 下次钓鱼，一定有大鱼上钩 |
+| Sells for {n} {money} | 能卖{n} {money} |
+| Nothing in your bag yet. Fruit trees, friends and the shop have things to put in it. | 你的背包里还没有东西。果树、朋友和商店都有东西可以放进去。 |
+| You still smell of the {w}: keep it for later. | 你身上还有{w}的味道：先留着以后再吃吧。 |
+| You eat some {w}: you’re full of energy! You walk faster for a while. | 你吃了一些{w}：浑身是劲！你会走得快一阵子。 |
+| You eat a {w}: {heal}. | 你吃了一个{w}：{heal}。 |
+| Tap something to put it on or take it off. | 点一样东西，就能穿上或者脱下。 |
+| Take off | 脱下 |
+| Put on | 穿上 |
+| Wearing | 穿着 |
+| Nothing to wear yet. Clothes come from the shop and from friends. | 还没有可以穿戴的东西。衣服可以在商店买，或者朋友送给你。 |
+| {n} more to find. | 还有{n}个要找。 |
+| {n} word caught | 抓到了{n}个单词 |
+| {n} words caught | 抓到了{n}个单词 |
+| {n} of {of} done so far | 已经完成{n}/{of} |
+| ◂ Tasks | ◂ 任务 |
+| Your journey | 你的旅程 |
+| Tasks | 任务 |
+| Now | 现在 |
+| Tap a task for the yellow arrow to show its way | 点一个任务，黄色的箭头就会给你指路 |
+| Also | 还有 |
+| Nothing to do right now. | 现在没有要做的事。 |
+| Checklist ▸ | 清单 ▸ |
+| Asked: they don’t know | 问过了：他们不知道 |
+| Not asked yet: help them first | 还没问：先帮帮他们 |
+| They knew! | 他们知道！ |
+| Someone who knows. Who can it be? | 有一个人知道。会是谁呢？ |
+| <b>{n} of {of}</b> asked | 已经问了<b>{n}/{of}</b> |
+| Tap a face to see who it is. | 点一个头像，看看是谁。 |
+| On | 开 |
+| Off | 关 |
+| Settings | 设置 |
+| Music | 音乐 |
+| Sound | 声音 |
+| Sound effects | 音效 |
+| IPA over words | 单词上显示音标 |
+| English on replies | 回复显示中文 |
+| Frames a second | 每秒帧数 |
+| How to play | 怎么玩 |
+| Watch the opening | 再看一遍开头 |
+| Your games | 你的游戏 |
+| Title screen: your games | 标题画面：你的游戏 |
+| Voice speed | 语速 |
+| Slower | 慢一点 |
+| Faster | 快一点 |
+| Close | 关闭 |
+| ⚙ Settings | ⚙ 设置 |
+| 💾 Saved: Game {n}, just now. It also saves by itself as you play. | 💾 已保存：游戏{n}，刚刚。玩的时候也会自动保存。 |
+| by day | 白天 |
+| after dark | 天黑以后 |
+| {clue}, {when}. | {clue}，{when}。 |
+| {clue}. | {clue}。 |
+| . | 。 |
+| Chinese characters | 汉字 |
+| Option {n} | 选项{n} |
+| Stop | 停下 |
+| Yes! | 对了！ |
+| Not quite. | 不太对。 |
+| Listen. Which has that many? | 听一听。哪一个是这么多？ |
+| Hear the question again | 再听一遍问题 |
+| Which paint is it? | 是哪一种颜料？ |
+| Listen. Which picture is it? | 听一听。是哪一张图片？ |
+| Read it. Which picture is it? | 读一读。是哪一张图片？ |
+| Listen. Which word is it? | 听一听。是哪一个单词？ |
+| all your health back | 体力全部回来 |
+| +{n} health | +{n}体力 |
+| : a wrong answer goes in each of your next {n} questions | ：接下来的{n}道题，各去掉一个错的答案 |
+| : one wrong answer goes | ：去掉一个错的答案 |
+| Eat some {w} | 吃一些{w} |
+| Eat a {w} | 吃一个{w} |
+|  · {n} left |  · 还剩{n}个 |
+| Grapes! One wrong answer is gone ({n} more to come). | 葡萄！去掉了一个错的答案（后面还有{n}次）。 |
+| Grapes! One wrong answer is gone. | 葡萄！去掉了一个错的答案。 |
+| Yum! One wrong answer is gone, and one goes in each of your next {n} questions too. | 好吃！去掉了一个错的答案，接下来的{n}道题也会各去掉一个。 |
+| Crunch! One wrong answer is gone. | 嘎嘣脆！去掉了一个错的答案。 |
+| Hear {x} | 听{x} |
+| Again | 再来一次 |
+| Friendship: {n} of {of} | 友谊：{n}/{of} |
+| Wrong: {n} of {of} | 答错：{n}/{of} |
+| Question {q} of {n} | 第{q}题，共{n}题 |
+| ♥ Friends | ♥ 朋友 |
+| ⭐ New friend | ⭐ 新朋友 |
+| Another {w} is now your {f}! | 又一只{w}成了你的{f}！ |
+| You played with your {f}, the {w}! | 你和{w}玩了，它是你的{f}！ |
+| The {w} is now your {f}! | {w}成了你的{f}！ |
+| {n} wrong | 答错{n}次 |
+| {n} of {of} | {n}/{of} |
+| The {w} went back to the {home}. | {w}回{home}去了。 |
+| The {w} wants to play again later. | {w}想过一会儿再来玩。 |
+|  Those words will come back soon. | 这些单词很快会再出现。 |
+| Fill the gap | 填空 |
+| Choose the missing word. | 选出缺少的单词。 |
+| Tap a word for its meaning. | 点一个单词，看看它的意思。 |
+| Is it? | 是不是？ |
+| Listen, and answer Yes or No. | 仔细听，回答 Yes 还是 No。 |
+| What do you say? | 你该说什么？ |
+| Story Scroll | 故事卷轴 |
+| Your story so far, in words you’ve met. Tap any word you’re unsure of. | 到现在为止你的故事，用你学过的单词写的。不确定的单词，点一下就行。 |
+| 🔊 Read it to me | 🔊 读给我听 |
+| Questions | 问题 |
+| Story question | 故事问题 |
+| You got {n} of {of} story questions. | 故事问题你答对了{n}/{of}道。 |
+| Keep playing | 继续玩 |
+| More to find as you play | 边玩边找，还有更多 |
+| {i} of {n} | {i}/{n} |
+| Tap a word, then tap its picture. | 点一个单词，再点它的图片。 |
+| Tap a word first. | 先点一个单词。 |
+| Not that one. Try again. | 不是这个。再试一次。 |
+| Words to practise: | 要练习的单词： |
+| Word test | 单词测验 |
+| Stop test | 停止测验 |
+| Test passed! | 测验通过了！ |
+| Not quite yet | 还差一点 |
+| You matched <b>{n} of {of}</b> words right first time. You needed {need}. | 你第一次就配对对了<b>{n}/{of}</b>个单词。需要{need}个。 |
+| Come back once you’ve learned {n} words with pictures ({have}/{n}). | 等你学会{n}个有图片的单词再来吧（{have}/{n}）。 |
+| Practise matching words to their pictures, then fill the gap in a sentence with {w}.  | 练习把单词和图片配对，然后用{w}把句子补完整。 |
+| Practise matching words to their pictures.  | 练习把单词和图片配对。 |
+| {n} of them needs practice: each one you get right first time earns a {money}. | 其中{n}个需要练习：每个第一次就答对，都能得到一个{money}。 |
+| {n} of them need practice: each one you get right first time earns a {money}. | 其中{n}个需要练习：每个第一次就答对，都能得到一个{money}。 |
+| None of these words need practice right now, so there’s no 🪙 money this time. | 这些单词现在都不需要练习，所以这次没有🪙钱。 |
+| None of these words need practice right now, so there’s no 🐚 shells this time. | 这些单词现在都不需要练习，所以这次没有🐚贝壳。 |
+| You matched <b>{n} of {of}</b> words right first time. | 你第一次就配对对了<b>{n}/{of}</b>个单词。 |
+|  You filled the gap right. | 你把空填对了。 |
+|  You filled the gap. | 你把空填上了。 |
+| Learn {n} words with pictures first ({have}/{n}): things that sparkle ✨ have words. | 先学会{n}个有图片的单词（{have}/{n}）：闪闪发光✨的东西都有单词。 |
+| <b>{n}</b> needs practice | <b>{n}</b>个需要练习 |
+| <b>{n}</b> need practice | <b>{n}</b>个需要练习 |
+| Fewer | 少一点 |
+| More | 多一点 |
+| The words that need it most come first. | 最需要练习的单词排在前面。 |
+| Start | 开始 |
+| question | 道题 |
+| questions | 道题 |
+| Practice stopped | 练习停止了 |
+| Practice done! | 练习完了！ |
+| You got <b>{n} of {of}</b> right first time. | 你第一次就答对了<b>{n}/{of}</b>。 |
+| No questions answered this time. | 这次一道题都没答。 |
+| A word moved up a level: | 一个单词升了一级： |
+| {n} words moved up a level: | {n}个单词升了一级： |
+| {n} more | 再来{n}道 |
+| {area} complete! | {area}完成了！ |
+| {n} of {of} words caught | 抓到了{n}/{of}个单词 |
+| new | 新 |
+| Heard {n} times, not caught yet | 听过{n}次，还没抓到 |
+| heard {n}× | 听过{n}次 |
+| Found: {where} | 在哪里找到的：{where} |
+| Example | 例句 |
+| Tap any word to see what it means. | 点任何一个单词，就能看到它的意思。 |
+| And a {colour} {头带\|headband} for you! Put it on from the menu: 衣服 (clothes). | 还送你一条{colour}的{头带\|headband}！在菜单的“clothes（衣服）”里戴上它。 |
+| And a {w} for your bag! | 还有一个{w}，放进你的背包！ |
+| And {n} {money} for you! | 还送你{n} {money}！ |
+| The old scroll | 旧卷轴 |
+| {who} gives you a very old scroll. Long ago, someone drew everything on the mountain in it, with its name, but the pictures have faded. Every word you catch brings one back! | {who}给了你一卷很旧的卷轴。很久以前，有人把山上的每样东西都画在了里面，还写上了名字，可是图画都褪色了。你每抓到一个单词，就会有一幅图画重新出现！ |
+| Open it any time: MENU, then 词 (words). A full page gets a red seal, and a present. | 随时可以打开它：按“菜单”，再点“words（词）”。一页写满了，就会盖上红印，还有礼物。 |
+| Your scroll · {page} | 你的卷轴 · {page} |
+| A red seal | 一个红印 |
+| The {page} page is full! {who} stamps it with a red seal: {seal} (hǎo), good. | “{page}”这一页满了！{who}给它盖上了红印：{seal}，就是 good（好）的意思。 |
+| Word Scroll | 单词卷轴 |
+| Today | 今天 |
+| Heard | 听过的 |
+| Today’s words | 今天的单词 |
+| You haven’t met any words yet today. | 你今天还没有遇到单词。 |
+| Words you’ve heard in sentences. You’ll catch them in later areas. | 你在句子里听过的单词。在后面的地方，你会抓到它们。 |
+| Sealed: a full page | 盖了红印：写满的一页 |
+| Full! Show it to {who}, for a red seal. | 写满了！拿给{who}看，盖一个红印。 |
+| Full! It waits for a red seal. | 写满了！等着盖红印。 |
+| Word Scroll · {n} of {of} caught | 单词卷轴 · 抓到了{n}/{of} |
+| Tap a word to see its page. | 点一个单词，看看它的那一页。 |
+| Gold squares show how well you know a word: caught, recognised, read, used. Shadows are words you’ve heard but not caught yet. | 金色的小方块表示你对一个单词有多熟：抓到了、认得了、会读了、会用了。影子是你听过、但还没抓到的单词。 |
+| They win! | 他们赢了！ |
+| One hit | 打中一次 |
+| Two hits | 打中两次 |
+| Three hits | 打中三次 |
+| Four hits | 打中四次 |
+| Five hits | 打中五次 |
+|  hits | 次 |
+| Covered in snow! You can play again whenever you like. | 浑身是雪！你想玩的时候，随时可以再玩。 |
+| Snowballs that hit them: {n} | 打中他们的雪球：{n} |
+| Snowballs that hit you: {n} | 打中你的雪球：{n} |
+| Your throw! Get it right, and your snowball hits. | 轮到你扔了！答对了，你的雪球就能打中。 |
+| Splat! | 啪！ |
+| Missed! | 没打中！ |
+| Your snowball hits! | 你的雪球打中了！ |
+| It flies past. | 它飞过去了。 |
+| They throw a snowball at you! | 他们朝你扔雪球了！ |
+| Listen. Which is it? Pick it to duck. | 听一听。是哪一个？选中它，就能躲开。 |
+| Ducked! | 躲开了！ |
+| You duck! | 你躲开了！ |
+| It hits you! | 打中你了！ |
+| {hits}! They’re covered in snow. | {hits}！他们浑身是雪。 |
+| +{n} {money} for winning your first snowball fight with them! | 第一次和他们打雪仗就赢了：+{n} {money}！ |
+| That file isn't a Little Monkey save. | 这个文件不是《小猴子》的存档。 |
+| That save is from a newer version of the game. Reload the page to get the newest version, then try again. | 这个存档来自更新版本的游戏。重新加载页面，获取最新版本，然后再试一次。 |
+| {subject} lesson {n} | {subject}第{n}课 |
+|  or  | 或 |
+| Lesson {n} | 第{n}课 |
+| ✓ Done: {words} | ✓ 学完了：{words} |
+| Opens once you’ve done lesson {n}. | 学完第{n}课就能开始。 |
+| Opens after {n} more question, answered anywhere: | 在哪里再答{n}道题，就能开始： |
+| Opens after {n} more questions, answered anywhere: | 在哪里再答{n}道题，就能开始： |
+| Opens once you know {w} well: get it right twice more, in practice. | 等你熟悉了{w}就能开始：在练习里再答对两次。 |
+| Ready: {about}. | 准备好了：{about}。 |
+| Lesson {n} again | 再上一次第{n}课 |
+| Start lesson {n} | 开始第{n}课 |
+| {n} word needs practice. | {n}个单词需要练习。 |
+| {n} words need practice. | {n}个单词需要练习。 |
+| No words need practice right now. | 现在没有单词需要练习。 |
+| A practice lesson asks about the words you know: never a new one, so you can do one any time, as often as you like. | 练习课只问你学过的单词：从来不教新单词，所以你随时都能上，想上几次都行。 |
+| Lesson {n}, again | 第{n}课，再上一次 |
+| You’ve done every {subject} lesson! | 你上完了所有的{subject}课！ |
+| Next in {subject}: lesson {n}, ready now! | {subject}的下一课：第{n}课，现在就能上！ |
+| Next in {subject}: lesson {n}, after {left} more questions, answered anywhere. | {subject}的下一课：第{n}课，在哪里再答{left}道题就能上。 |
+| Next in {subject}: lesson {n}, once you know {w} well. | {subject}的下一课：第{n}课，等你熟悉了{w}就能上。 |
+| Next in {subject}: lesson {n}. | {subject}的下一课：第{n}课。 |
+| ✓ Done again! | ✓ 又上完了一次！ |
+| ✓ Lesson {n} done! | ✓ 第{n}课学完了！ |
+| {n} of {of} right | 答对了{n}/{of} |
+| Timetable | 课程表 |
+| Eat the {w} in your bag to {does}: press <b>BAG</b>, and tap it. | 吃掉背包里的{w}，就能{does}：按<b>背包</b>键，再点它。 |
+| Quick: | 快： |
+| It slipped away! Try again. | 它溜走了！再试一次。 |
+| Ready to sail? | 准备好出海了吗？ |
+| Your Word Scroll | 你的单词卷轴 |
+| {n}/{of} animal friends | {n}/{of}个动物朋友 |
+| {n}/{of} treasures | {n}/{of}种宝贝 |
+| <b>{n}</b> word needs practice | <b>{n}</b>个单词需要练习 |
+| <b>{n}</b> words need practice | <b>{n}</b>个单词需要练习 |
+| Still to find: | 还要找： |
+| Anything you miss can still be found later in the story. | 错过的东西，在故事后面还能找到。 |
+| Quick practice | 快速练习 |
+| Sail away | 出海 |
+| Sell | 卖 |
+| You have {money} {n}. What will you sell? | 你有{money} {n}。你要卖什么？ |
+| {who} counts it into your paw. | {who}把它放到你的爪子里。 |
+| {who} counts them into your paw. | {who}把钱一个一个数到你的爪子里。 |
+| How many {w} do you want to pick up? | 你要捡几个{w}？ |
+| Begin | 开始 |
+| Count | 数一数 |
+| You counted all {n} right. | {n}个你全都数对了。 |
+| You counted {n} of {of} right. | 你数对了{n}/{of}个。 |
+| You get {n} {money}. | 你得到了{n} {money}。 |
+| A {w} for your bag. | 一个{w}，放进你的背包。 |
+| Your bag is full of {w}. | 你的背包里装满了{w}。 |
+| {who} still has a {w} for you, but your bag is full. Come back for it when you have room. | {who}还有一个{w}要给你，可是你的背包满了。等有空位了再来拿吧。 |
+| {who} offers you a {w}, but your bag is full. Come back for it when you have room. | {who}要给你一个{w}，可是你的背包满了。等有空位了再来拿吧。 |
+| What is it? | 这是什么？ |
+| Climbing | 爬 |
+| You’re carrying {n} {w}. | 你拿着{n}个{w}。 |
+| You’re carrying {w}. | 你拿着{w}。 |
+|  Take it to whoever asked for it. | 把它拿给要它的人。 |
+| That’s not what they asked for. Listen again! | 他们要的不是这个。再听一遍！ |
+| Keep playing? | 还要接着玩吗？ |
+| You stop playing. | 你不玩了。 |
+| Change! | 变！ |
+| 变！ You turned into {w}! | 变！你变成了{w}！ |
+| You turned into {w}… but that’s not what you heard! It was {was}. | 你变成了{w}……可是你听到的不是这个！是{was}。 |
+| You get {n} 🪙. | 你得到了{n} 🪙。 |
+| You give the money changer your {n} 🐚, and he gives you {n} 🪙, one for each. You have {have} 🪙. | 你把{n} 🐚给了换钱的，他给了你{n} 🪙，一个换一个。你有{have} 🪙。 |
+| You have no shells to change. You have {have} 🪙. | 你没有贝壳可以换。你有{have} 🪙。 |
+| It costs {n} {money}, and you have {have}. Help people, and play with your friends, to earn more. | 它要{n} {money}，你有{have}。多帮人们的忙，多和朋友们玩，就能挣到更多。 |
+| You pay {n} {money}. | 你付了{n} {money}。 |
+| Go | 走 |
+| Say it {use}. | {use}说它。 |
+| {who} {does}. | {who}{does}。 |
+| Now you say it! | 现在你来说！ |
+| What do you say back? | 你要怎么回答？ |
+| someone | 有人 |
+| Give it | 给他 |
+| +{n} {money}. Task complete! | +{n} {money}。任务完成了！ |
+| Task complete! | 任务完成了！ |
+| {n} {w} | {n}个{w} |
+| You have {money} {n}{also}. | 你有{money} {n}{also}。 |
+|  and {list} | ，还有{list} |
+| You can carry {n} {w}, and your bag is full. | 你最多能带{n}个{w}，你的背包满了。 |
+| Eat one first. | 先吃一个吧。 |
+| Use one first. | 先用掉一个吧。 |
+| The {w} costs {n} {money}, and you have {have}. | {w}要{n} {money}，你有{have}。 |
+| You see | 你看到了 |
+| No more ripe ones. Come back another time. | 没有熟的了。下次再来吧。 |
+| Your bag has {n} {w} already. | 你的背包里已经有{n}个{w}了。 |
+| You pick a {w} | 你摘了一个{w} |
+|  for your bag ({n} of {max}). {does}. | ，放进背包（{n}/{max}）。{does}。 |
+| Not that one. Listen again! | 不是这个。再听一遍！ |
+| That’s it: {word}! | 就是它：{word}！ |
+| You don’t know what this is yet. | 你还不知道这是什么。 |
+| There’s a {w} here, but your bag has no room for it. Come back for it. | 这里有一个{w}，可是你的背包放不下了。回头再来拿吧。 |
+| Stepping stones | 踏脚石 |
+| Listen. Which stone has its picture? | 听一听。哪块石头上有它的图片？ |
+| Splash! Try again. | 扑通！再试一次。 |
+| New on your map | 地图上的新地方 |
+| The {who} is fast asleep. Shh! {when} | {who}睡得正香。嘘！{when} |
+| It comes out after dark. | 它天黑以后才出来。 |
+| Come back in the daytime. | 白天再来吧。 |
+| A wild {name} jumped out of the {where}! Answer its questions to make friends. | 一只野生的{name}从{where}里跳了出来！回答它的问题，和它交朋友。 |
+| {what} found: {n}/{of} | 找到的{what}：{n}/{of} |
+| Animals | 动物 |
+| 十一 to 二十 added to your Word Scroll | “eleven”到“twenty”加进了你的单词卷轴 |
+| How many strikes? | 打几下？ |
+| Listen. Which is it? | 听一听。是哪一个？ |
+| ✓ Class over! | ✓ 下课了！ |
+| Turn to face that way with the arrows, then press A. | 用方向键转向那个方向，然后按A。 |
+| This way | 这边 |
+| Yes! That’s {w}. | 对了！那就是{w}。 |
+| Not quite: {w} is this way. | 不太对：{w}在这边。 |
+| Ten sticks, tied together: a bundle of ten. That’s {w}. | 十根木棍绑在一起：一捆十根。这就是{w}。 |
+| Ten sticks: {w}. Watch the master tie them together… | 十根木棍：{w}。看师父把它们绑在一起…… |
+| Two bundles of ten: {w}, two tens. | 两捆十根的木棍：{w}，两个十。 |
+| A bundle of ten and {more} more: {w}, ten and {more}. | 一捆十根，再加{more}根：{w}，十加{more}。 |
+| Counting on, from ten | 从十开始接着数 |
+| Tie them | 绑起来 |
+| One more ▸ | 再来一根 ▸ |
+| Writing practice | 练字 |
+| Press A to write each character with the brush. | 按A，用毛笔写出每个字。 |
+| Write ▸ | 写 ▸ |
+| {text} {py}: your name, in your own hand! | {text} {py}：你的名字，你亲手写的！ |
+
+## Flower Fruit Mountain (content/flower-fruit-mountain.js)
+
+| English | 中文 |
+|---|---|
+| You were just born from this stone! | 你刚刚从这块石头里蹦出来！ |
+| The old monkey is waiting by your stone. Go and say hello! | 老猴子在你的石头旁边等你。快去打个招呼吧！ |
+| Prologue | 序章 |
+| The Water Curtain Cave | 水帘洞 |
+| Chapter 1 | 第一章 |
+| The Great Feast | 盛大的宴会 |
+| Find your place in the troop, on the mountain where you were born. | 在你出生的山上，在猴群里找到属于你的位置。 |
+| Be brave, and become the troop’s {王\|king}. | 勇敢一点，成为猴群的{王\|king}。 |
+| Make the troop’s new home ground a good place to live. | 把猴群的新家园变成一个好地方。 |
+| Get everything ready for the troop’s great feast. | 为猴群的盛大宴会做好一切准备。 |
+| Sail across the sea, to find the immortals, who never grow old. | 漂洋过海，去寻找长生不老的神仙。 |
+| Part 1 | 第一部分 |
+| The meadow | 草地 |
+| Learn your first words, and get to know the troop. | 学会你的第一批单词，认识猴群。 |
+| Part 2 | 第二部分 |
+| Up the river | 沿河而上 |
+| The way up the mountain is open! Where does the river come from? Nobody in the troop has ever been to the top. | 上山的路通了！这条河是从哪里来的？猴群里还没有谁去过山顶呢。 |
+| Find where the river comes from. | 找到这条河的源头。 |
+| Bring the troop up to the waterfall. | 带猴群上山，去瀑布那里。 |
+| Part 3 | 第三部分 |
+| The waterfall | 瀑布 |
+| The whole troop has come up to the waterfall, where the river begins. What could be behind all that water? | 整个猴群都来到了河流的源头：瀑布。那么多水的后面，会藏着什么呢？ |
+| Find out what’s behind the waterfall. | 看看瀑布后面有什么。 |
+| Part 4 | 第四部分 |
+| A home for the troop | 猴群的家 |
+| Behind the waterfall is a cave, big enough for everyone, with beds, a table and bowls: a home for the whole troop! Lead them in. | 瀑布后面有一个山洞，大得能装下所有的猴子，里面有床、桌子和碗：是整个猴群的家！带大家进去吧。 |
+| Bring the troop into the cave. | 把猴群带进山洞。 |
+| A new home ground | 新的家园 |
+| Help the troop build a school at their new home ground. | 帮猴群在新家园盖一所学校。 |
+| The school | 学校 |
+| The troop has built a school, and the old monkey will be its teacher. Go in, and learn your numbers and colours! | 猴群盖好了学校，老猴子来当老师。快进去学数字和颜色吧！ |
+| Learn your numbers and colours at the school. | 在学校学数字和颜色。 |
+| Food for the feast | 宴会的食物 |
+| The old monkey has news: the troop will have a great feast! It needs food from all over the mountain. | 老猴子有消息：猴群要办一场盛大的宴会！需要从山上各处找来食物。 |
+| Find food for the feast: press A at its big table to see what it still needs. | 为宴会找食物：在大桌子前按A，看看还缺什么。 |
+| The feast | 宴会 |
+| The feast is ready, and the whole troop is excited. But before it begins, your teacher wants to see how much you’ve learned. | 宴会准备好了，整个猴群都很兴奋。不过开始之前，老师想看看你学会了多少。 |
+| Pass your teacher’s exam, then sit down to the feast. | 通过老师的考试，然后坐下来参加宴会。 |
+| Part 5 | 第五部分 |
+| Setting sail | 扬帆出海 |
+| You’re going to find the immortals across the sea, who never grow old. It’s time to say goodbye to the troop… | 你要去海的那边，寻找长生不老的神仙了。是时候和猴群告别了…… |
+| Sail away on your raft, to find the immortals. | 乘着你的木筏出海，去寻找神仙。 |
+| That’s the end of chapter 1. | 第一章到这里就结束了。 |
+| the mountain | 山 |
+| the river | 河 |
+| a tree | 一棵树 |
+| the fish in the pond | 池塘里的鱼 |
+| a bird | 一只鸟 |
+| Something new is coming! But first, a few words to practise. Play a quick word game? | 有新东西要学啦！不过先练习几个单词吧。来玩一个快速单词游戏吗？ |
+| Learn a few more words first, then come back. | 先多学几个单词，再回来吧。 |
+| Good morning! The sun is up over Flower Fruit Mountain, and your health is full. | 早上好！太阳从花果山上升起来了，你的体力也满了。 |
+| You don’t have a map yet. | 你还没有地图。 |
+| Every place you go is drawn on your map. | 你去过的每个地方，都会画在你的地图上。 |
+| Three new numbers, then counting | 三个新数字，然后数一数 |
+| A new number, then counting | 一个新数字，然后数一数 |
+| Two of something, then counting | 两个东西，然后数一数 |
+| The teacher counts peaches onto his table, one by one. | 老师把桃子一个一个地数到桌子上。 |
+| For two of something, such as two peaches: 两个桃子. Counting is still 二: 一，二，三！ | 说有两个东西时用“两”，比如两个桃子。数数的时候还是用“二”：一，二，三！ |
+| Three new colours, then choosing paints | 三种新颜色，然后选颜料 |
+| A new colour, then choosing paints | 一种新颜色，然后选颜料 |
+| The teacher opens a pot of paint. | 老师打开了一罐颜料。 |
+| A race, out on the sports ground | 在操场上赛跑 |
+| Going running round the sports ground | 绕着操场跑步 |
+| The teacher starts a race on the sports ground. | 老师在操场上开始了一场赛跑。 |
+| The class goes running round the sports ground. | 全班绕着操场跑步。 |
+| The class goes out to the sports ground. | 全班出发去操场。 |
+| The class goes back in. | 全班回到教室。 |
+| Race to the red ribbon: hold B as you walk, to run! | 跑向红丝带：走路时按住B键就能跑！ |
+| You won the race! | 你赢得了比赛！ |
+| Your classmates won this time. Hold B as you walk, to run! | 这次同学们赢了。走路时按住B键就能跑！ |
+| Count the stones in their tower? Each right answer earns a 🐚 if that number needs practice. | 要数数塔里的石头吗？如果那个数字需要练习，每答对一次就能得到一个🐚。 |
+| They count the stones as they put them on. Learn more numbers, then come back and count with them! | 它们一边放石头一边数。多学一些数字，再回来和它们一起数吧！ |
+| in a lesson at school | 在学校上课时 |
+| at the practice post | 在练习木桩那里 |
+| Say {你好} to the old monkey, by your {石头} | 去你的{石头}旁边，跟老猴子说{你好} |
+| A page of your scroll is full: show it to the old monkey | 你的卷轴有一页满了：拿给老猴子看看 |
+| Talk to the old monkey again | 再和老猴子说说话 |
+| Find the two things that sparkle ✨: walk up to them and press A ({firstWords}/2) | 找到两样闪闪发光✨的东西：走过去按A（{firstWords}/2） |
+| Find the {动物\|animals}: in rustling grass, out in the open, up a tree ({found}/{animals}) | 找到{动物\|animals}：在沙沙响的草丛里、空地上、树上（{found}/{animals}） |
+| Show the old monkey the words for the meadow | 把草地上的单词说给老猴子听 |
+| Meet the troop: a ! over a monkey means it wants something | 认识猴群：猴子头上有一个 ! ，就表示它想要什么东西 |
+| Learn the words for the meadow ({meadowWords}/5). Still to find: {left:meadowWords}. Things that sparkle ✨ have words. | 学会草地上的单词（{meadowWords}/5）。还要找：{left:meadowWords}。闪闪发光✨的东西都有单词。 |
+| Find some {水果\|fruit} for the hungry monkey | 给饿猴子找一些{水果\|fruit} |
+| Give the {holding:hungry} to the hungry monkey | 把{holding:hungry}给饿猴子 |
+| Find the {wanted:hungry2} the hungry monkey wants now | 找到饿猴子现在想要的{wanted:hungry2} |
+| Give the {holding:hungry2} to the hungry monkey | 把{holding:hungry2}给饿猴子 |
+| Collect {水} from the {河} or the pond | 从{河}或池塘里打一些{水} |
+| Give the {水} to the thirsty monkey | 把{水}给渴猴子 |
+| Talk to the old monkey, where the {石头\|rocks} were | 到原来{石头\|rocks}挡路的地方，和老猴子说话 |
+| Follow the path up beside the {河}, and find where the water comes from | 沿着{河}边的小路往上走，找到水是从哪里来的 |
+| Go back down and tell the old monkey what you found | 回到山下，告诉老猴子你发现了什么 |
+| Lead the troop up the path beside the river, to the {瀑布} | 带猴群沿着河边的小路往上走，到{瀑布}那里 |
+| Read the story at the {瀑布} | 在{瀑布}那里读故事 |
+| See what the {老板} sells | 看看{老板}卖什么 |
+| Ask the fishing monkey by the stream how to catch a big {鱼} | 问问小溪边钓鱼的猴子，怎么钓到一条大{鱼} |
+| Catch a big {鱼} for the feast: face the stream and press A | 为宴会钓一条大{鱼}：面朝小溪按A |
+| Take the big {鱼} to the hungry monkey | 把大{鱼}拿给饿猴子 |
+| Catch three {虾} in the clear brook on the riverside, above the bridge ({shrimpCaught}/3) | 在河边桥上游的清澈小溪里抓三只{虾}（{shrimpCaught}/3） |
+| Take the {虾} to the hungry monkey | 把{虾}拿给饿猴子 |
+| Catch a {螃蟹} on the shore, below the meadow: come at one from the front or behind | 在草地下面的海边抓一只{螃蟹}：从它前面或者后面靠近 |
+| Take the {螃蟹} to the hungry monkey | 把{螃蟹}拿给饿猴子 |
+| Every food is on the feast’s {桌子\|tables}! Your {老师} has an exam for you at school | 所有的食物都摆上宴会的{桌子\|tables}了！你的{老师}在学校给你准备了一场考试 |
+| The troop is ready for the feast: go to the big {树} in the middle of the home ground | 猴群准备好开宴会了：去家园中间那棵大{树}那里 |
+| Lead the troop down to the shore, below the meadow, to the edge of the {海} | 带猴群走到草地下面的海边，一直走到{海}边 |
+| Your {木筏} is ready at the edge of the {海\|sea}: press A at it when you’re ready to go | 你的{木筏}在{海\|sea}边准备好了：准备出发时，对着它按A |
+| The {老板} has come up to the home ground: go and see him, by the way in from the {瀑布} | {老板}来到家园了：去看看他，他就在从{瀑布}进来的路口 |
+| Find {松子\|pine nuts} for the {老板}: look for pine cones under the big pines in the pine wood | 给{老板}找{松子\|pine nuts}：到松林的大松树下面找松果 |
+| Take your {松子\|pine nuts} to the {老板}, by the way in to the home ground | 把你的{松子\|pine nuts}拿给家园路口的{老板} |
+| The troop is ready to set up what you bought for the {洞\|cave}: go and see | 猴群准备好摆放你给{洞\|cave}买的东西了：去看看吧 |
+| Talk to the old monkey: what could be behind the {瀑布}? | 和老猴子说话：{瀑布}后面会有什么呢？ |
+| {跳} through the {瀑布} | 从{瀑布}中间{跳}过去 |
+| Go back and tell the troop what’s behind the {瀑布} | 回去告诉猴群{瀑布}后面有什么 |
+| Lead the troop into the {洞}: jump through the waterfall | 带猴群进{洞}：从瀑布中间跳过去 |
+| Show the old monkey round the {洞} | 带老猴子参观{洞}里 |
+| Talk to the old monkey in the {洞} | 在{洞}里和老猴子说话 |
+| Lead the old monkey to the troop’s new home ground, along beside the {瀑布} | 沿着{瀑布}旁边，带老猴子去猴群的新家园 |
+| Find three pieces of {木头} in the pine wood ({woodGot}/3) | 在松林里找三块{木头}（{woodGot}/3） |
+| Find three small {石头\|stones} in the pine wood ({stonesGot}/3) | 在松林里找三块小{石头\|stones}（{stonesGot}/3） |
+| Take the {木头} to the big monkey | 把{木头}拿给大猴子 |
+| Take the small {石头\|stones} to the big monkey | 把小{石头\|stones}拿给大猴子 |
+| Take the {木头} and the small {石头\|stones} to the big monkey | 把{木头}和小{石头\|stones}拿给大猴子 |
+| Talk to the big monkey: the troop is ready to build the {学校} | 和大猴子说话：猴群准备好盖{学校}了 |
+| Go into the {学校}, and talk to the old monkey at the front of the class | 走进{学校}，和讲台前的老猴子说话 |
+| Talk to the little monkey in the {学校} | 和{学校}里的小猴子说话 |
+| Talk to the old monkey at the {学校}: he has news | 去{学校}和老猴子说话：他有消息 |
+| Go to the big {树} in the middle of the home ground | 去家园中间那棵大{树}那里 |
+| Talk to the hungry monkey by the big {桌子} | 和大{桌子}旁边的饿猴子说话 |
+| Fetch six {碗\|bowls} from the Water Curtain Cave ({bowlsGot}/6) | 从水帘洞拿六个{碗\|bowls}（{bowlsGot}/6） |
+| Take the {碗\|bowls} to the hungry monkey, at the feast’s tables | 把{碗\|bowls}拿给宴会桌旁边的饿猴子 |
+| The big monkey has made something for the feast: go and see him | 大猴子为宴会做了一样东西：去看看他 |
+| Ask the hungry monkey what the feast still needs | 问问饿猴子，宴会还缺什么 |
+| Follow the stream east, along the riverside, to find where {蜜蜂\|bees} live | 沿着小溪往东走，经过河边，找到{蜜蜂\|bees}住的地方 |
+| Make friends with the six {蜜蜂\|bees} hiding in the tall flowers ({beeCount}/6) | 和躲在高高的花丛里的六只{蜜蜂\|bees}交朋友（{beeCount}/6） |
+| Find out who lives in the old hollow {树}, up in the bees’ valley | 看看蜜蜂山谷里那棵空心的老{树}里住着谁 |
+| Win over the {蜂王\|queen bee} with her word game, at her old tree | 在她的老树那里，玩赢{蜂王\|queen bee}的单词游戏，赢得她的信任 |
+| Lead the {蜂王\|queen bee} and her bees home, back along the riverside | 沿着河边，带{蜂王\|queen bee}和她的蜜蜂回家 |
+| Tell the hungry monkey the {蜜蜂\|bees} are home | 告诉饿猴子，{蜜蜂\|bees}到家了 |
+| Talk to the {蜂王\|queen bee} by the wildflowers | 和野花旁边的{蜂王\|queen bee}说话 |
+| Take some {蜂蜜\|honey} from the bees’ hive, for the hungry monkey | 从蜂窝里取一些{蜂蜜\|honey}，给饿猴子 |
+| Take the {蜂蜜} to the hungry monkey | 把{蜂蜜}拿给饿猴子 |
+| Find the lost {牛\|cow}: south over the bridge, and down the slope. On the way, look for it from the lookout! | 找到走丢的{牛\|cow}：往南过桥，再走下山坡。路上，到瞭望台上找找它！ |
+| Find the lost {牛\|cow}: you saw it far below, by a spring beyond the dark pines | 找到走丢的{牛\|cow}：你看见它在远远的下面，在黑松林那边的泉水旁 |
+| Get over the stream in the pines: knock the dead pine on its bank down with your {棍子}, so it falls across | 过松林里的小溪：用你的{棍子}把岸边的枯松树打倒，让它横倒在溪上 |
+| Win the {牛}’s trust with its word game, by its spring in the pasture | 在牧场的泉水边，玩它的单词游戏，赢得{牛}的信任 |
+| Lead the {牛} home to the thirsty monkey, back through the pines. Watch out for wolves! | 穿过松林，把{牛}带回家，交给渴猴子。小心狼！ |
+| The {牛} won’t go into the long grass in the dark pines: go first, and chase the wolves off | {牛}不肯走进黑松林的长草里：你先走，把狼赶跑 |
+| The {牛} is hungry: pick it some fresh {草} by the brook, on the south slope ({cowGrass}/3) | {牛}饿了：去南坡的小溪边，给它拔一些新鲜的{草}（{cowGrass}/3） |
+| Give the {草} to the {牛} | 把{草}给{牛}吃 |
+| The {牛} ran back to its spring, frightened: go and fetch it | {牛}吓坏了，跑回了泉水边：去把它带回来 |
+| Talk to the thirsty monkey: the troop is ready to build the {牛} a home | 和渴猴子说话：猴群准备好给{牛}盖个家了 |
+| Lead the {牛} in through the gate of its new home | 带{牛}从大门走进它的新家 |
+| Talk to the {牛}, and lead it in through the gate of its new home | 和{牛}说话，带它从大门走进它的新家 |
+| Wild melons grow in a sunny field east off the south slope, but {鸟\|birds} keep pecking at them: shoo them away ({birdsShooed}/5) | 南坡东边有一片向阳的地，长着野瓜，可是{鸟\|birds}总来啄它们：把它们赶走（{birdsShooed}/5） |
+| The {鸟\|birds} are gone, and the melons are safe: take some {种子\|seeds} from one, for the garden | {鸟\|birds}走了，瓜保住了：从一个瓜里取一些{种子\|seeds}，拿回园子种 |
+| Take the {种子} to the big monkey, at the garden by the stream | 把{种子}拿给小溪边园子里的大猴子 |
+| Wild {葡萄\|grapes} grow on the cliffs west off the hillside, halfway up: find a way down to them | 山坡西边的山崖半腰上长着野{葡萄\|grapes}：找条路下去 |
+| Take the {种子} from the wild {葡萄} to the big monkey, at the garden by the stream | 把野{葡萄}的{种子}拿给小溪边园子里的大猴子 |
+| Wild {香蕉\|bananas} grow in a valley of hot springs, up the brook from the riverside | 从河边沿着小溪往上走，有一个温泉山谷，那里长着野{香蕉\|bananas} |
+| Take the {种子} from the wild {香蕉} to the big monkey, at the garden by the stream | 把野{香蕉}的{种子}拿给小溪边园子里的大猴子 |
+| The {西瓜} in the garden are growing: practise your words, and they’ll soon be ripe ({melonWait}/8) | 园子里的{西瓜}正在长：练习你的单词，它们很快就会熟（{melonWait}/8） |
+| The {西瓜} in the garden are ripe: go and see the big monkey | 园子里的{西瓜}熟了：去看看大猴子 |
+| Go and see the {西瓜} go on the feast’s {桌子}, by the big tree | 去大树旁边，看{西瓜}摆上宴会的{桌子} |
+| The {葡萄} on the trellis are growing: practise your words, and they’ll soon be ripe ({grapeWait}/8) | 架子上的{葡萄}正在长：练习你的单词，它们很快就会熟（{grapeWait}/8） |
+| The {葡萄} on the trellis are ripe: go and see the big monkey | 架子上的{葡萄}熟了：去看看大猴子 |
+| Go and see the {葡萄} go on the feast’s {桌子}, by the big tree | 去大树旁边，看{葡萄}摆上宴会的{桌子} |
+| The {香蕉} in the garden are growing: practise your words, and they’ll soon be ripe ({bananaWait}/8) | 园子里的{香蕉}正在长：练习你的单词，它们很快就会熟（{bananaWait}/8） |
+| The {香蕉} in the garden are ripe: go and see the big monkey | 园子里的{香蕉}熟了：去看看大猴子 |
+| Go and see the {香蕉} go on the feast’s {桌子}, by the big tree | 去大树旁边，看{香蕉}摆上宴会的{桌子} |
+| Give the {牛奶} to the thirsty monkey | 把{牛奶}给渴猴子 |
+| Go and see the {牛奶} go on the feast’s second {桌子} | 去看{牛奶}摆上宴会的第二张{桌子} |
+| Talk to the thirsty monkey: he wants to make something with the {牛奶} | 和渴猴子说话：他想用{牛奶}做点东西 |
+| The thirsty monkey is making something from the {牛奶}: practise, then come back and see what it is ({dairyWait}/8) | 渴猴子正在用{牛奶}做东西：练习一下，再回来看看是什么（{dairyWait}/8） |
+| The thirsty monkey has made something from the {牛奶}: go and see what it is! | 渴猴子用{牛奶}做好了一样东西：快去看看是什么！ |
+| The thirsty monkey is making something else from the {牛奶}: practise, then come back and see what it is ({dairyWait}/8) | 渴猴子正在用{牛奶}做另一样东西：练习一下，再回来看看是什么（{dairyWait}/8） |
+| The thirsty monkey has made something else from the {牛奶}: go and see what it is! | 渴猴子用{牛奶}又做好了一样东西：快去看看是什么！ |
+| Go and see the {酸奶} go on the feast’s second {桌子} | 去看{酸奶}摆上宴会的第二张{桌子} |
+| The big monkey has made something for the {酸奶}: go and see him | 大猴子为{酸奶}做了一样东西：去看看他 |
+| Go and see the {奶酪} go on the feast’s second {桌子} | 去看{奶酪}摆上宴会的第二张{桌子} |
+| Find where the little monkey is hiding | 找到小猴子藏在哪里 |
+| Pick a red, a yellow and a white {花} for the big monkey to plant ({flowersPicked}/3) | 摘一朵红的、一朵黄的和一朵白的{花}，给大猴子种（{flowersPicked}/3） |
+| Take the {花} to the big monkey | 把{花}拿给大猴子 |
+| Count the troop in with the old monkey ({troopIn}/3) | 和老猴子一起，数着猴群走进来（{troopIn}/3） |
+| Talk to the old monkey: the whole troop is in the {洞} | 和老猴子说话：整个猴群都进{洞}了 |
+| Practise before your next lesson, {lessons:waiting}: answer questions anywhere ({practised}/8) | 上下一课（{lessons:waiting}）之前先练习：在哪里答题都可以（{practised}/8） |
+| Chapter 1 is complete! Your {木筏} is waiting at the water’s edge, on the shore below the meadow: press A at it to sail on across the sea. | 第一章完成了！你的{木筏}在草地下面的海边等着你：对着它按A，就能漂洋过海了。 |
+| Monkeys with a ! need help. Go and talk to them. | 头上有 ! 的猴子需要帮忙。去和它们说说话吧。 |
+| You know three colours now! The big monkey has something to ask you. | 你已经认识三种颜色了！大猴子有事想请你帮忙。 |
+| The hungry monkey has something to ask you. | 饿猴子有事想请你帮忙。 |
+| The thirsty monkey has news for you: look for his ! at the home ground. | 渴猴子有消息告诉你：在家园里找他头上的 ! 。 |
+| The big monkey has an idea for the feast: look for his ! at the home ground. | 大猴子为宴会想了个主意：在家园里找他头上的 ! 。 |
+| The hungry monkey has something to ask you: look for his ! by the feast’s {桌子\|tables}. | 饿猴子有事想请你帮忙：在宴会的{桌子\|tables}旁边找他头上的 ! 。 |
+| The feast still needs more food before the troop can sit down to it: press A at the big {桌子} to see what it doesn’t have yet. | 宴会还需要更多食物，猴群才能坐下来吃：在大{桌子}前按A，看看还缺什么。 |
+| The feast has {蜂蜜\|honey}, milk, yoghurt and cheese, and fruit from the garden now! Take more honey from the hive for your bag, and {吃\|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next. | 宴会上已经有{蜂蜜\|honey}、牛奶、酸奶、奶酪，还有园子里的水果了！再从蜂窝里取些蜂蜜放进背包，{吃\|eat}了它，就能走得快一阵子。宴会的其他食物很快就来。在那之前，只要有新的数字或颜色可以学，或者你的单词需要练习，{老师}就会给你上课：每学一个新单词，先练习一下，再学下一个。 |
+| The feast has {蜂蜜\|honey}, milk, yoghurt and cheese now! Take more honey from the hive for your bag, and {吃\|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next. | 宴会上已经有{蜂蜜\|honey}、牛奶、酸奶和奶酪了！再从蜂窝里取些蜂蜜放进背包，{吃\|eat}了它，就能走得快一阵子。宴会的其他食物很快就来。在那之前，只要有新的数字或颜色可以学，或者你的单词需要练习，{老师}就会给你上课：每学一个新单词，先练习一下，再学下一个。 |
+| A new lesson is ready at the {学校}: {lessons:ready}. Talk to the {老师}, or look at the timetable on the classroom wall. | {学校}有新课了：{lessons:ready}。和{老师}说话，或者看看教室墙上的课程表。 |
+| The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then (after each new word, practise a little before the next). The rest of chapter 1 is coming soon. | 只要有新的数字或颜色可以学，或者你的单词需要练习，{老师}就会给你上课：那时他头上会有 ! （每学一个新单词，先练习一下，再学下一个）。第一章的其他内容很快就来。 |
+| The troop is ready to build the {学校}: talk to the big monkey. | 猴群准备好盖{学校}了：和大猴子说话。 |
+| The troop wants to build a {学校} first. The big monkey has something to ask you. | 猴群想先盖一所{学校}。大猴子有事想请你帮忙。 |
+| Flower Fruit Mountain is complete. Practise in the {草} or visit your {朋友\|friends}. | 花果山完成了。去{草}丛里练习，或者去看看你的{朋友\|friends}。 |
+| Say {你好} to the old monkey | 跟老猴子说{你好} |
+| Learn about {动物\|animals} from the old monkey | 听老猴子讲{动物\|animals} |
+| Find the {动物\|animals} ({found}/{animals}) | 找到{动物\|animals}（{found}/{animals}） |
+| Learn the words for the meadow ({meadowWords}/5) | 学会草地上的单词（{meadowWords}/5） |
+| Meet the little monkey and the big monkey | 认识小猴子和大猴子 |
+| Bring the hungry monkey the {水果\|fruit} it wants | 给饿猴子带去它想要的{水果\|fruit} |
+| Bring {水} to the thirsty monkey | 给渴猴子带{水} |
+| Find where the {河} comes from | 找到{河}的源头 |
+| Make friends with the {山羊\|goat} in the river valley | 和河谷里的{山羊\|goat}交朋友 |
+| Bring the troop up to the {瀑布} | 带猴群上山去{瀑布} |
+| Tell the troop what’s behind the {瀑布} | 告诉猴群{瀑布}后面有什么 |
+| Lead the troop into the {洞} | 带猴群进{洞} |
+| Show the old monkey round the {洞} ({caveThings}/3) | 带老猴子参观{洞}里（{caveThings}/3） |
+| Hear what the old monkey calls the {洞} | 听听老猴子给{洞}取了什么名字 |
+| Count the troop into the {洞} ({troopIn}/3) | 数着猴群走进{洞}（{troopIn}/3） |
+| Become the troop’s {王} | 成为猴群的{王} |
+| Go with the old monkey to the troop’s new home ground | 和老猴子一起去猴群的新家园 |
+| Bring {木头} and small {石头\|stones} for the school | 为盖学校带来{木头}和小{石头\|stones} |
+| Find the {动物} hiding on the hillside | 找到藏在山坡上的{动物} |
+| Find the {动物} that lives in the pine wood | 找到住在松林里的{动物} |
+| Find the {动物\|animals} that come out at night, near home ({nightAnimalsFound}/{nightAnimals}) | 找到家附近晚上才出来的{动物\|animals}（{nightAnimalsFound}/{nightAnimals}） |
+| Build the {学校} with the troop | 和猴群一起盖{学校} |
+| Go to {学校}, and meet your {老师} | 去{学校}，见见你的{老师} |
+| Meet your {同学} | 认识你的{同学} |
+| Learn to count to ten at {学校} ({numbersKnown}/7) | 在{学校}学会数到十（{numbersKnown}/7） |
+| Learn nine colours at the {学校} ({coloursKnown}/9) | 在{学校}学会九种颜色（{coloursKnown}/9） |
+| Plant {花\|flowers} in front of the {学校} | 在{学校}前面种{花\|flowers} |
+| Help the {老板} open his new shop at the home ground | 帮{老板}在家园开他的新店 |
+| Hear the old monkey’s news at the {学校} | 在{学校}听老猴子的消息 |
+| See the big {桌子} set up for the feast | 看大家为宴会摆好大{桌子} |
+| Fetch {碗\|bowls} for the feast from the Water Curtain Cave | 从水帘洞拿来宴会用的{碗\|bowls} |
+| Hear from the hungry monkey what the feast still needs | 听饿猴子说说宴会还缺什么 |
+| Play hide and seek with a little monkey | 和一只小猴子玩捉迷藏 |
+| Follow the stream east to find where {蜜蜂\|bees} live | 沿着小溪往东走，找到{蜜蜂\|bees}住的地方 |
+| Find the {动物} on the riverside | 找到河边的{动物} |
+| Make friends with the six {蜜蜂\|bees} in their valley ({beeCount}/6) | 和山谷里的六只{蜜蜂\|bees}交朋友（{beeCount}/6） |
+| Win over the {蜂王\|queen bee} with her word game | 玩赢{蜂王\|queen bee}的单词游戏，赢得她的信任 |
+| Lead the {蜂王\|queen bee} and her bees home | 带{蜂王\|queen bee}和她的蜜蜂回家 |
+| Bring {蜂蜜\|honey} to the feast’s big {桌子} | 把{蜂蜜\|honey}送到宴会的大{桌子}上 |
+| Find the lost {牛\|cow} on the mountain | 找到山上走丢的{牛\|cow} |
+| Win the {牛}’s trust with its word game | 玩它的单词游戏，赢得{牛}的信任 |
+| Lead the {牛} home, past the wolves | 带{牛}回家，路上要避开狼 |
+| Find the {动物} in the dark pines | 找到黑松林里的{动物} |
+| Bring the big monkey {种子\|seeds} from wild melons, for the garden | 从野瓜里取{种子\|seeds}，拿给大猴子种在园子里 |
+| Bring the big monkey {种子\|seeds} from wild grapes, for the garden | 从野葡萄里取{种子\|seeds}，拿给大猴子种在园子里 |
+| Bring the big monkey {种子\|seeds} from wild bananas, for the garden | 从野香蕉里取{种子\|seeds}，拿给大猴子种在园子里 |
+| See the garden’s {西瓜\|watermelons} go on the feast’s table, once they’re ripe | 等园子里的{西瓜\|watermelons}熟了，看它们摆上宴会的桌子 |
+| See the garden’s {葡萄\|grapes} go on the feast’s table, once they’re ripe | 等园子里的{葡萄\|grapes}熟了，看它们摆上宴会的桌子 |
+| See the garden’s {香蕉\|bananas} go on the feast’s table, once they’re ripe | 等园子里的{香蕉\|bananas}熟了，看它们摆上宴会的桌子 |
+| Lead the {牛} into its new home | 带{牛}走进它的新家 |
+| Give the thirsty monkey some {牛奶\|milk} | 给渴猴子一些{牛奶\|milk} |
+| See the {牛奶\|milk} go on the feast’s second {桌子} | 看{牛奶\|milk}摆上宴会的第二张{桌子} |
+| Find out what the thirsty monkey makes from the {牛奶} | 看看渴猴子用{牛奶}做了什么 |
+| Find out what else he makes from the {牛奶} | 看看他还用{牛奶}做了什么 |
+| Catch a big {鱼} for the feast | 为宴会钓一条大{鱼} |
+| Catch three {虾\|shrimp} for the feast | 为宴会抓三只{虾\|shrimp} |
+| Catch a {螃蟹\|crab} for the feast | 为宴会抓一只{螃蟹\|crab} |
+| Pass your {老师}’s exam at the {学校} | 在{学校}通过{老师}的考试 |
+| Sit down to the great feast with the troop | 和猴群一起坐下来，参加盛大的宴会 |
+| Sail away on your {木筏\|raft} | 乘着你的{木筏\|raft}出海 |
+| The hungry monkey wants some fruit. Check your tasks. | 饿猴子想要一些水果。看看你的任务吧。 |
+| The monkey gives the fruit back. It wants the {wanted:hungry}. | 猴子把水果还给你。它想要的是{wanted:hungry}。 |
+| 吃 means to eat. | “eat”就是吃的意思。 |
+| The hungry monkey wants the other fruit now. Check your tasks. | 饿猴子现在想要另一种水果。看看你的任务吧。 |
+| The monkey gives the fruit back. It wants the {wanted:hungry2}. | 猴子把水果还给你。它想要的是{wanted:hungry2}。 |
+| The thirsty monkey wants something to drink. Check your tasks. | 渴猴子想喝点东西。看看你的任务吧。 |
+| The big monkey wants to plant {花\|flowers} in front of the {学校}: a red, a yellow and a white one. Check your tasks. | 大猴子想在{学校}前面种{花\|flowers}：一朵红的、一朵黄的和一朵白的。看看你的任务吧。 |
+| The big monkey wants three pieces of {木头}. Check your tasks. | 大猴子想要三块{木头}。看看你的任务吧。 |
+| The big monkey wants three small {石头\|stones}. Check your tasks. | 大猴子想要三块小{石头\|stones}。看看你的任务吧。 |
+| The hungry monkey wants six {碗\|bowls} for the feast. They’re in the Water Curtain Cave! | 饿猴子要六个{碗\|bowls}办宴会。碗在水帘洞里！ |
+| The hungry monkey wants honey for the feast. Take some from the bees’ hive! | 饿猴子要蜂蜜办宴会。去蜂窝里取一些吧！ |
+| The thirsty monkey wants to drink some {牛奶}! | 渴猴子想喝{牛奶}！ |
+| The big monkey wants seeds from wild fruit, to grow in the garden! | 大猴子想要野果的种子，种在园子里！ |
+| The hungry monkey wants a big {鱼} for the feast! The fishing monkey by the stream can help. | 饿猴子想要一条大{鱼}办宴会！小溪边钓鱼的猴子能帮你。 |
+| The hungry monkey wants three {虾\|shrimp} for the feast! Shrimp live in the clear shallows of the brook on the riverside, above the bridge. Catch them with your {鱼竿}. | 饿猴子想要三只{虾\|shrimp}办宴会！虾住在河边桥上游那条小溪清清的浅水里。用你的{鱼竿}抓它们。 |
+| The hungry monkey wants a {螃蟹\|crab} for the feast! Crabs live on the shore, below the meadow, where the river meets the sea. The troop has cleared a way down. | 饿猴子想要一只{螃蟹\|crab}办宴会！螃蟹住在草地下面的海边，就是河流入大海的地方。猴群已经清出了一条下去的路。 |
+| The {牛} is hungry. Pick it some fresh {草} by the brook! | {牛}饿了。去小溪边给它拔一些新鲜的{草}！ |
+| The {老板} gives you the {item}. | {老板}把{item}给了你。 |
+| Earn more by helping the monkeys, making friends with the animals in the tall grass, practising your words, and selling him treasures. | 多帮猴子们的忙，和长草里的动物交朋友，练习你的单词，再把宝贝卖给他，就能挣到更多。 |
+| The {老板} looks puzzled: you pointed at the {item}, but asked for something else! | {老板}一脸疑惑：你指的是{item}，说的却是别的东西！ |
+| You asked the {老板} for the wrong thing. | 你跟{老板}要错了东西。 |
+| You have everything the {老板} sells. Come back another time. | {老板}卖的东西你都有了。下次再来吧。 |
+| The {老板} looks puzzled: you pointed at the {item}, but offered him something else! | {老板}一脸疑惑：你指的是{item}，给他的却是别的东西！ |
+| For the Water Curtain Cave | 水帘洞用的 |
+| To wear | 穿戴 |
+| A ripe peach. | 一个熟透的桃子。 |
+| You put the {桃子} in your bag. Eat it to get 10 health back. | 你把{桃子}放进了背包。吃了它，体力回来10点。 |
+| A ripe banana from the troop’s garden. | 一根熟透的香蕉，来自猴群的园子。 |
+| You put the {香蕉} in your bag. Eat it to get 25 health back. | 你把{香蕉}放进了背包。吃了它，体力回来25点。 |
+| A big watermelon from the troop’s garden. | 一个大西瓜，来自猴群的园子。 |
+| You put the {西瓜} in your bag. Eat it to get all your health back. | 你把{西瓜}放进了背包。吃了它，体力全部回来。 |
+| A crunchy apple. | 一个脆脆的苹果。 |
+| You put the {苹果} in your bag. In a battle or with an animal, eat it to take away a wrong answer. | 你把{苹果}放进了背包。在战斗中或者和动物玩的时候吃了它，就能去掉一个错的答案。 |
+| Sweet grapes from the troop’s trellis. | 甜甜的葡萄，来自猴群的葡萄架。 |
+| You put the {葡萄} in your bag. Eat them in a battle or with an animal, and a wrong answer goes in each of your next three questions. | 你把{葡萄}放进了背包。在战斗中或者和动物玩的时候吃了它，接下来的三道题都会各去掉一个错的答案。 |
+| Golden honey from the bees’ hive. | 金黄的蜂蜜，来自蜜蜂的蜂窝。 |
+| You put the {蜂蜜} in your bag. Eat it to walk faster for a minute. | 你把{蜂蜜}放进了背包。吃了它，一分钟里走得更快。 |
+| A spiky, smelly durian. | 一个浑身是刺、臭臭的榴莲。 |
+| You put the {榴莲} in your bag. Eat it, and wild creatures keep away for two minutes. | 你把{榴莲}放进了背包。吃了它，两分钟里野兽都不敢靠近。 |
+| Wriggly worms in a little clay pot. Big fish love them! | 一小陶罐扭来扭去的虫子。大鱼最爱吃了！ |
+| You put the {鱼饵} in your bag. The next time you fish, a big fish bites! | 你把{鱼饵}放进了背包。下次钓鱼，一定有大鱼上钩！ |
+| A woven bamboo basket for your bag. | 一个竹子编的篮子，放进背包里用。 |
+| Your {篮子} goes in your bag: now you can carry two more of every snack. | 你的{篮子}放进了背包：现在每种零食你都能多带两个。 |
+| A red paper lantern, with a candle inside. | 一盏红纸灯笼，里面点着蜡烛。 |
+| Your {灯笼} lights up the dark round you at night, and treasures glint from further away. | 晚上，你的{灯笼}会照亮你身边的黑暗，宝贝在更远的地方也能看到闪光。 |
+| A spade with a wooden handle, for digging. | 一把木柄的铲子，用来挖土。 |
+| With your {铲子}, you can dig up roots that grow deep in the ground. | 有了你的{铲子}，你就能挖出长在地下深处的根。 |
+| A clay vase, for flowers. | 一个陶瓷花瓶，用来插花。 |
+| The troop will set your {花瓶} up in the Water Curtain Cave. Go and see! | 猴群会把你的{花瓶}摆在水帘洞里。去看看吧！ |
+| Bamboo tubes that tinkle in the wind. | 一串竹管，风一吹就叮当响。 |
+| The troop will hang your {风铃} up in the Water Curtain Cave. Go and see! | 猴群会把你的{风铃}挂在水帘洞里。去看看吧！ |
+| A drum of wood and skin. Boom! | 一面用木头和皮做的鼓。咚！ |
+| The troop will set your {鼓} up in the Water Curtain Cave. Go and see! | 猴群会把你的{鼓}摆在水帘洞里。去看看吧！ |
+| A painting of the mountain, on paper. | 一幅画在纸上的山水画。 |
+| The troop will hang your {画} up in the Water Curtain Cave. Go and see! | 猴群会把你的{画}挂在水帘洞里。去看看吧！ |
+| A big glazed jar, for a fish to live in. | 一个大釉缸，可以养一条鱼。 |
+| The troop will set your {鱼缸} up in the Water Curtain Cave. Your next little fish can live in it! | 猴群会把你的{鱼缸}摆在水帘洞里。你钓到的下一条小鱼就能住在里面了！ |
+| A red cloth headband. | 一条红布头带。 |
+| A headband of {colour} cloth. | 一条{colour}布头带。 |
+| You tie on the red {头带}. It suits you! | 你系上了红{头带}。真合适！ |
+| You tie on the {colour} {头带}. It suits you! | 你系上了{colour}的{头带}。真合适！ |
+| The exam | 考试 |
+| Start the exam | 开始考试 |
+| You passed the exam! | 你通过了考试！ |
+| The exam: match 30 words from all over Flower Fruit Mountain to their pictures, the ones you know least well first. Get 24 right first time to pass. | 考试：把花果山各处的30个单词和它们的图片配对，你最不熟的先考。第一次就答对24个，就算通过。 |
+| Practise the words you missed, at school or with your friends, then come back and try again. Your teacher is ready whenever you are. | 在学校或者和朋友们一起，练习你答错的单词，然后再回来考一次。你准备好了，老师随时都在。 |
+| Chapter 1 complete! | 第一章完成了！ |
+| You sail away from Flower Fruit Mountain on your {木筏}, to find the immortals across the sea. | 你乘着{木筏}离开花果山，去海的那边寻找神仙。 |
+| Your words, your friends and your shells come with you. On to the next part of the journey! | 你的单词、你的朋友和你的贝壳都会跟着你。向旅程的下一站出发吧！ |
+| You cast your line. Wait for the float to go under, then press A! | 你甩出了鱼线。等浮漂沉下去，就按A！ |
+| A bite! Press A! | 咬钩了！按A！ |
+| Too slow: it got away! Cast again. | 太慢了：它跑掉了！再甩一次。 |
+| It slipped off the hook! Cast again. | 它从钩子上溜走了！再甩一次。 |
+| You reel in your line. | 你收起了鱼线。 |
+| You put some {鱼饵} on your hook: a big one bites! | 你在钩子上挂了一些{鱼饵}：大鱼咬钩了！ |
+| Reel it in! | 快把它拉上来！ |
+| You caught a fish! It’s tiny. | 你钓到了一条鱼！它好小。 |
+| A little fish: too small to keep. You let it go back into the water. | 一条小鱼：太小了，不能留。你把它放回了水里。 |
+| You let the little fish go. Cast again, for a bigger one! | 你把小鱼放走了。再甩一次，钓条大的！ |
+| You carry the little fish home to the Water Curtain Cave. It swims round and round in your {鱼缸\|fish jar} now! | 你把小鱼带回了水帘洞。现在它在你的{鱼缸\|fish jar}里游来游去！ |
+| You let the little fish go. | 你把小鱼放走了。 |
+| You caught a fish! It’s huge! | 你钓到了一条鱼！它好大！ |
+| A big fish, just right for the feast! | 一条大鱼，正好拿来办宴会！ |
+| Take the big {鱼} to the hungry monkey, at the feast’s tables! | 把大{鱼}拿给宴会桌旁边的饿猴子！ |
+| The troop has a big {鱼} for supper! +2 🐚 | 猴群晚饭有一条大{鱼}吃了！+2 🐚 |
+| A nibble! Wait for the float to go right under… | 有东西在轻轻咬！等浮漂完全沉下去…… |
+| Too soon! The shrimp let go. Wait for the float to go right under. | 太早了！虾松开了。等浮漂完全沉下去再拉。 |
+| You caught a shrimp! It’s tiny, and you can see right through it. | 你抓到了一只虾！它好小，身子都是透明的。 |
+| A shrimp, from the clear shallows of the brook. | 一只虾，来自小溪清清的浅水里。 |
+| A {虾\|shrimp} for the feast ({shrimpCaught}/3). Cast again! | 一只{虾\|shrimp}，留着办宴会（{shrimpCaught}/3）。再甩一次！ |
+| Three {虾\|shrimp}! Take them to the hungry monkey. | 三只{虾\|shrimp}！把它们拿给饿猴子。 |
+| You let the {虾\|shrimp} go back into the water. | 你把{虾\|shrimp}放回了水里。 |
+| Brings back 10 health | 体力回来10点 |
+| Brings back 25 health | 体力回来25点 |
+| Brings back all your health | 体力全部回来 |
+| Takes away a wrong answer | 去掉一个错的答案 |
+| A wrong answer goes in each of your next 3 questions | 接下来的3道题，各去掉一个错的答案 |
+| Walk faster for a minute | 一分钟里走得更快 |
+| Keeps wild creatures away for 2 minutes | 2分钟里野兽都不敢靠近 |
+| Phew! Wild creatures keep away from the smell for two minutes. | 呼！野兽闻到这股味儿，两分钟里都不敢靠近。 |
+| 臭 means smelly. Nothing wants to come near you now! | “smelly”就是臭的意思。现在什么都不想靠近你了！ |
+| Pick up | 捡起来 |
+| A pine cone, full of pine nuts. The {老板} wants to buy them! | 一个松果，里面满是松子。{老板}想买它们！ |
+| A pine cone, full of {松子\|pine nuts}! The {老板} pays 2 🐚 each. | 一个松果，里面满是{松子\|pine nuts}！{老板}每个出2 🐚。 |
+| Under the big pines in the pine wood. Every day there are more. | 在松林的大松树下面。每天都会有新的。 |
+| A bird left it on the grass. | 一只鸟把它落在了草地上。 |
+| A bird left a {羽毛\|feather} on the grass. The {老板} pays 1 🐚 each. | 一只鸟在草地上落下了一根{羽毛\|feather}。{老板}每根出1 🐚。 |
+| On the grass where birds land, by day. Every day there are more. | 白天，在鸟儿落脚的草地上。每天都会有新的。 |
+| The clam is closing! Quick: | 蚌壳要合上了！快： |
+| A clam, shut tight. Clams open in the moonlight… | 一个蚌，壳闭得紧紧的。蚌在月光下才会张开…… |
+| Snap! The clam shut tight. It opens again in a moment: try again! | 啪！蚌壳闭紧了。一会儿它还会张开：再试一次！ |
+| A pearl, from a clam that opened in the moonlight. | 一颗珍珠，来自一个在月光下张开的蚌。 |
+| A shining {珍珠\|pearl}! The {老板} pays 6 🐚 for it. | 一颗闪闪发光的{珍珠\|pearl}！{老板}出6 🐚买它。 |
+| On the shore, at night. | 在海边，晚上。 |
+| You hit the rock with your stick! | 你用棍子敲石头！ |
+| The rock holds firm. Try again! | 石头很结实。再试一次！ |
+| Jade, green and smooth, from inside a rock. | 玉，绿绿的、滑滑的，藏在石头里面。 |
+| The rock cracks open: {玉\|jade}! The {老板} pays 8 🐚 for it. | 石头裂开了：是{玉\|jade}！{老板}出8 🐚买它。 |
+| Inside rocks with green in them. Hit them with your stick. | 在带绿色的石头里面。用你的棍子敲开它们。 |
+| Dig | 挖 |
+| You dig with your spade! | 你用铲子挖！ |
+| The root is stuck fast. Try again! | 根卡得很紧。再试一次！ |
+| A little plant with red berries. Its root goes deep: you’d need a spade to dig it up. The {老板} sells them. | 一株结着红果子的小植物。它的根长得很深：要用铲子才能挖出来。{老板}有铲子卖。 |
+| A root shaped like a little person: ginseng! | 一条长得像小人的根：是人参！ |
+| You dig up the root: {人参\|ginseng}! The {老板} pays 10 🐚 for it. | 你挖出了根：是{人参\|ginseng}！{老板}出10 🐚买它。 |
+| Under the pines, by day. Dig it up with a spade. | 白天，在松树下面。用铲子把它挖出来。 |
+| Scoop | 舀 |
+| You scoop up the sand! | 你舀起了沙子！ |
+| The gold slipped through your paws. Try again! | 金子从你的爪子缝里溜走了。再试一次！ |
+| Gold, washed down the stream by the heavy rain. | 金子，被大雨冲到了小溪里。 |
+| Gold, washed down by the rain: {金子}! The {老板} pays 10 🐚 for it. | 被大雨冲下来的：{金子}！{老板}出10 🐚买它。 |
+| In the water, after heavy rain. | 在水里，下过大雨以后。 |
+| A clay {花瓶\|vase} of flowers on the table. Lovely! | 桌上一个插着花的陶瓷{花瓶\|vase}。真好看！ |
+| Ring | 摇一摇 |
+| Tinkle, tinkle! The {风铃\|wind chime} rings. | 叮铃，叮铃！{风铃\|wind chime}响了。 |
+| A {画\|painting} of Flower Fruit Mountain, with its waterfall. | 一幅花果山的{画\|painting}，画着它的瀑布。 |
+| Beat | 敲一敲 |
+| Boom, boom! The little monkeys dance to your {鼓\|drum}. | 咚，咚！小猴子们跟着你的{鼓\|drum}跳起舞来。 |
+| An empty {鱼缸\|fish jar}. Your next little fish can live in it! | 一个空{鱼缸\|fish jar}。你钓到的下一条小鱼就能住在里面！ |
+| Your little fish swims round and round in its {鱼缸\|jar}. | 你的小鱼在{鱼缸\|jar}里游来游去。 |
+| The sun has gone down, and the moon is coming up over Flower Fruit Mountain. | 太阳下山了，月亮从花果山上升起来了。 |
+| 晚上 means night, or evening. At night the troop sleeps in the Water Curtain Cave. | “night”就是晚上的意思。晚上，猴群在水帘洞里睡觉。 |
+| Sleep in one of the stone beds in the Water Curtain Cave, and you’ll wake up in the morning. Or stay up: the night soon passes. | 到水帘洞里的石床上睡一觉，醒来就是早上了。或者不睡也行：夜晚很快就会过去。 |
+| Drip, drip… it’s starting to rain! | 滴答，滴答……下雨了！ |
+| 雨 means rain. It never lasts long here: the sun will soon be out again. | “rain”就是雨的意思。这里的雨从来不会下很久：太阳很快又会出来。 |
+| Splash, splash… it’s pouring! | 哗啦，哗啦……雨下得好大！ |
+| 大雨 means heavy rain: big rain. It never lasts long here either. | “heavy rain”就是大雨的意思：很大很大的雨。这里的大雨也不会下很久。 |
+| It’s gloomy under the thick pines, and very still. Somewhere far off, a wolf howls… | 密密的松树下面又暗又静。远远的什么地方，有一只狼在嚎叫…… |
+| A butterfly has fluttered after you, from the wildflowers on the riverside! | 一只蝴蝶从河边的野花丛里一路跟着你飞来了！ |
+| A valley full of flowers! Six bees are hiding in the tall flowers, and wasps too. Where the tall flowers shake, a bee is hiding: walk in to meet it. | 一个开满鲜花的山谷！六只蜜蜂躲在高高的花丛里，还有黄蜂。哪里的高花在晃，哪里就藏着一只蜜蜂：走进去就能见到它。 |
+| Make friends with all six bees! Each one stays out over the flowers once you’ve met it. Watch out for the wasps: they zoom out to fight. | 和六只蜜蜂都交上朋友！你见过的蜜蜂会一直留在花上。小心黄蜂：它们会冲出来打架。 |
+| Your six {蜜蜂\|bee} friends fly off to join the swarm by the old tree, and the swarm flies aside: the way to it is open! | 你的六个{蜜蜂\|bee}朋友飞去加入老树旁边的蜂群，蜂群让到了一边：去老树的路通了！ |
+| The queen bee and her swarm fly over to the wildflowers by the cliff. The bees are home! Go and tell the hungry monkey. | 蜂王和她的蜂群飞到了山崖旁边的野花丛里。蜜蜂到家了！去告诉饿猴子吧。 |
+| The hungry monkey pours the honey into the empty bowl on the big table: now the feast has honey! He gives you a little {蜂蜜} for your bag too: eat it, and you walk faster for a minute. | 饿猴子把蜂蜜倒进大桌子上的空碗里：现在宴会有蜂蜜了！他还给了你一点{蜂蜜}放进背包：吃了它，一分钟里走得更快。 |
+| Dark pines, and long grass where wolves hide. Somewhere beyond them, a cow moos, long and sad… | 黑黑的松树，还有藏着狼的长草。在它们后面的什么地方，一头牛在长长地、伤心地叫着…… |
+| Hoofprints in the soft earth, going east: the cow came this way! Follow them. | 松软的泥土上有一串蹄印，往东去了：牛是从这边走的！跟着它们走。 |
+| A great pine has fallen along the gully, hollow inside. The cow stepped over it, but a little monkey can crawl right through! | 一棵大松树倒在了沟里，里面是空的。牛从上面跨过去了，可是小猴子能从里面钻过去！ |
+| The hoofprints go right down into a stream, deep and fast. A big cow can wade across, but a little monkey can’t! A dead pine leans out over the water… | 蹄印一直通到一条又深又急的小溪里。大牛能蹚过去，可是小猴子不行！一棵枯松树斜斜地伸到了水面上…… |
+| The {牛} won’t go into the long grass: wolves hide in it! Go first, and chase them off. | {牛}不肯走进长草里：草里藏着狼！你先走，把它们赶跑。 |
+| A {狼} leaps out of the long grass at you! | 一只{狼}从长草里朝你扑了过来！ |
+| The {狼} is too strong for you this time. The {牛} is still waiting for you. | 这次{狼}太厉害了。{牛}还在等你。 |
+| The {狼} runs off into the pines. The {牛} isn’t scared now: it follows you through the long grass! | {狼}逃进了松林。{牛}不怕了：它跟着你穿过了长草！ |
+| The {牛} is tired and hungry after the long walk. Pick it some fresh {草} by the brook! | 走了这么远，{牛}又累又饿。去小溪边给它拔一些新鲜的{草}！ |
+| The {牛} munches the {草\|grass} happily, and follows you again. On up the slope, by its steps, and home! | {牛}高高兴兴地嚼着{草\|grass}，又跟着你走了。沿着它的台阶往山坡上走，回家去！ |
+| The troop plants the {西瓜} seeds in the garden, and waters them from the stream. Little vines come up at once: on Flower Fruit Mountain, everything grows fast! | 猴群把{西瓜}的种子种在园子里，又从小溪里打水来浇。小藤蔓一下子就长出来了：在花果山上，什么都长得飞快！ |
+| The troop plants the {葡萄} seeds in the garden, with a trellis for them to climb. Vines come up at once, and climb all over it! | 猴群把{葡萄}的种子种在园子里，还给它们搭了一个架子爬。藤蔓一下子就长出来，爬满了架子！ |
+| The {西瓜} in the garden are ripe! Go and see the big monkey. | 园子里的{西瓜}熟了！去看看大猴子。 |
+| The {葡萄} on the trellis are ripe! Go and see the big monkey. | 架子上的{葡萄}熟了！去看看大猴子。 |
+| The {香蕉} in the garden are ripe! Go and see the big monkey. | 园子里的{香蕉}熟了！去看看大猴子。 |
+| The troop sets out a new stone {桌子} for the garden’s fruit, beside the big one. | 猴群在大桌子旁边，为园子里的水果摆了一张新的石{桌子}。 |
+| Slices of {西瓜} in a bowl, for the feast! | 一碗切好的{西瓜}，留着办宴会！ |
+| Bunches of {葡萄} in a bowl, for the feast! | 一碗一串串的{葡萄}，留着办宴会！ |
+| {香蕉} in a bowl, for the feast! | 一碗{香蕉}，留着办宴会！ |
+| Steep cliffs, one ledge below another. Somewhere down here, wild grapes grow! | 陡峭的山崖，一层岩架下面还有一层。野葡萄就长在这下面的什么地方！ |
+| The troop plants the {香蕉} seeds in the garden. Two banana plants shoot up at once, their big leaves unfolding! | 猴群把{香蕉}的种子种在园子里。两棵香蕉树一下子就长了出来，大大的叶子展开了！ |
+| A warm, sheltered valley, full of steaming hot springs! Wild bananas grow at the top, past the steam. | 一个温暖又背风的山谷，到处都是冒着热气的温泉！野香蕉长在最上面，要穿过热气才能到。 |
+| A {熊} rears up out of the long grass between the rocks! It wants the {牛}! | 一头{熊}从石头中间的长草里站了起来！它想抓{牛}！ |
+| The {熊} is too strong for you this time. The {牛} is still with you, hiding behind you. | 这次{熊}太厉害了。{牛}还跟着你，躲在你身后。 |
+| The {熊} is gone. The {牛} is safe, and the way home is clear. Lead it on, back through the pines! | {熊}走了。{牛}安全了，回家的路也通了。带着它，穿过松林往回走！ |
+| You’ve brought the {牛} home, safe from the wolves! Now it needs a safe place to live: the troop is going to build it a home of its own, by the road. | 你把{牛}带回家了，狼没能伤到它！现在它需要一个安全的地方住：猴群要在路边给它盖一个自己的家。 |
+| Safe and happy in its new home, the {牛} gives you some milk: its thank-you! | 在新家里又安全又开心，{牛}给了你一些牛奶：这是它的谢礼！ |
+| The thirsty monkey wants to drink some {牛奶}! Take it to him. | 渴猴子想喝{牛奶}！把它拿给他。 |
+| The thirsty monkey drinks some of the {牛奶}. The rest is for the feast, in a bowl on its second {桌子}. | 渴猴子喝了一些{牛奶}。剩下的留着办宴会，盛在第二张{桌子}上的碗里。 |
+| The {牛}’s milk goes on the feast’s second {桌子}: a bowl full, and a jug of it! | {牛}的奶摆上了宴会的第二张{桌子}：满满一碗，还有一壶！ |
+| The thirsty monkey’s {酸奶} goes in a bowl on the feast’s second table, with a wooden spoon in it! | 渴猴子做的{酸奶}盛在宴会第二张桌子上的碗里，里面还插着一把木勺子！ |
+| The big monkey made the spoon, for the {酸奶}: go and see him! | 勺子是大猴子为{酸奶}做的：去看看他！ |
+| And a round {奶酪} for the feast, in the last bowl! | 还有一块圆圆的{奶酪}，放在最后一个碗里，留着办宴会！ |
+| The thirsty monkey has finished making something from the {牛奶}. Go and see what it is! | 渴猴子用{牛奶}做好了一样东西。快去看看是什么！ |
+| The thirsty monkey has made something else from the {牛奶}. Go and see what it is! | 渴猴子用{牛奶}又做好了一样东西。快去看看是什么！ |
+| A big, dry cave, hidden behind the water! | 一个又大又干燥的山洞，藏在水的后面！ |
+| Splash, splash! The troop follows you through the water curtain! | 哗啦，哗啦！猴群跟着你穿过了水帘！ |
+| You’ve practised enough: a new lesson is ready at the {学校}, {lessons:ready}! | 你练习够了：{学校}有新课了，{lessons:ready}！ |
+| A rumble from the {山}! The rocks north of the meadow have rolled away, and the troop gathers there. | {山}那边传来轰隆隆的声音！草地北边的大石头滚走了，猴群都聚到了那里。 |
+| You know every part of your home’s name now! Read the sign by your stone, in the meadow. | 你家名字的每个部分你都认识了！去读一读草地上你的石头旁边那块牌子。 |
+| The troop has followed you all the way up to the {瀑布}! | 猴群一路跟着你来到了{瀑布}这里！ |
+| A wide, open valley, all their own! The troop dreams of building a school here, and a new shop, a hive, a garden and a pen. First, a school! | 一个宽阔的山谷，完全属于它们！猴群梦想在这里盖一所学校，还有一家新店、一个蜂窝、一个园子和一个牛圈。先盖学校吧！ |
+| A big {鱼} on a leaf, for the feast! | 一条大{鱼}放在叶子上，留着办宴会！ |
+| A bowl of {虾\|shrimp} for the feast, beside the big fish! | 一碗{虾\|shrimp}，放在大鱼旁边，留着办宴会！ |
+| A big red {螃蟹} on a plate, for the feast! | 一只大红{螃蟹}放在盘子里，留着办宴会！ |
+| Happy: how you felt as a little monkey, with all your friends. | “happy”就是快乐：你还是小猴子的时候，和朋友们在一起的那种感觉。 |
+| The troop will build you a raft, down on the shore. Lead the old monkey, the big monkey and the little monkey down there, past the waterfall and through the meadow! | 猴群要在下面的海边给你做一个木筏。带老猴子、大猴子和小猴子下去，经过瀑布，穿过草地！ |
+| Your raft, from dead pines tied together with rope, and a long pole to push it along. | 你的木筏，用绳子把枯松树绑在一起做成，还有一根长竿用来撑船。 |
+| Your {木筏} is ready at the water’s edge. When you’re ready to go, press A at it. | 你的{木筏}在水边准备好了。准备出发时，对着它按A。 |
+| The sea! Water as far as you can see. The river from the waterfall runs into it here. | 大海！一眼望不到边的水。从瀑布流下来的河就在这里流进大海。 |
+| Crabs scuttle about on the sand. A crab can only walk sideways: come at one from the front or behind to catch it! | 螃蟹在沙滩上跑来跑去。螃蟹只能横着走：从它前面或者后面靠近，才能抓住它！ |
+| A shop owner has come up the mountain! He wants to open a shop at the troop’s home ground. Go and see him, by the way in from the {瀑布}. | 一位老板上山来了！他想在猴群的家园开一家店。去看看他，他就在从{瀑布}进来的路口。 |
+| The troop has built its school! | 猴群盖好了学校！ |
+| The old monkey has gone in: he’s the teacher now. Walk in through the school’s door! | 老猴子进去了：他现在是老师了。从学校的门走进去吧！ |
+| The troop used the practice post from the meadow to build it: from now on, you practise your words in lessons at school. | 猴群用草地上的练习木桩盖了学校：从现在起，你在学校上课时练习单词。 |
+| The troop sets out two {桌子\|tables} under the big tree for the feast, with peaches and apples piled up on one. But there are no bowls! | 猴群在大树下摆了两张{桌子\|tables}办宴会，其中一张上堆满了桃子和苹果。可是没有碗！ |
+| The bowls go on the feast’s tables. And the big monkey has made something for the feast: go and see him! | 碗摆上了宴会的桌子。大猴子还为宴会做了一样东西：去看看他！ |
+| The big monkey plants your flowers in front of the {学校}: red, yellow and white. It looks lovely! | 大猴子把你的花种在{学校}前面：红的、黄的和白的。真好看！ |
+| The old monkey wants to talk to you first. | 老猴子想先和你说话。 |
+| Thick bushes block the way. | 茂密的灌木丛挡住了路。 |
+| A | A |
+| Jump | 跳 |
+| A wooden bridge over the stream. | 一座横在小溪上的木桥。 |
+| A little pool of clear water. | 一小汪清清的水。 |
+| A bamboo cup of chopsticks for the feast, one pair for every monkey. | 一个竹杯，里面插着宴会用的筷子，每只猴子一双。 |
+| Watermelon vines, growing in the garden. | 园子里长着的西瓜藤。 |
+| The {葡萄} vines climb all over the trellis, green and leafy. | {葡萄}藤爬满了架子，绿油油的。 |
+| A banana plant, its big leaves rustling. No {香蕉} on it yet! | 一棵香蕉树，大叶子沙沙作响。上面还没有{香蕉}！ |
+| A big ripe {西瓜}, growing in the garden. | 园子里长着一个熟透的大{西瓜}。 |
+| Bunches of ripe {葡萄} hang from the trellis. | 架子上挂着一串串熟透的{葡萄}。 |
+| A banana plant, a bunch of ripe {香蕉} hanging under its leaves. | 一棵香蕉树，叶子下面挂着一串熟透的{香蕉}。 |
+| The troop’s garden. The big monkey grows fruit here for the feast. | 猴群的园子。大猴子在这里种水果，留着办宴会。 |
+| Thick bushes. The troop will clear a way through here when it’s needed. | 茂密的灌木丛。需要的时候，猴群会在这里开出一条路。 |
+| The {牛}’s new home: a shelter with hay, and fresh water from a bamboo pipe. Lead it in through the gate! | {牛}的新家：一个有干草的棚子，还有从竹管里流出来的清水。带它从大门走进去！ |
+| A wooden spoon in the yoghurt, to eat it with. | 酸奶里插着一把木勺子，用来吃酸奶。 |
+| The thirsty monkey’s little dairy: a pail of the {牛}’s milk, and a pot with a cloth tied over it. He’s making something! | 渴猴子的小奶坊：一桶{牛}的奶，还有一个用布扎着口的罐子。他正在做东西！ |
+| Jars of {酸奶} on the shelf, and a pot with a cloth tied over it: something else is ready! | 架子上摆着一罐罐{酸奶}，还有一个用布扎着口的罐子：另一样东西做好了！ |
+| Jars of {酸奶} on the shelf, and a pot with a cloth tied over it: he’s making something else! | 架子上摆着一罐罐{酸奶}，还有一个用布扎着口的罐子：他正在做另一样东西！ |
+| Jars of {酸奶} and a round {奶酪} on the shelf, all made from the cow’s milk. | 架子上摆着一罐罐{酸奶}和一块圆圆的{奶酪}，都是用牛奶做的。 |
+| The {老板}’s shop: {头带\|headbands} in every colour you know, and food for your bag. | {老板}的店：有你认识的每种颜色的{头带\|headbands}，还有放进背包的食物。 |
+| The troop is building the {老板} a new shop here, by the way in. | 猴群正在路口这里给{老板}盖一家新店。 |
+| The sea, as far as you can see. Waves wash up the sand. | 大海，一眼望不到边。海浪冲上沙滩。 |
+| A rock pool: clear water left by the sea, with a little red starfish in it. | 一个礁石水洼：大海留下的清水，里面有一只小小的红海星。 |
+| Board | 上木筏 |
+| Your {木筏} waits at the edge of the sea. Come back whenever you’re ready: the troop will come down to see you off. | 你的{木筏}在海边等着。准备好了就随时回来：猴群会下来给你送行。 |
+| Sail away on your {木筏} across the sea, to find the immortals? Your words, friends and shells come with you. | 要乘着你的{木筏}漂洋过海，去寻找神仙吗？你的单词、朋友和贝壳都会跟着你。 |
+| Red mushrooms with white spots, under the pines. Pretty, but not for eating! | 松树下面长着带白点的红蘑菇。很好看，可是不能吃！ |
+| Clear, shallow water over pebbles. Little shrimp dart about in it! | 清清的浅水，下面是鹅卵石。小虾在里面窜来窜去！ |
+| A wooden bridge over the brook. | 一座横在小溪上的木桥。 |
+| A clear pond under the cliff. | 山崖下面一个清清的池塘。 |
+| The old hollow tree is quiet now: the queen bee and her bees have gone with you. | 那棵空心的老树现在静悄悄的：蜂王和她的蜜蜂跟你走了。 |
+| An old, hollow tree, humming with bees. Honeycomb glints inside, and deep in it, something big is buzzing… | 一棵空心的老树，里面嗡嗡地全是蜜蜂。里面闪着蜂巢的光，深处还有个大家伙在嗡嗡响…… |
+| A swarm of bees hangs in front of the old tree, buzzing. They won’t let you by till the six bees hiding in the tall flowers are your friends ({beeCount} of 6). | 一群蜜蜂挡在老树前面，嗡嗡地叫。要等藏在高花丛里的六只蜜蜂都成了你的朋友，它们才让你过去（{beeCount}/6）。 |
+| Listen, and hop onto the stone with its picture. | 听一听，跳到有它图片的那块石头上。 |
+| Splash! The stone tips, and in you go. You climb back out onto the bank. Try again! | 扑通！石头一歪，你掉进了水里。你爬回了岸上。再试一次！ |
+| Fresh, juicy grass by the brook. | 小溪边新鲜多汁的草。 |
+| You pick a handful of fresh {草}. | 你拔了一把新鲜的{草}。 |
+| You have three handfuls of fresh {草}. Take them to the {牛}! | 你有三把新鲜的{草}了。把它们拿给{牛}！ |
+| There’s the cow, far below, by a spring beyond the dark pines! Go on down the slope to find it. | 那头牛在那儿，在远远的下面，在黑松林那边的泉水旁！顺着山坡下去找它。 |
+| Grapes! They hang down the cliff below you, out of reach. Find a way down to them. | 葡萄！它们挂在你下面的山崖上，够不着。找条路下去摘吧。 |
+| Wild {葡萄\|grapes} hang down the cliff below you. | 野{葡萄\|grapes}挂在你下面的山崖上。 |
+| Wild grapes, purple and sweet, hanging down the cliff. | 野葡萄，紫紫的、甜甜的，挂在山崖上。 |
+| You pick a bunch of {葡萄} and eat some: sweet! You keep their little {种子} for the big monkey’s garden. | 你摘了一串{葡萄}，吃了几颗：好甜！你把它们的小{种子}留着，给大猴子的园子。 |
+| Wild {葡萄}, hanging down the cliff. | 野{葡萄}，挂在山崖上。 |
+| A hot spring, steaming. Too hot to touch! | 一个冒着热气的温泉。太烫了，不能碰！ |
+| A warm pool, just right for a bath. The monkeys love it! | 一个温暖的水池，泡澡正合适。猴子们最喜欢了！ |
+| Too hot! Wait for the steam to stop. | 太烫了！等热气停了再走。 |
+| Too hot! The steam pushes you back. | 太烫了！热气把你推了回来。 |
+| Wild bananas, growing in the warm valley. | 野香蕉，长在温暖的山谷里。 |
+| You climb up and pick a {香蕉}. Wild ones are full of hard black {种子\|seeds}: you eat round them, and keep them for the big monkey’s garden. | 你爬上去摘了一根{香蕉}。野香蕉里全是硬硬的黑色{种子\|seeds}：你绕着它们吃，把种子留着给大猴子的园子。 |
+| Wild {香蕉}, in a bunch under the big leaves. | 野{香蕉}，一串串挂在大叶子下面。 |
+| Durians: spiky, and famous for their smell! | 榴莲：浑身是刺，出了名的臭！ |
+| You reach up and twist a {榴莲} off its branch, carefully | 你伸手小心地把一个{榴莲}从树枝上拧下来 |
+| You’ve picked its ripe one. Come back another time. | 熟的那个你已经摘了。下次再来吧。 |
+| Birds keep pecking at the melons! Shoo them all away first. | 鸟总是来啄瓜！先把它们都赶走。 |
+| A wild watermelon, big and striped, warm from the sun. | 一个野西瓜，又大又有条纹，被太阳晒得暖暖的。 |
+| You crack open a {西瓜} and eat some: sweet and juicy! You keep its black {种子} for the big monkey’s garden. | 你掰开一个{西瓜}吃了几口：又甜又多汁！你把它的黑{种子}留着给大猴子的园子。 |
+| Wild {西瓜}, ripening in the sun. | 野{西瓜}，在太阳下慢慢变熟。 |
+| The stream is deep and fast. The cow’s hoofprints go right into it: a big cow can wade across, but not a little monkey! | 小溪又深又急。牛的蹄印一直通到水里：大牛能蹚过去，小猴子可不行！ |
+| Hoofprints in the soft earth, two marks to each: the cow came this way! | 松软的泥土上有一串蹄印，每个蹄印都分成两半：牛是从这边走的！ |
+| A great hollow pine, fallen along the gully. The cow stepped over it, but a little monkey can crawl right through! | 一棵空心的大松树，倒在了沟里。牛从上面跨过去了，可是小猴子能从里面钻过去！ |
+| Crack! The dead pine topples over, right across the stream: a bridge! Over you go. | 咔嚓！枯松树倒了下来，正好横在小溪上：成了一座桥！走过去吧。 |
+| A spring of clear, fresh water, bubbling up out of the ground. | 一眼清清的泉水，从地下咕嘟咕嘟地冒出来。 |
+| Your certificate, on the classroom wall: you passed the exam! | 教室墙上挂着你的证书：你通过了考试！ |
+| The blackboard: the teacher has written the numbers on it, {一} to {十}. | 黑板：老师在上面写了数字，从{一}到{十}。 |
+| The teacher’s table, with books and a cup on it. | 老师的讲桌，上面放着书和一个杯子。 |
+| A desk for two, with books on it. | 一张两个人坐的课桌，上面放着书。 |
+| The timetable, for lessons. Say hello to the {老师} first! | 上课用的课程表。先跟{老师}打个招呼吧！ |
+| A big war drum. The {老师} beats it to start a race. | 一面大战鼓。{老师}敲响它，赛跑就开始了。 |
+| A red banner, like an army’s, flying over the sports ground. | 一面红旗，像军旗一样，在操场上飘扬。 |
+| Plum-blossom poles, for kung fu: you step from one to another. A little monkey is balancing on the tallest. | 练功用的梅花桩：从一根跳到另一根。一只小猴子正站在最高的那根上保持平衡。 |
+| A stone padlock, lifted to make you strong. | 一个石锁，举起它能让你变得更有力气。 |
+| A rack of wooden staffs for practice, one banded with gold, and a spear with a red tassel. | 一个架子，上面放着练功用的木棍，其中一根箍着金圈，还有一杆系着红缨的长枪。 |
+| Red, yellow and white flowers: the ones you picked, planted in front of the {学校}. | 红的、黄的和白的花：是你摘的，种在了{学校}前面。 |
+| The troop’s {学校}, where the little monkeys learn. The {老师} gives lessons inside. | 猴群的{学校}，小猴子们在这里学习。{老师}在里面上课。 |
+| The troop is building a school here, where the little monkeys can learn. | 猴群正在这里盖一所学校，让小猴子们可以学习。 |
+| The troop wants to build a school here, where the little monkeys can learn. | 猴群想在这里盖一所学校，让小猴子们可以学习。 |
+| Tall grass. Animals hide in here. | 高高的草丛。动物们藏在里面。 |
+| You pick a flower. | 你摘了一朵花。 |
+| For the big monkey to plant ({flowersPicked}/3). Find the other colours. | 给大猴子种的（{flowersPicked}/3）。再找找别的颜色。 |
+| You have a red, a yellow and a white {花}. Take them to the big monkey. | 你有一朵红的、一朵黄的和一朵白的{花}了。把它们拿给大猴子。 |
+| You have a red {花} already. Find another colour. | 你已经有一朵红色的{花}了。找一找别的颜色。 |
+| You have a yellow {花} already. Find another colour. | 你已经有一朵黄色的{花}了。找一找别的颜色。 |
+| You have a white {花} already. Find another colour. | 你已经有一朵白色的{花}了。找一找别的颜色。 |
+| Ripe peaches hang from its branches. | 树枝上挂着熟透的桃子。 |
+| You pick one from the tree. | 你从树上摘了一个。 |
+| You picked a {桃子}. Take it to the hungry monkey. | 你摘了一个{桃子}。把它拿给饿猴子。 |
+| Ripe apples hang from its branches. | 树枝上挂着熟透的苹果。 |
+| You picked a {苹果}. Take it to the hungry monkey. | 你摘了一个{苹果}。把它拿给饿猴子。 |
+| You were born from this stone. | 你是从这块石头里蹦出来的。 |
+| Train | 练习 |
+| Big rocks block the way up. Maybe they will move once the monkeys are happy. | 大石头挡住了上山的路。也许猴子们开心了，它们就会挪开。 |
+| Collect | 装水 |
+| You scoop up some water from the river. | 你从河里舀了一些水。 |
+| You collected some {水}. Take it to the thirsty monkey. | 你装了一些{水}。把它拿给渴猴子。 |
+| Little fish dart about in the pond. | 小鱼在池塘里窜来窜去。 |
+| You scoop up some water from the pond. | 你从池塘里舀了一些水。 |
+| Water crashes down the 山 (mountain). What could be behind it? | 水从mountain（山）上哗哗地冲下来。后面会有什么呢？ |
+| Water crashes down from high on the 山 (mountain). This is where the river comes from! | 水从mountain（山）的高处哗哗地冲下来。这里就是河的源头！ |
+| You found where the water comes from! Go back down the path and tell the troop. | 你找到水的源头了！顺着小路回去，告诉猴群吧。 |
+| Beds of smooth stone, enough for the whole troop. | 光滑的石床，够整个猴群睡。 |
+| Everything’s made of stone in here! Go back and tell the troop what you’ve found. | 这里的东西全是石头做的！回去告诉猴群你发现了什么。 |
+| Show the old monkey round: talk to him, and he’ll ask what everything is. | 带老猴子参观：和他说话，他会问你每样东西是什么。 |
+| You lie down on the stone bed and go to sleep. | 你躺在石床上睡着了。 |
+| You wake up with your health full. | 你醒来了，体力全满。 |
+| A big table of stone. | 一张大石桌。 |
+| Stacks of bowls, ready for the troop. | 一摞摞的碗，给猴群准备好了。 |
+| You take a {碗} from the stack. | 你从那摞碗里拿了一个{碗}。 |
+| You have six {碗\|bowls}. Take them to the hungry monkey, at the feast’s tables! | 你有六个{碗\|bowls}了。把它们拿给宴会桌旁边的饿猴子！ |
+| Thick bushes. The river runs on down past them, towards the sea. | 茂密的灌木丛。河从它们旁边流过，一直流向大海。 |
+| The frame of the school is up. The troop is busy building. | 学校的架子搭好了。猴群正忙着盖房子。 |
+| The troop’s school: the sign over its door says {学校}. Walk in through its door. | 猴群的学校：门上的牌子写着{学校}。从门走进去吧。 |
+| Bees buzz in and out of the hive, and golden honey drips inside. | 蜜蜂在蜂窝里飞进飞出，金黄的蜂蜜在里面滴着。 |
+| Golden honey from the bees’ hive! 蜂蜜 is 蜜蜂 (bee) the other way round. | 金黄的蜂蜜，来自蜜蜂的蜂窝！ |
+| You took some {蜂蜜}. Take it to the hungry monkey. | 你取了一些{蜂蜜}。把它拿给饿猴子。 |
+| You take some {蜂蜜} | 你取了一些{蜂蜜} |
+| The bees are still making more honey. Come back another time. | 蜜蜂还在酿更多的蜂蜜。下次再来吧。 |
+| The {牛}’s home. Your friend the cow lives here, safe from the wolves. | {牛}的家。你的朋友牛住在这里，不用再怕狼了。 |
+| The {牛}’s new home, by the road, safe from the wolves. | {牛}的新家，在路边，不用再怕狼了。 |
+| The bees’ hive. The queen bee and her swarm live here, and make honey for the troop. | 蜜蜂的蜂窝。蜂王和她的蜂群住在这里，为猴群酿蜂蜜。 |
+| The troop is building the bees a hive here, by the flowers. | 猴群正在花丛旁边给蜜蜂盖一个蜂窝。 |
+| Dry wood from a dead pine, for building. | 枯松树上的干木头，可以用来盖房子。 |
+| Down comes the dry pine! You take a piece of {木头}. | 干松树倒下来了！你拿了一块{木头}。 |
+| You have three pieces of {木头}. Take them to the big monkey. | 你有三块{木头}了。把它们拿给大猴子。 |
+| You have three pieces of {木头}, and the small {石头\|stones} too. Take them all to the big monkey. | 你有三块{木头}，小{石头\|stones}也有了。把它们都拿给大猴子。 |
+| You have three pieces of {木头}. Now find three small {石头\|stones}. | 你有三块{木头}了。现在去找三块小{石头\|stones}。 |
+| An old pine, long dead and dry. | 一棵老松树，早就枯死了，干干的。 |
+| You pick up a small {石头}. | 你捡起了一块小{石头}。 |
+| You have three small {石头\|stones}. Take them to the big monkey. | 你有三块小{石头\|stones}了。把它们拿给大猴子。 |
+| You have three small {石头\|stones}, and the {木头} too. Take them all to the big monkey. | 你有三块小{石头\|stones}，{木头}也有了。把它们都拿给大猴子。 |
+| You have three small {石头\|stones}. Now find three pieces of {木头}. | 你有三块小{石头\|stones}了。现在去找三块{木头}。 |
+| Crack! The rock breaks apart, and the way into the glade is open. | 咔嚓！大石头裂开了，通往林间空地的路通了。 |
+| A big rock with a deep crack down it. Behind it, between the pines, the sun shines into a glade. | 一块大石头，中间有一道深深的裂缝。它后面的松树之间，阳光照进了一片林间空地。 |
+| The name of the cave. | 山洞的名字。 |
+| Fight | 战斗 |
+| Catch | 抓 |
+| Shoo | 赶走 |
+| Shoo! It flies off. ({birdsShooed}/5) | 嘘！它飞走了。（{birdsShooed}/5） |
+| The name of your home. | 你家的名字。 |
+| The lanterns on the {学校} are red: the class painted them. | {学校}上的灯笼是红色的：是全班一起涂的。 |
+| Paper lanterns hang from the eaves of the {学校}. | {学校}的屋檐下挂着纸灯笼。 |
+| The stone you were born from, at the top of the path. | 你蹦出来的那块石头，在小路的最上面。 |
+| The old monkey said it when you first met. | 你们第一次见面时，老猴子说过。 |
+| The old monkey said it as he sent you to meet the troop. | 老猴子让你去认识猴群时说过。 |
+| The cliffs all around the mountain. | 围着整座山的山崖。 |
+| The flowers growing in the grass. | 草地上长着的花。 |
+| A colour lesson at school: the class painted the lanterns with it. | 学校的颜色课：全班用它涂了灯笼。 |
+| A colour lesson at school: the teacher opened a pot of it. | 学校的颜色课：老师打开了一罐这个颜色的颜料。 |
+| The tall grass, where animals hide. | 高高的草丛，动物们藏在里面。 |
+| Under the pines: at the top of the hillside, and on the way south to the pasture. | 在松树下面：在山坡的最上面，还有往南去牧场的路上。 |
+| The trees on the mountain. | 山上的树。 |
+| The peach trees at the far left end of the long path. | 长长的小路最左边的桃树。 |
+| The apple tree in the south-east, across the river. | 河对面东南边的苹果树。 |
+| The river that runs down the right of the mountain. | 顺着山的右边流下来的那条河。 |
+| You collected it for the thirsty monkey. | 你给渴猴子装过它。 |
+| The hungry monkey wanted some, from the fruit trees. | 饿猴子想吃一些，来自果树。 |
+| Little fish in the pond in the middle of the meadow. | 草地中间池塘里的小鱼。 |
+| Little birds that land on the grass near you. | 落在你身边草地上的小鸟。 |
+| The old monkey told you about the hidden animals. | 老猴子跟你讲过藏起来的动物。 |
+| It jumped out of the tall grass. | 它从高高的草丛里跳了出来。 |
+| Eating grass at the foot of the cliffs, in the south of the meadow. | 在草地南边的山崖脚下吃草。 |
+| It lives in the big tree to the south. | 它住在南边的大树上。 |
+| It lives on the cliffs to the south. | 它住在南边的山崖上。 |
+| The Water Curtain Cave, behind the waterfall. | 水帘洞，在瀑布后面。 |
+| The hungry monkey wanted something to eat. | 饿猴子想吃东西。 |
+| The thirsty monkey wanted something to drink. | 渴猴子想喝东西。 |
+| The little monkey became your friend. | 小猴子成了你的朋友。 |
+| The big monkey said it, telling you who he is. | 大猴子介绍自己的时候说过。 |
+| You learned it to say what a monkey wanted. | 你学会它，用来说一只猴子想要什么。 |
+| The waterfall at the top of the mountain path, where the river comes from. | 山路最上面的瀑布，河就是从那里来的。 |
+| The mountain path, up beside the river from the meadow. | 山路，从草地沿着河边往上走。 |
+| The big monkey gave it to you, before you set off up the mountain path. | 你出发走山路之前，大猴子给了你。 |
+| The big monkey gave it to you when he sent you up to the pine wood: every place you go is drawn on it. | 大猴子让你去松林的时候给了你：你去过的每个地方都画在上面。 |
+| In the long grass on the mountain path. | 在山路的长草里。 |
+| Hiding in the tall flowers of the bees’ valley. | 藏在蜜蜂山谷的高花丛里。 |
+| Blocking the narrow way at the top of the mountain path. | 挡在山路最上面的窄路上。 |
+| In a sunny glade deep in the pine wood, behind a cracked rock. | 在松林深处一片向阳的林间空地上，在一块裂开的大石头后面。 |
+| Up on a dead pine in the dark pines, just inside the way in from the south slope. | 在黑松林里一棵枯松树上，就在从南坡进来的路口里面。 |
+| Swimming on the home ground’s stream, east of the fishing monkey. | 在家园的小溪里游泳，在钓鱼猴子的东边。 |
+| Out on the pasture’s grass, west of the way in from the dark pines. | 在牧场的草地上，在从黑松林进来的路口西边。 |
+| On a lily pad on the south slope’s brook, just west of the stepping stones. | 在南坡小溪的一片荷叶上，就在踏脚石的西边。 |
+| Hiding in the tall grass at the melon field’s south-west corner. | 藏在瓜田西南角的高草丛里。 |
+| Warming itself on the boulder by the hot spring pools. | 在温泉池旁边的大石头上晒太阳。 |
+| On the shore’s sand, at the water’s edge by the cliff. | 在海边的沙滩上，在山崖旁边的水边。 |
+| In the long grass in the pine wood. | 在松林的长草里。 |
+| In the long grass, after dark. | 在长草里，天黑以后。 |
+| Over the home ground’s stream, after dark. | 在家园的小溪上空，天黑以后。 |
+| In the riverside’s long grass, after dark. | 在河边的长草里，天黑以后。 |
+| In the meadow’s long grass, after dark. | 在草地的长草里，天黑以后。 |
+| In the hillside’s long grass, after dark. | 在山坡的长草里，天黑以后。 |
+| Rearing up out of the long grass between the big rocks in the pasture, as you led the cow home. | 你带牛回家的时候，它从牧场大石头中间的长草里站了起来。 |
+| Hiding in the tall grass on the hillside. | 藏在山坡的高草丛里。 |
+| Fluttering over the wildflowers on the riverside, the way east to the bees. | 在河边的野花上飞来飞去，就在往东去找蜜蜂的路上。 |
+| Zooming out of the tall flowers in the bees’ valley. | 从蜜蜂山谷的高花丛里冲了出来。 |
+| Out of her old hollow tree, in the bees’ valley. | 从她那棵空心的老树里出来，在蜜蜂山谷。 |
+| Lost and all alone by its spring, in the pasture south of the home ground. | 孤零零地迷路在泉水边，在家园南边的牧场里。 |
+| From the bees’ hive, by the wildflowers at the home ground. | 来自家园野花丛旁边的蜂窝。 |
+| The cow’s thank-you, in its new home by the road. | 牛的谢礼，在它路边的新家。 |
+| The thirsty monkey made it from the cow’s milk, at the little dairy by its pen. | 渴猴子用牛奶做的，在牛圈旁边的小奶坊里。 |
+| The thirsty monkey made it from the cow’s milk too, at the little dairy. | 也是渴猴子用牛奶做的，在小奶坊里。 |
+| The big monkey made them for the feast, out of wood: in a bamboo cup at the end of its big table. | 大猴子用木头为宴会做的：插在大桌子一头的竹杯里。 |
+| The big monkey made them, for the yoghurt on the feast’s second table. | 大猴子做的，用来吃宴会第二张桌子上的酸奶。 |
+| The big monkey wants them for his garden by the stream: seeds from wild fruit. | 大猴子想要它们，种在他小溪边的园子里：野果的种子。 |
+| Wild in the melon field, east off the south slope, where birds peck at them. | 长在南坡东边的瓜田里，鸟儿常来啄。 |
+| Wild on the cliffs west off the hillside, hanging down a cliff over a ledge. | 长在山坡西边的山崖上，从一块岩架上面挂下来。 |
+| Wild in the hot spring valley, up the brook from the riverside, past the steam. | 长在温泉谷里，从河边沿小溪往上走，穿过热气就到。 |
+| He came up the mountain to open a shop at the troop’s home ground. | 他上山来，要在猴群的家园开一家店。 |
+| You bought it from the {老板}, at his shop at the troop’s home ground. | 你在猴群家园{老板}的店里买的。 |
+| You said it to thank a friend for a present. | 你收到朋友的礼物时，用它说谢谢。 |
+| You said it when a monkey thanked you for your help. | 一只猴子谢谢你帮忙时，你说过它。 |
+| You said it when you brought the hungry monkey the wrong fruit. | 你给饿猴子拿错水果时说过它。 |
+| You said it when the hungry monkey said sorry for being so fussy. | 饿猴子为自己太挑剔说对不起时，你说过它。 |
+| You said it to the old monkey as you set off up the mountain path. | 你出发走山路时，对老猴子说过它。 |
+| You said it at the {老板}’s shop when you didn’t want anything. | 你在{老板}的店里什么都不想要时说过它。 |
+| You said it when you put something on from your wardrobe. | 你从衣柜里拿东西穿戴时说过它。 |
+| The big monkey dared the troop to jump through the waterfall. | 大猴子跟猴群打赌，看谁敢跳过瀑布。 |
+| A bridge over the stream, at the home ground or in the pine wood. | 一座横在小溪上的桥，在家园里，或者在松林里。 |
+| The stone beds in the Water Curtain Cave. | 水帘洞里的石床。 |
+| The stone beds in the Water Curtain Cave: sleep there to get your health back. | 水帘洞里的石床：在那里睡一觉，体力就回来了。 |
+| Your first night on Flower Fruit Mountain, as the troop went into the Water Curtain Cave to sleep. | 你在花果山的第一个晚上，猴群走进水帘洞睡觉的时候。 |
+| The first rain on Flower Fruit Mountain: 下雨了！ It’s raining! | 花果山下的第一场雨：It’s raining!（下雨了！） |
+| The first heavy rain on Flower Fruit Mountain: 下大雨了！ It’s raining hard! | 花果山下的第一场大雨：It’s raining hard!（下大雨了！） |
+| The troop’s bowls, stacked up in the Water Curtain Cave. | 猴群的碗，一摞摞地放在水帘洞里。 |
+| The stone table in the Water Curtain Cave. | 水帘洞里的石桌。 |
+| The old monkey, when the troop moved into the Water Curtain Cave. | 老猴子说的，那时猴群刚搬进水帘洞。 |
+| The troop, when they made you their king. | 猴群说的，那时它们让你当了大王。 |
+| Counting the troop into the Water Curtain Cave. | 数着猴群走进水帘洞的时候。 |
+| A maths lesson at school: two peaches. | 学校的数学课：两个桃子。 |
+| A dry, dead pine in the pine wood, knocked down with your stick. | 松林里一棵干枯的死松树，你用棍子把它打倒了。 |
+| The troop built it at the home ground, with the wood and stones you brought. | 猴群用你带来的木头和石头，在家园里盖的。 |
+| The little monkeys greeting the old monkey, their teacher, at school. | 小猴子们在学校向老猴子问好，他是它们的老师。 |
+| The little monkey, at school: you’re classmates. | 学校里的小猴子：你们是同学。 |
+| A number lesson at school: the teacher counting peaches onto his table. | 学校的数字课：老师把桃子数到桌子上。 |
+| The old monkey’s news at school: the troop has a home, and a school too. | 老猴子在学校说的消息：猴群有了家，还有了学校。 |
+| The hungry monkey, at the feast’s big table: there’s no honey. | 饿猴子在宴会的大桌子旁边说的：没有蜂蜜。 |
+| PE at school: the teacher started a race with it, on the sports ground. | 学校的体育课：老师在操场上用它开始了一场赛跑。 |
+| PE at school: the class went running round the sports ground. | 学校的体育课：全班绕着操场跑步。 |
+| The fishing monkey gave it to you, by the stream at the home ground. | 钓鱼的猴子给你的，在家园的小溪边。 |
+| You bought it at the {老板}’s shop, at the home ground. | 你在家园{老板}的店里买的。 |
+| You said it as you let your first fish go: too small! | 你放走第一条鱼时说的：太小了！ |
+| You said it when you caught a big fish for the feast. | 你为宴会钓到大鱼时说的。 |
+| You caught it in the clear shallows of the brook on the riverside. | 你在河边小溪清清的浅水里抓到的。 |
+| You saw it from the shore, below the meadow, where the river runs into it. | 你在草地下面的海边看见的，河就在那里流进大海。 |
+| You caught one on the shore’s sand, for the feast. | 你在海边的沙滩上抓到一只，留着办宴会。 |
+| You heard it at the great feast: the little monkey was very happy. | 你在盛大的宴会上听到的：小猴子非常快乐。 |
+| The troop built it on the shore, for you to sail away on. | 猴群在海边为你做的，让你乘着它出海。 |
+| A durian tree grows in the hot spring valley’s warm corner. The 老板 sells them too. | 温泉谷温暖的角落里长着一棵榴莲树。老板也卖榴莲。 |
+| You said it as you ate your first durian: it was so smelly! | 你第一次吃榴莲时说的：太臭了！ |
+| The 老板 asks what you want to buy, every time you shop. | 每次买东西，老板都会问你要买什么。 |
+| The 老板 asked if you wanted to sell him your pine nuts. | 老板问你要不要把松子卖给他。 |
+| In the pine cones under the big pines of the pine wood. | 在松林大松树下面的松果里。 |
+| Left on the grass by the birds, by day. | 白天，鸟儿落在草地上的。 |
+| In a clam on the shore, open in the moonlight. | 在海边的一个蚌里，月光下才张开。 |
+| Inside a rock with green in it: you cracked it open with your stick. | 在一块带绿色的石头里面：你用棍子把它敲开了。 |
+| You dug it up under the pines, with your spade. | 你用铲子在松树下面挖出来的。 |
+| Washed down into the water by heavy rain. | 被大雨冲到了水里。 |
+| You bought it from the 老板. | 你从老板那里买的。 |
+| You bought it from the 老板, to light up the night. | 你从老板那里买的，用来照亮黑夜。 |
+| You bought it from the 老板, for digging. | 你从老板那里买的，用来挖土。 |
+| You bought it from the 老板, for the Water Curtain Cave. | 你从老板那里买的，摆在水帘洞里。 |
+| For the feast, at the big {桌子} | 宴会用的，在大{桌子}上 |
+| More food goes on the list as the story goes on. | 故事往下走，清单上会有更多食物。 |
+| Hide and seek! Cover your eyes and count to ten, then find where the little monkey is hiding. Listen to where it says it is. | 捉迷藏！捂上眼睛数到十，然后去找小猴子藏在哪里。听它说它在哪里。 |
+| The little monkey wants to play hide and seek, but you don’t know the words for enough places yet. Come back when you know more! | 小猴子想玩捉迷藏，可是你认识的地方名字还不够多。多学一些再来吧！ |
+| 🐾 Not here! Listen again: where did it say it is? | 🐾 不在这里！再听一遍：它说它在哪里？ |
+| 🐾 Not here! Listen again, and look out for a tail… | 🐾 不在这里！再听一遍，注意找找尾巴…… |
+| You found the little monkey! It was {where}. | 你找到小猴子了！它在{where}。 |
+| Talk to it again to play another game: it hides somewhere new each time. | 再和它说话，就能再玩一局：它每次都会藏到新的地方。 |
+| behind the big {树} | 大{树}后面 |
+| under the {桌子} | {桌子}下面 |
+| under the {桥} | {桥}下面 |
+| in the {水} | {水}里 |
+| in the {花\|flowers} | {花\|flowers}丛里 |
+| The big monkey raises his stick: let’s practise! On your turn, choose 打 (hit) and answer to hit him. | 大猴子举起了棍子：我们来练一练！轮到你的时候，选“hit（打）”，答对了就能打中他。 |
+| The big monkey jumps out of sight… | 大猴子一下子跳得看不见了…… |
+| The big monkey swings his stick at you! | 大猴子朝你挥起了棍子！ |
+| The big monkey laughs, and lowers his stick. | 大猴子哈哈大笑，放下了棍子。 |
+| The big monkey helps you up. | 大猴子把你扶了起来。 |
+| A snake hisses at you from the long grass! | 一条蛇在长草里冲你嘶嘶地叫！ |
+| A {蛇} hisses at you! | 一条{蛇}冲你嘶嘶地叫！ |
+| The {蛇} slides out of sight… | {蛇}滑走，看不见了…… |
+| The {蛇} strikes! | {蛇}扑了过来！ |
+| The {蛇} slithers away into the grass. | {蛇}滑进草丛溜走了。 |
+| The {蛇} sniffs the air, and slithers off! | {蛇}闻了闻空气，滑走了！ |
+| A spider scuttles out of the long grass! | 一只蜘蛛从长草里窜了出来！ |
+| A {蜘蛛} scuttles at you! | 一只{蜘蛛}朝你窜了过来！ |
+| The {蜘蛛} scurries out of sight… | {蜘蛛}一溜烟跑得看不见了…… |
+| The {蜘蛛} jumps at you! | {蜘蛛}朝你扑了过来！ |
+| The {蜘蛛} scurries off into the grass. | {蜘蛛}一溜烟钻进了草丛。 |
+| The {蜘蛛} sniffs the air, and scurries off! | {蜘蛛}闻了闻空气，一溜烟跑了！ |
+| A wolf leaps out of the long grass, growling! | 一只狼低吼着从长草里扑了出来！ |
+| A {狼} growls at you! | 一只{狼}冲你低吼！ |
+| The {狼} slinks out of sight… | {狼}悄悄溜走，看不见了…… |
+| The {狼} pounces! | {狼}扑了过来！ |
+| The {狼} runs off into the pines. | {狼}逃进了松林。 |
+| The {狼} sniffs the air, whines, and runs off! | {狼}闻了闻空气，呜呜叫着跑了！ |
+| A wasp zooms out of the tall flowers! | 一只黄蜂从高花丛里嗖地冲了出来！ |
+| A {黄蜂} buzzes at you! | 一只{黄蜂}冲你嗡嗡叫！ |
+| The {黄蜂} zips out of sight… | {黄蜂}嗖地飞走，看不见了…… |
+| The {黄蜂} stings! | {黄蜂}蜇你！ |
+| The {黄蜂} buzzes off over the flowers. | {黄蜂}嗡嗡地飞过花丛走了。 |
+| The {黄蜂} sniffs the air, and zooms off! | {黄蜂}闻了闻空气，嗖地飞走了！ |
+| A weasel slinks out of the long grass, its eyes shining in the dark! | 一只黄鼠狼从长草里溜了出来，眼睛在黑暗中闪闪发光！ |
+| A {黄鼠狼} hisses at you! | 一只{黄鼠狼}冲你嘶嘶地叫！ |
+| The {黄鼠狼} slinks out of sight… | {黄鼠狼}悄悄溜走，看不见了…… |
+| The {黄鼠狼} pounces! | {黄鼠狼}扑了过来！ |
+| The {黄鼠狼} slinks off into the dark. | {黄鼠狼}溜进了黑暗里。 |
+| The {黄鼠狼} sniffs the air, and slinks off into the dark! | {黄鼠狼}闻了闻空气，溜进了黑暗里！ |
+| ROAR! | 吼！ |
+| The {熊} stands up tall, angry! | {熊}高高地站了起来，很生气！ |
+| From now on it attacks twice in a row. Listen hard! | 从现在起，它会连着攻击两次。仔细听！ |
+| A bear rears up out of the long grass between the big rocks, roaring! | 一头熊吼叫着，从大石头中间的长草里站了起来！ |
+| The {熊} roars! | {熊}吼叫着！ |
+| The {熊} drops down out of sight… | {熊}趴下去，看不见了…… |
+| The {熊} swipes at you! | {熊}朝你挥爪子！ |
+| The {熊} lumbers off into the pines, and doesn’t come back. | {熊}慢吞吞地走进松林，再也没回来。 |
+| SNORT! | 哼哧！ |
+| A wild boar blocks the narrow way to the top! | 一头野猪挡住了通往山顶的窄路！ |
+| The {野猪} snorts and paws the ground! | {野猪}哼哧哼哧地用蹄子刨地！ |
+| The {野猪} crashes off into the trees… | {野猪}冲进树林里去了…… |
+| The {野猪} charges! | {野猪}冲过来了！ |
+| The {野猪} squeals and runs off into the trees. | {野猪}尖叫着逃进了树林。 |
+| You’re worn out. You crawl back down to the home ground and rest under the big tree until your health is full again. | 你累坏了。你爬回家园，在大树下休息，直到体力又满了。 |
+| You’re worn out. You crawl back to the Water Curtain Cave and sleep until your health is full again. | 你累坏了。你爬回水帘洞，睡了一觉，直到体力又满了。 |
+| You’re worn out. You crawl back down to the meadow and rest until your health is full again. | 你累坏了。你爬回草地，休息到体力又满了。 |
+| Frightened, the {牛} ran back to its spring in the pasture. Go and fetch it again! | {牛}吓坏了，跑回了牧场的泉水边。再去把它带回来！ |
+| The {牛} is still waiting for you by the long grass in the dark pines. Go first, and chase the wolves off! | {牛}还在黑松林的长草旁边等你。你先走，把狼赶跑！ |
+| The {牛} is still waiting for you on the south slope, hungry. | {牛}还在南坡等你，它饿了。 |
+| In tall grass, almost anywhere | 在高高的草丛里，差不多哪里都有 |
+| The meadow, at the foot of the cliffs in the south | 草地，在南边的山崖脚下 |
+| A sheep is eating grass at the foot of the {山}. Answer its questions to make friends. | 一只羊在{山}脚下吃草。回答它的问题，和它交朋友。 |
+| The meadow, up a big tree | 草地，在一棵大树上 |
+| A squirrel peeks out of the big {树}! Answer its questions to make friends. | 一只松鼠从大{树}里探出头来！回答它的问题，和它交朋友。 |
+| The river valley, beside the path | 河谷，在小路旁边 |
+| A goat is grazing beside the path. Answer its questions to make friends. | 一只山羊在小路旁边吃草。回答它的问题，和它交朋友。 |
+| The pine wood, in a sunny glade deep inside | 松林，在深处一片向阳的林间空地上 |
+| A deer looks up from the grass, its ears twitching. Answer its questions to make friends. | 一只鹿从草里抬起头来，耳朵一抖一抖的。回答它的问题，和它交朋友。 |
+| The dark pines, up an old dead pine | 黑松林，在一棵枯死的老松树上 |
+| Two big round eyes blink at you from the dead pine: an owl! Answer its questions to make friends. | 枯松树上有两只又大又圆的眼睛冲你眨呀眨：是猫头鹰！回答它的问题，和它交朋友。 |
+| The hillside’s tall grass | 山坡的高草丛 |
+| A fox darts out of the {草}, its tail swishing! Answer its questions to make friends. | 一只狐狸从{草}丛里窜了出来，尾巴甩来甩去！回答它的问题，和它交朋友。 |
+| By the riverside, over the wildflowers | 在河边，野花上空 |
+| A butterfly flutters over the flowers beside you. Answer its questions to make friends. | 一只蝴蝶在你身边的花丛上飞舞。回答它的问题，和它交朋友。 |
+| A valley of flowers, in the tall flowers | 开满鲜花的山谷，在高花丛里 |
+| A bee buzzes out of the tall flowers! Answer its questions to make friends. | 一只蜜蜂嗡嗡地从高花丛里飞出来！回答它的问题，和它交朋友。 |
+| Your first {蜜蜂\|bee} friend! It stays out over the flowers now. Five more bees to make friends with! | 你的第一个{蜜蜂\|bee}朋友！现在它会一直留在花上。还有五只蜜蜂可以交朋友！ |
+| Two {蜜蜂\|bee} friends! Four more to make friends with. | 两个{蜜蜂\|bee}朋友！还有四只可以交朋友。 |
+| Three {蜜蜂\|bee} friends! Three more to make friends with. | 三个{蜜蜂\|bee}朋友！还有三只可以交朋友。 |
+| Four {蜜蜂\|bee} friends! Two more to make friends with. | 四个{蜜蜂\|bee}朋友！还有两只可以交朋友。 |
+| Five {蜜蜂\|bee} friends! Just one more to make friends with. | 五个{蜜蜂\|bee}朋友！只剩一只可以交朋友了。 |
+| Another {蜜蜂\|bee}, a new one! Answer its questions to make friends with it too ({beeCount} of 6 so far). | 又一只{蜜蜂\|bee}，是只新的！回答它的问题，也和它交朋友吧（已经{beeCount}/6）。 |
+| This {蜜蜂\|bee} still wants to play! Answer its questions to make friends ({beeCount} of 6 so far). | 这只{蜜蜂\|bee}还想玩！回答它的问题，和它交朋友（已经{beeCount}/6）。 |
+| The {蜜蜂\|bee} hovers over the flowers: it still wants to play. Press A at it to try again. | {蜜蜂\|bee}在花上飞着：它还想玩。对着它按A，再试一次。 |
+| The home ground, on the stream | 家园，在小溪上 |
+| A duck paddles along the stream, quacking. Answer its questions to make friends. | 一只鸭子嘎嘎叫着，在小溪里划水。回答它的问题，和它交朋友。 |
+| The pasture, out on the grass | 牧场，在草地上 |
+| A horse looks up from the grass and swishes its tail. Answer its questions to make friends. | 一匹马从草里抬起头来，甩了甩尾巴。回答它的问题，和它交朋友。 |
+| The south slope, by the stepping stones | 南坡，在踏脚石旁边 |
+| A frog sits on a lily pad on the brook, croaking. Answer its questions to make friends. | 一只青蛙坐在小溪的荷叶上呱呱叫。回答它的问题，和它交朋友。 |
+| The melon field’s tall grass | 瓜田的高草丛 |
+| A mouse pops out of the {草}, its whiskers twitching! Answer its questions to make friends. | 一只老鼠从{草}丛里钻出来，胡子一抖一抖的！回答它的问题，和它交朋友。 |
+| The hot springs, on a warm rock | 温泉，在一块暖暖的石头上 |
+| A turtle is warming itself on a rock by the pools. Answer its questions to make friends. | 一只乌龟在水池旁的石头上晒太阳。回答它的问题，和它交朋友。 |
+| Over the home ground’s stream; by day it sleeps somewhere dark and dry | 在家园的小溪上空；白天它睡在又暗又干的地方 |
+| A bat flits over the stream in the dark, catching insects. Answer its questions to make friends. | 一只蝙蝠在黑暗中掠过小溪，捉虫子吃。回答它的问题，和它交朋友。 |
+| Your first {萤火虫\|firefly} friend! It glows over the grass now. Four more to find. | 你的第一个{萤火虫\|firefly}朋友！现在它在草上一闪一闪地发光。还有四只要找。 |
+| Two {萤火虫\|firefly} friends! Three more to find. | 两个{萤火虫\|firefly}朋友！还有三只要找。 |
+| Three {萤火虫\|firefly} friends! Two more to find. | 三个{萤火虫\|firefly}朋友！还有两只要找。 |
+| Four {萤火虫\|firefly} friends! Just one more to find. | 四个{萤火虫\|firefly}朋友！只剩一只要找了。 |
+| All five {萤火虫\|firefly} friends, glowing over the grass! | 五个{萤火虫\|firefly}朋友都找到了，在草上一闪一闪地发光！ |
+| Another {萤火虫\|firefly}, a new one! Answer its questions to make friends with it too ({fireflyCount} of 5 so far). | 又一只{萤火虫\|firefly}，是只新的！回答它的问题，也和它交朋友吧（已经{fireflyCount}/5）。 |
+| This {萤火虫\|firefly} still wants to play! Answer its questions to make friends ({fireflyCount} of 5 so far). | 这只{萤火虫\|firefly}还想玩！回答它的问题，和它交朋友（已经{fireflyCount}/5）。 |
+| The {萤火虫\|firefly} glows over the grass: it still wants to play. Press A at it to try again. | {萤火虫\|firefly}在草上发着光：它还想玩。对着它按A，再试一次。 |
+| The riverside’s long grass: five of them | 河边的长草：有五只 |
+| A firefly rises out of the long grass, glowing! Answer its questions to make friends. | 一只萤火虫发着光，从长草里飞了起来！回答它的问题，和它交朋友。 |
+| The meadow’s long grass | 草地的长草 |
+| A hedgehog snuffles out of the {草}, its spines bristling! Answer its questions to make friends. | 一只刺猬从{草}丛里嗅着钻出来，身上的刺竖起来了！回答它的问题，和它交朋友。 |
+| The hillside’s long grass, where something chirps | 山坡的长草，那里有东西在唧唧叫 |
+| A cricket hops out of the {草}, chirping! Answer its questions to make friends. | 一只蟋蟀唧唧叫着，从{草}丛里跳了出来！回答它的问题，和它交朋友。 |
+| The shore, on the sand by the sea | 海边，在大海旁边的沙滩上 |
+| A sea turtle crawls slowly up the sand from the sea. Answer its questions to make friends. | 一只海龟从海里慢慢爬上了沙滩。回答它的问题，和它交朋友。 |
+| A little bird hops about on the grass, singing. | 一只小鸟在草地上蹦蹦跳跳，唱着歌。 |
+| Under the edge of the boulder: 2 🐚! | 在大石头边下面：2 🐚！ |
+| Tucked behind the tree: 2 🐚! | 藏在树后面：2 🐚！ |
+| In a hollow in the tree: 2 🐚! | 在树洞里：2 🐚！ |
+| A little monkey’s hidden snack, behind the tree: a {苹果} for your bag! | 一只小猴子藏在树后面的零食：一个{苹果}，放进你的背包！ |
+| Tucked among the pine’s roots: a {苹果} for your bag! | 藏在松树根之间：一个{苹果}，放进你的背包！ |
+| Tucked behind the tree by the stream: a {苹果} for your bag! | 藏在小溪边的树后面：一个{苹果}，放进你的背包！ |
+| Tucked behind the tree at the edge of the pasture: a {桃子} for your bag! | 藏在牧场边上的树后面：一个{桃子}，放进你的背包！ |
+| The way goes nowhere, but under the boulder at its end: 2 🐚! | 这条路哪儿也不通，可是尽头的大石头下面有：2 🐚！ |
+| The cow didn’t come this way, but tucked under the boulder: 2 🐚! | 牛没走这边，可是大石头下面藏着：2 🐚！ |
+| Under the boulder by the way in: 2 🐚! | 在路口的大石头下面：2 🐚！ |
+| Washed up by the sea, behind a rock on the sand: 3 🐚! | 大海冲上来的，在沙滩上一块石头后面：3 🐚！ |
+| Tucked in by a rock, over the little bridge: 2 🐚! | 藏在一块石头边，过了小桥就是：2 🐚！ |
+| Under the boulder on the ledge: 2 🐚! | 在岩架上的大石头下面：2 🐚！ |
+| Under the warm boulder by the pools: 2 🐚! | 在水池旁边暖暖的大石头下面：2 🐚！ |
+| Night animals | 夜间动物 |
+| It wants to play! Answer its questions to make friends. | 它想玩！回答它的问题，和它交朋友。 |
+| Your {朋友} wants to play again! Answer its questions. | 你的{朋友}又想玩了！回答它的问题。 |
+| Use 戴 for things you wear on your head. | “wear”可以用在所有穿戴的东西上：帽子、头带、衣服都可以。 |
+| Pick it up! | 把它捡起来！ |
+| Ouch! The crab pinched you, and scuttled off. Try another: come at it from the front or behind. | 哎哟！螃蟹夹了你一下，横着跑掉了。换一只试试：从它前面或者后面靠近。 |
+| A crab! It can only walk sideways. | 一只螃蟹！它只能横着走。 |
+| You caught a {螃蟹}! Take it to the hungry monkey, at the feast’s tables. | 你抓到了一只{螃蟹}！把它拿给宴会桌旁边的饿猴子。 |
+| Ouch! The crab pinched you, and scuttled off. | 哎哟！螃蟹夹了你一下，横着跑掉了。 |
+| You let the {螃蟹\|crab} go, and it scuttles off. | 你把{螃蟹\|crab}放走了，它横着跑开了。 |
+| A bamboo fishing rod, with a line, a float and a hook. | 一根竹鱼竿，有鱼线、浮漂和鱼钩。 |
+| The fishing monkey gives you a {鱼竿}! Stand by the stream, face the water, and press A to fish. | 钓鱼的猴子给了你一根{鱼竿}！站在小溪边，面朝水，按A就能钓鱼。 |
+| Face the water and press A to fish. The {老板} sells {鱼饵\|bait}: with some in your bag, a big fish bites next. | 面朝水按A就能钓鱼。{老板}卖{鱼饵\|bait}：背包里有鱼饵，下一次就会有大鱼咬钩。 |
+| Show the old monkey your words | 把你的单词说给老猴子听 |
+| Come back to the old monkey when you’re ready to show him your words. | 准备好把你的单词说给老猴子听，就回来找他。 |
+| There are {animals} different animals here in the meadow. Can you find them all? | 草地上有{animals}种不同的动物。你能把它们都找到吗？ |
+| If you forget what to do, press TASKS. | 忘了要做什么，就按“任务”键。 |
+| You’ve found the animals, and you know all the words for the meadow! The old monkey wants to hear them. | 你找到了动物，还学会了草地上所有的单词！老猴子想听你说说。 |
+| Show the old monkey the meadow’s words | 把草地上的单词说给老猴子听 |
+| Come back to the old monkey when you’re ready to show him the meadow’s words. | 准备好把草地上的单词说给老猴子听，就回来找他。 |
+| You’re a monkey, and so is everyone in the troop. | 你是一只猴子，猴群里的大家也都是猴子。 |
+| Some of the troop need help. A ! over a monkey means it wants something: go and see them all! | 猴群里有几只猴子需要帮忙。猴子头上有 ! ，就表示它想要什么东西：去看看它们吧！ |
+| Find the animals ({found}/{animals}): in rustling grass, out in the open, up a tree. | 找到动物（{found}/{animals}）：在沙沙响的草丛里、空地上、树上。 |
+| Learn the words for the meadow ({meadowWords}/5), then come back. Things that sparkle ✨ have words. | 学会草地上的单词（{meadowWords}/5），再回来。闪闪发光✨的东西都有单词。 |
+| The path up beside the river is wild, and nobody has been to the top. Someone brave should go and see where the water comes from. | 河边那条往上的小路很荒凉，还没有谁去过山顶。得有一只勇敢的猴子去看看水是从哪里来的。 |
+| You set off for the path, on your own. | 你一个人出发去走那条小路。 |
+| You rest with the old monkey. Your health is full again. | 你在老猴子身边休息了一会儿。体力又满了。 |
+| Follow the path up beside the river, and find where the water comes from. | 沿着河边的小路往上走，找到水是从哪里来的。 |
+| The troop follows you. Lead them up the mountain path to the waterfall! | 猴群跟着你。带它们走山路，上到瀑布那里！ |
+| Lead the way up the mountain path to the waterfall. | 带路走山路，上到瀑布那里。 |
+| Look for a monkey with a ! over its head. | 找一只头上有 ! 的猴子。 |
+| Everyone looks at you. | 大家都看着你。 |
+| Jump through the waterfall! | 从瀑布中间跳过去！ |
+| Lead the way: jump through the waterfall. | 带路：从瀑布中间跳过去。 |
+| Stacks of stone bowls, ready for the troop. | 一摞摞的石碗，给猴群准备好了。 |
+| A monkey comes in through the water curtain. | 一只猴子穿过水帘走了进来。 |
+| Another monkey comes in. | 又一只猴子走了进来。 |
+| And another! | 又来了一只！ |
+| The whole troop is home. | 整个猴群都到家了。 |
+| Show the old monkey the troop’s numbers | 把猴群的数字说给老猴子听 |
+| Come back to the old monkey when you’re ready to show him the numbers. | 准备好把数字说给老猴子听，就回来找他。 |
+| The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)! | 猴群给你起了个名字：美猴王（Handsome Monkey King）！ |
+| The little monkeys are sitting at their desks. The old monkey stands at the front: he’s their teacher now! | 小猴子们坐在课桌前。老猴子站在前面：他现在是它们的老师了！ |
+| The class greets the old monkey: he’s their teacher now. | 全班向老猴子问好：他现在是它们的老师了。 |
+| Lessons are where you practise your words now. Talk to the teacher, or look at the timetable on the wall, to choose one. | 现在你在上课时练习单词。和老师说话，或者看看墙上的课程表，选一节课吧。 |
+| Use 有 to say what you have. (要 is for what you want.) | 用“have”说你有什么。（“want”是说你想要什么。） |
+| Time for a great feast, for the whole troop! It will be at a big {桌子\|table} under the big {树\|tree}, in the middle of the home ground. | 猴群要办一场盛大的宴会了！宴会就在家园中间那棵大{树\|tree}下的大{桌子\|table}旁边。 |
+| Your certificate goes up on the classroom wall! +10 🐚 | 你的证书挂上了教室的墙！+10 🐚 |
+| The troop is getting ready for the feast! Go to the big {树} in the middle of the home ground. | 猴群正在准备宴会！去家园中间那棵大{树}那里。 |
+| Treasures! Pine nuts, feathers, pearls, jade… things monkeys love, hidden all over the mountain. The {老板} buys them for shells! | 宝贝！松子、羽毛、珍珠、玉……猴子们喜欢的东西，藏在山上各处。{老板}会用贝壳买它们！ |
+| He wants pine nuts most of all. Look for pine cones under the big pines in the pine wood. | 他最想要松子。去松林的大松树下面找松果吧。 |
+| The troop loves the cave. Now they dream of more: somewhere to learn, to trade and to grow things. | 猴群很喜欢这个山洞。现在它们梦想得到更多：一个学习的地方、一个做买卖的地方、一个种东西的地方。 |
+| The big monkey and the little monkey have cleared a way beside the waterfall, to a wide open space. The old monkey wants to see it with you! | 大猴子和小猴子在瀑布旁边开出了一条路，通到一片宽阔的空地。老猴子想和你一起去看看！ |
+| Lead the way: out of the cave, then along beside the waterfall. | 带路：走出山洞，再沿着瀑布旁边走。 |
+| First, the troop wants to build a school. | 首先，猴群想盖一所学校。 |
+| Keep exploring, little monkey. | 继续探险吧，小猴子。 |
+| The little monkeys at school with you. | 和你一起上学的小猴子们。 |
+| Talk to the old monkey by the stone first. | 先去和石头旁边的老猴子说话。 |
+| First, find the two things that sparkle ✨, as the old monkey asked. Then come back! | 先按老猴子说的，找到两样闪闪发光✨的东西。然后再回来！ |
+| First, go back to the old monkey: he wants to see the words you’ve learned. Then come back! | 先回到老猴子那里：他想看看你学会的单词。然后再回来！ |
+| First, find the {动物\|animals}, as the old monkey asked. Then come back! | 先按老猴子说的，找到{动物\|animals}。然后再回来！ |
+| First, learn the words for the meadow: things that sparkle ✨ have words. Then come back! | 先学会草地上的单词：闪闪发光✨的东西都有单词。然后再回来！ |
+| First, go back to the old monkey: he wants to hear the words for the meadow. Then come back! | 先回到老猴子那里：他想听你说草地上的单词。然后再回来！ |
+| The little monkey is your friend now. | 小猴子现在是你的朋友了。 |
+| The little monkey says what it can see, only in Chinese. Find it, and press A at it! | 小猴子说它看见了什么，只说英语。找到那样东西，对着它按A！ |
+| The little monkey gives you 2 🐚. | 小猴子给了你2 🐚。 |
+| Play I spy with the little monkey? | 和小猴子玩“我看见”的游戏吗？ |
+| You’re in the middle of a game of I spy with the little monkey. Keep playing? | 你正在和小猴子玩“我看见”的游戏。还要接着玩吗？ |
+| You stop playing I spy. Talk to the little monkey to play again. | 你不玩“我看见”了。和小猴子说话就能再玩。 |
+| Play a word game with this little monkey? | 和这只小猴子玩单词游戏吗？ |
+| Learn a few more words first, then come back to play. | 先多学几个单词，再回来玩吧。 |
+| The {老板} owns the shop. Come back to see what they sell. | 这家店是{老板}的。回来看看他卖什么吧。 |
+| The {老板} wants his new shop here, by the way in, where every monkey goes past. The troop comes to build it! | {老板}想把新店开在这里，就在路口，每只猴子都会经过。猴群来帮他盖了！ |
+| The {老板}’s new shop! He sells {头带\|headbands} in every colour you know, and food for your bag. | {老板}的新店！他卖你认识的每种颜色的{头带\|headbands}，还有放进背包的食物。 |
+| To sell: the {老板} buys your treasures, for shells. | 卖：{老板}会用贝壳买你的宝贝。 |
+| Now you can sell your treasures to the {老板}: his shop has a Sell tab. He sells tools, and things for the Water Curtain Cave, too! | 现在你可以把宝贝卖给{老板}了：他的店里有“卖”这一栏。他还卖工具，和摆在水帘洞里的东西！ |
+| Play a word game with the hungry monkey? If you win, you get a {桃子} for your bag. | 和饿猴子玩单词游戏吗？要是你赢了，就能得到一个{桃子}放进背包。 |
+| The hungry monkey gives you a {桃子} for your bag. | 饿猴子给了你一个{桃子}，放进你的背包。 |
+| Peaches and apples are both fruit. | “fruit”就是水果：桃子和苹果都是水果。 |
+| Use 没有 to say what you don’t have. | 用“don’t have”说你没有什么。 |
+| There’s no honey for the feast! Honey comes from bees: the troop has cleared a way east, along the stream, to find them. Follow the road east! | 宴会没有蜂蜜！蜂蜜是蜜蜂酿的：猴群已经沿着小溪往东开出了一条路，去找它们。顺着路往东走！ |
+| The bees need a home: the troop is going to build them a hive, by the wildflowers. Go and see! | 蜜蜂需要一个家：猴群要在野花丛旁边给它们盖一个蜂窝。去看看吧！ |
+| Honey comes from bees: the troop has cleared a way east, along the stream, to find them. Follow the road east! | 蜂蜜是蜜蜂酿的：猴群已经沿着小溪往东开出了一条路，去找它们。顺着路往东走！ |
+| Honey comes from bees: follow the road east, along the stream, to find them. Press A at the big {桌子} to see what the feast still needs. | 蜂蜜是蜜蜂酿的：顺着路沿小溪往东走，去找它们。在大{桌子}前按A，看看宴会还缺什么。 |
+| Play a word game with the thirsty monkey? If you win, he gives you 2 🐚. | 和渴猴子玩单词游戏吗？要是你赢了，他就给你2 🐚。 |
+| The thirsty monkey gives you 2 🐚. | 渴猴子给了你2 🐚。 |
+| He heard a cow mooing beyond the pines, while he was looking for fresh water. It’s lost and all alone, and wolves live in those pines! | 他找清水的时候，听到松林那边有一头牛在叫。它迷路了，孤零零的，可是那片松林里住着狼！ |
+| The troop has cleared a way south, over the bridge at the bottom of the home ground. Go and find the cow! | 猴群已经往南开出了一条路，过了家园最下面的那座桥就是。去找那头牛吧！ |
+| Go south, over the bridge at the bottom of the home ground, and through the pines, to find the lost cow. | 往南走，过了家园最下面的桥，再穿过松林，去找那头走丢的牛。 |
+| You found the cow by its spring, in the pasture. Win its trust with its word game, and it will follow you home. | 你在牧场的泉水边找到了牛。玩它的单词游戏，赢得它的信任，它就会跟你回家。 |
+| The cow is waiting for you by the long grass in the dark pines: go first, and chase the wolves off! | 牛在黑松林的长草旁边等你：你先走，把狼赶跑！ |
+| The cow is waiting for you on the south slope, hungry: pick it some fresh grass by the brook. | 牛在南坡等你，它饿了：去小溪边给它拔一些新鲜的草。 |
+| The cow ran back to its spring in the pasture: go and fetch it, then lead it home past the wolves. | 牛跑回了牧场的泉水边：去把它带回来，再带它避开狼回家。 |
+| The troop is ready to build the {牛} a safe home of its own, here by the road. Watch! | 猴群准备好在路边这里，给{牛}盖一个安全的家了。看着！ |
+| A safe home for the {牛}: a fence with a gate, a shelter with hay, and a trough of fresh water, fed by a bamboo pipe (the thirsty monkey’s idea). Lead the {牛} in through its gate! | 给{牛}的安全的家：一道带大门的篱笆，一个有干草的棚子，还有一个水槽，清水从竹管里流进来（是渴猴子的主意）。带{牛}从大门走进去！ |
+| Lead the cow in through the gate of its new home! | 带牛从大门走进它的新家！ |
+| The thirsty monkey takes some of the {牛奶} to a little table by the pen. The troop sets it up for him, under a thatched roof. | 渴猴子把一些{牛奶}拿到牛圈旁边的小桌子上。猴群为他搭了一个茅草顶的小棚子。 |
+| He’s making something from the {牛奶}! Practise your words (8 questions, anywhere), then come back and see what it is. | 他正在用{牛奶}做东西！练习你的单词（8道题，在哪里答都行），再回来看看是什么。 |
+| Practise your words, then come back and see what he’s making: {dairyWait} of 8 questions done. | 练习你的单词，再回来看看他在做什么：已经答了{dairyWait}/8道题。 |
+| The milk has gone thick and sour: the thirsty monkey has made yoghurt! | 牛奶变得又稠又酸：渴猴子做出了酸奶！ |
+| Some of the {酸奶} is for the feast. Now he’s making something else from the {牛奶}: practise, then come back and see what it is! | 一些{酸奶}留着办宴会。现在他又在用{牛奶}做另一样东西：练习一下，再回来看看是什么！ |
+| Practise your words, then come back and see what he’s making now: {dairyWait} of 8 questions done. | 练习你的单词，再回来看看他现在在做什么：已经答了{dairyWait}/8道题。 |
+| Cheese! The thirsty monkey has made it from the cow’s milk too. | 奶酪！这也是渴猴子用牛奶做的。 |
+| Some of the {奶酪} is for the feast too. | 一些{奶酪}也留着办宴会。 |
+| The feast has milk, yoghurt and cheese now, from your friend the cow! | 宴会上现在有牛奶、酸奶和奶酪了，都来自你的朋友牛！ |
+| The cow is safe and happy in its new home, and the feast has its milk! | 牛在新家里又安全又开心，宴会也有了它的奶！ |
+| The {兔子} saw which way the cow went! Play a word game with it, and it will show you? | {兔子}看见牛往哪边走了！和它玩一个单词游戏，它就会告诉你吗？ |
+| The {兔子} points its long ears south, past the long grass, towards the big rocks: that’s the way the cow went! | {兔子}把长耳朵指向南边，越过长草，指向那些大石头：牛就是往那边走的！ |
+| The {兔子} points its long ears south, past the long grass, towards the big rocks. | {兔子}把长耳朵指向南边，越过长草，指向那些大石头。 |
+| A cow, lost and all alone, by the spring. It looks up at you, trembling. | 一头牛，迷了路，孤零零地在泉水边。它抬头看着你，浑身发抖。 |
+| The {牛} is too scared of the wolves to go anywhere. Play a word game with it, to win its trust? Win, and it follows you home. | {牛}太怕狼了，哪儿也不敢去。和它玩一个单词游戏，赢得它的信任吗？赢了，它就跟你回家。 |
+| The {牛} trusts you, and follows you! Lead it home to the thirsty monkey, back through the pines. Watch out for wolves! | {牛}信任你了，跟着你走！穿过松林，带它回家去找渴猴子。小心狼！ |
+| The {牛} follows you again. Lead it home to the thirsty monkey! | {牛}又跟着你走了。带它回家去找渴猴子！ |
+| The {牛} follows you. Lead it in through the gate of its new home! | {牛}跟着你。带它从大门走进它的新家！ |
+| The {牛} munches the grass by the road, safe from the wolves, waiting for a home of its own. | {牛}在路边嚼着草，不用再怕狼了，它在等一个自己的家。 |
+| The way to the top is clear. | 去山顶的路通了。 |
+| The queen bee buzzes out of her old tree, her little crown glinting! | 蜂王嗡嗡地飞出了她的老树，头上的小王冠闪闪发光！ |
+| Play a word game with the {蜂王} to win her over? Six questions: three wrong, and she flies back into her tree. | 和{蜂王}玩单词游戏，赢得她的信任吗？一共六道题：错三道，她就飞回树里去了。 |
+| The {蜂王} buzzes back into her old tree. Press A at the tree to try again! | {蜂王}嗡嗡地飞回了她的老树。对着树按A，再试一次！ |
+| The queen bee and her swarm follow you! Lead them home, back along the riverside. | 蜂王和她的蜂群跟着你！沿着河边，带它们回家。 |
+| The troop comes over to build the bees a hive, right here by the wildflowers! | 猴群过来了，就在这野花丛旁边，给蜜蜂盖一个蜂窝！ |
+| The queen bee and her swarm fly into their new hive. Take some honey from it, for the hungry monkey’s feast! | 蜂王和她的蜂群飞进了新蜂窝。从里面取一些蜂蜜，给饿猴子办宴会！ |
+| A swarm of bees, buzzing round their queen. | 一群蜜蜂，围着它们的蜂王嗡嗡地飞。 |
+| Sleep in a {床} and your health is full again. | 在{床}上睡一觉，体力就又满了。 |
+| Face a {床} and press A to sleep. You wake up with your health full. | 面对一张{床}按A就能睡觉。醒来时体力全满。 |
+| The path up the mountain, beside the river. | 上山的路，在河边。 |
+| Play a word game with the {松鼠}? If you win, it gives you a {桃子}. | 和{松鼠}玩单词游戏吗？要是你赢了，它就给你一个{桃子}。 |
+| The {松鼠} gives you a {桃子} for your bag. | {松鼠}给了你一个{桃子}，放进你的背包。 |
+| The {松鼠} gives you a {桃子}. | {松鼠}给了你一个{桃子}。 |
+| Play a word game with the {松鼠}, just for practice? | 和{松鼠}玩单词游戏吗？只是练习一下？ |
+| The squirrel points its nose at the grey, dead pines. Their wood is dry: one hit with your stick, and down they come! | 松鼠用鼻子指了指那些灰灰的枯松树。它们的木头很干：用棍子敲一下，就倒下来了！ |
+| Its tail twitches. Wolves live in the long grass, and every way through the wood goes through it. Eating a {桃子} in a fight brings back some health: pick some at the home ground. | 它的尾巴抖了抖。狼住在长草里，穿过树林的每条路都要经过长草。打架时吃一个{桃子}，体力能回来一些：去家园摘一些吧。 |
+| The squirrel loves the pine wood. Its name, {松鼠}, means pine mouse! | 松鼠最喜欢松林了。{松鼠}的中文名字，意思就是“松树上的老鼠”！ |
+| Play a word game with the {山羊}? If you win, it gives you a {苹果}. | 和{山羊}玩单词游戏吗？要是你赢了，它就给你一个{苹果}。 |
+| The {山羊} gives you a {苹果} for your bag. | {山羊}给了你一个{苹果}，放进你的背包。 |
+| The {山羊} gives you a {苹果}. | {山羊}给了你一个{苹果}。 |
+| Play a word game with the {山羊}, just for practice? | 和{山羊}玩单词游戏吗？只是练习一下？ |
+| Going down is quicker! You can hop down the grassy banks in the cliffs: just walk off the edge. You can’t climb back up them, though. | 下山更快！你可以从山崖上长着草的土坡跳下去：直接走出边缘就行。不过，你爬不回去哦。 |
+| Going down the mountain? Hop down the grassy banks: it’s quicker. | 要下山吗？从长着草的土坡跳下去：更快。 |
+| This little monkey is practising with a stick, just like yours. It wants to be like you, its king! | 这只小猴子拿着一根棍子在练习，和你的一模一样。它想变得像你一样，像它的大王一样！ |
+| Play a word game with the monkey? If you win, it gives you 3 🐚. | 和这只猴子玩单词游戏吗？要是你赢了，它就给你3 🐚。 |
+| The monkey gives you 3 🐚. | 猴子给了你3 🐚。 |
+| Play a word game with the monkey, just for practice? | 和这只猴子玩单词游戏吗？只是练习一下？ |
+| This little monkey is practising too, swinging its stick at the air. It wants to be like you, its king! | 这只小猴子也在练习，对着空气挥舞着棍子。它想变得像你一样，像它的大王一样！ |
+| Play a word game with the monkey? If you win, it gives you a {桃子}. | 和这只猴子玩单词游戏吗？要是你赢了，它就给你一个{桃子}。 |
+| The monkey gives you a {桃子} for your bag. | 猴子给了你一个{桃子}，放进你的背包。 |
+| The monkey gives you a {桃子}. | 猴子给了你一个{桃子}。 |
+| This little monkey loves finding {蘑菇\|mushrooms} under the pines, just to look at. They’re not for eating! | 这只小猴子最喜欢在松树下面找{蘑菇\|mushrooms}，只是看看。它们可不能吃！ |
+| Oops! Your tail swishes against the little monkeys’ tower of stones as you go by, and down it all comes. | 哎呀！你走过的时候，尾巴扫到了小猴子们的石头塔，整座塔都倒了。 |
+| You’ve knocked over the little monkeys’ tower. | 你把小猴子们的塔碰倒了。 |
+| They laugh, and start building it up again, higher than before. | 它们哈哈大笑，又开始搭，搭得比原来还高。 |
+| The little monkeys are building a tower of stones, as high as it will go, before it falls! | 小猴子们在搭石头塔，要搭得越高越好，直到它倒下来！ |
+| Whoops! The little monkey chasing the dragonfly isn’t looking where it’s going, and bumps right into you. | 哎哟！追蜻蜓的小猴子没看路，一下子撞到了你身上。 |
+| It grins, and dashes off after the dragonfly again. | 它咧嘴一笑，又追着蜻蜓跑了。 |
+| It’s chasing a dragonfly, but the dragonfly is far too quick for it! | 它在追一只蜻蜓，可是蜻蜓飞得太快了！ |
+| They take turns to groom each other, picking through each other’s fur, as monkeys do with their friends. | 它们轮流给对方梳毛，在对方的毛里翻来翻去，猴子和朋友们就是这样的。 |
+| It’s soaking in the warm water up to its shoulders, eyes shut. Bliss! | 它泡在暖暖的水里，水一直到肩膀，眼睛闭着。真舒服！ |
+| The goat looks down over the edge. The banks can’t be climbed back up: look before you hop! | 山羊从边上往下看。土坡是爬不回去的：跳之前先看一看！ |
+| The goat nods down the mountain. From the lookout’s railing, you can see a long way. | 山羊朝山下点了点头。站在瞭望台的栏杆边，你能看得很远。 |
+| You can see a long way from a lookout like this! Wherever you find one, face its railing and press A to see the view. | 在这样的瞭望台上能看得很远！不管在哪里找到瞭望台，都可以面朝栏杆按A，看看风景。 |
+| Face the railing and press A to see the view. | 面朝栏杆按A，看看风景。 |
+| Some animals hide in the tall grass. Walk through it to find them, and answer their questions to make friends. | 有些动物藏在高高的草丛里。走进去找它们，回答它们的问题，和它们交朋友。 |
+| When the {老师} has a !, some of your words need practice: he’ll give you a lesson. | {老师}头上有 ! 的时候，就是你有些单词需要练习了：他会给你上课。 |
+| When the practice post by the pond has a !, some of your words are due: practise them there, so you don’t forget them. | 池塘边的练习木桩上有 ! 的时候，就是你有些单词该复习了：到那里练习一下，就不会忘了。 |
+| Earn shells by helping the troop, making friends and practising. The {老板} sells {苹果}: in a question, one takes away a wrong answer. | 帮猴群做事、交朋友、练习单词，都能挣到贝壳。{老板}卖{苹果}：答题时吃一个，能去掉一个错的答案。 |
+| Earn shells by helping the troop, making friends and practising. | 帮猴群做事、交朋友、练习单词，都能挣到贝壳。 |
+| Now and then a little bird lands on the grass near you: walk up to it and press A. | 有时候会有一只小鸟落在你身边的草地上：走过去按A。 |
+| The big monkey has made chopsticks out of {木头}, a pair for every monkey. | 大猴子用{木头}做了筷子，每只猴子一双。 |
+| A bamboo cup of the big monkey’s chopsticks goes on the feast’s big table. Now ask the hungry monkey what else the feast needs! | 一竹杯大猴子做的筷子摆上了宴会的大桌子。现在去问问饿猴子，宴会还缺什么！ |
+| The big monkey has made wooden spoons, for eating the {酸奶}. | 大猴子做了木勺子，用来吃{酸奶}。 |
+| The big monkey gives you a stick, to chase wild animals off the path. | 大猴子给了你一根棍子，用来把野兽从路上赶走。 |
+| Well fought! Wild creatures in the long grass fight like that, but they hurt: eat something to get your health back, or come back to the old monkey to rest. | 打得好！长草里的野兽也会这样打架，不过它们会伤到你：吃点东西让体力回来，或者回到老猴子身边休息。 |
+| First, he marks out the ground for the school, right here beside him. | 首先，他就在他身边这里，为学校划出了一块地。 |
+| To build it, the troop needs wood and small stones. The big monkey has cleared a way through the bushes at the top of the home ground, up to the pine wood. | 要盖学校，猴群需要木头和小石头。大猴子在家园最上面的灌木丛里开出了一条路，通到松林。 |
+| Look there for dead, dry pines: one hit with your stick knocks them down. Small stones lie by the water. | 到那里找枯死的干松树：用棍子敲一下就倒了。小石头在水边。 |
+| The mountain is big, so the big monkey gives you a map of it. Every place you’ve been is drawn on it, and each place you go will be too. Press MAP to look at it. | 山很大，所以大猴子给了你一张地图。你去过的每个地方都画在上面，你以后去的地方也会画上去。按“地图”键就能看。 |
+| The big monkey picks the ripe {西瓜}: they’re for the feast! Go and see them go on its {桌子}, by the big tree. | 大猴子摘下了熟透的{西瓜}：留着办宴会！去大树旁边，看它们摆上{桌子}。 |
+| The big monkey picks the ripe {葡萄}: they’re for the feast! Go and see them go on its {桌子}, by the big tree. | 大猴子摘下了熟透的{葡萄}：留着办宴会！去大树旁边，看它们摆上{桌子}。 |
+| The big monkey picks the ripe {香蕉}: they’re for the feast! Go and see them go on its {桌子}, by the big tree. | 大猴子摘下了熟透的{香蕉}：留着办宴会！去大树旁边，看它们摆上{桌子}。 |
+| The big monkey wants to grow fruit for the feast, in a garden. | 大猴子想在园子里种水果，留着办宴会。 |
+| He wants to make a garden by the stream. Come and see! | 他想在小溪边建一个园子。来看看吧！ |
+| Wild fruit grows on the mountain, in places the troop has found. Bring the big monkey its {种子}, and the troop will plant them here! | 山上长着野果，猴群已经找到了一些地方。把野果的{种子}带给大猴子，猴群就会把它们种在这里！ |
+| 我 means I or me. | “I”和“me”都是我的意思。 |
+| Your first story | 你的第一个故事 |
+| You read a whole story in Chinese: your story on Flower Fruit Mountain. | 你读完了一整个英语故事：你在花果山的故事。 |
+| The troop stares at the roaring waterfall. What could be behind it? | 猴群盯着轰隆隆的瀑布看。它后面会有什么呢？ |
+| Talk to the old monkey: he has something to ask you. | 和老猴子说话：他有事想请你帮忙。 |
+| The door won’t move. Finish everything on Flower Fruit Mountain first: | 门推不动。先把花果山的事情都做完： |
+| The door has rolled open. To go through, pass a short word test: match each word you learned here to its picture. | 门滚开了。要走过去，先通过一个小小的单词测验：把你在这里学会的每个单词和它的图片配对。 |
+| Walk around the mountain, look at things again and meet animals in the tall grass. Then come back to the door and try again. | 在山上走走，再看看各种东西，到高草丛里见见动物。然后回到门这里，再试一次。 |
+| Go through the door | 走过这道门 |
+| Back to the mountain | 回到山上 |
+| The tunnel leads behind the waterfall to <b>水帘洞</b> (Water Curtain Cave), where the story goes next. | 隧道通到瀑布后面的<b>水帘洞</b>（Water Curtain Cave），故事接下来就在那里。 |
+| That area isn’t built yet, so you’re back on the mountain for now. Your progress is saved. | 那个地方还没有做好，所以你暂时回到了山上。你的进度已经保存了。 |
+| Watch becoming king | 再看一遍当大王 |
+| Watch the school being built | 再看一遍盖学校 |
+| Watch the feast | 再看一遍宴会 |
+| Your home’s name | 你家的名字 |
+| a mountain of flowers and fruit | 开满鲜花、结满果子的山 |
+
+## Across the sea (content/across-the-sea.js)
+
+| English | 中文 |
+|---|---|
+| People! The first you’ve ever seen. They’re pointing at you… | 人！这是你第一次见到人。他们正指着你…… |
+| The people ran off into their hut! The old one dropped something on the sand as he ran. | 那些人跑进了他们的小屋！那个老人跑的时候，有东西掉在了沙滩上。 |
+| The human world | 人间 |
+| The teacher’s mountain | 老师的山 |
+| Chapter 2 | 第二章 |
+| The Demon of Havoc | 混世魔王 |
+| Find someone who knows where the immortals live: an immortal can teach you never to grow old. | 找到一个知道神仙住在哪里的人：神仙能教你长生不老。 |
+| Find an immortal who can teach you never to grow old. | 找到一位能教你长生不老的神仙。 |
+| Learn all you can from the immortal. | 向神仙学习你能学的一切。 |
+| Save the troop’s little monkeys from the Demon of Havoc. | 从混世魔王手里救出猴群的小猴子。 |
+| A real weapon for a king: the Dragon King’s palace, under the sea (still to come). | 一件配得上大王的真兵器：在海底的龙王宫里（还没有做好）。 |
+| Dressing like a person | 像人一样穿戴 |
+| You’ve crossed the sea to find an immortal, who can teach you never to grow old. But the people here run from a monkey! First, find something to wear. | 你漂洋过海来寻找神仙，神仙能教你长生不老。可是这里的人见到猴子就跑！先找些东西穿上吧。 |
+| People run from a monkey: find something to wear. | 人们见到猴子就跑：找些东西穿上。 |
+| Learning to talk | 学说话 |
+| Dressed like a person, you can go among people. Up the path is a village: learn to talk like the villagers, help them, and ask them where the immortals are. | 穿得像个人了，你就能走到人群里去了。顺着小路往上走，有一个村子：学着像村民一样说话，帮帮他们，再问问他们神仙在哪里。 |
+| Go up to the village, and meet the people there. | 走到村子里去，认识那里的人。 |
+| Help the villagers, and ask them where the immortals are ({askedVillage} of 3). | 帮助村民，问问他们神仙在哪里（{askedVillage}/3）。 |
+| The road east | 往东的路 |
+| Nobody in the village knows where the immortals are. Maybe someone further east does: the road goes east, through the fields, to a town. | 村子里没有人知道神仙在哪里。也许再往东有人知道：这条路往东穿过田野，通到一个小镇。 |
+| Follow the road east, through the fields, to the town. Help the farmer on the way, and ask him too. | 沿着路往东走，穿过田野，到小镇去。路上帮帮农民，也问问他。 |
+| The market town | 小镇 |
+| A busy market town, full of people. Help them, and ask them where the immortals are: someone here must know! | 一个热闹的小镇，到处都是人。帮帮他们，问问他们神仙在哪里：这里一定有人知道！ |
+| Help the people of the town, and ask them where the immortals are ({askedTown} of 3). | 帮助小镇上的人，问问他们神仙在哪里（{askedTown}/3）。 |
+| Across the western sea | 渡过西边的海 |
+| Years go by, and nobody in the town knows. But at the harbour, boats sail all over the sea: maybe someone there knows… | 很多年过去了，小镇上还是没有人知道。可是码头上的船开往海上的四面八方：也许那里有人知道…… |
+| Ask at the harbour: someone there must know. | 到码头上问问：那里一定有人知道。 |
+| Sail west across the sea, with the boatman. | 和船夫一起往西渡海。 |
+| Find out where the immortal lives. | 打听神仙住在哪里。 |
+| The climb | 爬山 |
+| Climb the mountain, to the immortal’s cave. | 爬上山，去神仙的山洞。 |
+| Spring | 春天 |
+| The immortal is waiting for you, in his cave. You’ll live here a whole year, and he’s a great teacher: learn all you can! | 神仙在他的山洞里等着你。你要在这里住整整一年，他是一位了不起的老师：能学的都学吧！ |
+| Learn from the master, and help in the cave. | 向师父学习，在山洞里帮忙。 |
+| Summer | 夏天 |
+| Summer in the cave: long, hot days, and everything green. | 山洞里的夏天：白天又长又热，到处都是绿的。 |
+| Help in the cave through the summer. | 整个夏天都在山洞里帮忙。 |
+| Autumn | 秋天 |
+| Autumn: the leaves are turning red and gold, and falling. | 秋天：树叶变红变黄，纷纷落下。 |
+| Get the cave ready for the winter. | 让山洞为过冬做好准备。 |
+| Winter | 冬天 |
+| Winter: snow on the mountain, and cold in the cave. Nothing grows now, and the stores are getting low. | 冬天：山上下雪了，山洞里很冷。现在什么都不长了，存粮也快吃完了。 |
+| Fetch rice and fish from the fishing village, across the sea. | 渡海去渔村取米和鱼。 |
+| Keep warm, and help in the cave. | 保持暖和，在山洞里帮忙。 |
+| The last days of the year. | 一年的最后几天。 |
+| Part 6 | 第六部分 |
+| The master’s secret | 师父的秘密 |
+| Seven years have gone by. You’ve learned a lot, but not yet what you came for: how never to grow old… | 七年过去了。你学了很多，可是还没有学到你来这里要学的：怎样长生不老…… |
+| Find out what the master’s riddle means. | 弄明白师父的谜语是什么意思。 |
+| Part 7 | 第七部分 |
+| Changing into things | 变化 |
+| The master has told you his secret, at night. Now learn to change into things, and to fly! | 夜里，师父把他的秘密告诉了你。现在学会变成各种东西，还要学会飞！ |
+| Learn to change into things, and to fly. | 学会变成各种东西，还要学会飞。 |
+| Part 8 | 第八部分 |
+| Showing off | 炫耀 |
+| Showing off to the pupils has made the master angry… | 你在师兄弟面前炫耀，惹得师父生气了…… |
+| The master wants to see you. | 师父想见你。 |
+| Home again | 又回家了 |
+| Home, after twenty years. Find the troop: they’re hiding. | 二十年后回到家了。去找猴群：它们藏起来了。 |
+| The little demons | 小妖 |
+| A demon from the north, the Demon of Havoc, has carried off the troop’s little ones. Some of his little demons are still here… | 北边来的一个魔王，混世魔王，抓走了猴群的小猴子。他的几个小妖还在这里…… |
+| Chase the little demons off the home ground ({demonsChased} of 3). | 把小妖赶出家园（{demonsChased}/3）。 |
+| The demon’s mountain | 魔王的山 |
+| Far to the north: the Demon of Havoc’s mountain. The troop’s little ones are here somewhere! | 在遥远的北边：混世魔王的山。猴群的小猴子就在这里的什么地方！ |
+| Find the little monkeys, and set them free ({freed} of 5). | 找到小猴子们，把它们放出来（{freed}/5）。 |
+| The troop’s things are on a {车\|cart}: beat the little {妖怪\|demon} guarding it. | 猴群的东西在一辆{车\|cart}上：打败看守它的小{妖怪\|demon}。 |
+| Pull the {车\|cart} back to the little monkeys. | 把{车\|cart}拉回小猴子们那里。 |
+| The little demons have run into the cave, shouting. Out comes their master… | 小妖们大喊大叫地跑进了山洞。它们的主人出来了…… |
+| Beat the Demon of Havoc. | 打败混世魔王。 |
+| Home | 回家 |
+| The Demon of Havoc has run off for good. Take the little monkeys home! | 混世魔王永远地逃走了。带小猴子们回家吧！ |
+| Home with the little monkeys and the {车\|cart}: put the troop’s things back on the feast’s {桌子\|tables}. | 带着小猴子们和{车\|cart}回到家：把猴群的东西放回宴会的{桌子\|tables}上。 |
+| Home with the little monkeys: celebrate with the troop. | 带着小猴子们回到家：和猴群一起庆祝。 |
+| That’s the end of Area 2. | 第二部分到这里就结束了。 |
+| What does she want? Take it off the cart. | 她想要什么？把它从车上拿下来。 |
+| She says it only in Chinese. Take it off the cart: press A at the cart. | 她只说英语。把它从车上拿下来：对着车按A。 |
+| You’re carrying the {item}. Put it down on its table. | 你拿着{item}。把它放到它的桌子上。 |
+| Not on this table: it goes on the other one. | 不是这张桌子：它要放在另一张上。 |
+| Everything’s back on the feast’s tables! The troop brings out the rest, and everyone celebrates: your friends come too. | 东西都放回宴会的桌子上了！猴群拿出了剩下的东西，大家一起庆祝：你的朋友们也来了。 |
+| the well | 井 |
+| a house | 一座房子 |
+| the gate in the white wall | 白墙上的门 |
+| the fishermen’s nets | 渔夫的网 |
+| their boats | 他们的船 |
+| a chicken | 一只鸡 |
+| who’s at the gate | 谁在门口 |
+| the granny’s rice | 老奶奶的米饭 |
+| Quick game | 快速游戏 |
+| Something new is coming, after a little more practice: {left} more questions. Fishing, the stepping stones and your friends in the long grass all count. Or play a quick word game now? | 再练习一下，就有新东西要学啦：还要答{left}道题。钓鱼、踏脚石，还有长草里的朋友都算数。或者现在玩一个快速单词游戏？ |
+| with quick practice (练习), in the menu | 用菜单里的“practice（练习）” |
+| Ask | 问一问 |
+| You don’t know what this is. Maybe someone can tell you, once you know how to ask. | 你不知道这是什么。等你学会怎么问，也许有人能告诉你。 |
+| You don’t know what this is. Ask someone: walk up to it with a person nearby, and press A. | 你不知道这是什么。问问别人吧：在旁边有人的时候走到它跟前，按A。 |
+| You leap onto a cloud, and somersault away! | 你跳上一朵云，翻着跟头飞走了！ |
+| A page of your scroll is full: show it to your {师父\|master} | 你的卷轴有一页满了：拿给你的{师父\|master}看看 |
+| A page of your scroll is full: show it to the {老\|old} monkey | 你的卷轴有一页满了：拿给{老\|old}猴子看看 |
+| The {老\|old} man dropped something on the sand as he ran: go and find it | 那个{老\|old}人跑的时候，有东西掉在了沙滩上：去找找看 |
+| Make {朋友\|friends} with the goose on the sand | 和沙滩上的鹅交{朋友\|friends} |
+| Something else is blowing along the sand: pick it up too | 还有东西在沙滩上被风吹着跑：也把它捡起来 |
+| Catch three {鱼\|fish} for the fishermen: fish off the pier with your {鱼竿} ({pierCaught}/3) | 给渔夫们钓三条{鱼\|fish}：用你的{鱼竿}在码头上钓鱼（{pierCaught}/3） |
+| Take the {鱼\|fish} to the fisherman on the pier | 把{鱼\|fish}拿给码头上的渔夫 |
+| Go up the {路\|path} to the village | 沿着{路\|path}往上走，去村子 |
+| The {孩子\|child} in the village wants to play again | 村子里的{孩子\|child}想再玩一次 |
+| Ask {人\|people} about things ({askedWords}/5): face something that sparkles ✨ with someone near, and press A. Still to find: {left:askedWords}. | 向{人\|people}打听东西（{askedWords}/5）：旁边有人的时候，面对一样闪闪发光✨的东西按A。还要找：{left:askedWords}。 |
+| Knock on the {门} in the white wall | 敲敲白墙上的{门} |
+| Catch a {鱼} for the fisherman: face the sea or the stream with your {鱼竿}, and press A | 给渔夫钓一条{鱼}：拿着你的{鱼竿}面朝大海或者小溪，按A |
+| The sea, or the village’s stream | 大海，或者村子里的小溪 |
+| Take the {鱼} to the fisherman in the village | 把{鱼}拿给村子里的渔夫 |
+| Make {朋友\|friends} with the chicken in the yard | 和院子里的鸡交{朋友\|friends} |
+| The hens are out of their yard! Catch them, and carry them back ({hensBack}/4) | 母鸡跑出院子了！抓住它们，把它们抱回去（{hensBack}/4） |
+| Find the {孩子\|child}: they’re hiding somewhere in the village | 找到那个{孩子\|child}：他藏在村子里的什么地方 |
+| Help the people of the village, and ask them {哪里\|where} the immortals are ({askedVillage}/3) | 帮助村子里的人，问问他们神仙在{哪里\|where}（{askedVillage}/3） |
+| Ask the {孩子\|child} where the immortals are | 问问那个{孩子\|child}神仙在哪里 |
+| Ask the fisherman {哪里\|where} the immortals are | 问问渔夫神仙在{哪里\|where} |
+| Ask the villager by the hens’ yard {哪里\|where} the immortals are | 问问鸡院子旁边的村民，神仙在{哪里\|where} |
+| Learn to {说\|talk} like the villagers: learn the village’s words ({villageWords}/12). Still to find: {left:villageWords} | 学着像村民一样{说\|talk}话：学会村子里的单词（{villageWords}/12）。还要找：{left:villageWords} |
+| The village and the shore | 村子和海边 |
+| Follow the {路\|road} east, to the fields | 沿着{路\|road}往东走，到田边去 |
+| Shoo the {鸟\|birds} off the farmer’s rice ({birdsShooed}/5) | 把{鸟\|birds}从农民的稻田里赶走（{birdsShooed}/5） |
+| The {鸟\|birds} have gone: go back to the farmer | {鸟\|birds}都走了：回去找农民 |
+| The farmer is hungry: ask the granny by the well for some {米饭\|rice} for him | 农民饿了：去井边找老奶奶要一些{米饭\|rice}给他 |
+| Take the {米饭\|rice} to the farmer in the fields | 把{米饭\|rice}拿给田里的农民 |
+| Make {朋友\|friends} with the dog by the road | 和路边的狗交{朋友\|friends} |
+| Ask the farmer {哪里\|where} the immortals are | 问问农民神仙在{哪里\|where} |
+| Follow the {路\|road} east, to the town | 沿着{路\|road}往东走，到小镇去 |
+| Change your {钱\|money}: talk to the money changer at the market | 换{钱\|money}：去集市上找换钱的说话 |
+| Help the people of the town, and ask them {哪里\|where} the immortals are ({askedTown}/3) | 帮助小镇上的人，问问他们神仙在{哪里\|where}（{askedTown}/3） |
+| Ask the granny in the town {哪里\|where} the immortals are | 问问小镇上的老奶奶神仙在{哪里\|where} |
+| Ask the teahouse keeper {哪里\|where} the immortals are | 问问茶馆老板神仙在{哪里\|where} |
+| Ask the storyteller {哪里\|where} the immortals are | 问问说书人神仙在{哪里\|where} |
+| Learn to {说\|talk} like the townspeople: find someone with a ! over them ({townWords}/10) | 学着像镇上的人一样{说\|talk}话：找头上有 ! 的人（{townWords}/10） |
+| Buy a {包子} at the market for the granny | 在集市上给老奶奶买一个{包子} |
+| Buy an {苹果} at the market for the granny | 在集市上给老奶奶买一个{苹果} |
+| Buy a {桃子} at the market for the granny | 在集市上给老奶奶买一个{桃子} |
+| Take it to the granny in the town | 把它拿给小镇上的老奶奶 |
+| Carry four sacks onto the {船\|boat} for the docker ({cargoCarried}/4) | 帮码头工人把四袋东西搬上{船\|boat}（{cargoCarried}/4） |
+| Carry the sack down the pier, and put it on the {船\|boat} ({cargoCarried}/4) | 把这袋东西沿着码头搬下去，放到{船\|boat}上（{cargoCarried}/4） |
+| Tell the docker the sacks are on the {船\|boat} | 告诉码头工人，袋子都搬上{船\|boat}了 |
+| Make {朋友\|friends} with the cat in the market | 和集市上的猫交{朋友\|friends} |
+| Cross the {桥\|bridge} to the harbour: maybe someone there knows | 过{桥\|bridge}去码头：也许那里有人知道 |
+| Ask the docker {哪里\|where} the immortals are | 问问码头工人神仙在{哪里\|where} |
+| Ask everyone on your list {哪里\|where} the immortals are ({asked}/8): tap the faces on your Tasks page to see who’s left | 问问你名单上的每一个人神仙在{哪里\|where}（{asked}/8）：在任务页上点头像，就能看到还剩谁 |
+| Ask the boatman {哪里\|where} the immortals are: the boatman has sailed all over the sea | 问问船夫神仙在{哪里\|where}：船夫去过海上的四面八方 |
+| Ask the boatman to take you across the {海\|sea} | 请船夫带你渡过{海\|sea} |
+| Wait for the {风\|wind}: practise a little, then go back to the boatman | 等{风\|wind}来：先练习一下，再回去找船夫 |
+| Someone is singing among the {树\|trees}. Go and find them | 有人在{树\|trees}林里唱歌。去找找他 |
+| The woodcutter has gone back to his {家\|home}, up the steps. Find out if he needs help | 樵夫顺着台阶回到他{家\|home}了。去看看他需不需要帮忙 |
+| Bring the woodcutter {什么\|what} he asks for, as many as he asks for: it’s by his hut. Talk to him again to {听\|listen} again | 樵夫要{什么\|what}，要多少，就给他带来：东西都在他的小屋旁边。再和他说话，就能再{听\|listen}一遍 |
+| Climb the {山\|mountain}, to find where the immortal lives | 爬上{山\|mountain}，找到神仙住的地方 |
+| Climb the walkway up the cliff. Gusts of {风\|wind} blow across it: wait for one to drop, then cross the windy planks quickly | 顺着山崖上的栈道往上爬。一阵阵的{风\|wind}吹过栈道：等风停了，再快快地走过有风的木板 |
+| Make {朋友\|friends} with the {鹤} by the pool | 和水池边的{鹤}交{朋友\|friends} |
+| Find the immortal’s {洞\|cave}, up at the top | 找到山顶上神仙的{洞\|cave} |
+| Go in through the stone {门\|door}, and find the old man in front of the hall | 从石{门\|door}走进去，找到大殿前面的那位老人 |
+| Your {师父\|master} has something to ask you | 你的{师父\|master}有事想问你 |
+| A pupil wants to play I spy: {听\|listen}, then find what she sees, and press A at it | 一个师姐想玩“我看见”的游戏：{听\|listen}一听，找到她看见的东西，对着它按A |
+| The {师父\|master}’s first class is about to begin | {师父\|master}的第一堂课要开始了 |
+| Morning training! The senior pupil is waiting for you | 早上练功了！大师兄在等你 |
+| Plant your little peach {树\|tree} in the garden, where the ground sparkles ✨: face it, and press A | 把你的小桃{树\|tree}种在园子里地面闪闪发光✨的地方：面对它，按A |
+| Your little {树\|tree} is thirsty: fill your {桶\|bucket} at the pool | 你的小{树\|tree}渴了：去水池把你的{桶\|bucket}装满水 |
+| Water your little peach {树\|tree}: face it, and press A | 给你的小桃{树\|tree}浇水：面对它，按A |
+| A pupil wants to train with you: a quick word game | 一个师兄想和你一起练习：一个快速单词游戏 |
+| It’s a hot {夏天\|summer}’s day. The senior pupil has a job for you | 今天是个炎热的{夏天\|summer}。大师兄有活儿给你 |
+| The {师父\|master}’s summer class is about to begin | {师父\|master}的夏天课要开始了 |
+| A pupil wants a friendly match with you | 一个师兄想和你友好地比一场 |
+| The {师父\|master} needs your help with something | {师父\|master}有件事需要你帮忙 |
+| Find three lingzhi for the {师父\|master}’s medicine: they grow among the stone pillars, outside the cave ({herbsFound}/3) | 给{师父\|master}找三棵做药的灵芝：它们长在山洞外面的石林里（{herbsFound}/3） |
+| Find three lingzhi on the {山\|mountain}’s rocks: they sparkle ✨ ({herbsFound}/3) | 在{山\|mountain}上的石头间找三棵灵芝：它们闪闪发光✨（{herbsFound}/3） |
+| Take the lingzhi to the {师父\|master} | 把灵芝拿给{师父\|master} |
+| A yellow {叶子\|leaf} has drifted down by your room: face it, and press A | 一片黄{叶子\|leaf}飘落在你的房间旁边：面对它，按A |
+| The senior pupil has one more thing to teach you | 大师兄还有一样东西要教你 |
+| The {师父\|master}’s autumn class is about to begin | {师父\|master}的秋天课要开始了 |
+| The first {雪\|snow} is settling by your room: face it, and press A | 第一场{雪\|snow}落在你的房间旁边：面对它，按A |
+| It’s {秋天\|autumn}. The senior pupil has jobs for you | {秋天\|autumn}到了。大师兄有活儿给你 |
+| {扫\|Sweep} up the five heaps of fallen {叶子\|leaves}: face one, and press A ({leavesSwept}/5) | 把五堆落{叶子\|leaves}{扫\|Sweep}干净：面对一堆，按A（{leavesSwept}/5） |
+| Tell the senior pupil the {叶子\|leaves} are swept up | 告诉大师兄，{叶子\|leaves}都扫干净了 |
+| Bring the senior pupil {什么\|what} he asks for. Talk to him again to {听\|listen} again | 大师兄要{什么\|what}，就给他带来。再和他说话，就能再{听\|listen}一遍 |
+| The senior pupil has one more job for you before {冬天\|winter} | {冬天\|winter}来之前，大师兄还有一件活儿给你 |
+| It’s {冬天\|winter}, and cold! The senior pupil has a job for you | {冬天\|winter}到了，好冷！大师兄有活儿给你 |
+| Take {木头\|wood} from the woodpile, for the fire | 从柴堆里拿{木头\|wood}，用来生火 |
+| Light a {火\|fire} in the brazier, in the middle of the courtyard: face it, and press A | 在院子中间的火盆里生{火\|fire}：面对它，按A |
+| Your little {树\|tree} is cold: wrap its trunk in straw. Face it, and press A | 你的小{树\|tree}冷了：用稻草把它的树干包起来。面对它，按A |
+| The {师父\|master}’s winter class is about to begin | {师父\|master}的冬天课要开始了 |
+| A pupil wants to build something with you, out of {雪\|snow} | 一个师兄想和你一起用{雪\|snow}堆个东西 |
+| The senior pupil needs your help | 大师兄需要你帮忙 |
+| Go down the {山\|mountain} and across the sea, to the fishing village. Buy rice and {鱼\|fish} there, for the senior pupil | 下{山\|mountain}，渡过大海，去渔村。在那里买米和{鱼\|fish}，给大师兄带回来 |
+| Buy rice from the granny, and {鱼\|fish} from the fisherman | 找老奶奶买米，找渔夫买{鱼\|fish} |
+| The boatman is waiting on the beach below the village, to take you back across the {海\|sea} | 船夫在村子下面的海滩上等着，要带你渡回{海\|sea}那边 |
+| The boatman will take you back across the {海\|sea} | 船夫会带你渡回{海\|sea}那边 |
+| Go to the foot of the {山\|mountain}: the pupils’ basket will haul you up | 到{山\|mountain}脚下去：师兄弟们的篮子会把你拉上去 |
+| Climb into the pupils’ {篮子\|basket}: face it, and press A | 爬进师兄弟们的{篮子\|basket}：面对它，按A |
+| Take the rice and {鱼\|fish} to the senior pupil | 把米和{鱼\|fish}拿给大师兄 |
+| The senior pupil wants a match with you: the {年\|year}’s big match | 大师兄想和你比一场：一{年\|year}一次的大比赛 |
+| It’s the last night of the {年\|year}: the {师父\|master} is waiting for you | 今天是一{年\|year}的最后一个晚上：{师父\|master}在等你 |
+| A pupil wants a snowball fight with you | 一个师兄想和你打雪仗 |
+| A {孩子\|child} in the town wants a snowball fight with you | 小镇上的一个{孩子\|child}想和你打雪仗 |
+| A {孩子\|child} in the fields wants a snowball fight with you | 田边的一个{孩子\|child}想和你打雪仗 |
+| A {孩子\|child} in the village wants a snowball fight with you | 村子里的一个{孩子\|child}想和你打雪仗 |
+| Time to {睡觉\|sleep}: go to your room in the rock, face its door, and press A | 该{睡觉\|sleep}了：回到你在石头里的房间，面对房门，按A |
+| Go to the {师父\|master}’s lecture, in front of the hall | 去大殿前面听{师父\|master}讲课 |
+| The {师父\|master} wants to see you | {师父\|master}想见你 |
+| Three taps on the {头\|head}, then the back {门\|door}… Wait for night: press A at your room in the rock | 在{头\|head}上敲三下，然后是后{门\|door}……等天黑：对着你在石头里的房间按A |
+| Go quietly to the {师父\|master}’s back door, beside the hall | 悄悄地去大殿旁边，{师父\|master}的后门 |
+| Talk to your {师父\|master} | 和你的{师父\|master}说话 |
+| The {师父\|master} wants to test you | {师父\|master}想考考你 |
+| The {师父\|master} has one more thing to teach you | {师父\|master}还有一样东西要教你 |
+| The pupils want to {看\|see} you change into something | 师兄弟们想{看\|see}你变成什么东西 |
+| The {师父\|master} is angry with you. Go and {说\|talk} to him | {师父\|master}生你的气了。去和他{说\|talk}说 |
+| Someone near your stone is {哭\|crying} | 你的石头旁边有人在{哭\|crying} |
+| The troop is hiding! A bush sparkles ✨ over there: someone’s behind it | 猴群藏起来了！那边有一丛灌木闪闪发光✨：后面有人 |
+| The others are hiding up at the home ground, by the {瀑布\|waterfall} | 其他猴子都藏在上面的家园里，在{瀑布\|waterfall}旁边 |
+| The {老\|old} monkey is hiding in the Water Curtain Cave: jump through the waterfall | {老\|old}猴子藏在水帘洞里：从瀑布中间跳过去 |
+| Little {妖怪\|demons} are on the home ground! Chase them off | 家园里有小{妖怪\|demons}！把它们赶走 |
+| Chase the next little {妖怪\|demon} off the home ground | 把下一个小{妖怪\|demon}赶出家园 |
+| One more little {妖怪\|demon} to chase off | 还有一个小{妖怪\|demon}要赶走 |
+| The little {妖怪\|demons} have gone. Tell the {老\|old} monkey | 小{妖怪\|demons}都走了。告诉{老\|old}猴子 |
+| Fly north on your {云\|cloud}, to the demon’s mountain | 乘着你的{云\|cloud}往北飞，去魔王的山 |
+| Climb up to the {洞\|cave} at the top. Something’s burning in front of it | 爬到山顶的{洞\|cave}那里。洞前面有东西在烧 |
+| Someone is calling out, near the {火\|fire} | {火\|fire}旁边有人在喊 |
+| Little {猴子\|monkeys} are locked in {笼子\|cages}! | 小{猴子\|monkeys}被关在{笼子\|cages}里！ |
+| Who has the {钥匙\|key}? Ask the guard at the cave’s {门\|door} | 谁拿着{钥匙\|key}？去问问洞{门\|door}口的看守 |
+| The guard won’t give a monkey the {钥匙\|key}. Hide behind a boulder, {变\|change} into a little {妖怪\|demon}, and ask him again | 看守不肯把{钥匙\|key}给猴子。躲到一块大石头后面，{变\|change}成一个小{妖怪\|demon}，再去问他 |
+| Open the {笼子\|cages} with the {钥匙\|key} ({freed}/5) | 用{钥匙\|key}打开{笼子\|cages}（{freed}/5） |
+| The troop’s things are on a {车\|cart}, over on the right. Beat the little {妖怪\|demon} guarding it | 猴群的东西在一辆{车\|cart}上，就在右边。打败看守它的小{妖怪\|demon} |
+| Pull the {车\|cart} back to the little monkeys | 把{车\|cart}拉回小猴子们那里 |
+| Pull the {车\|cart} back to the little monkeys, by the {笼子\|cages} | 把{车\|cart}拉回{笼子\|cages}旁边的小猴子们那里 |
+| Beat {混世魔王} | 打败{混世魔王} |
+| The hungry monkey wants the troop’s things off the {车\|cart}, one at a time: {听\|listen}, then take each off it | 饿猴子想把猴群的东西一样一样从{车\|cart}上拿下来：{听\|listen}一听，再把每样东西拿下来 |
+| Put it down on the big {桌子\|table} | 把它放到大{桌子\|table}上 |
+| Put the {牛奶\|milk} down on the table beside the big one | 把{牛奶\|milk}放到大桌子旁边的那张桌子上 |
+| Give your {棍子\|stick} to the little monkey in training | 把你的{棍子\|stick}给正在练功的小猴子 |
+| The {老\|old} monkey wants to talk to you | {老\|old}猴子想和你说话 |
+| That’s the end of Area 2! The Dragon King’s palace, under the {海\|sea}, is still to come. Until then, practise your words, and visit your {朋友\|friends}. | 第二部分结束了！{海\|sea}底的龙王宫还没有做好。在那之前，练习你的单词，去看看你的{朋友\|friends}吧。 |
+| Far to the north lives {混世魔王}. Fly there on your {云\|cloud}, from the home ground. | {混世魔王}住在遥远的北边。乘着你的{云\|cloud}，从家园飞过去。 |
+| Find someone with a ! over them. | 找头上有 ! 的人。 |
+| Find someone in the {洞\|cave} with a ! over them. | 在{洞\|cave}里找头上有 ! 的人。 |
+| Climb the {山\|mountain}, to find where the immortal lives. | 爬上{山\|mountain}，找到神仙住的地方。 |
+| Walk about on the shore. | 在海边走走。 |
+| Find someone with a ! over them, and ask {人\|people} about things. | 找头上有 ! 的人，向{人\|people}打听东西。 |
+| Make friends with the {鹅\|goose} on the sand | 和沙滩上的{鹅\|goose}交朋友 |
+| Dress like a {人\|person} | 穿得像个{人\|person} |
+| Go up to the village | 走到村子里去 |
+| Play the {孩子\|child}’s game | 玩那个{孩子\|child}的游戏 |
+| Find out how to ask about things | 学会怎么打听东西 |
+| Ask the villagers {哪里\|where} the immortals are ({askedVillage}/3) | 问问村民神仙在{哪里\|where}（{askedVillage}/3） |
+| Ask about things in the village and on the shore ({askedWords}/5) | 在村子里和海边打听东西（{askedWords}/5） |
+| Catch {鱼\|fish} for the fishermen’s basket | 给渔夫的篮子钓{鱼\|fish} |
+| Make {朋友\|friends} with the chicken | 和鸡交{朋友\|friends} |
+| Catch the hens, and carry them back to their yard | 抓住母鸡，把它们抱回院子 |
+| Play hide and seek with the village {孩子\|children} | 和村里的{孩子\|children}玩捉迷藏 |
+| Have lunch with the granny | 和老奶奶一起吃午饭 |
+| Catch a {鱼} for the fisherman | 给渔夫钓一条{鱼} |
+| Help the farmer in the fields | 帮田里的农民 |
+| Change your {钱\|money} in the town | 在小镇上换{钱\|money} |
+| Ask the people of the town {哪里\|where} the immortals are ({askedTown}/3) | 问问小镇上的人神仙在{哪里\|where}（{askedTown}/3） |
+| Learn to {说\|talk} like the townspeople ({townWords}/10) | 学着像镇上的人一样{说\|talk}话（{townWords}/10） |
+| Go shopping for the granny in the town | 替小镇上的老奶奶买东西 |
+| Help the docker load the {船\|boat} | 帮码头工人装{船\|boat} |
+| Find someone who knows {哪里\|where} the immortals are | 找到一个知道神仙在{哪里\|where}的人 |
+| Sail across the western {海\|sea} | 渡过西边的{海\|sea} |
+| Find out {哪里\|where} the immortal lives | 打听神仙住在{哪里\|where} |
+| Help the woodcutter at his hut | 在樵夫的小屋帮他的忙 |
+| Make {朋友\|friends} with the {鹤} on the cliff road | 和栈道上的{鹤}交{朋友\|friends} |
+| Find the immortal’s {洞\|cave} | 找到神仙的{洞\|cave} |
+| Find out your new {名字\|name} | 知道你的新{名字\|name} |
+| Go to the {师父\|master}’s first class | 去上{师父\|master}的第一堂课 |
+| Morning training with the pupils | 和师兄弟们一起早上练功 |
+| Plant and water your own peach {树\|tree} | 种下你自己的桃{树\|tree}，再给它浇水 |
+| Play I spy with a pupil | 和一个师姐玩“我看见”的游戏 |
+| Train with a pupil, and win | 和一个师兄练习，并且赢了他 |
+| Fetch {水\|water} for the pupils | 给师兄弟们打{水\|water} |
+| Go to the {师父\|master}’s summer class | 去上{师父\|master}的夏天课 |
+| Have a friendly match with a pupil | 和一个师兄友好地比一场 |
+| Find lingzhi for the {师父\|master}’s medicine | 给{师父\|master}找做药的灵芝 |
+| Sweep up the fallen {叶子\|leaves} | 把落下的{叶子\|leaves}扫干净 |
+| Chop firewood for the {冬天\|winter} | 为{冬天\|winter}劈柴 |
+| Write your {名字\|name} with a brush | 用毛笔写你的{名字\|name} |
+| Go to the {师父\|master}’s autumn class | 去上{师父\|master}的秋天课 |
+| Light a {火\|fire} for the pupils | 给师兄弟们生一堆{火\|fire} |
+| Wrap your peach {树\|tree} in straw | 用稻草把你的桃{树\|tree}包起来 |
+| Go to the {师父\|master}’s winter class | 去上{师父\|master}的冬天课 |
+| Build a {雪人\|snowman} | 堆一个{雪人\|snowman} |
+| Fetch rice and {鱼\|fish} from the fishing village | 从渔村取米和{鱼\|fish}回来 |
+| Win a snowball fight | 打赢一场雪仗 |
+| Win the {年\|year}’s big match | 赢得一{年\|year}一次的大比赛 |
+| New Year’s Eve, the last night of the {年\|year} | 除夕，一{年\|year}的最后一个晚上 |
+| Solve the {师父\|master}’s riddle | 解开{师父\|master}的谜语 |
+| Learn to {变\|change} into things, and to {飞\|fly} | 学会{变\|change}成各种东西，还要学会{飞\|fly} |
+| Go {回家\|home} | {回家\|home} |
+| Find the troop: they’re hiding | 找到猴群：它们藏起来了 |
+| Chase the little {妖怪\|demons} off the home ground | 把小{妖怪\|demons}赶出家园 |
+| Set the little monkeys free | 把小猴子们放出来 |
+| Bring back the troop’s things | 把猴群的东西拿回来 |
+| Put the troop’s things back on the feast’s {桌子\|tables} | 把猴群的东西放回宴会的{桌子\|tables}上 |
+| Take the little monkeys {回家\|home} | 带小猴子们{回家\|home} |
+| Who knows? | 谁知道？ |
+| The granny wants {包子\|steamed buns}. Buy a steamed bun at the market, and bring it to her! | 老奶奶想要{包子\|steamed buns}。去集市上买一个包子，带给她！ |
+| The granny wants {苹果\|an apple}. Buy an apple at the market, and bring it to her! | 老奶奶想要{苹果\|an apple}。去集市上买一个苹果，带给她！ |
+| The granny wants {桃子\|a peach}. Buy a peach at the market, and bring it to her! | 老奶奶想要{桃子\|a peach}。去集市上买一个桃子，带给她！ |
+| The fishermen want fish for their basket. Fish off the pier beside them: face the sea, and press A. Three, please! | 渔夫们想要鱼装进篮子里。就在他们旁边的码头上钓：面朝大海，按A。请钓三条！ |
+| The fisherman wants a fish. Catch one with your {鱼竿}: face the sea or the stream, and press A. | 渔夫想要一条鱼。用你的{鱼竿}钓一条：面朝大海或者小溪，按A。 |
+| Coins: the money people use. The fisherman pays you for the fish! | 铜钱：人们用的钱。渔夫付钱买你的鱼！ |
+| The fisherman gives you 3 🪙. Now you have coins! | 渔夫给了你3 🪙。现在你有铜钱了！ |
+| The farmer is hungry, but his lunch is back in the village. Ask the granny by the well for some {米饭\|rice} for him! | 农民饿了，可是他的午饭还在村子里。去井边找老奶奶要一些{米饭\|rice}给他！ |
+| The peddler gives you the {item}. | 货郎把{item}给了你。 |
+| Earn more by helping people and making friends with animals. | 多帮人们的忙，多和动物交朋友，就能挣到更多。 |
+| The peddler looks puzzled: you pointed at the {item}, but asked for something else! | 货郎一脸疑惑：你指的是{item}，说的却是别的东西！ |
+| You asked the peddler for the wrong thing. | 你跟货郎要错了东西。 |
+| Come back another time. | 下次再来吧。 |
+| You put the {苹果} in your bag. | 你把{苹果}放进了背包。 |
+| You put the {桃子} in your bag. | 你把{桃子}放进了背包。 |
+| A steamed bun, soft and hot. | 一个包子，又软又热。 |
+| You put the {包子} in your bag. | 你把{包子}放进了背包。 |
+| The stallholder gives you the {item}. | 摊主把{item}给了你。 |
+| The stallholder looks puzzled: you pointed at the {item}, but asked for something else! | 摊主一脸疑惑：你指的是{item}，说的却是别的东西！ |
+| You asked the stallholder for the wrong thing. | 你跟摊主要错了东西。 |
+| A steamed bun, soft and hot, with something tasty inside. | 一个包子，又软又热，里面还有好吃的馅儿。 |
+| You put the {包子} in your bag. In a word game, eat it to take away a wrong answer. | 你把{包子}放进了背包。玩单词游戏时吃了它，就能去掉一个错的答案。 |
+| Tofu, fried till it’s golden. It smells terrible, and tastes good! | 炸得金黄的豆腐。闻起来好臭，吃起来好香！ |
+| You put the {臭豆腐} in your bag. Eat it out on the map, and wild creatures keep away from the smell for two minutes. | 你把{臭豆腐}放进了背包。在地图上吃了它，两分钟里野兽闻到这股味儿都不敢靠近。 |
+| The granny gives you the {item}. | 老奶奶把{item}给了你。 |
+| The senior pupil gave you enough for the rice and the fish. Spent some? Catch big {鱼\|fish} with your rod and sell them, 1 🪙 each. | 大师兄给你的钱够买米和鱼。花掉了一些？用你的鱼竿钓大{鱼\|fish}去卖，每条1 🪙。 |
+| The granny looks puzzled: you pointed at the {item}, but asked for something else! | 老奶奶一脸疑惑：你指的是{item}，说的却是别的东西！ |
+| You asked the granny for the wrong thing. | 你跟老奶奶要错了东西。 |
+| A sack of rice, for the cave. | 一袋米，给山洞用的。 |
+| You carry the sack of {米\|rice} for the senior pupil. | 你替大师兄扛着那袋{米\|rice}。 |
+| The fisherman gives you the {item}. | 渔夫把{item}给了你。 |
+| The fisherman looks puzzled: you pointed at the {item}, but asked for something else! | 渔夫一脸疑惑：你指的是{item}，说的却是别的东西！ |
+| You asked the fisherman for the wrong thing. | 你跟渔夫要错了东西。 |
+| A big fish, for the cave. | 一条大鱼，给山洞用的。 |
+| You carry the {鱼\|fish} for the senior pupil. | 你替大师兄拿着那条{鱼\|fish}。 |
+| You have shoes now! Come back another time. | 你现在有鞋了！下次再来吧。 |
+| Cloth shoes, black, with thick soles. | 黑色的布鞋，鞋底很厚。 |
+| You put on your new {鞋}. Now you look just like a person! | 你穿上了新{鞋}。现在你看起来就像一个人了！ |
+| The money changer looks puzzled: you pointed at the {item}, but offered him something else! | 换钱的一脸疑惑：你指的是{item}，给他的却是别的东西！ |
+| Earn more by helping the troop, making friends with animals, and selling the {老板} treasures. | 多帮猴群的忙，多和动物交朋友，再把宝贝卖给{老板}，就能挣到更多。 |
+| The troop will set your {鱼缸} up in the Water Curtain Cave. | 猴群会把你的{鱼缸}摆在水帘洞里。 |
+| The end of Area 2 | 第二部分结束了 |
+| The troop’s little ones are home, and the Demon of Havoc has gone for good. | 猴群的小猴子们回家了，混世魔王也永远地走了。 |
+| To be continued: under the sea, to the Dragon King’s palace (Area 3). Until then, practise your words, and visit your friends. | 未完待续：到海底去，去龙王宫（第三部分）。在那之前，练习你的单词，去看看你的朋友们吧。 |
+| You caught a fish! It’s little. | 你钓到了一条鱼！它很小。 |
+| A {鱼} for the fishermen’s basket ({pierCaught}/3). Cast again! | 一条{鱼}，装进渔夫的篮子（{pierCaught}/3）。再甩一次！ |
+| Three {鱼\|fish}! Take them to the fisherman on the pier. | 三条{鱼\|fish}！把它们拿给码头上的渔夫。 |
+| A {鱼} for the fisherman! Take it to him, in the village. | 给渔夫的一条{鱼}！把它拿到村子里给他。 |
+| A big {鱼} for the fishermen’s basket ({pierCaught}/3). Cast again! | 一条大{鱼}，装进渔夫的篮子（{pierCaught}/3）。再甩一次！ |
+| A big {鱼} for the fisherman! Take it to him, in the village. | 给渔夫的一条大{鱼}！把它拿到村子里给他。 |
+| You sell the big fish at the market: +1 🪙 | 你在集市上卖掉了大鱼：+1 🪙 |
+| You let the big fish go. | 你把大鱼放走了。 |
+| The sun has gone down, and the moon is coming up. | 太阳下山了，月亮升起来了。 |
+| 晚上 means night, or evening. Everyone goes home to sleep, and the streets are quiet. | “night”就是晚上的意思。大家都回家睡觉了，街上静悄悄的。 |
+| 雨 means rain. It never lasts long: the sun will soon be out again. | “rain”就是雨的意思。雨从来不会下很久：太阳很快又会出来。 |
+| 大雨 means heavy rain: big rain. It never lasts long either. | “heavy rain”就是大雨的意思：很大很大的雨。它也不会下很久。 |
+| All four hens are back in their yard! The villager gives you 3 🐚 for your help. | 四只母鸡都回到院子里了！村民给了你3 🐚，谢谢你帮忙。 |
+| All four hens are back in their yard! The villager gives you 3 🪙 for your help. | 四只母鸡都回到院子里了！村民给了你3 🪙，谢谢你帮忙。 |
+| The fishermen come out of their hut. They don’t run away now: in a coat and hat, you look just like a person! | 渔夫们从小屋里走了出来。他们现在不跑了：穿上衣服、戴上帽子，你看起来就像一个人！ |
+| The woodcutter has gone home, up the stone steps. Follow him up the mountain! | 樵夫顺着石阶回家了。跟着他上山吧！ |
+| Up here, above the clouds, there’s nothing over you but the wide, blue sky. | 在这上面，云的上方，你头顶上只有一大片蓝蓝的天。 |
+| 天 means sky. Up here, it feels close enough to touch! | “sky”就是天的意思。在这上面，天好像近得伸手就能摸到！ |
+| Through the stone doors: a great hollow in the mountain, open to the sky. Pupils in robes are sweeping and reading, and an old man in white stands in front of the hall… | 走过石门：山里面有一个大大的空洞，头顶露着天。穿着长袍的师兄弟们在扫地、读书，一位穿白衣的老人站在大殿前面…… |
+| 春天 means spring. The peach trees are in blossom, and everything is growing again. | “spring”就是春天的意思。桃树开花了，万物又开始生长。 |
+| The sun goes down behind the rocks. The last of the blossom blows away, and the cicadas start to sing: summer is coming. Time for bed! | 太阳落到了石头后面。最后的花瓣被风吹走了，知了开始叫了：夏天要来了。该睡觉了！ |
+| Evening comes, cooler at last. A yellow leaf drifts down, by your room: autumn is coming! | 傍晚来了，终于凉快了。一片黄叶飘落在你的房间旁边：秋天要来了！ |
+| Evening comes, and it’s cold. The first snowflakes are falling, and settling by your room: winter is coming! | 傍晚来了，好冷。第一片雪花飘了下来，落在你的房间旁边：冬天要来了！ |
+| Rice and fish! The boatman is waiting on the beach below the village, to sail you straight back across the sea. | 米和鱼都有了！船夫在村子下面的海滩上等着，要直接载你渡回大海那边。 |
+| The last night of the year. Time for bed! | 一年的最后一个晚上。该睡觉了！ |
+| With a deep rumble, the stone doors swing open. A boy comes out! | 随着一阵低沉的轰隆声，石门打开了。一个男孩走了出来！ |
+| Flower Fruit Mountain, after twenty years! Your stone, the meadow, the river… But it’s very quiet. Then you hear someone crying. | 二十年后的花果山！你的石头、草地、河……可是这里好安静。接着，你听到有人在哭。 |
+| The old monkey sits down on his stool by the big table, to watch. | 老猴子在大桌子旁边他的凳子上坐了下来，看着。 |
+| The Demon of Havoc’s mountain: black rock, ash and dead pines. Up at the top, torches burn in front of a dark cave… | 混世魔王的山：黑色的石头、灰烬和枯死的松树。山顶上，一个黑漆漆的山洞前面烧着火把…… |
+| 救命 means Help! The troop’s little ones, locked in cages! | “Help!”就是救命的意思！猴群的小猴子们被关在笼子里！ |
+| The ground shakes! The little demons run into the cave, shouting. Something big is coming out… | 地面在晃！小妖们大喊大叫地跑进了山洞。有个大家伙要出来了…… |
+| Nobody in the town knows where the immortals are either. You stay, and keep asking, year after year… | 小镇上也没有人知道神仙在哪里。你留了下来，一年又一年地打听…… |
+| Years among people | 在人间的那些年 |
+| Years go by. You can talk like people now, but nobody here knows where the immortals are. The town has changed too: the children from the school are grown up. Across the bridge, at the harbour, boats sail all over the sea: maybe someone there knows. | 很多年过去了。你现在能像人一样说话了，可是这里没有人知道神仙在哪里。小镇也变了：学校里的孩子们都长大了。过了桥就是码头，船开往海上的四面八方：也许那里有人知道。 |
+| People run from a monkey! Find something to wear first. | 人们见到猴子就跑！先找些东西穿上。 |
+| Not yet: help the villagers, and ask them where the immortals are. Check your tasks. | 还不行：帮助村民，问问他们神仙在哪里。看看你的任务吧。 |
+| Not yet: help the farmer and ask him where the immortals are, and make friends with the dog, first. | 还不行：先帮帮农民，问问他神仙在哪里，再和那条狗交朋友。 |
+| Not yet: help the people of the town, and ask them where the immortals are. Check your tasks. | 还不行：帮助小镇上的人，问问他们神仙在哪里。看看你的任务吧。 |
+| Lift | 举起来 |
+| Lift the sack! | 把袋子举起来！ |
+| Up it goes, over your head! Carry it down the pier, onto the {船\|boat}. | 举起来了，举过了头顶！把它沿着码头搬下去，搬到{船\|boat}上。 |
+| Your arms are full! Take this sack to the {船\|boat} first. | 你手里拿满了！先把这袋东西搬到{船\|boat}上。 |
+| Sacks of rice, waiting to go on the boat. | 一袋袋的米，等着装上船。 |
+| A big boat with a sail, to cross the sea. | 一条挂着帆的大船，用来渡海。 |
+| Put down | 放下 |
+| 米 means rice, uncooked: grains of rice, in a sack. Cooked, it’s 米饭. | “rice”就是米：一粒一粒的米，装在袋子里。煮熟了盛在碗里，就是 bowl of rice（米饭）。 |
+| You put the sack down on the {船\|boat} ({cargoCarried}/4). | 你把袋子放到了{船\|boat}上（{cargoCarried}/4）。 |
+| Four sacks on the {船\|boat}! Tell the docker. | 四袋都放到{船\|boat}上了！告诉码头工人吧。 |
+| Sail | 开船 |
+| The path goes on up the mountain. Who lives up there? Find out first. | 小路继续往山上去。谁住在上面呢？先去打听打听。 |
+| A stream, rushing down from the mountain. | 一条小溪，从山上哗哗地流下来。 |
+| Climb in | 爬进去 |
+| The pupils haul you all the way up, with the rice and the fish. Take them to the senior pupil! | 师兄弟们把你连同米和鱼一路拉了上去。把它们拿给大师兄！ |
+| The pupils’ supply basket, on its long rope. Come back with the rice and the fish, and they’ll haul you up in it. | 师兄弟们运东西的篮子，挂在长长的绳子上。带着米和鱼回来，他们就会用它把你拉上去。 |
+| The pupils’ supply basket, on its long rope. | 师兄弟们运东西的篮子，挂在长长的绳子上。 |
+| You pick a lingzhi ({herbsFound}/3). | 你采了一棵灵芝（{herbsFound}/3）。 |
+| Three lingzhi! Take them to the master. | 三棵灵芝！把它们拿给师父。 |
+| A lingzhi, a mushroom of long life, growing out of the rock. | 一棵灵芝，长寿的蘑菇，从石头里长出来。 |
+| A sea of clouds, far below. | 一片云海，在远远的下面。 |
+| 云 means cloud. You’re up above the clouds! | “cloud”就是云的意思。你在云的上面！ |
+| A pine, growing out of the bare rock. | 一棵松树，从光秃秃的石头里长出来。 |
+| Clear, cold water, running down from the top of the mountain. | 清凉的水，从山顶流下来。 |
+| The wind is too strong! Wait for the gust to drop, then cross the windy planks quickly. | 风太大了！等这阵风停了，再快快地走过有风的木板。 |
+| Whoosh! The wind blows you back. | 呼！风把你吹了回来。 |
+| Loose planks | 松动的木板 |
+| Listen, and hop onto the plank with its picture. | 听一听，跳到有它图片的那块木板上。 |
+| The plank swings away under you! You grab the chain, and pull yourself back. | 木板在你脚下荡开了！你抓住铁链，把自己拉了回来。 |
+| Climb | 爬 |
+| Climbing the chain | 顺着铁链往上爬 |
+| A peach tree, in blossom and ripe fruit at once. | 一棵桃树，同时开着花、结着熟透的果子。 |
+| The name of the immortal’s mountain. | 神仙的山的名字。 |
+| The name of the immortal’s cave. | 神仙的山洞的名字。 |
+| Go in | 进去 |
+| The lecture hall, where the master teaches. | 讲经堂，师父在这里讲课。 |
+| A pine, growing out of the rock. | 一棵松树，从石头里长出来。 |
+| A clear pool, fed by the spring. | 一个清清的水池，泉水流进里面。 |
+| Fill | 装满 |
+| You fill the bucket with {水\|water}. Now water your little tree: face it, and press A. | 你把桶装满了{水\|water}。现在给你的小树浇水：面对它，按A。 |
+| How many {桶\|buckets} of {水\|water} do you want to fill? | {水\|water}，你要装几{桶\|buckets}？ |
+| You’re carrying {n} bucket{s} of {水\|water}. Take {them} to the senior pupil. | 你提着{n}桶{水\|water}。把它们拿给大师兄。 |
+| A peach tree, in the master’s garden. | 一棵桃树，在师父的园子里。 |
+| A young peach tree, just planted. You water it every day. | 一棵刚种下的小桃树。你每天都给它浇水。 |
+| Q | Q |
+| Big jars of water, for the kitchen. | 几个装水的大缸，给厨房用的。 |
+| The cave’s firewood. | 山洞里的柴火。 |
+| You take an armful of {木头\|wood} from the pile. Now light the fire: face the brazier, and press A. | 你从柴堆里抱了一大捆{木头\|wood}。现在去生火：面对火盆，按A。 |
+| Chop | 劈 |
+| Chopping the wood | 劈柴 |
+| How many pieces of {木头\|wood} do you want to chop? | 你要劈几块{木头\|wood}？ |
+| You’re carrying {n} piece{s} of {木头\|wood}. Take {them} to the senior pupil. | 你抱着{n}块{木头\|wood}。把它们拿给大师兄。 |
+| A chopping block, with logs beside it to chop. | 一个砧板，旁边放着要劈的木头。 |
+| A heap of fallen leaves. | 一堆落叶。 |
+| Sweep | 扫 |
+| Sweeping the leaves | 扫落叶 |
+| You sweep up the leaves ({leavesSwept}/5). | 你把落叶扫干净了（{leavesSwept}/5）。 |
+| All five heaps swept! Tell the senior pupil. | 五堆都扫干净了！告诉大师兄吧。 |
+| A pupil’s room, cut into the rock. | 一间师兄弟的房间，凿在石头里。 |
+| 叶子 means a leaf, or leaves. The first yellow leaf, drifting down: autumn is coming! | “leaf”就是叶子的意思，很多片叶子就是 leaves。第一片黄叶飘了下来：秋天要来了！ |
+| 雪 means snow. 下雪了！ It’s snowing! Winter is coming. | “snow”就是雪的意思。It’s snowing!（下雪了！）冬天要来了。 |
+| Plant | 种下 |
+| Your own little peach tree! Now fill the bucket at the pool, and water it. | 你自己的小桃树！现在去水池把桶装满水，给它浇水。 |
+| Your own peach tree. | 你自己的桃树。 |
+| Water | 浇水 |
+| You water your little tree, and it drinks it all up. It’ll grow big and strong! | 你给小树浇了水，它一口气全喝光了。它会长得又高又壮！ |
+| Wrap | 包起来 |
+| You wrap straw round your little tree’s trunk, and tie it tight. Now the frost can’t hurt it! | 你用稻草包住小树的树干，扎得紧紧的。现在霜冻伤不到它了！ |
+| Your little peach tree is thirsty. Fill the bucket at the pool, and water it. | 你的小桃树渴了。去水池把桶装满水，给它浇水。 |
+| Your own peach tree, which you planted in the spring. | 你自己的桃树，是你春天种下的。 |
+| Your own peach tree, wrapped in straw for the winter. | 你自己的桃树，用稻草包着过冬。 |
+| Light it | 点火 |
+| 火 means fire. The flames leap up, and the pupils come running to warm their hands. | “fire”就是火的意思。火苗蹿了起来，师兄弟们都跑过来烤手。 |
+| Your little peach tree is cold too. Wrap its trunk in straw against the frost: face it, and press A. | 你的小桃树也冷了。用稻草把它的树干包起来，挡住霜冻：面对它，按A。 |
+| The brazier is empty. Bring wood from the woodpile, to light a fire. | 火盆是空的。从柴堆里拿些木头来生火。 |
+| A bronze brazier, for a fire in winter. | 一个铜火盆，冬天用来生火。 |
+| The fire in the courtyard, keeping everyone warm. | 院子里的火，让大家都暖暖和和的。 |
+| The snowman you built with the pupils, in a red scarf. | 你和师兄弟们一起堆的雪人，围着一条红围巾。 |
+| The New Year’s dinner: bowls of {米饭\|rice}, and the fish you brought, for plenty in the year to come. | 年夜饭：一碗碗{米饭\|rice}，还有你带回来的鱼，图个来年年年有余。 |
+| 夏天 means summer. Hot, sunny days, and everything green. | “summer”就是夏天的意思。阳光灿烂的大热天，到处都是绿的。 |
+| 秋天 means autumn. The leaves are turning red and gold, and falling. | “autumn”就是秋天的意思。树叶变红变黄，纷纷落下。 |
+| 冬天 means winter. Snow on the mountain, and cold! | “winter”就是冬天的意思。山上下雪了，好冷！ |
+| Seven years have gone by. The peach trees you watered are tall now, with fruit on them, and there are new little pupils. | 七年过去了。你浇过水的桃树现在都长高了，结满了果子，还来了新的小师弟、小师妹。 |
+| Wait for night | 等天黑 |
+| You lie down in your room, but you don’t sleep. You wait, and wait… | 你在房间里躺下，可是没有睡。你等啊等啊…… |
+| It’s the middle of the night: everyone is asleep. It’s the third watch. | 已经半夜了：大家都睡着了。现在是三更。 |
+| 晚上 means night, or evening. Everyone is asleep: it’s the third watch of the night. | “night”就是晚上的意思。大家都睡着了：现在是夜里三更。 |
+| A pupil’s room, cut into the rock: a stone bed, and a little window. | 一间师兄弟的房间，凿在石头里：一张石床，一扇小窗户。 |
+| You wake up in your room, with your health full. | 你在房间里醒来，体力全满。 |
+| The master’s back door. It’s shut. | 师父的后门。门关着。 |
+| It’s too dark to read your map! | 太黑了，看不清地图！ |
+| 月亮 means the moon. A thin, slanting moon, shining in the pool. | “moon”就是月亮的意思。一弯斜斜的细月亮，倒映在水池里。 |
+| The chopping block, in the moonlight. | 月光下的砧板。 |
+| Not now! The master is waiting, at his back door beside the hall. | 现在不行！师父在大殿旁边的后门等着你。 |
+| Look up | 抬头看 |
+| 星星 means stars. Over the master’s back door: a slanting moon, and three stars. Like the cave’s name: 斜月三星洞! | “stars”就是星星的意思。师父的后门上方：一弯斜月，三颗星星。就像山洞的名字：斜月三星洞！ |
+| Not now: the master is waiting! | 现在不行：师父在等你！ |
+| This is home: you know your way about here. Your map is of the lands across the sea. | 这是你的家：这里的路你都认得。你的地图画的是海那边的地方。 |
+| A bush. | 一丛灌木。 |
+| Fly north | 往北飞 |
+| The feast’s table. Everything on it has gone! | 宴会的桌子。上面的东西都不见了！ |
+| The feast’s table, the troop’s things going back on it. | 宴会的桌子，猴群的东西正放回上面去。 |
+| You’re far from home, and your map is of the lands across the sea. | 你离家很远，你的地图画的是海那边的地方。 |
+| A dead pine, black and bare. | 一棵枯死的松树，又黑又秃。 |
+| A black pool. Nothing lives in it. | 一个黑水池。里面什么都不能活。 |
+| Hide | 躲起来 |
+| Out of the guard’s sight behind the boulder, you remember what the master taught you… | 躲在大石头后面，看守看不见你了，你想起了师父教你的本领…… |
+| 变！ What will you change into, to fool the guard? Listen! | 变！你要变成什么，去骗过看守呢？仔细听！ |
+| You look just like a little demon! Go and ask the guard for the key. | 你看起来跟小妖一模一样！去找看守要钥匙吧。 |
+| 火 means fire. Torches, burning in front of the demon’s cave. | “fire”就是火的意思。魔王的山洞前面烧着火把。 |
+| A torch, burning. | 一支燃烧的火把。 |
+| The name of the Demon of Havoc’s cave. | 混世魔王的山洞的名字。 |
+| A little monkey, locked in a wooden cage! It looks frightened. | 一只小猴子被关在木笼子里！它看起来很害怕。 |
+| 笼子 means cage. A little monkey from the troop is locked inside! | “cage”就是笼子的意思。猴群的一只小猴子被关在里面！ |
+| The cage is locked. Who has the key? | 笼子锁着。谁拿着钥匙呢？ |
+| Opening the cage | 打开笼子 |
+| The little monkey jumps out, free! ({freed}/5) | 小猴子跳了出来，自由了！（{freed}/5） |
+| An empty cage, its door open. | 一个空笼子，门开着。 |
+| Fly home | 飞回家 |
+| The cart’s too heavy for your cloud! Pull it back to the little monkeys first. | 车太重了，你的云载不动！先把它拉回小猴子们那里。 |
+| You leap onto your cloud, and somersault home. | 你跳上你的云，翻着跟头飞回了家。 |
+| The sea, as far as you can see. | 大海，一眼望不到边。 |
+| A new stall, selling kites. It wasn’t here before! | 一个卖风筝的新摊子。以前可没有！ |
+| A thick grove of bamboo. | 一大片茂密的竹林。 |
+| A big old tree, with a ring of stone round it to sit on. | 一棵大老树，周围有一圈可以坐的石头。 |
+| A fisherman’s house, with mud walls and a thatched roof. | 一座渔夫的房子，泥墙，茅草顶。 |
+| A house with white walls and a roof of dark tiles. | 一座白墙黑瓦的房子。 |
+| The teahouse: a red flag with 茶 on it hangs outside. | 茶馆：外面挂着一面写着“茶”字的红旗。 |
+| A busy house with a red flag and red lanterns. People come and go, and sit inside. | 一座挂着红旗和红灯笼的房子，很热闹。人们进进出出，坐在里面。 |
+| The town’s school: the board over its door says {学校}. | 镇上的学校：门上的牌子写着{学校}。 |
+| A wooden gate in the white wall. | 白墙上的一扇木门。 |
+| Knock | 敲门 |
+| Someone behind the gate wants to know who’s there. | 门后面有人想知道是谁来了。 |
+| Fish hung up to dry in the sun. | 挂在太阳下晒干的鱼。 |
+| Big clay jars of water. | 几个装水的大陶缸。 |
+| Baskets, woven from bamboo. | 竹子编的篮子。 |
+| A handcart, full of vegetables. | 一辆装满蔬菜的手推车。 |
+| Sacks of rice. | 一袋袋的米。 |
+| Rows of green vegetables, growing behind a bamboo fence. | 一排排绿油油的蔬菜，长在竹篱笆后面。 |
+| A deep stone well, where the village gets its water. | 一口深深的石井，村子里的水都从这里打。 |
+| A fishing net, hung up to dry. | 一张挂起来晾干的渔网。 |
+| A little fishing boat, with a woven roof. | 一条小渔船，上面有编起来的船篷。 |
+| Young rice, growing in muddy water. | 长在泥水里的秧苗。 |
+| A scarecrow, in a straw hat. The birds don’t seem scared of it. | 一个戴着草帽的稻草人。鸟儿好像一点也不怕它。 |
+| A stall of steamed buns, with a sign: 包子. | 一个卖包子的摊子，有块牌子写着：包子。 |
+| A stall of shoes. | 一个卖鞋的摊子。 |
+| A stall of fruit and vegetables. | 一个卖水果和蔬菜的摊子。 |
+| The money changer’s table, with strings of coins. | 换钱的桌子，上面放着一串串铜钱。 |
+| Books, on a table by the school. | 学校旁边桌子上的书。 |
+| The old man’s coat: you put it on! | 老人的衣服：你把它穿上了！ |
+| You put on the coat. But people would still know you’re a monkey… | 你穿上了衣服。可是人们还是认得出你是一只猴子…… |
+| A straw hat: you put it on, and it hides your ears! | 一顶草帽：你戴上它，它遮住了你的耳朵！ |
+| A straw hat, blowing along the sand. | 一顶草帽，在沙滩上被风吹着跑。 |
+| Your raft, washed up on the sand. It won’t sail again: the sea has broken it up. | 你的木筏，被冲上了沙滩。它不能再出海了：大海把它打散了。 |
+| A tree stump, where the woodcutter chops his wood. | 一个树桩，樵夫在上面劈柴。 |
+| The bird flies off the rice ({birdsShooed}/5). | 鸟从稻田里飞走了（{birdsShooed}/5）。 |
+| You asked the fruit seller in the town how much her apples were. | 你问过小镇上卖水果的阿姨，她的苹果多少钱。 |
+| The fishermen on the shore, the first people you saw. | 海边的渔夫们，你见到的第一批人。 |
+| Waddling about on the sand, where you landed. | 在你上岸的沙滩上摇摇摆摆地走来走去。 |
+| The old fisherman’s coat, dropped on the sand. | 老渔夫的衣服，掉在了沙滩上。 |
+| The old fisherman’s straw hat, blowing along the sand. | 老渔夫的草帽，在沙滩上被风吹着跑。 |
+| The child in the village: 你不是人！ (You’re not a person!) | 村子里的孩子说：You’re not a person!（你不是人！） |
+| The child’s game in the village: 是不是？ (Is it or isn’t it?) | 村子里那个孩子的游戏：Is it or isn’t it?（是不是？） |
+| The child in the village, pointing at the well: 这是什么？ | 村子里的孩子指着井问：What’s this?（这是什么？） |
+| The well in the middle of the village, from the granny. | 村子中间的井，老奶奶告诉你的。 |
+| The houses in the village. | 村子里的房子。 |
+| The gate in the white wall, in the village. | 村子里白墙上的门。 |
+| Knocking on the gate in the white wall: 谁啊？ (Who is it?) | 敲白墙上的门：Who is it?（谁啊？） |
+| In the yard in the village. | 在村子里的院子里。 |
+| The granny’s lunch: 吃米饭吧！ | 老奶奶的午饭：Have some rice!（吃米饭吧！） |
+| The docker’s sacks of rice, at the harbour. | 码头工人的一袋袋米，在码头上。 |
+| The fisherman paid you for a fish. | 渔夫付钱买了你的一条鱼。 |
+| The fishermen’s nets, drying on the shore. | 渔夫们的网，晾在海边。 |
+| The fishermen’s boats, on the shore. | 渔夫们的船，停在海边。 |
+| The farmer, showing you the birds in his rice: 你看！ | 农民指着稻田里的鸟给你看：Look!（你看！） |
+| Guarding the road through the fields. | 守在穿过田野的路上。 |
+| The bun stall at the market. | 集市上的包子摊。 |
+| The bun stall at the night market, after dark. | 天黑以后，夜市上的包子摊。 |
+| The shoe stall at the market. | 集市上的鞋摊。 |
+| The teahouse in the town: 喝茶吧！ | 小镇上的茶馆：Have some tea!（喝茶吧！） |
+| The storyteller in front of the teahouse: 我说，你听。 | 茶馆前面的说书人：I talk, you listen.（我说，你听。） |
+| Asking people where the immortals are: 神仙在哪里？ | 问人们神仙在哪里：Where are the immortals?（神仙在哪里？） |
+| Everyone you asked where the immortals are: 我不知道。 (I don’t know.) | 你问过的每个人都说：I don’t know.（我不知道。） |
+| The teacher at the town’s school: 你听！ | 镇上学校的老师：Listen!（你听！） |
+| The children at the town’s school. | 镇上学校的孩子们。 |
+| The children learning at the town’s school. | 在镇上学校学习的孩子们。 |
+| The books on the table by the town’s school. | 镇上学校旁边桌子上的书。 |
+| On the sacks at the market. | 在集市上的米袋子上。 |
+| Round a lamp at the night market, after dark. | 天黑以后，夜市上围着一盏灯。 |
+| The boatman at the harbour, waiting for the wind. | 码头上的船夫，在等风来。 |
+| The woodcutter’s song, on the far shore. | 樵夫的歌，在西边的海岸上。 |
+| The sea of clouds under the cliff road, on the teacher’s mountain. | 老师的山上，栈道下面的云海。 |
+| By the pool on the cliff road, on the teacher’s mountain. | 在老师的山上，栈道边的水池旁。 |
+| The open sky over the stone pillars, at the top of the teacher’s mountain. | 老师的山顶上，石林上方开阔的天空。 |
+| The master, in the Cave of the Slanting Moon and Three Stars. | 师父，在斜月三星洞里。 |
+| The master asked your name: 你叫什么名字？, and named you 孙悟空. | 师父问你的名字：What’s your name?（你叫什么名字？），还给你取名叫孙悟空。 |
+| The fallen leaves in the cave, from the senior pupil. | 山洞里的落叶，大师兄教你的。 |
+| Sweeping the cave’s leaves, for the senior pupil. | 为大师兄扫山洞里的落叶。 |
+| The senior pupil’s bucket, to water your little tree in the spring. | 大师兄的水桶，春天用来给你的小树浇水。 |
+| The senior pupil’s axe, to chop wood. | 大师兄的斧头，用来劈柴。 |
+| The master’s riddle: three taps on your head. | 师父的谜语：在你头上敲三下。 |
+| The slanting moon, shining in the cave’s pool at night. | 夜里，斜挂的月亮倒映在山洞的水池里。 |
+| The three stars over the master’s back door, at night. | 夜里，师父后门上方的三颗星星。 |
+| The master’s secret, at night in his room: changing into things. | 师父的秘密，夜里在他的房间里：变成各种东西。 |
+| The master’s cloud somersault. | 师父的筋斗云。 |
+| Showing off to the pupils: you changed into a pine tree. | 在师兄弟面前炫耀：你变成了一棵松树。 |
+| The master sent you home: 你回家吧。 | 师父让你回家：Go home.（你回家吧。） |
+| Spring in the immortal’s cave, as you arrived: the peach trees in blossom. | 你来到神仙的山洞时正是春天：桃树开满了花。 |
+| Waking up in your room in the cave: summer had come. | 在山洞里的房间醒来：夏天到了。 |
+| Waking up in the cave: autumn, the leaves turning red and gold. | 在山洞里醒来：秋天，树叶变红变黄。 |
+| Waking up in the cave: winter, and snow on the mountain. | 在山洞里醒来：冬天，山上下雪了。 |
+| The master’s first class, in spring: a bundle of ten sticks, and one more. | 师父春天的第一堂课：一捆十根木棍，再加一根。 |
+| The master’s first class, in spring: a bundle of ten sticks, and two more. | 师父春天的第一堂课：一捆十根木棍，再加两根。 |
+| The master’s first class, in spring: a bundle of ten sticks, and three more. | 师父春天的第一堂课：一捆十根木棍，再加三根。 |
+| The master’s first class, in spring: a bundle of ten sticks, and four more. | 师父春天的第一堂课：一捆十根木棍，再加四根。 |
+| The master’s first class, in spring: a bundle of ten sticks, and five more. | 师父春天的第一堂课：一捆十根木棍，再加五根。 |
+| The master’s first class, in spring: a bundle of ten sticks, and six more. | 师父春天的第一堂课：一捆十根木棍，再加六根。 |
+| The master’s first class, in spring: a bundle of ten sticks, and seven more. | 师父春天的第一堂课：一捆十根木棍，再加七根。 |
+| The master’s first class, in spring: a bundle of ten sticks, and eight more. | 师父春天的第一堂课：一捆十根木棍，再加八根。 |
+| The master’s first class, in spring: a bundle of ten sticks, and nine more. | 师父春天的第一堂课：一捆十根木棍，再加九根。 |
+| The master’s first class, in spring: two bundles of ten sticks. | 师父春天的第一堂课：两捆十根的木棍。 |
+| Morning training with the pupils, in the cave’s courtyard. | 在山洞的院子里，和师兄弟们一起早上练功。 |
+| A hot summer’s day in the cave, the pupils training in the sun. | 山洞里炎热的夏天，师兄弟们在太阳下练功。 |
+| The master’s summer class: the hall is to the north. | 师父的夏天课：大殿在北边。 |
+| The master’s summer class: the way out is to the south. | 师父的夏天课：出去的路在南边。 |
+| The master’s medicine, made from the lingzhi on the stone pillars. | 师父的药，用石林里的灵芝做的。 |
+| Writing your name with a brush, in the autumn. | 秋天，用毛笔写你的名字。 |
+| The master’s autumn class: the waterfall is to the east. | 师父的秋天课：瀑布在东边。 |
+| The master’s autumn class: your tree is to the west. | 师父的秋天课：你的树在西边。 |
+| The first snow, as autumn ended in the cave. | 第一场雪，山洞里的秋天结束的时候。 |
+| A cold winter’s day in the cave, everyone shivering. | 山洞里寒冷的冬天，大家都冻得发抖。 |
+| The master’s winter class: four seasons make a year. | 师父的冬天课：四个季节是一年。 |
+| The snowman you built with the pupils, in the courtyard. | 你和师兄弟们在院子里堆的雪人。 |
+| Your old friend the little monkey, crying in the meadow as you came home. | 你回家时，你的老朋友小猴子在草地上哭。 |
+| The big monkey, hiding in the meadow: 你回来了！ | 大猴子，躲在草地上：You’re back!（你回来了！） |
+| The hungry monkey, hiding at the home ground: 好久不见！ | 饿猴子，躲在家园里：Long time no see!（好久不见！） |
+| The old monkey, twenty years on: 我老了。 | 二十年后的老猴子：I’ve grown old.（我老了。） |
+| The Demon of Havoc’s little demons, on the home ground. | 混世魔王的小妖，在家园里。 |
+| The fire in the cave’s courtyard, to keep everyone warm in the winter. | 山洞院子里的火，冬天让大家暖暖和和的。 |
+| New Year’s Eve in the cave, with the master and the pupils. | 在山洞里和师父、师兄弟们一起过除夕。 |
+| The troop’s little ones, locked in cages on the demon’s mountain: 救命！ | 猴群的小猴子们，被关在魔王山上的笼子里：Help!（救命！） |
+| The cages on the demon’s mountain. | 魔王山上的笼子。 |
+| The key to the cages, on the belt of the guard at the demon’s cave. | 笼子的钥匙，挂在魔王洞口看守的腰带上。 |
+| The hair trick, fighting the Demon of Havoc: your hairs turned into little monkeys. | 和混世魔王打架时的毫毛把戏：你的毫毛变成了小猴子。 |
+| The Demon of Havoc’s broadsword, yours once you’d beaten him. | 混世魔王的大刀，你打败他以后就是你的了。 |
+| The little demons’ cart, piled with the troop’s things, on the demon’s mountain. | 小妖们的车，堆满了猴群的东西，在魔王的山上。 |
+| The senior pupil bows, and raises his staff. The master is watching. | 大师兄鞠了一躬，举起了他的棍子。师父在看着。 |
+| The senior pupil leaps out of sight… | 大师兄一跳，看不见了…… |
+| The senior pupil’s staff comes swinging! | 大师兄的棍子挥过来了！ |
+| The senior pupil bows to you. You’ve won the big match! | 大师兄向你鞠躬。你赢了大比赛！ |
+| The senior pupil helps you up out of the snow. Try again! | 大师兄把你从雪里扶了起来。再试一次！ |
+| The pupil bows, and raises his staff. | 师兄鞠了一躬，举起了他的棍子。 |
+| The pupil leaps out of sight… | 师兄一跳，看不见了…… |
+| The pupil swings his staff at you! | 师兄朝你挥起了棍子！ |
+| The pupil bows to you, laughing: you win! | 师兄笑着向你鞠躬：你赢了！ |
+| The pupil bows: he wins this time. | 师兄鞠了一躬：这次他赢了。 |
+| A little demon jumps out at you, waving its spear! | 一个小妖挥着长矛朝你跳了出来！ |
+| A little {妖怪} jumps out at you! | 一个小{妖怪}朝你跳了出来！ |
+| The little {妖怪} ducks out of sight… | 小{妖怪}一闪，看不见了…… |
+| The little {妖怪} jabs at you with its spear! | 小{妖怪}用长矛朝你戳过来！ |
+| The little {妖怪} runs off, squealing. | 小{妖怪}尖叫着逃走了。 |
+| The little {妖怪} sniffs the air, holds its nose, and runs off! | 小{妖怪}闻了闻空气，捂着鼻子跑了！ |
+| The little {妖怪} guarding the cart jumps at you! | 看守车的小{妖怪}朝你扑了过来！ |
+| The little {妖怪} ducks behind the cart… | 小{妖怪}躲到了车后面…… |
+| The little {妖怪} lets go of the cart. | 小{妖怪}松开了车。 |
+| HA HA HA! | 哈哈哈！ |
+| The Demon of Havoc swings his great broadsword, angry! | 混世魔王挥舞着他的大刀，气坏了！ |
+| From now on he attacks twice in a row. Listen hard! | 从现在起，他会连着攻击两次。仔细听！ |
+| 毛 means hair, or fur. You pulled out a handful of your hairs, blew on them and said 变！: they turned into little monkeys! | “hair”就是毛的意思。你拔下一把毫毛，吹一口气，说了声“变！”：它们变成了小猴子！ |
+| Little monkeys swarm all over the Demon of Havoc! He drops his broadsword… | 小猴子们一拥而上，爬满了混世魔王全身！他的大刀掉了下来…… |
+| 刀 means a broadsword, or a knife. The Demon of Havoc’s own broadsword: you pick it up! | “sword”就是刀的意思。混世魔王自己的大刀：你把它捡了起来！ |
+| You swing the broadsword! It hits harder than your stick. | 你挥起了大刀！它比你的棍子打得更狠。 |
+| The Demon of Havoc laughs: HA HA HA! | 混世魔王哈哈大笑：哈哈哈！ |
+| The Demon of Havoc leaps out of sight… | 混世魔王一跳，看不见了…… |
+| The Demon of Havoc swings his broadsword! | 混世魔王挥起了大刀！ |
+| The Demon of Havoc runs off over the mountains, and never comes back! | 混世魔王翻过山逃走了，再也没有回来！ |
+| The Demon of Havoc is too strong for you this time. | 这次混世魔王太厉害了。 |
+| You’re worn out. You rest at the foot of the path until your health is full again. | 你累坏了。你在小路脚下休息，直到体力又满了。 |
+| You’re worn out. You crawl back to the home ground and rest under the big tree until your health is full again. | 你累坏了。你爬回家园，在大树下休息，直到体力又满了。 |
+| The shore, on the sand | 海边，在沙滩上 |
+| A goose waddles up to you on the sand, honking. Answer its questions to make friends. | 一只鹅嘎嘎叫着，在沙滩上摇摇摆摆地朝你走来。回答它的问题，和它交朋友。 |
+| The village, in the yard | 村子，在院子里 |
+| A chicken pecks about in the yard. Answer its questions to make friends. | 一只鸡在院子里啄来啄去。回答它的问题，和它交朋友。 |
+| The fields, by the road | 田边，在路边 |
+| A dog guards the road, barking at you! Answer its questions to make friends. | 一条狗守着路，冲你汪汪叫！回答它的问题，和它交朋友。 |
+| The teacher’s mountain, by the pool on the cliff road | 老师的山，在栈道边的水池旁 |
+| A crane stands by the pool on one leg. It looks at you, its head on one side. Answer its questions to make friends. | 一只鹤单腿站在水池边。它歪着头看着你。回答它的问题，和它交朋友。 |
+| The town, at the market | 小镇，在集市上 |
+| A cat is curled up on the sacks at the market. Answer its questions to make friends. | 一只猫蜷在集市的米袋子上。回答它的问题，和它交朋友。 |
+| The town’s market, round a lamp | 小镇的集市，围着一盏灯 |
+| A moth flutters round the stall’s lamp. Answer its questions to make friends. | 一只飞蛾绕着摊子的灯飞来飞去。回答它的问题，和它交朋友。 |
+| A little bird hops about, looking for something to eat. | 一只小鸟蹦蹦跳跳，在找东西吃。 |
+| Hide and seek! Cover your eyes and count to ten, then find where the child is hiding. Listen to where they say they are. | 捉迷藏！捂上眼睛数到十，然后去找那个孩子藏在哪里。听他说他在哪里。 |
+| The child wants to play hide and seek, but you don’t know the words for enough places yet. Come back when you know more! | 那个孩子想玩捉迷藏，可是你认识的地方名字还不够多。多学一些再来吧！ |
+| Not here! Listen again: where did they say they are? | 不在这里！再听一遍：他说他在哪里？ |
+| Not here! Listen again, and look out for a foot poking out… | 不在这里！再听一遍，注意看看有没有一只脚露出来…… |
+| You found the child! They were {where}. | 你找到那个孩子了！他在{where}。 |
+| Talk to them again to play another game: they hide somewhere new each time. | 再和他说话，就能再玩一局：他每次都会藏到新的地方。 |
+| behind the {井} | {井}后面 |
+| behind a {房子} | 一座{房子}后面 |
+| behind the {门} | {门}后面 |
+| behind the {衣服\|washing} | 晾着的{衣服\|washing}后面 |
+| Under a pine by the path, among its needles: 2 🐚! | 在路边一棵松树下，松针中间：2 🐚！ |
+| Tucked behind a rock in the long grass: a {桃子} for your bag! | 藏在长草里的一块石头后面：一个{桃子}，放进你的背包！ |
+| Washed up behind a rock on the sand: 2 🐚! | 被冲到沙滩上一块石头后面：2 🐚！ |
+| Tucked behind the jars: a {苹果} for your bag! | 藏在缸后面：一个{苹果}，放进你的背包！ |
+| Tucked in the straw of the scarecrow’s coat: 2 🐚! | 藏在稻草人衣服的稻草里：2 🐚！ |
+| In a basket that nobody wants: a {桃子} for your bag! | 在一个没人要的篮子里：一个{桃子}，放进你的背包！ |
+| Tucked under a rock among the pines: 2 🐚! | 藏在松树中间的一块石头下面：2 🐚！ |
+| In a crack under the pine on the pillar: 3 🐚! | 在石柱上那棵松树下的一道裂缝里：3 🐚！ |
+| Under the pine at the end of the bridge, someone has left a {桃子}! | 在桥头的松树下，有人放了一个{桃子}！ |
+| The old fisherman laughs, and lets you keep his coat and hat. | 老渔夫哈哈大笑，让你留着他的衣服和帽子。 |
+| 不 means not. | “no”就是不、不是的意思。 |
+| The child laughs. They don’t mind that you’re a monkey! | 那个孩子笑了。他一点也不在乎你是一只猴子！ |
+| 是 means is, or yes. 不是 means isn’t, or no. | “yes”就是是、对的意思。“no”就是不是、不对。 |
+| The child claps. You’re good at this game! | 那个孩子拍起手来。你玩这个游戏真厉害！ |
+| 什么 means what. 这是什么？ means What’s this? | “what”就是什么的意思。What’s this? 就是“这是什么？” |
+| Now you can ask what things are! Face something that sparkles ✨ with a person near, and press A. | 现在你可以问东西是什么了！旁边有人的时候，面对一样闪闪发光✨的东西，按A。 |
+| 哪里 means where. 神仙在哪里？ Where are the immortals? | “where”就是哪里的意思。Where are the immortals? 就是“神仙在哪里？” |
+| They don’t know, but they’re your friend now. Help the others in the village, and ask them too. | 他们不知道，不过他们现在是你的朋友了。帮帮村子里的其他人，也问问他们。 |
+| Nobody in the village knows where the immortals are. Maybe someone further east does: the road east is open now, through the fields. | 村子里没有人知道神仙在哪里。也许再往东有人知道：往东的路现在通了，穿过田野就是。 |
+| 知道 means to know. 我不知道。 I don’t know. | “know”就是知道的意思。I don’t know. 就是“我不知道。” |
+| 米饭 is rice, cooked: a bowl of it makes a meal. | “bowl of rice”就是一碗米饭：一碗就是一顿饭。 |
+| You sit down by the well and eat the whole bowl of {米饭\|rice}. Your health is full! | 你在井边坐下，把一整碗{米饭\|rice}都吃光了。你的体力全满了！ |
+| The granny gives you a bowl of {米饭\|rice} for the farmer. Take it to him, in the fields! | 老奶奶给了你一碗{米饭\|rice}，让你带给农民。把它拿到田里给他！ |
+| Another bowl of {米饭\|rice}! You eat it all up. Your health is full! | 又是一碗{米饭\|rice}！你把它全吃光了。你的体力全满了！ |
+| A chicken runs about, clucking. There’s another one in the yard behind the fence: make friends with it first! | 一只鸡咯咯叫着跑来跑去。篱笆后面的院子里还有一只：先和它交朋友吧！ |
+| Catch it! | 抓住它！ |
+| The hen flaps out of your hands, and runs off! Try again. | 母鸡扑腾着翅膀，从你手里挣脱跑掉了！再试一次。 |
+| You carry the hen back to its yard ({hensBack}/4). | 你把母鸡抱回了院子（{hensBack}/4）。 |
+| 看 means to look. | “look”就是看的意思。 |
+| Birds are eating the farmer’s rice! Shoo them off: walk up to each one, and press A. | 鸟在吃农民的稻子！把它们赶走：走到每一只跟前，按A。 |
+| Shoo the birds off the rice ({birdsShooed}/5). | 把鸟从稻田里赶走（{birdsShooed}/5）。 |
+| The farmer doesn’t know, but is your friend now. Ask in the town, east along the high road: lots of people live there. | 农民不知道，不过他现在是你的朋友了。去小镇上问问吧，顺着大路往东走：那里住着很多人。 |
+| She’s planting rice over here, all on her own, and glad of the company. She gives you an {苹果} from her lunch basket. | 她一个人在这边插秧，很高兴有人陪她。她从午饭篮子里拿了一个{苹果}给你。 |
+| A water buffalo: a big grey cow that works in the rice fields. | 一头水牛：在稻田里干活的灰色大牛。 |
+| To sell: the money changer buys your treasures from the mountain, for coins. | 卖：换钱的会用铜钱买你从山上带来的宝贝。 |
+| To sell: the {老板} buys your treasures, for coins. | 卖：{老板}会用铜钱买你的宝贝。 |
+| You point at his peaches. You want to know how much they cost. | 你指了指他的桃子。你想知道它们多少钱。 |
+| Two of something is 两, two coins: 两文钱. Counting is still 二: 一，二，三！ | 说有两个东西时用“两”：两文钱。数数的时候还是用“二”：一，二，三！ |
+| You point at her apples. You want to know how much they cost. | 你指了指她的苹果。你想知道它们多少钱。 |
+| The bun seller is busy. Try the fruit stall first! | 卖包子的很忙。先去水果摊试试吧！ |
+| The shoe seller is busy. Try the fruit stall first! | 卖鞋的很忙。先去水果摊试试吧！ |
+| A cup of hot green tea, in the teahouse. | 一杯热绿茶，在茶馆里。 |
+| They don’t know, but they’re your friend now. Help the others in the town, and ask them too. | 他们不知道，不过他们现在是你的朋友了。帮帮小镇上的其他人，也问问他们。 |
+| You sit down and drink a cup of tea. | 你坐下来喝了一杯茶。 |
+| 说 means to say, or to talk. | “say”就是说的意思。 |
+| The storyteller tells stories in front of the teahouse. People stop to listen. | 说书人在茶馆前面讲故事。人们停下来听。 |
+| The storyteller knows lots of stories, but not where the immortals live. | 说书人知道很多故事，可是不知道神仙住在哪里。 |
+| 听 means to listen. | “listen”就是听的意思。 |
+| Inside the school, children are reading aloud together. | 学校里面，孩子们在一起大声读书。 |
+| 孩子 means child, or children. | “child”就是孩子的意思，很多孩子就是 children。 |
+| 学 means to learn. | “learn”就是学的意思。 |
+| The docker is loading the big boat. Help him: carry four sacks from the quay down the pier to it, one at a time. Face a sack, and press A! | 码头工人在装那条大船。帮帮他：把四袋东西从岸边沿着码头搬到船上，一次一袋。面对一个袋子，按A！ |
+| The docker gives you 3 🪙 for your help. | 码头工人给了你3 🪙，谢谢你帮忙。 |
+| Four sacks, please! ({cargoCarried}/4) | 请搬四袋！（{cargoCarried}/4） |
+| The docker doesn’t know, but is your friend now. The boatman on the pier has sailed all over the sea, though: ask the boatman! | 码头工人不知道，不过他现在是你的朋友了。码头上的船夫去过海上的四面八方：去问问船夫吧！ |
+| It’s one of the children from the school, all grown up, selling kites at a stall of their own! | 是学校里的一个孩子，已经长大了，在自己的摊子上卖风筝！ |
+| It’s one of the children from the school, all grown up! | 是学校里的一个孩子，已经长大了！ |
+| The teacher’s hair has gone grey. New children are learning at the school now. | 老师的头发都白了。现在学校里是新来的孩子们在学习。 |
+| Back across the sea! Take the rice and fish to the foot of the mountain: the pupils’ basket is waiting there, to haul you up. | 渡回大海那边了！把米和鱼拿到山脚下：师兄弟们的篮子在那里等着，要把你拉上去。 |
+| The boatman has sailed all over the sea… But first, ask everyone else on your list ({asked} of 8 so far): tap the faces on your Tasks page to see who’s left. | 船夫去过海上的四面八方……不过，先去问问你名单上的其他人（已经问了{asked}/8）：在任务页上点头像，就能看到还剩谁。 |
+| At last, someone who knows! Far across the western sea, on a mountain, there lives an immortal. The boatman can take you there, once the wind comes. | 终于有人知道了！在遥远的西边大海那边，有一座山，山上住着一位神仙。等风来了，船夫就能带你去。 |
+| 风 means wind. Without it, the boat can’t sail. | “wind”就是风的意思。没有风，船就开不了。 |
+| No wind today: the boat can’t sail. Practise a little, then come back. | 今天没有风：船开不了。先练习一下，再回来吧。 |
+| You give the boatman 5 🪙 for your fare. | 你给了船夫5 🪙当船钱。 |
+| 歌 means song. The woodcutter learned it from the immortal! | “song”就是歌的意思。樵夫是跟神仙学的这首歌！ |
+| The woodcutter picks up his axe and goes home, up the stone steps. Follow him: the way up the mountain starts there! | 樵夫拿起斧头，顺着石阶回家了。跟着他：上山的路就从那里开始！ |
+| Two of something is 两, two stones: 两块石头. Counting is still 二: 一，二，三！ | 说有两个东西时用“两”：两块石头。数数的时候还是用“二”：一，二，三！ |
+| That’s not what he asked for. Listen again! | 他要的不是这个。再听一遍！ |
+| He only says it in Chinese: what he wants, and how many. Listen, then find it by his hut (the woodpile, the stream, the pebbles), pick up as many as he asked for, and bring them to him. | 他只说英语：他要什么，要多少。仔细听，然后到他的小屋旁边去找（柴堆、小溪、鹅卵石），他要多少就捡多少，拿给他。 |
+| The woodcutter gives you 3 🪙 for your help. | 樵夫给了你3 🪙，谢谢你帮忙。 |
+| The boy goes back in through the open doors. Follow him: face the doors, and press A. | 男孩从开着的门走了回去。跟着他：面对门，按A。 |
+| 师父 means master, or teacher: the one who teaches you, and looks after you. | “master”就是师父的意思：教你本领、照顾你的人。 |
+| 名字 means name. 你叫什么名字？ What are you called? | “name”就是名字的意思。What’s your name? 就是“你叫什么名字？” |
+| From now on you’re 孙悟空, Sun Wukong: Monkey Awakened to Emptiness. You’re one of the master’s pupils now. | 从现在起，你就叫孙悟空（Sun Wukong）了。你现在是师父的徒弟了。 |
+| The pupils sit down in front of the hall. It’s the master’s first class! | 师兄弟们在大殿前面坐了下来。这是师父的第一堂课！ |
+| The master’s class · Counting on | 师父的课 · 接着数 |
+| Next: morning training, with the senior pupil. | 下一个：和大师兄一起早上练功。 |
+| The master holds up some sticks. Can you still count, as at school? Count them! | 师父举起了一些木棍。你还会像在学校里一样数数吗？数一数吧！ |
+| The pupils sit down in front of the hall, for the master’s summer class. | 师兄弟们在大殿前面坐了下来，上师父的夏天课。 |
+| The master’s class · North and south | 师父的课 · 北和南 |
+| Next: a pupil wants a match with you. | 下一个：一个师兄想和你比一场。 |
+| Did you listen last time? The master holds up some sticks. | 上次你认真听了吗？师父举起了一些木棍。 |
+| 北边 means the north: 北 north + 边 side. On a map, the north is at the top. The hall is to the north. | “north”就是北边的意思。在地图上，北边在上面。大殿在北边。 |
+| 南边 means the south: 南 south + 边 side. On a map, the south is at the bottom. The way out is to the south. | “south”就是南边的意思。在地图上，南边在下面。出去的路在南边。 |
+| The pupils sit down in front of the hall, for the master’s autumn class. | 师兄弟们在大殿前面坐了下来，上师父的秋天课。 |
+| The master’s class · East and west | 师父的课 · 东和西 |
+| Next: evening, and the first snow. | 下一个：傍晚，还有第一场雪。 |
+| Did you listen last time? Turn to face the way the master says. | 上次你认真听了吗？按师父说的方向转过身去。 |
+| 东边 means the east: 东 east + 边 side. On a map, the east is on the right. The waterfall is to the east. | “east”就是东边的意思。在地图上，东边在右边。瀑布在东边。 |
+| 西边 means the west: 西 west + 边 side. On a map, the west is on the left. Your peach tree is to the west. | “west”就是西边的意思。在地图上，西边在左边。你的桃树在西边。 |
+| The master makes medicines. He needs lingzhi, a mushroom of long life: it grows on the rocks among the stone pillars, outside the cave. Find three! | 师父会做药。他需要灵芝，一种长寿的蘑菇：它长在山洞外面石林里的石头上。找三棵来！ |
+| The master grinds the lingzhi in a stone bowl, and mixes it with honey and water from the spring… | 师父在石碗里把灵芝磨碎，和蜂蜜、泉水调在一起…… |
+| 药 means medicine. The master’s medicine, made from the lingzhi you found. | “medicine”就是药的意思。师父的药，是用你找到的灵芝做的。 |
+| The master gives you 3 🪙 for your help. | 师父给了你3 🪙，谢谢你帮忙。 |
+| The pupils sit down round the fire, for the master’s winter class. | 师兄弟们围着火坐下，上师父的冬天课。 |
+| The master’s class · The year | 师父的课 · 一年 |
+| Next: a pupil wants to build something with you. | 下一个：一个师兄想和你一起堆东西。 |
+| Did you listen? Turn to face the way the master says. | 你认真听了吗？按师父说的方向转过身去。 |
+| 年 means year: spring, summer, autumn and winter make one year. You’ve been here a whole year! | “year”就是年的意思：春天、夏天、秋天和冬天，合起来就是一年。你在这里已经整整一年了！ |
+| Listen. Which season is it? | 听一听。这是哪个季节？ |
+| It’s the last night of the year. Red lanterns glow along the hall, and the pupils set out the New Year’s dinner… | 今天是一年的最后一个晚上。大殿上挂满了红灯笼，师兄弟们摆好了年夜饭…… |
+| 新年快乐 means Happy New Year! 新 new + 年 year + 快乐 happy. | “Happy New Year!”就是新年快乐的意思！new 新 + year 年 + happy 快乐。 |
+| The master gives each pupil a red envelope, with coins inside: 5 🪙 for you! | 师父给每个徒弟一个红包，里面装着铜钱：给你5 🪙！ |
+| You eat {米饭\|rice} and fish with everyone, round the fire. Your health is full! | 你和大家一起围着火吃{米饭\|rice}和鱼。你的体力全满了！ |
+| The master’s lecture | 师父讲课 |
+| 头 means head. The master tapped you on the head, three times! | “head”就是头的意思。师父在你的头上敲了三下！ |
+| The master puts his hands behind his back, goes into the hall and shuts the doors. The pupils are cross with you. But you understand: three taps… the third watch of the night… the back door! | 师父背着手走进大殿，关上了门。师兄弟们都怪你。可是你明白了：敲三下……夜里三更……后门！ |
+| 变 means to change: into something else. The master’s secret, for you alone. | “change”就是变的意思：变成别的东西。这是师父只告诉你一个人的秘密。 |
+| To change into something, you have to know its name. Every word you’ve caught is something you could change into: the more words you know, the more you can become! | 要变成一样东西，你得知道它的名字。你学会的每个单词，都是你能变成的东西：认识的单词越多，你能变的就越多！ |
+| 变！ Listen: what does the master say? | 变！仔细听：师父说的是什么？ |
+| Before dawn, you creep back to your room. Nobody saw you! | 天亮之前，你悄悄溜回了房间。没有人看见你！ |
+| 飞 means to fly. The master teaches you the cloud somersault: one leap, and you fly a long, long way. | “fly”就是飞的意思。师父教你筋斗云：一个跟头，就能飞得好远好远。 |
+| From now on you can fly by cloud: open your map (MAP), choose a place you’ve been, and press Fly here. | 从现在起，你可以驾云飞了：打开你的地图（“地图”键），选一个你去过的地方，按“飞到这里”。 |
+| 回家 means to go home. The master is sending you home, to Flower Fruit Mountain. | “go home”就是回家的意思。师父要送你回家，回花果山。 |
+| 雪人 means snowman: 雪 snow + 人 person. | “snowman”就是雪人：snow 雪 + man 人。 |
+| You roll the snow into balls, and the pupils help you stack them up. A snowman, in a red scarf! | 你把雪滚成一个个雪球，师兄弟们帮你把它们堆起来。一个围着红围巾的雪人！ |
+| She says it only in Chinese. Find it, and press A at it. | 她只说英语。找到那样东西，对着它按A。 |
+| The pupil laughs, and gives you 2 🪙. | 师姐笑了，给了你2 🪙。 |
+| You’re in the middle of a game of I spy with the pupil. Keep playing? | 你正在和师姐玩“我看见”的游戏。还要接着玩吗？ |
+| You stop playing I spy. Talk to the pupil to play again. | 你不玩“我看见”了。和师姐说话就能再玩。 |
+| Play I spy with the pupil? | 和师姐玩“我看见”的游戏吗？ |
+| 功夫 means kung fu. Every morning, the pupils train together in the courtyard. | “kung fu”就是功夫的意思。每天早上，师兄弟们在院子里一起练功。 |
+| Listen for how many strikes the senior pupil calls out. Then everyone strikes together, and counts! | 仔细听大师兄喊出要打几下。然后大家一起出拳，一起数！ |
+| 桶 means bucket. It counts buckets of something too: 三桶水, three buckets of water. | “bucket”就是桶的意思。three buckets of water 就是三桶水。 |
+| The senior pupil gives you a little peach tree of your own, and a bucket. Plant your tree in the garden, where the ground sparkles ✨. | 大师兄给了你一棵属于你自己的小桃树，还有一个水桶。把你的树种在园子里地面闪闪发光✨的地方。 |
+| 热 means hot. The pupils are training in the sun, and they’re thirsty. | “hot”就是热的意思。师兄弟们在太阳下练功，都渴了。 |
+| He says it only in Chinese. Listen for how many he wants: fill them at the pool, all at once, and bring them to him. | 他只说英语。仔细听他要几桶：在水池一次装好，拿给他。 |
+| The senior pupil gives you 2 🪙 for your help. | 大师兄给了你2 🪙，谢谢你帮忙。 |
+| 叶子 means leaves. In autumn they fall all over the cave. | “leaves”就是叶子的意思。秋天，它们落得满山洞都是。 |
+| 扫 means to sweep. Face a heap of leaves, and press A to sweep it up. | “sweep”就是扫的意思。面对一堆落叶，按A把它扫干净。 |
+| Sweep up the heaps of leaves in the courtyard ({leavesSwept}/5): face one, and press A. | 把院子里的几堆落叶扫干净（{leavesSwept}/5）：面对一堆，按A。 |
+| 斧头 means axe. Chop logs at the chopping blocks: face one, and press A. | “axe”就是斧头的意思。在砧板那里劈木头：面对一个砧板，按A。 |
+| He says it only in Chinese. Listen for how many he wants: chop them at a chopping block, all at once, and bring them to him. | 他只说英语。仔细听他要几块：在砧板那里一次劈好，拿给他。 |
+| The senior pupil gives you 3 🪙 for your help. | 大师兄给了你3 🪙，谢谢你帮忙。 |
+| 冷 means cold. It’s summer’s sentence, 今天很热！, with the opposite word. | “cold”就是冷的意思。这就是夏天那句 It’s hot today!（今天很热！），只换了一个意思相反的词。 |
+| The pupils are shivering. Take wood from the woodpile, and light a fire in the brazier, in the middle of the courtyard. | 师兄弟们冻得发抖。从柴堆里拿些木头，在院子中间的火盆里生一堆火。 |
+| The senior pupil gives you 6 🪙, to buy them. | 大师兄给了你6 🪙，让你去买。 |
+| The stores are nearly empty. Go down the mountain and across the sea, to the fishing village where you first landed, and buy rice and fish there. | 仓库快空了。下山渡海，去你第一次上岸的那个渔村，在那里买米和鱼。 |
+| The senior pupil puts the rice and fish away in the store. There’s enough for the whole winter, and for New Year! | 大师兄把米和鱼收进了仓库。够吃一整个冬天，还够过年！ |
+| The senior pupil bows to you, and the master nods: you’ve learned well this year. +5 🪙 | 大师兄向你鞠躬，师父点了点头：你这一年学得很好。+5 🪙 |
+| 写 means to write. The pupils practise writing with a brush, on paper with red lines. | “write”就是写的意思。师兄弟们用毛笔在有红线的纸上练字。 |
+| The senior pupil hangs your name over the door of your room: 孙悟空. Now everyone knows whose room it is! | 大师兄把你的名字挂在你房间的门上：孙悟空。现在大家都知道这是谁的房间了！ |
+| The pupil bows, and gives you 3 🪙. You’re good at kung fu! | 师兄鞠了一躬，给了你3 🪙。你的功夫真不错！ |
+| 松树 means pine tree: 松 pine + 树 tree. | “pine tree”就是松树：pine 松 + tree 树。 |
+| The pupils clap and cheer. But the noise brings the master out of the hall, and he’s angry… | 师兄弟们拍手叫好。可是吵闹声把师父从大殿里引了出来，他生气了…… |
+| Train with this pupil? A quick word game: win, and he gives you 2 🪙. | 和这个师兄练习吗？一个快速单词游戏：赢了，他就给你2 🪙。 |
+| Learn a few more words first, then come back to train. | 先多学几个单词，再回来练习吧。 |
+| The pupil bows, and gives you 2 🪙. | 师兄鞠了一躬，给了你2 🪙。 |
+| Train with this pupil? A quick word game. | 和这个师兄练习吗？一个快速单词游戏。 |
+| A new little pupil. They call you 师兄, senior brother: you’ve been here longer than them! | 一个新来的小徒弟。他们叫你“师兄”：因为你比他们来得早！ |
+| 哭 means to cry. It’s your old friend the little monkey, all grown up. Why is she crying? | “cry”就是哭的意思。是你的老朋友小猴子，已经长大了。她为什么哭呢？ |
+| Her little one has gone! And everyone else is hiding. Look for them: a bush that sparkles ✨. | 她的孩子不见了！其他猴子也都藏起来了。去找找它们：找一丛闪闪发光✨的灌木。 |
+| 回来 means to come back. 你回来了！ You’re back! | “come back”就是回来的意思。You’re back! 就是“你回来了！” |
+| It’s the big monkey, grey now, hiding behind a bush. The others are hiding up at the home ground. Go and find them! | 是大猴子，毛都灰了，躲在一丛灌木后面。其他猴子都藏在上面的家园里。去找它们吧！ |
+| 好久不见 means long time no see: what you say to a friend you haven’t seen for a long time. | “long time no see”就是好久不见的意思：见到很久没见的朋友时说的话。 |
+| The hungry monkey hugs you. The old monkey is hiding in the Water Curtain Cave, with some of the others. Go and find him! | 饿猴子紧紧地抱住了你。老猴子和另外几只猴子藏在水帘洞里。去找他吧！ |
+| The little monkeys run to their mothers! The troop crowds round the cart: all their things, home again. Help the hungry monkey put them back on the feast’s tables. | 小猴子们跑向了它们的妈妈！猴群围住了车：它们所有的东西都回家了。帮饿猴子把它们放回宴会的桌子上。 |
+| The old monkey hides his face. Find the others first: up at the home ground. | 老猴子捂着脸。先去找其他猴子：在上面的家园里。 |
+| 老 means old. Twenty years have gone by: the old monkey’s fur is white now, and he leans on a stick. | “old”就是老的意思。二十年过去了：老猴子的毛都白了，还拄着一根拐杖。 |
+| A demon came from far away: the Demon of Havoc (混世魔王 Hùnshì Mówáng). His little demons carried off the troop’s little ones, and everything on the feast’s tables! | 一个魔王从很远的地方来了：混世魔王（the Demon of Havoc）。他的小妖抓走了猴群的小猴子，还有宴会桌上所有的东西！ |
+| Some of his little demons are still on the home ground. Chase them off! The old monkey comes with you, leaning on his stick. | 他的几个小妖还在家园里。把它们赶走！老猴子拄着拐杖，和你一起去。 |
+| Chase the little demons off the home ground! | 把小妖赶出家园！ |
+| Far to the north, over the mountains, is the Demon of Havoc’s home. Call your cloud, and fly north to find the little ones! | 在遥远的北边，翻过几座山，就是混世魔王的家。叫来你的云，往北飞，去找小猴子们！ |
+| Fly north on your cloud: it’s waiting on the grass, south of the path. | 乘着你的云往北飞：它在小路南边的草地上等着。 |
+| The old monkey looks at your broadsword. It will do for now… but a king needs a real weapon. | 老猴子看了看你的大刀。暂时可以用……可是一个大王需要一件真正的兵器。 |
+| The water under the iron bridge in the Water Curtain Cave goes all the way down to the sea, to the Dragon King’s palace. He has the finest weapons in the world… | 水帘洞里铁板桥下面的水，一直通到海底，通到龙王宫。他有世界上最好的兵器…… |
+| You give your stick to the little monkey in training. You carry the Demon of Havoc’s broadsword now. | 你把你的棍子给了正在练功的小猴子。现在你拿着混世魔王的大刀。 |
+| The little monkey points: the troop’s things are on a cart, over on the right. A little demon is guarding it! | 小猴子指了指：猴群的东西在一辆车上，就在右边。有个小妖在看守它！ |
+| The cow, with a calf of her own now! | 牛，现在有了自己的小牛！ |
+| The cow’s calf, born while you were away. | 牛的小牛，是你不在的时候生的。 |
+| 妖怪 means demon, or monster: the word for every demon on the journey west. This one is little, but it wants to fight! | “demon”就是妖怪的意思：西天路上所有的妖怪都叫这个词。这个是小的，可它想打架！ |
+| The last little demon runs off north, squealing! Tell the old monkey. | 最后一个小妖尖叫着往北逃走了！告诉老猴子吧。 |
+| The guard thinks you’re one of his little demons, and gives you the key! | 看守以为你是他的小妖，就把钥匙给了你！ |
+| Puff! You’re yourself again. Quick, open the cages! | 噗！你变回了自己。快，打开笼子！ |
+| 钥匙 means key. The key to the cages, on the guard’s belt! | “key”就是钥匙的意思。笼子的钥匙，挂在看守的腰带上！ |
+| The guard won’t give the key to a monkey. If only you looked like a little demon… Hide behind a boulder, and change (变)! | 看守不肯把钥匙给猴子。要是你看起来像个小妖就好了……躲到一块大石头后面，变（change）！ |
+| He won’t give the key to a monkey. Hide behind a boulder, and change into a little demon (变)! | 他不肯把钥匙给猴子。躲到一块大石头后面，变（change）成一个小妖！ |
+| The little demon won’t let you near the cart. Try again when you’re ready! | 小妖不让你靠近车。准备好了再来试试！ |
+| The little demon runs off into the cave, squealing! The cart is yours. | 小妖尖叫着逃进了山洞！车是你的了。 |
+| The little demon guards the cart. First, set the little monkeys free! | 小妖在看守着车。先把小猴子们放出来！ |
+| Pull the cart back to the little monkeys, by the cages. | 把车拉回笼子旁边的小猴子们那里。 |
+| 车 means a cart, or anything on wheels. The little demons’ cart, piled with the troop’s things! | “cart”就是车的意思。小妖们的车，堆满了猴群的东西！ |
+| The troop’s things, all piled on a cart! But a little demon is guarding it. | 猴群的东西，全堆在一辆车上！可是有个小妖在看守它。 |
+| Pull | 拉 |
+| You take hold of the cart’s shafts, and pull. It rolls along behind you. Take it back to the little monkeys! | 你抓住车把，用力一拉。车跟在你后面滚了起来。把它拉回小猴子们那里！ |
+| The cart, with the troop’s things on it. | 车，上面放着猴群的东西。 |
+| The troop’s cart, empty now. Everything’s back on the feast’s tables. | 猴群的车，现在空了。东西都放回宴会的桌子上了。 |
+| Not yet. | 还没有。 |
+| Ready. | 准备好了。 |
+| Try again. | 再试一次。 |
+| Done. | 完成了。 |
+| Not built yet. | 还没有做好。 |
+| Watch the raft drifting | 再看一遍木筏漂流 |
+| Watch the years go by | 再看一遍很多年过去 |
+| Watch “many years later” | 再看一遍“很多年以后” |
+| Watch the cloud somersault | 再看一遍筋斗云 |
+| Watch the flight home | 再看一遍飞回家 |
+| Watch the hair trick | 再看一遍毫毛把戏 |
+| Watch the party | 再看一遍庆祝会 |
+| Watch the wind carry everyone home | 再看一遍大风把大家吹回家 |
+| Watch the crossing | 再看一遍渡海 |
+
+## What each phrase is for (content/words.js)
+
+| English | 中文 |
+|---|---|
+| when you meet someone | 见到别人的时候 |
+| says hello | 跟你打招呼 |
+| You meet a friend. | 你见到了一个朋友。 |
+| when someone gives you something or helps you | 别人给你东西或者帮了你的时候 |
+| helps you | 帮了你 |
+| A friend gives you a peach. | 一个朋友给了你一个桃子。 |
+| when someone thanks you | 别人谢谢你的时候 |
+| thanks you | 谢谢你 |
+| You help a friend, and they thank you. | 你帮了一个朋友，他谢谢你。 |
+| when you’ve made a mistake | 你做错了事的时候 |
+| isn’t happy | 不高兴 |
+| You bump into a friend by mistake. | 你不小心撞到了一个朋友。 |
+| when someone says sorry | 别人跟你说对不起的时候 |
+| says sorry | 跟你说对不起 |
+| A friend bumps into you, and says sorry. | 一个朋友撞到了你，跟你说对不起。 |
+| when you leave | 你要走的时候 |
+| says goodbye | 跟你说再见 |
+| You’re leaving your friends to go home. | 你要离开朋友们回家了。 |
+| when you don’t want something | 你不想要什么东西的时候 |
+| A friend offers you something you don’t want. | 一个朋友给你一样你不想要的东西。 |
+| when you want to know how much something costs | 你想知道一样东西多少钱的时候 |
+| shows you something to buy | 给你看一样可以买的东西 |
+| You want to know how much the apples cost. | 你想知道苹果多少钱。 |
+| when you meet someone you haven’t seen for a long time | 见到很久没见的人的时候 |
+| is so happy to see you again | 再见到你好开心 |
+| You meet a friend you haven’t seen for years. | 你见到了一个好几年没见的朋友。 |
+| at New Year | 过新年的时候 |
+| wishes you a happy New Year | 祝你新年快乐 |
+| It’s New Year’s Eve, and everyone is celebrating. | 今天是除夕，大家都在庆祝。 |
+| when you’re in danger and need someone to help you | 你遇到危险、需要别人帮忙的时候 |
+| is in danger | 遇到了危险 |
+| You’re locked in a cage, and you need someone to help you! | 你被关在笼子里，需要有人来救你！ |
+
+## The Word Scroll’s pages
+
+| English | 中文 |
+|---|---|
+| Food and drink | 食物和饮料 |
+| Food | 食物 |
+| Nature | 大自然 |
+| Places | 地方 |
+| Items | 东西 |
+| From the shop | 店里买的 |
+| Shop | 商店 |
+| Actions | 动作 |
+| Describing words | 描述的词 |
+| Describing | 描述 |
+| Asking questions | 提问题 |
+| Asking | 提问 |
+| Colours | 颜色 |
+| Numbers | 数字 |
+| Phrases | 短语 |
+
+## What each English word means
+
+Each word's English, as it's learned, and the Chinese shown for it.
+
+| English | 中文 |
+|---|---|
+| stone | 石头 |
+| monkey | 猴子 |
+| mountain | 山 |
+| flower | 花 |
+| grass | 草 |
+| mushroom | 蘑菇 |
+| tree | 树 |
+| peach | 桃子 |
+| apple | 苹果 |
+| river | 河 |
+| water | 水 |
+| fruit | 水果 |
+| fish | 鱼 |
+| bird | 鸟 |
+| animal | 动物 |
+| rabbit | 兔子 |
+| sheep | 羊 |
+| squirrel | 松鼠 |
+| goat | 山羊 |
+| cave | 洞 |
+| red | 红色 |
+| yellow | 黄色 |
+| white | 白色 |
+| black | 黑色 |
+| blue | 蓝色 |
+| green | 绿色 |
+| brown | 棕色 |
+| orange | 橙色 |
+| pink | 粉色 |
+| path | 路 |
+| stick | 棍子 |
+| map | 地图 |
+| snake | 蛇 |
+| spider | 蜘蛛 |
+| bee | 蜜蜂 |
+| queen bee | 蜂王 |
+| wild boar | 野猪 |
+| deer | 鹿 |
+| wolf | 狼 |
+| bear | 熊 |
+| fox | 狐狸 |
+| butterfly | 蝴蝶 |
+| turtle | 乌龟 |
+| sea turtle | 海龟 |
+| mouse | 老鼠 |
+| frog | 青蛙 |
+| horse | 马 |
+| duck | 鸭子 |
+| owl | 猫头鹰 |
+| wasp | 黄蜂 |
+| cow | 牛 |
+| jump | 跳 |
+| bridge | 桥 |
+| bed | 床 |
+| bowl | 碗 |
+| table | 桌子 |
+| home | 家 |
+| sleep | 睡觉 |
+| king | 王 |
+| one | 一 |
+| two | 二 |
+| three | 三 |
+| four | 四 |
+| five | 五 |
+| six | 六 |
+| seven | 七 |
+| eight | 八 |
+| nine | 九 |
+| ten | 十 |
+| eat | 吃 |
+| drink | 喝 |
+| friend | 朋友 |
+| I | 我 |
+| want | 要 |
+| waterfall | 瀑布 |
+| shopkeeper | 老板 |
+| headband | 头带 |
+| wear | 戴 |
+| wood | 木头 |
+| school | 学校 |
+| teacher | 老师 |
+| classmate | 同学 |
+| have | 有 |
+| don’t have | 没有 |
+| honey | 蜂蜜 |
+| milk | 牛奶 |
+| yoghurt | 酸奶 |
+| cheese | 奶酪 |
+| chopsticks | 筷子 |
+| spoon | 勺子 |
+| seeds | 种子 |
+| watermelon | 西瓜 |
+| grapes | 葡萄 |
+| banana | 香蕉 |
+| durian | 榴莲 |
+| run | 跑 |
+| jog | 跑步 |
+| bait | 鱼饵 |
+| fishing rod | 鱼竿 |
+| happy | 快乐 |
+| smelly | 臭 |
+| weasel | 黄鼠狼 |
+| bat | 蝙蝠 |
+| firefly | 萤火虫 |
+| hedgehog | 刺猬 |
+| cricket | 蟋蟀 |
+| raft | 木筏 |
+| sea | 海 |
+| crab | 螃蟹 |
+| shrimp | 虾 |
+| small | 小 |
+| big | 大 |
+| night | 晚上 |
+| rain | 雨 |
+| heavy rain | 大雨 |
+| buy | 买 |
+| sell | 卖 |
+| pine nuts | 松子 |
+| feather | 羽毛 |
+| pearl | 珍珠 |
+| jade | 玉 |
+| ginseng | 人参 |
+| gold | 金子 |
+| basket | 篮子 |
+| lantern | 灯笼 |
+| spade | 铲子 |
+| vase | 花瓶 |
+| wind chime | 风铃 |
+| drum | 鼓 |
+| painting | 画 |
+| fishbowl | 鱼缸 |
+| hello | 你好 |
+| thank you | 谢谢 |
+| you’re welcome | 不客气 |
+| sorry | 对不起 |
+| that’s OK | 没关系 |
+| goodbye | 再见 |
+| no, thank you | 我不要 |
+| person | 人 |
+| goose | 鹅 |
+| clothes | 衣服 |
+| hat | 帽子 |
+| no | 不 |
+| yes | 是 |
+| what | 什么 |
+| well | 井 |
+| house | 房子 |
+| door | 门 |
+| who | 谁 |
+| chicken | 鸡 |
+| bowl of rice | 米饭 |
+| money | 钱 |
+| net | 网 |
+| boat | 船 |
+| look | 看 |
+| dog | 狗 |
+| how much is it | 多少钱 |
+| bun | 包子 |
+| shoes | 鞋 |
+| tea | 茶 |
+| say | 说 |
+| where | 哪里 |
+| know | 知道 |
+| listen | 听 |
+| child | 孩子 |
+| learn | 学 |
+| book | 书 |
+| cat | 猫 |
+| rice | 米 |
+| wind | 风 |
+| song | 歌 |
+| cloud | 云 |
+| crane | 鹤 |
+| sky | 天 |
+| master | 师父 |
+| name | 名字 |
+| leaf | 叶子 |
+| sweep | 扫 |
+| bucket | 桶 |
+| axe | 斧头 |
+| head | 头 |
+| moon | 月亮 |
+| star | 星星 |
+| change | 变 |
+| fly | 飞 |
+| pine tree | 松树 |
+| go home | 回家 |
+| spring | 春天 |
+| summer | 夏天 |
+| autumn | 秋天 |
+| winter | 冬天 |
+| eleven | 十一 |
+| twelve | 十二 |
+| thirteen | 十三 |
+| fourteen | 十四 |
+| fifteen | 十五 |
+| sixteen | 十六 |
+| seventeen | 十七 |
+| eighteen | 十八 |
+| nineteen | 十九 |
+| twenty | 二十 |
+| kung fu | 功夫 |
+| hot | 热 |
+| north | 北边 |
+| south | 南边 |
+| medicine | 药 |
+| write | 写 |
+| east | 东边 |
+| west | 西边 |
+| snow | 雪 |
+| cold | 冷 |
+| fire | 火 |
+| year | 年 |
+| snowman | 雪人 |
+| come back | 回来 |
+| long time no see | 好久不见 |
+| cry | 哭 |
+| old | 老 |
+| demon | 妖怪 |
+| Happy New Year | 新年快乐 |
+| help | 救命 |
+| cage | 笼子 |
+| key | 钥匙 |
+| hair | 毛 |
+| sword | 刀 |
+| cart | 车 |
+| stinky tofu | 臭豆腐 |
+| moth | 飞蛾 |
+| hungry | 饿 |
+| thirsty | 渴 |
+| good | 好 |
+| very | 很 |
+| too | 太 |
+| you | 你 |
+| we | 我们 |
+| they | 他们 |
+| it | 它 |
+| this | 这 |
+| here | 这里 |
+| there | 那里 |
+| over there | 那边 |
+| go | 去 |
+| come | 来 |
+| see | 看见 |
+| play | 玩 |
+| give | 给 |
+| look for | 找 |
+| find | 找到 |
+| wait | 等 |
+| be called | 叫 |
+| make | 做 |
+| walk | 走 |
+| sit | 坐 |
+| move | 动 |
+| teach | 教 |
+| practise | 练 |
+| win | 赢 |
+| scared | 怕 |
+| can | 能 |
+| will | 会 |
+| won’t | 不会 |
+| also | 也 |
+| all | 都 |
+| many | 多 |
+| lots of | 很多 |
+| how many | 几 |
+| and | 和 |
+| but | 可是 |
+| then | 就 |
+| from | 从 |
+| at | 在 |
+| in | 里 |
+| inside | 里面 |
+| on | 上 |
+| under | 下面 |
+| behind | 后面 |
+| before | 以前 |
+| after | 以后 |
+| a long time | 很久 |
+| today | 今天 |
+| everyone | 大家 |
+| real | 真正 |
+| brave | 勇敢 |
+| tired | 累 |
+| lovely | 好看 |
+| treasure | 宝贝 |
+| light | 光 |
+| eyes | 眼睛 |
+| test | 考试 |
+| build | 盖 |
+| paint | 刷 |
+| grow up | 长大 |
+| swap | 换 |
+| words | 话 |
+| hide and seek | 捉迷藏 |
+| snowball fight | 打雪仗 |
+| match | 比武 |
+| lingzhi | 灵芝 |
+| class begins | 上课 |
+| class is over | 下课 |
+| right | 对 |
+| let’s | 吧 |
+| fall | 下 |
+| go in | 进去 |
+| plant flowers | 种花 |
+| from then on | 从此 |
+| immortal | 神仙 |
+| Sun Wukong | 孙悟空 |
+| Flower Fruit Mountain | 花果山 |
+| Water Curtain Cave | 水帘洞 |
+| Handsome Monkey King | 美猴王 |
+| Demon of Havoc | 混世魔王 |
+| Water-Belly Cave | 水脏洞 |
+| Dragon King | 龙王 |
+| Mountain of Mind and Heart | 灵台方寸山 |
+| Cave of the Slanting Moon and Three Stars | 斜月三星洞 |
+| senior pupil | 师兄 |
+
+## Other English words in sentences (just for listening)
+
+| English | 中文 |
+|---|---|
+| the | 这；那（说到已知的东西） |
+| a | 一（个） |
+| an | 一（个） |
+| some | 一些 |
+| any | 一些；任何 |
+| is | 是 |
+| are | 是 |
+| am | 是 |
+| was | 是（以前） |
+| were | 是（以前） |
+| be | 是 |
+| isn’t | 不是 |
+| aren’t | 不是 |
+| don’t | 不 |
+| doesn’t | 不 |
+| didn’t | 没 |
+| not | 不 |
+| that | 那 |
+| that’s | 那是 |
+| those | 那些 |
+| there’s | 有 |
+| what’s | 什么是 |
+| where’s | 在哪里 |
+| he | 他 |
+| him | 他 |
+| his | 他的 |
+| she | 她 |
+| her | 她；她的 |
+| to | 到；去 |
+| of | ……的 |
+| for | 给；为了 |
+| with | 和；用 |
+| by | 在……旁边 |
+| about | 关于 |
+| across | 到……那边 |
+| over | 在……上方；结束 |
+| out | 出来；出去 |
+| away | 走开；离开 |
+| off | 离开 |
+| now | 现在 |
+| so | 所以；这么 |
+| just | 只；刚 |
+| still | 还 |
+| again | 再 |
+| never | 从不 |
+| need | 需要 |
+| needs | 需要 |
+| must | 一定要 |
+| like | 喜欢；像 |
+| take | 拿；带 |
+| got | 有；得到 |
+| talk | 说话 |
+| live | 住 |
+| lives | 住 |
+| start | 开始 |
+| starting | 开始 |
+| calls | 叫 |
+| watches | 看着 |
+| sails | 开船 |
+| sailed | 开船 |
+| stood | 站 |
+| shone | 照；亮 |
+| matter | 要紧 |
+| time | 时间；次 |
+| long | 长；久 |
+| hard | 用力；难 |
+| heavy | 重；大 |
+| deep | 深 |
+| dark | 黑；暗 |
+| high | 高 |
+| far | 远 |
+| ready | 准备好 |
+| handsome | 漂亮；帅 |
+| senior | 年长的 |
+| nobody | 没有人 |
+| whoever | 谁 |
+| something | 东西 |
+| thing | 东西 |
+| things | 东西 |
+| number | 数字 |
+| hundred | 百 |
+| pieces | 块 |
+| piece | 块 |
+| sun | 太阳 |
+| dragon | 龙 |
+| curtain | 帘子 |
+| washing | 晾的衣服 |
+| sign | 牌子 |
+| tablet | 石碑 |
+| meadow | 草地 |
+| hillside | 山坡 |
+| riverside | 河边 |
+| valley | 山谷 |
+| pasture | 牧场 |
+| shore | 海边 |
+| slope | 山坡 |
+| cliff | 悬崖 |
+| cliffs | 悬崖 |
+| ground | 地 |
+| field | 田 |
+| fields | 田 |
+| village | 村子 |
+| town | 小镇 |
+| market | 市场 |
+| harbour | 码头 |
+| canal | 运河 |
+| lane | 小路 |
+| country | 乡下 |
+| gate | 大门 |
+| hall | 大厅 |
+| room | 房间 |
+| foot | 脚；山脚 |
+| pillars | 柱子 |
+| shop | 商店 |
+| teahouse | 茶馆 |
+| sports | 运动 |
+| maths | 数学 |
+| art | 美术 |
+| pe | 体育 |
+| boy | 男孩 |
+| brother | 哥哥 |
+| granny | 奶奶 |
+| auntie | 阿姨 |
+| owner | 主人 |
+| villager | 村民 |
+| farmer | 农民 |
+| fisherman | 渔夫 |
+| fishermen | 渔夫们 |
+| changer | 换钱的人 |
+| keeper | 看守的人 |
+| storyteller | 说书人 |
+| traveller | 旅人 |
+| peddler | 货郎 |
+| docker | 搬运工 |
+| boatman | 船夫 |
+| woodcutter | 樵夫 |
+
+## How a word is made
+
+| Word | Parts | 中文 |
+|---|---|---|
+| waterfall | water 水 + fall 落下 |  |
+| snowman | snow 雪 + man 人 |  |
+| firefly | fire 火 + fly 飞虫 |  |
+| fishbowl | fish 鱼 + bowl 碗 |  |
+| headband | head 头 + band 带子 |  |
+| classmate | class 班 + mate 伙伴 |  |
+| watermelon | water 水 + melon 瓜 |  |
+| pine tree | pine 松 + tree 树 |  |
+| sea turtle | sea 海 + turtle 乌龟 |  |
+| queen bee | queen 女王 + bee 蜜蜂 |  |
+| heavy rain | heavy 重；大 + rain 雨 |  |
+| wind chime | wind 风 + chime 铃声 |  |
+| fourteen | four 四 + teen 十几 | -teen：十几。 |
+| sixteen | six 六 + teen 十几 | -teen：十几。 |
+| seventeen | seven 七 + teen 十几 | -teen：十几。 |
+| nineteen | nine 九 + teen 十几 | -teen：十几。 |
+
+## Words that sound alike, and the tip about English
+
+- three / tree: three 的 th：舌尖放在上下牙齿之间，轻轻吹气；tree 的 t 不用。
+- hat / hot: hat 的 a 嘴张得大；hot 的 o 嘴是圆的。
+- 小贴士：英语单词的节拍: 敲敲鼓，一拍一拍地听 {兔子}。 rabbit 有两拍：RAB-bit，第一拍更重。 每个英语单词都有节拍，其中一拍特别重。听到新单词，找找最重的那一拍，跟着说就对了！
+
+## How to play
+
+- 怎么玩 · 1/3 ✚ 走路 ：按住一个方向。点一下就原地转身。拇指可以在几个方向之间滑动。 A 说话、看看、选择。 有人说话时，按A继续。在卡片上，A按的是带红色A标志的按钮。 B 返回。 关上卡片或消息，按的是带蓝色B标志的按钮。 ☰ 菜单 打开菜单：单词卷轴、朋友和设置。 任务 显示你的任务。 ☰ 背包 打开你的背包。 地图 打开你的地图（老猴子给了你地图以后）。
+- 怎么玩 · 2/3 你会听到很多英语，就像一只小猴子在听森林里的声音。 你不用全都听懂，也不用全都记住。 I’m thirsty . I want to drink some water ! 绿色的单词 是你已经学会的。 加粗的绿色单词 是你现在正在学的新单词。 灰色的单词 只是听一听。好奇的话就点一下，然后就放过它吧。
+- 怎么玩 · 3/3 ⭐ 只有 新单词 卡片上的单词，才会放进你的单词卷轴。 第一次看到一个句子时，它的中文意思会显示在下面。以后需要的话，点“中文”。 有人和你说话时，你可以用英语回答。每个选项也会显示中文；如果你已经会一些英语，可以在设置里关掉“回复显示中文”。 点一个答案，或者用方向键和A来选。也可以用键盘或者游戏手柄。
+
+## Choosing which language a new game learns (in both)
+
+- What do you want to learn? 你想学什么？ Each game learns one language: Chinese, played in English, or English, played in Chinese. 每个游戏学一种语言：用英语玩，学中文；或者用中文玩，学英语。 Back 返回 学英语 Learn English Learn Chinese 学中文

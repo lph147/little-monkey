@@ -229,7 +229,7 @@ async function practise(who, kind = PRACTICE.post){
 // Stop, or B, ends it where you are. The end card says how you did, the words that moved up a level, and those you missed;
 // again: the same number again. back: where Back and Done go (the title, or the menu).
 const QUICK = {step:5, most:50, first:10, gapEvery:5, phraseEvery:6};   // (phraseEvery: a What do you say? question, js/quiz.js, the third of each six)
-const QUICK_NAME = () => `<span class="hz">练习</span>${S.pinyin ? ' <span class="spy">liànxí</span>' : ''} Practice`;
+const QUICK_NAME = () => LEARN === 'en' ? `<span class="hz"${LANG}>Practice</span> 练习` : `<span class="hz">练习</span>${S.pinyin ? ' <span class="spy">liànxí</span>' : ''} Practice`;
 const sentenceWords = () => [...new Set(SENTENCES().map(b => toks(b.sentence)).filter(t => t.every(w => lvl(w) >= 1)).flat().filter(w => !WORDS[w].pic))];
 const askable = () => trainable().length + sentenceWords().length;
 function quickSizes(){   // the numbers − and + step through: fives, up to the most you can be asked about
@@ -335,14 +335,14 @@ function exampleFor(w){
 // A caught word's page in the Word Scroll, or Friends. Its English waits behind the English button, which then shows how
 // it's made, if it has a story (madeCard, js/cards.js), whose Back comes back here (en: with the English showing, and the
 // word not said again).
-function wordPage(w, back, from = 'Word Scroll', en = false){
+function wordPage(w, back, from = ui('Word Scroll'), en = false){
   const d = WORDS[w], ex = exampleFor(w), extras = moreCards(w), more = extras.length ? extras[0].label : '';   // (what English becomes: then how it's made, the word that sounds like it, and the one it's shown side by side with: js/cards.js)
   if (!en) say(w);
   const howBtn = `<button class="btn" data-a="made">${more}</button>`;
   openCard(`<p class="label">${ui(from)} · ${ui(CATEGORIES[d.category].name)}</p>
     <div class="word side"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big"${LANG}>${wd(w)}</div><div class="py">${LEARN === 'en' ? (S.ipa ? '/' + esc(enIpa(w)) + '/' : '') : d.py}</div><div class="en"${en ? '' : ' hidden'}>${esc(wmean(w))}</div>
       <p class="mastery">${pips(w)} ${ui(MASTERY[lvl(w) - 1])}</p>
-      <div class="wordmore"><p class="note">${ui('Found: {where}', {where:esc(fill(AREA.found[w] || AREA.name.en))})}</p>
+      <div class="wordmore"><p class="note">${ui('Found: {where}', {where:esc(fill(AREA.found[w] || (LEARN === 'en' ? AREA.name.zh : AREA.name.en)))})}</p>
       ${ex ? `<p class="label examplehead">${ui('Example')}</p>${lineHTML(ex.t, w)}<div class="sentence-en"${en ? '' : ' hidden'}>${esc(ex.en)}</div>${Object.keys(S.lines).length <= TAP_TIP_LINES ? `<div class="gloss tip">${ui('Tap any word to see what it means.')}</div>` : ''}` : ''}</div></div>
     <div class="actions"><button class="btn grow" data-a="say">${ui('🔊 Hear it')}</button>${en ? (more ? howBtn : '') : `<button class="btn" data-a="en">${ui('English')}</button>`}<button class="btn primary" data-a="ok" data-b>${ui('Back')}</button></div>`);
   bindTokens(sheet);
@@ -362,27 +362,27 @@ const SCROLL_WORDS = () => [...ORDER, ...PHRASES];   // everything in the Word S
 // The Word Scroll's tabs, as [id, name]: a tab for each category the area has words in (Phrases among them), then Today,
 // then Heard once you've heard a word this area doesn't teach.
 const scrollTabs = () => [
-  ...Object.entries(CATEGORIES).filter(([id]) => SCROLL_WORDS().some(w => WORDS[w].category === id)).map(([id, c]) => [id, c.tab]),
-  ['today', 'Today'], ...(heardWords().length ? [['heard', 'Heard']] : [])
+  ...Object.entries(CATEGORIES).filter(([id]) => SCROLL_WORDS().some(w => WORDS[w].category === id)).map(([id, c]) => [id, ui(c.tab)]),
+  ['today', ui('Today')], ...(heardWords().length ? [['heard', ui('Heard')]] : [])
 ];
 let scrollTab = null;   // the tab the Word Scroll is open at; it opens there again next time
 function scrollPage(tab){   // what a tab of the Word Scroll shows
   if (tab === 'today'){
     const ids = todaysWords(), need = practiceWords().length;
-    return `<p class="label cathead">Today’s words <span class="catn">${ids.length}</span></p>
-      ${ids.length ? `<div class="grid" data-nav>${ids.map(scrollCard).join('')}</div>` : '<p>You haven’t met any words yet today.</p>'}
-      <p class="small">${need} ${need === 1 ? 'word needs' : 'words need'} practice: practise ${esc(practiseWhere())}, or meet animals in the tall grass.</p>`;
+    return `<p class="label cathead">${ui('Today’s words')} <span class="catn">${ids.length}</span></p>
+      ${ids.length ? `<div class="grid" data-nav>${ids.map(scrollCard).join('')}</div>` : `<p>${ui('You haven’t met any words yet today.')}</p>`}
+      <p class="small">${ui(need === 1 ? '{n} word needs practice: practise {where}, or meet animals in the tall grass.' : '{n} words need practice: practise {where}, or meet animals in the tall grass.', {n:need, where:esc(ui(practiseWhere()))})}</p>`;
   }
   if (tab === 'heard'){
     const heard = heardWords();
-    return `<p class="label cathead">Heard</p><p class="small">Words you've heard in sentences. You'll catch them in later areas.</p>
-      <div class="chips" data-nav>${heard.map(w => `<button class="chip" data-h="${w}" data-label="Hear it"><ruby>${w}<rt class="${S.pinyin ? '' : 'hid'}">${info(w)[0]}</rt></ruby> <span class="small">${S.heard[w]}×</span></button>`).join('')}</div>`;
+    return `<p class="label cathead">${ui('Heard')}</p><p class="small">${ui('Words you’ve heard in sentences. You’ll catch them in later areas.')}</p>
+      <div class="chips" data-nav>${heard.map(w => `<button class="chip" data-h="${w}" data-label="${ui('Hear it')}"${LANG}><ruby>${wd(w)}<rt class="${showPy() ? '' : 'hid'}">${info(w)[0]}</rt></ruby> <span class="small">${S.heard[w]}×</span></button>`).join('')}</div>`;
   }
   const ws = SCROLL_WORDS().filter(w => WORDS[w].category === tab), pages = scrollPages().filter(p => p.cat === tab);
-  if (pages.length < 2) return `<p class="label cathead">${CATEGORIES[tab].name} <span class="catn">${ws.filter(w => lvl(w) > 0).length}/${ws.length}${pages[0] ? sealHTML(pages[0]) : ''}</span></p>
+  if (pages.length < 2) return `<p class="label cathead">${ui(CATEGORIES[tab].name)} <span class="catn">${ws.filter(w => lvl(w) > 0).length}/${ws.length}${pages[0] ? sealHTML(pages[0]) : ''}</span></p>
     ${pages[0] ? sealNote(pages[0]) : ''}<div class="grid" data-nav>${ws.map(scrollCard).join('')}</div>`;
-  return `<p class="label cathead">${CATEGORIES[tab].name} <span class="catn">${ws.filter(w => lvl(w) > 0).length}/${ws.length}</span></p>
-    ${pages.map(p => `<p class="pagehead"><span>${esc(areaOf(p.area).name.en)}</span> <span class="catn">${p.words.filter(w => lvl(w) > 0).length}/${p.words.length}${sealHTML(p)}</span></p>
+  return `<p class="label cathead">${ui(CATEGORIES[tab].name)} <span class="catn">${ws.filter(w => lvl(w) > 0).length}/${ws.length}</span></p>
+    ${pages.map(p => `<p class="pagehead"><span>${LEARN === 'en' ? areaOf(p.area).name.zh : esc(areaOf(p.area).name.en)}</span> <span class="catn">${p.words.filter(w => lvl(w) > 0).length}/${p.words.length}${sealHTML(p)}</span></p>
       ${sealNote(p)}<div class="grid" data-nav>${p.words.map(scrollCard).join('')}</div>`).join('')}`;
 }
 /* ---- the old monkey's scroll ---- */
@@ -412,11 +412,11 @@ const sealer = () => ((AREA.scroll || {}).by || []).find(b => !b.if || matches(b
 const sealFor = n => !!n && S.scroll.has && (sealer() || {}).who === n.id && sealsWaiting().length > 0;   // they have a ! for you: a page to seal
 const sealPart = () => ({seal:true, do:[{say:sealer().say}, {seal:true}]});   // what they do when you talk to them then, or straight after what they had for the story (talk, js/world.js)
 const SEAL_ZH = '好';   // what the seal says: good
-const sealHTML = p => pageSealed(p) ? ` <span class="seal" role="img" aria-label="Sealed: a full page">${SEAL_ZH}</span>` : '';
+const sealHTML = p => pageSealed(p) ? ` <span class="seal" role="img" aria-label="${ui('Sealed: a full page')}">${SEAL_ZH}</span>` : '';
 function sealNote(p){   // under a full page's heading, till it's sealed: who to show it to
   if (!S.scroll.has || pageSealed(p) || !pageFull(p)) return '';
   const by = sealer();
-  return `<p class="sealwait">Full! ${by ? `Show it to ${esc(theName(by.who))}, for a red seal.` : 'It waits for a red seal.'}</p>`;
+  return `<p class="sealwait">${by ? ui('Full! Show it to {who}, for a red seal.', {who:esc(theName(by.who))}) : ui('Full! It waits for a red seal.')}</p>`;
 }
 // What you're given for a full page (its steps), by its size.
 function scrollGift(p){
@@ -485,12 +485,12 @@ function openScroll(back, top, tab){   // top: where to scroll to, to come back 
   else if (fresh.length) scrollTab = WORDS[fresh[fresh.length - 1]].category;   // (new words: the page with the newest)
   if (!tabs.some(([id]) => id === scrollTab)) scrollTab = tabs[0][0];
   const dots = new Set(fresh.map(w => WORDS[w].category));   // (each other tab with new words: a gold dot)
-  openCard(`<p class="label">Word Scroll · ${wordsCaught()} of ${ORDER.length} caught</p>
+  openCard(`<p class="label">${ui('Word Scroll · {n} of {of} caught', {n:wordsCaught(), of:ORDER.length})}</p>
     <div class="scrolltabs" role="tablist">${tabs.map(([id, name]) => `<button class="tab" role="tab" data-tab="${id}" aria-selected="${id === scrollTab}">${name}${dots.has(id) && id !== scrollTab ? '<span class="newdot" aria-hidden="true"></span>' : ''}</button>`).join('')}</div>
     ${scrollPage(scrollTab)}
-    <div class="gloss">${scrollTab === 'heard' ? 'Tap a word to hear it.' : 'Tap a word to see its page.'}</div>
-    <p class="small">Gold squares show how well you know a word: caught, recognised, read, used. Shadows are words you've heard but not caught yet.</p>
-    <div class="actions"><button class="btn primary" data-a="ok" data-b>${back ? 'Back' : 'Close'}</button></div>`);
+    <div class="gloss">${ui(scrollTab === 'heard' ? 'Tap a word to hear it.' : 'Tap a word to see its page.')}</div>
+    <p class="small">${ui('Gold squares show how well you know a word: caught, recognised, read, used. Shadows are words you’ve heard but not caught yet.')}</p>
+    <div class="actions"><button class="btn primary" data-a="ok" data-b>${ui(back ? 'Back' : 'Close')}</button></div>`);
   seenOn(scrollTab);   // (its new words, seen: tagged this once)
   if (top) sheet.scrollTop = top;
   const chosen = sheet.querySelector('.tab[aria-selected="true"]'), row = sheet.querySelector('.scrolltabs');

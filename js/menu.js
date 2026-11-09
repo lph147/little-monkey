@@ -54,7 +54,7 @@ function friendsPage(back, focus){
     ${others.length ? `<p class="label fsub">${ui('The troop and others')}</p><div class="friends" data-nav>${others.map(id => { const hz = FRIEND_NAMES[id] || id; return `<button data-w="${hz}" data-label="${ui(page(hz) ? 'Open' : 'Hear it')}">${portrait(id)}<span class="fz"${LANG}>${WORDS[hz] ? wd(hz) : LEARN === 'en' && NAMES[id] ? esc(NAMES[id].en) : hz}</span><span class="small">${WORDS[hz] ? wpy(hz) : LEARN === 'en' ? (NAMES[id] || {}).zh || '' : (NAMES[id] || {}).py || ''}</span></button>`; }).join('')}</div>` : ''}
     ${people.length ? `<p class="label fsub">${ui('People')}</p><div class="friends" data-nav>${people.map(id => { const pn = nameShown(NAMES[id] || {zh:id, py:'', en:''}); return `<button data-w="${(NAMES[id] || {}).zh || id}" data-label="${ui('Hear it')}">${portrait(id)}<span class="fz"${pn.lang ? LANG : ''}>${pn.zh || id}</span><span class="small">${esc(pn.en || '')}</span></button>`; }).join('')}</div>` : ''}
     <div class="actions"><button class="btn primary" data-a="ok" data-b>${ui('Back')}</button></div>`);
-  sheet.querySelectorAll('.friends button[data-w]').forEach(bt => bt.onclick = () => { const w = bt.dataset.w; if (page(w)){ SFX.blip(); wordPage(w, () => friendsPage(back, w), 'Friends'); } else say(LEARN === 'en' && !EN[w] ? bt.querySelector('.fz').textContent : w); });
+  sheet.querySelectorAll('.friends button[data-w]').forEach(bt => bt.onclick = () => { const w = bt.dataset.w; if (page(w)){ SFX.blip(); wordPage(w, () => friendsPage(back, w), ui('Friends')); } else say(LEARN === 'en' && !EN[w] ? bt.querySelector('.fz').textContent : w); });
   sheet.querySelectorAll('.friends button[data-clue]').forEach(bt => bt.onclick = () => { SFX.blip(); friendClue(ANIMALS.find(a => a.id === bt.dataset.clue), () => friendsPage(back, bt.dataset.clue)); });
   on('[data-a=ok]', back);
   const f = focus && sheet.querySelector(`.friends [data-w="${focus}"], .friends [data-clue="${focus}"]`); if (f) f.focus();
@@ -63,8 +63,8 @@ function friendsPage(back, focus){
 const WHEN = {day:{icon:'☀️', get text(){ return ui('by day'); }}, night:{icon:'🌙', get text(){ return ui('after dark'); }}};
 // A friend still to find: its shadow, bigger, and where it lives.
 function friendClue(a, back){
-  openCard(`<p class="label">${ui('A friend to find')}</p><div class="fclue"><span class="sil">${portrait(a.id)}</span><div><p class="fz">？</p><p>${esc(ui(a.clue))}${WHEN[a.time] ? `${ui(', ')}${WHEN[a.time].text}` : ''}${ui('.')}${WHEN[a.time] ? ' ' + WHEN[a.time].icon : ''}</p><p class="small">${ui('Find it, and answer its questions to make friends.')}</p></div></div>
-    <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+  openCard(`<p class="label">${ui('A friend to find')}</p><div class="fclue"><span class="sil">${portrait(a.id)}</span><div><p class="fz">？</p><p>${WHEN[a.time] ? ui('{clue}, {when}.', {clue:esc(ui(a.clue)), when:WHEN[a.time].text}) : ui('{clue}.', {clue:esc(ui(a.clue))})}${WHEN[a.time] ? ' ' + WHEN[a.time].icon : ''}</p><p class="small">${ui('Find it, and answer its questions to make friends.')}</p></div></div>
+    <div class="actions"><button class="btn primary" data-a="ok" data-b>${ui('Back')}</button></div>`);
   on('[data-a=ok]', back);
 }
 // 衣服 Wardrobe: the clothes you own. Tap one to put it on (your monkey says so, such as 我戴头带, which
@@ -211,7 +211,7 @@ function openSettings(focusId){
     <div class="menu twocol">
       <button class="btn" data-m="music" data-label="${ui('Music')}">${ui('Music')} <span class="val">${onOff(S.music)}</span></button>
       <button class="btn" data-m="sound" data-label="${ui('Sound')}">${ui('Sound effects')} <span class="val">${onOff(S.sound)}</span></button>
-      ${LEARN === 'en' ? `<button class="btn" data-m="ipa" data-label="音标">${ui('IPA over words')} <span class="val">${onOff(S.ipa)}</span></button>`   // (learning English: the 音标 over each word, off to start with)
+      ${LEARN === 'en' ? `<button class="btn" data-m="ipa" data-label="音标">${ui('IPA over words')} <span class="val">${onOff(S.ipa)}</span></button><button class="btn" data-m="script" data-label="${traditionalNow() ? '简体' : '繁體'}">${ui('Chinese characters')} <span class="val">${traditionalNow() ? '繁體' : '简体'}</span></button>`   // (learning English: the 音标 over each word, off to start with)
         : `<button class="btn" data-m="pinyin" data-label="Pinyin">Pinyin over words <span class="val">${S.pinyin ? 'On' : 'Off'}</span></button>`}
       <button class="btn" data-m="replyEn" data-label="${ui('English')}">${ui('English on replies')} <span class="val">${onOff(S.replyEn)}</span></button>
       <button class="btn" data-m="fps" data-label="FPS">${ui('Frames a second')} <span class="val">${onOff(S.fps)}</span></button>
@@ -232,6 +232,8 @@ function openSettings(focusId){
     sound: () => { S.sound = !S.sound; save(); if (S.sound) SFX.blip(); openSettings('sound'); },
     pinyin: () => { S.pinyin = !S.pinyin; save(); openSettings('pinyin'); },
     ipa: () => { S.ipa = !S.ipa; save(); openSettings('ipa'); },
+    // (learning English: simplified or traditional characters; back to simplified, the page loads again, as it was)
+    script: () => { S.script = traditionalNow() ? 'cn' : 'tw'; save(); if (S.script === 'tw'){ writeChinese(); openSettings('script'); } else toArea(AREA.number, SLOT, 'continue'); },
     replyEn: () => { S.replyEn = !S.replyEn; save(); openSettings('replyEn'); },
     fps: () => { S.fps = !S.fps; save(); openSettings('fps'); },
     howto: () => howToPlay().then(() => openSettings('howto')),

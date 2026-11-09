@@ -156,6 +156,40 @@ if (LEARN === 'en'){
     for (const [sel, text] of Object.entries(PAGE_LABELS)){ const el = one(sel); if (el && el.setAttribute) el.setAttribute('aria-label', ui(text)); }
   } catch(e) {}
 }
+/* ================= TRADITIONAL CHINESE ================= */
+// Learning English, a game can show its Chinese in traditional characters (Settings: S.script 'tw'; till it's chosen, as the
+// device is set, Taiwan's or Hong Kong's Chinese): toTraditional turns some text round (TRADITIONAL, content/traditional.js),
+// and writeChinese keeps the page in it as it changes, all but the English you learn (lang="en") and the world's own
+// writing, drawn in pixels.
+const TW = (() => { const t = typeof TRADITIONAL === 'undefined' ? {chars:''} : TRADITIONAL, m = new Map(), c = [...t.chars]; for (let i = 0; i + 1 < c.length; i += 2) m.set(c[i], c[i + 1]); return {...t, map:m}; })();
+function toTraditional(s){
+  let out = String(s);
+  if (!/[\u4e00-\u9fff]/.test(out)) return out;
+  for (const [a, b] of TW.words || []) out = out.split(a).join(b);
+  if (TW.measure) out = out.replace(new RegExp(`([${TW.measure[0]}])只(?![${TW.measure[1]}])`, 'g'), '$1隻');
+  return [...out].map(c => TW.map.get(c) || c).join('');
+}
+const deviceTW = () => { try { return /^zh-(tw|hk|mo)|hant/i.test(navigator.language || ''); } catch(e) { return false; } };
+const traditionalNow = () => LEARN === 'en' && (S.script ? S.script === 'tw' : deviceTW());
+let twWatch = null;
+function writeChinese(){
+  if (typeof MutationObserver === 'undefined' || typeof document.createTreeWalker !== 'function' || !document.body) return;
+  if (!traditionalNow()){ if (twWatch){ twWatch.disconnect(); twWatch = null; } return; }
+  if (twWatch) return;
+  const cjk = /[\u4e00-\u9fff]/, english = el => !!(el && el.closest && el.closest('[lang="en"]'));
+  const text = n => { if (cjk.test(n.nodeValue) && !english(n.parentElement)){ const t = toTraditional(n.nodeValue); if (t !== n.nodeValue) n.nodeValue = t; } };
+  const attrs = el => { for (const a of ['aria-label', 'data-label', 'title']){ const v = el.getAttribute(a); if (v && cjk.test(v)){ const t = toTraditional(v); if (t !== v) el.setAttribute(a, t); } } };
+  const all = root => {
+    if (root.nodeType === 3) return text(root);
+    if (root.nodeType !== 1) return;
+    attrs(root);
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+    for (let n = w.nextNode(); n; n = w.nextNode()) if (n.nodeType === 3) text(n); else attrs(n);
+  };
+  all(document.body);
+  twWatch = new MutationObserver(list => { for (const m of list){ if (m.type === 'characterData') text(m.target); else if (m.type === 'attributes') attrs(m.target); else m.addedNodes.forEach(all); } });
+  twWatch.observe(document.body, {subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:['aria-label', 'data-label', 'title']});
+}
 // The words of a line, as said aloud: its English learning English, or its characters run together.
 const lineSay = line => line.say || line.t.join('');
 // How a line you've heard is kept in the save (S.lines): its words run together, or learning English, with spaces between.

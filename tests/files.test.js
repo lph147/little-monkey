@@ -58,3 +58,10 @@ test('draft sentences waiting to be checked only use words in the word bank (a n
   for (const d of DRAFTS.filter(d => !d.py)) for (const w of d.zh.split(' ')) assert.ok(bank[w] || ['。', '！', '，', '？', '、', '……'].includes(w), `the draft "${d.zh}" uses ${w}, which isn't in the word bank`);
   for (const d of DRAFTS.filter(d => d.py)) assert.ok(!d.zh.includes(' ') && d.py.split(' ').length === [...d.zh].length, `the name "${d.zh}": its pinyin (${d.py}) says each character`);
 });
+
+// Learning English (Both ways): CHINESE-UI.md, all the game's Chinese for a native speaker to check, and ENGLISH.md, all
+// its English, for a native speaker of English (tools/both-ways-sheets.js).
+test('CHINESE-UI.md and ENGLISH.md are up to date with the content (if not, run: npm run chinese)', () => {
+  const {FILES} = require('../tools/both-ways-sheets');
+  for (const [file, make] of Object.entries(FILES)) assert.equal(fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n'), make(), `${path.basename(file)} is out of date: run npm run chinese`);
+});

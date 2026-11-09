@@ -35,23 +35,10 @@ function tokens(src){
       out.push({type:'str', v, at:i}); i = j + 1; continue;
     }
     if (c === '`'){   // a template: its text, and whether it has ${…} (whose insides are read as code, and kept apart)
-      let j = i + 1, v = '', subs = false, depth = 0;
-      while (j < src.length){
+      let j = i + 1, v = '', subs = false;
+      while (j < src.length && src[j] !== '`'){
         if (src[j] === '\\'){ v += src[j + 1]; j += 2; continue; }
-        if (src[j] === '`') break;
-        if (src[j] === '$' && src[j + 1] === '{'){   // skip to its matching }, minding strings and templates inside
-          subs = true; j += 2; depth = 1;
-          const inner = j;
-          while (j < src.length && depth){
-            const d = src[j];
-            if (d === '\'' || d === '"'){ const q = d; j++; while (j < src.length && src[j] !== q){ if (src[j] === '\\') j++; j++; } j++; continue; }
-            if (d === '`'){ let k = j + 1, dd = 0; while (k < src.length && !(src[k] === '`' && dd === 0)){ if (src[k] === '\\') k++; else if (src[k] === '$' && src[k + 1] === '{'){ dd++; k++; } else if (src[k] === '}' && dd) dd--; k++; } j = k + 1; continue; }
-            if (d === '{') depth++; else if (d === '}') depth--;
-            j++;
-          }
-          out.push({type:'sub', code:src.slice(inner, j - 1), at:inner});
-          v += '\u0000'; continue;
-        }
+        if (src[j] === '$' && src[j + 1] === '{'){ subs = true; const inner = j + 2; j = subEnd(src, inner); out.push({type:'sub', code:src.slice(inner, j - 1), at:inner}); v += '\u0000'; continue; }
         v += src[j++];
       }
       out.push({type:'tpl', v, subs, at:i}); i = j + 1; continue;
@@ -69,6 +56,33 @@ function tokens(src){
     out.push({type:'punct', v:op, at:i}); i += op.length;
   }
   return out;
+}
+// From just inside a template's ${, the index just after its matching }: strings, templates (with their own ${…}, as deep
+// as they go), comments and regular expressions inside it passed over whole, so a } or ` in them never ends it.
+function subEnd(src, j){
+  let depth = 1, prev = '(';   // (the last character that isn't a space: after a name or a bracket, a / divides)
+  while (j < src.length){
+    const d = src[j];
+    if (/\s/.test(d)){ j++; continue; }
+    if (d === '/' && src[j + 1] === '/'){ while (j < src.length && src[j] !== '\n') j++; continue; }
+    if (d === '/' && src[j + 1] === '*'){ j = src.indexOf('*/', j + 2) + 2; continue; }
+    if (d === '\'' || d === '"'){ j++; while (j < src.length && src[j] !== d){ if (src[j] === '\\') j++; j++; } j++; prev = 'a'; continue; }
+    if (d === '`'){ j = templateEnd(src, j); prev = 'a'; continue; }
+    if (d === '/' && /[(,=:[!&|?{};+\-*%<>~^]/.test(prev)){
+      j++; let cls = false;
+      while (j < src.length && (cls || src[j] !== '/')){ if (src[j] === '\\') j++; else if (src[j] === '[') cls = true; else if (src[j] === ']') cls = false; j++; }
+      j++; while (/[a-z]/i.test(src[j] || '')) j++; prev = 'a'; continue;
+    }
+    if (d === '{') depth++;
+    else if (d === '}' && !--depth) return j + 1;
+    prev = /[\w$)\]]/.test(d) ? 'a' : d; j++;
+  }
+  return j;
+}
+function templateEnd(src, j){   // from a template's opening `, the index just after its closing one
+  j++;
+  while (j < src.length && src[j] !== '`'){ if (src[j] === '\\'){ j += 2; continue; } if (src[j] === '$' && src[j + 1] === '{'){ j = subEnd(src, j + 2); continue; } j++; }
+  return j + 1;
 }
 // The calls whose text is in your own words, and which of their arguments (counting from 0) are.
 const SAYS = {ui:[0], toast:[0], showNarration:[0], confirmBox:[1, 2, 3], infoBox:[1], fill:[0]};
@@ -95,7 +109,7 @@ function engineStrings(file){
       if (u.type === 'punct' && u.v === ',' && depth === 1){ arg++; continue; }
       if (depth < 1 || !SAYS[t.v].includes(arg)) continue;
       const text = u.type === 'str' ? u.v : u.type === 'tpl' && !u.subs ? u.v : null;
-      if (text === null || !/[A-Za-z]/.test(text)) continue;
+      if (text === null || !(t.v === 'ui' ? text.trim() : /[A-Za-z]/.test(text))) continue;   // (in ui(), punctuation too: ', ' is 、 in Chinese)
       const prev = all[j - 1], next = all[j + 1];
       if (prev && /^[!=]==?$/.test(prev.v) || next && /^[!=]==?$/.test(next.v)) continue;   // (compared, not shown: LEARN === 'en')
       if (next && next.v === ':' && prev && /[{,]/.test(prev.v)) continue;   // (an object's key)
@@ -111,7 +125,7 @@ const looksLikeText = s => /[A-Za-z]/.test(s) && (/\s/.test(s.trim()) || /^[A-Z]
 // maps, ids, the story's conditions (an object under if, when, done…: done can also be steps, a list), and what's only
 // shown learning Chinese (the area's tips about Chinese, and how its home's name is made).
 const NOT_TEXT = new Set(['zh', 'en', 'py', 'sentence', 'sentenceEn', 'colourSentence', 'colourSentenceEn', 'sell', 'sellEn', 'map', 'palette', 'id', 'look', 'art',
-  'any', 'around', 'put', 'moves', 'rows', 'keys', 'pic', 'icon', 'emoji', 'tips', 'made', 'at']);
+  'any', 'around', 'put', 'moves', 'rows', 'keys', 'pic', 'icon', 'emoji', 'tips', 'at']);
 const CONDITIONS = new Set(['if', 'when', 'show', 'done', 'have', 'set', 'following', 'away', 'left']);
 function contentStrings(obj, from, all = false){
   const found = [], seen = new Set();
@@ -119,7 +133,7 @@ function contentStrings(obj, from, all = false){
     if (typeof o === 'string'){ if (all ? /[A-Za-z]/.test(o) : looksLikeText(o)) found.push({text:o, where:at.join('.')}); return; }
     if (!o || typeof o !== 'object' || seen.has(o)) return;
     seen.add(o);
-    for (const [k, v] of Object.entries(o)) if (all || (!NOT_TEXT.has(k) && !(CONDITIONS.has(k) && v && typeof v === 'object' && !Array.isArray(v)))) walk(v, [...at, k]);
+    for (const [k, v] of Object.entries(o)) if (all || (!NOT_TEXT.has(k) && !(CONDITIONS.has(k) && v && typeof v === 'object' && !Array.isArray(v)) && !(k === 'parts' && at[at.length - 1] === 'made'))) walk(v, [...at, k]);   // (how the home's name is made: its title and why, not its parts)
   })(obj, [from]);
   return found;
 }

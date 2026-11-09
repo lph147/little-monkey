@@ -114,8 +114,8 @@ function openMap(chosen = PLACE){
       <canvas class="mapart" width="${MAP_W}" height="${MAP_H}" aria-hidden="true"></canvas>
       <p class="maptitle">地图 <span class="mappy">dìtú</span> · Map <span class="mappy">${AREA.name.zh} ${AREA.name.py}</span></p>
       <div class="mapplaces" data-nav>${been.map(id => { const [x, y, w, h] = onMapAt(id);
-        return `<button class="mapplace" data-place="${id}" data-label="Look" aria-label="${esc(PLACES[id].name.en)}" style="left:${pct(x, MAP_W)};top:${pct(y, MAP_H)};width:${pct(w, MAP_W)};height:${pct(h, MAP_H)}"></button>`; }).join('')}</div>
-      <div class="mapbox"><div class="mapname"></div><div class="actions"><button class="btn" data-a="back" data-b>Back</button></div></div>
+        return `<button class="mapplace" data-place="${id}" data-label="${ui('Look')}" aria-label="${LEARN === 'en' ? PLACES[id].name.zh : esc(PLACES[id].name.en)}" style="left:${pct(x, MAP_W)};top:${pct(y, MAP_H)};width:${pct(w, MAP_W)};height:${pct(h, MAP_H)}"></button>`; }).join('')}</div>
+      <div class="mapbox"><div class="mapname"></div><div class="actions"><button class="btn" data-a="back" data-b>${ui('Back')}</button></div></div>
     </div></div>`);
   drawMap(sheet.querySelector('.mapart'));
   const show = id => {   // the chosen place's name in the corner (a name: Chinese, pinyin and English together)

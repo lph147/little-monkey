@@ -41,3 +41,28 @@ test('continuing a game that learns the other language loads the page again for 
   same.run('continueGame(2)');
   assert.equal(same.run('sessionStorage.getItem(GO_KEY)'), null, 'one learning the same language just carries on');
 });
+
+test('New game asks which language the game learns, in both; choosing English loads the page again to learn it', () => {
+  const g = loadGame({dom: true, save: {...SAVE, learn: 'zh'}});
+  g.runFrame();
+  g.el('#titleButtons').querySelector('#newBtn').click();
+  const sheet = g.el('#sheet');
+  assert.match(sheet.textContent, /What do you want to learn\? 你想学什么？/);
+  assert.deepEqual(sheet.querySelectorAll('[data-learn]').map(b => b.dataset.learn), ['en', 'zh'], 'learning Chinese first (A, on the right), on a device in English');
+  sheet.querySelector('[data-learn=en]').click();
+  assert.deepEqual(JSON.parse(g.run('sessionStorage.getItem(GO_KEY)')), {area: 1, slot: 2, action: 'new', learn: 'en'}, 'a new game in Game 2, learning English');
+  assert.equal(g.reloads.count, 1);
+});
+
+test('learning English, a game can show its Chinese in traditional characters, word by word where a character depends on it', () => {
+  const g = loadGame({save: {...SAVE, learn: 'en'}});
+  const tw = s => g.run(`toTraditional(${JSON.stringify(s)})`);
+  assert.equal(tw('老板给了你一只苹果。'), '老闆給了你一隻蘋果。', '老板 is 老闆, and 只 counting is 隻');
+  assert.equal(tw('你只说英语。'), '你只說英語。', 'but only (只) stays');
+  assert.equal(tw('把头发系上，没关系！'), '把頭髮繫上，沒關係！');
+  assert.equal(tw('树干上的干草很干燥。'), '樹幹上的乾草很乾燥。');
+  assert.equal(tw('游戏里的鱼游来游去。'), '遊戲裡的魚游來游去。');
+  assert.equal(tw('water（水）'), 'water（水）', 'the same in both');
+  assert.equal(g.run("S.script = 'tw'; traditionalNow()"), true, 'chosen in Settings');
+  assert.equal(loadGame().run("S.script = 'tw'; traditionalNow()"), false, 'never learning Chinese');
+});

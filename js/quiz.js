@@ -301,7 +301,7 @@ function tipCard(t, img){
     const drum = sheet.querySelector('.drum'), beats = [...sheet.querySelectorAll('.beat')], ok = sheet.querySelector('[data-a=ok]');
     let n = 0, again = [];
     const label = () => { drum.querySelector('.dlab').textContent = n < ex.length ? ui('Hear {x}', {x:ex[n][2] || ex[n][1]}) : ui('Again'); };
-    const beat = i => { beats.forEach(b => b.classList.remove('now')); beats[i].classList.add('on', 'now'); say(t.whole && i === ex.length - 1 ? t.whole : t.whole ? '' : ex[i][0]); };   // (learning English, a beat each, and the whole word on the last)
+    const beat = i => { beats.forEach(b => b.classList.remove('now')); beats[i].classList.add('on', 'now'); const said = t.whole && i === ex.length - 1 ? t.whole : t.whole ? '' : ex[i][0]; if (said) say(said); };   // (learning English, a beat each, and the whole word on the last)
     label();
     drum.onclick = () => {
       if (n < ex.length){ beat(n++); label(); }

@@ -160,7 +160,7 @@ function getTasks(){   // the tasks to show now: the area's tasks whose if match
 function whereText(w){
   if (!w || w === 'hut') return null;
   if (!PLACES[w]) return fill(w, false, true);
-  return w === PLACE ? null : PLACES[w].name.en;
+  return w === PLACE ? null : LEARN === 'en' ? PLACES[w].name.zh : PLACES[w].name.en;   // (learning English, its Chinese name)
 }
 // The nearest of several characters (nearest: each {who, if}, those whose if matches), such as the hens still loose about
 // the village: here, the closest; or else the first, wherever they are.
@@ -1244,7 +1244,7 @@ function theName(id){
 // Your monkey says a phrase. It counts as using it if you chose it yourself (chose), not when the game said which fits.
 async function iSay(said, chose = true, last = false){
   if (chose){ const r = rec(said); r.used = 1; r.lv = 4; addToday(said); save(); }
-  const en = WORDS[said].en.split(',')[0];
+  const en = LEARN === 'en' ? enW(said) : WORDS[said].en.split(',')[0];   // (learning English, the phrase as it's learned)
   await showDialog(speaker('player'), {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said, last});
 }
 // Runs a list of steps, one after another: a step with an if only if it matches (such as the old monkey asking for the

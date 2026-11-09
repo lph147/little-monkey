@@ -6,7 +6,8 @@ let markGloss = [];
 function info(t){
   if (LEARN === 'en'){   // learning English: its 音标 and what it means in Chinese (a word in a sentence, or a word's name)
     const id = EN[t] ? t : idOf(t), h = !id && EN_HEARD[lc(t)];
-    return id ? [enIpa(id), enZh(id)] : h ? [h[0], h[1]] : ['', ''];
+    const asIs = id && (EN[t] || lc(t) === lc(enW(id)));   // (its 音标 only as the word is written: not ago's, before's)
+    return id ? [asIs ? enIpa(id) : '', enZh(id)] : h ? [h[0], h[1]] : ['', ''];
   }
   if (WORDS[t]) return [WORDS[t].py, WORDS[t].en]; if (GLOSS[t]) return GLOSS[t]; return ['',''];
 }
@@ -17,7 +18,7 @@ function tokHTML(t){
   if (isPunct(t)) return `<span class="punct">${t}</span>`;
   if (t === GAP) return '<span class="gap" aria-label="missing word">？</span>';
   const [py] = info(t), id = tokId(t);
-  const cls = id === teachWord ? 'learn teach' : (WORDS[id] && lvl(id) >= 1 ? 'learn' : 'listen');
+  const cls = id && id === teachWord ? 'learn teach' : (WORDS[id] && lvl(id) >= 1 ? 'learn' : 'listen');   // (learning English, a word that isn't one of the game's has no id)
   // (its characters in a box of their own, so a wider pinyin over them never spreads them apart: 动 物)
   return `<button class="tok ${cls}" data-t="${esc(t)}"${LANG}><ruby><span class="rb">${esc(t)}</span><rt class="${showPy() ? '' : 'hid'}">${esc(py)}</rt></ruby></button>`;
 }

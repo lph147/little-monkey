@@ -71,7 +71,7 @@ function ssml(voice, item, full = true){   // full: with the voice's speed, styl
   if (rate) said = `<prosody rate="${rate}">${said}</prosody>`;
   if (full && voice.style) said = `<mstts:express-as style="${voice.style}">${said}</mstts:express-as>`;
   const tidy = full && voice.tidy ? '<mstts:silence type="Leading-exact" value="0ms"/><mstts:silence type="Tailing-exact" value="0ms"/><mstts:silence type="Sentenceboundary-exact" value="250ms"/>' : '';
-  return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">`
+  return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="${voice.lang || 'zh-CN'}">`   // (an English voice, learning English: its lang)
     + `<voice name="${voice.name}">${tidy}${said}</voice></speak>`;
 }
 

@@ -388,6 +388,9 @@ const EN_MADE = {
 // Learning English, words that sound the same, or that Chinese ears find hard to tell apart (as 河 hé and 喝 hē are,
 // learning Chinese): shown side by side the first time you catch the second, and never two answers when you only hear
 // the word (soundKey, js/quiz.js). note: what tells them apart, in Chinese.
+// The English voices (Azure's British ones, decided 9 November 2026: tools/make-voices.js): each word on its own, in Sonia's;
+// every line in Ryan's, chatting, as Yunxi's is for the Chinese; and the old monkey's lines in Thomas's.
+const EN_VOICES = {words:{name:'en-GB-SoniaNeural', lang:'en-GB'}, everyone:{name:'en-GB-RyanNeural', style:'chat', lang:'en-GB'}, elder:{name:'en-GB-ThomasNeural', lang:'en-GB'}};
 // A line's English as it's said learning English, where the content's doesn't have the word it teaches (the content's is its
 // meaning, learning Chinese, so it stays as it is): by the line's id.
 const EN_LINES = {

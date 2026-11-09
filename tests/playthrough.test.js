@@ -1070,9 +1070,10 @@ async function playFlowerFruitMountain(learn){
   // Everything said on the way has a voice clip (npm run voices makes them)
   const said = get('__said');
   assert.ok(said.length > 50, 'the game should say plenty aloud');
-  if (zh){
-    const clips = require('../tools/make-voices').plan().clips;
-    const missing = [...new Set(said)].filter(t => !Object.values(clips).some(c => c[t]));   // in one of the voices
+  {
+    const p = require('../tools/make-voices').plan(), voices = Object.values(zh ? p.who : p.whoEn);   // (learning English, the English voices)
+    const heard = [...new Set(said)].filter(t => zh || !/[\u4e00-\u9fff]/.test(t));   // (learning English, what's said, not the Chinese noted with it for the checks above)
+    const missing = heard.filter(t => !voices.some(v => p.clips[v] && p.clips[v][t]));   // in one of the voices
     assert.deepEqual(missing, [], 'these are said but have no voice clip: tools/make-voices.js should find them in the content');
   }
   // Learning English, nothing on the screen is in English but the English you're learning
