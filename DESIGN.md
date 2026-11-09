@@ -808,7 +808,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] 二 and 两 (9 November 2026): 两 is the second maths lesson, with a card showing 二 or 两? side by side; how many there are is 两 from then on (counting questions, two things to count at last, the How many card), counting stays 二; the woodcutter asks for two stones; a game from before learns 两 where it first meets it (the How many card, the woodcutter, a stall's 两文钱). New Chinese, drafts for the native speaker: 一，二。两个桃子！, 两个桃子, 两只猴子, 我要两块石头。
 - [ ] Daily tasks: discussed, not decided (see Treasures and trading)
 - [x] Both ways, the plan agreed (9 November 2026, the [proposal](https://claude.ai/artifact/5zpoxxuwFCBtduMzzcRwQZ), all eight decisions as recommended): the game played in Chinese to learn English, as well as in English to learn Chinese (see Both ways: learning English too)
-- [ ] Both ways 1: the fonts in the game's own files, not from Google, which is blocked in mainland China (nothing looks different)
+- [x] Both ways 1: the fonts in the game's own files, not from Google, which is blocked in mainland China (nothing looks different; 9 November 2026, version 455: fonts/, the very pieces Google served)
 - [ ] Both ways 2: a learning language for each game, behind a hidden switch for testing; the player's own-language text through one door, `t()`
 - [ ] Both ways 3: every menu, button and card in Chinese, learning English
 - [ ] Both ways 4: English for every word (a word sheet to check first), and the English voices, chosen by a listening test: word cards, the Word Scroll and Quick practice in English

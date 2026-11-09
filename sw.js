@@ -9,8 +9,8 @@
 //   error) gets all its files from the copy too.
 // - A page from the web whose own file can't come from the web (the connection dropped as it loaded) opens again
 //   from the copy, whole, rather than get that file from the copy. Only while it loads, and only for the game's own
-//   files: once it has loaded whole, or for a file from another site (a piece of a font, which never changes), a file
-//   the web can't send comes from the copy if it has it, and the game is never reopened while you play (decided 30
+//   files: once it has loaded whole, or for a piece of a font (in fonts/, or from another site), which never changes, a
+//   file the web can't send comes from the copy if it has it, and the game is never reopened while you play (decided 30
 //   October 2026: meeting the turtle needed a new piece of the Chinese font, the signal dropped, and the game went back
 //   to its title, in other fonts).
 // - Every file is checked with the web (FRESH), never taken from the browser's own saved copy without asking: GitHub lets
@@ -65,10 +65,11 @@ async function networkFirst(req, e){
   const hit = await inCopy(req);   // no connection, an error or a login page: the copy, if it has it
   if (!hit) return res || Response.error();
   if (page) return opened(hit, e);
-  if (loaded.has(e.clientId) || !req.url.startsWith(self.registration.scope)) return hit;   // playing, or a font: never reopened
+  if (loaded.has(e.clientId) || !req.url.startsWith(self.registration.scope) || isFont(req.url)) return hit;   // playing, or a font: never reopened
   broken.add(e.clientId); copyNext = Date.now(); e.waitUntil(openAgain(e.clientId));   // a file for a page from the web: the page opens again from the copy
   return Response.error();
 }
+const isFont = url => new URL(url).pathname.includes('/fonts/');   // a piece of one of the game's fonts (fonts/fonts.css)
 const opened = (hit, e) => { if (e.resultingClientId) fromCopy.add(e.resultingClientId); return hit; };   // a page from the copy
 async function openAgain(id){ const page = id && await self.clients.get(id); if (page && page.navigate) await page.navigate(page.url).catch(() => {}); }
 async function update(){   // a page from the web has loaded whole: its files go into the copy together

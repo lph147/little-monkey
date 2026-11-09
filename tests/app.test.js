@@ -226,6 +226,18 @@ test('a font from another site never reopens a page, even as it loads: a piece o
   assert.deepEqual(web.reopened, []);
 });
 
+test('nor does a piece of a font kept with the game, in fonts/ (9 November 2026: the fonts moved off Google, blocked in mainland China)', async () => {
+  const FONT = SITE + 'fonts/noto-sans-sc-42.woff2';
+  const web = worker();
+  web.server[FONT] = 'a piece of the font';
+  await web.load(); await web.get(FONT, 'cors'); await web.send({keepFiles: [SITE, SITE + 'js/main.js']});
+  assert.equal(web.copy.get(FONT).body, 'a piece of the font', 'the copy has it');
+  assert.equal((await web.get(SITE, 'navigate', 'page 2')).body, 'version 1');
+  web.online = false;   // the signal drops as the page loads, needing that piece
+  assert.equal((await web.get(FONT, 'cors', 'page 2')).body, 'a piece of the font', 'from the copy');
+  assert.deepEqual(web.reopened, [], 'the page carries on loading');
+});
+
 test('opened from the copy with no connection, a page gets all its files from the copy, even if the connection comes back as it loads', async () => {
   const web = worker();
   await web.load();
