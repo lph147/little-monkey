@@ -214,7 +214,7 @@ function drawSky(){
 // from one), nor over anything on the water or above it: a tree's leaves, someone standing or swimming in it. It's drawn
 // on a canvas of its own, the screen's size (the water its window, then what's over the water rubbed out), and put on
 // the screen over the dark, so it shines.
-const SKY_WATER = ['water', 'sea'], SKY_EDGE = 4, MOON_ROOM = 2;   // (MOON_ROOM: the open water the moon needs every way from its middle, in half squares)
+const SKY_WATER = ['water', 'sea'], SKY_EDGE = 4, MOON_ROOM = 2, SKY_STAR = '#BFD0F5';   // (MOON_ROOM: the open water the moon needs every way from its middle, in half squares)
 const skyCanvas = document.createElement('canvas'); skyCanvas.width = VW*T; skyCanvas.height = VH*T;
 const skyG = skyCanvas.getContext('2d');
 const skyWet = (x, y) => x >= 0 && y >= 0 && x < COLS && y < ROWS && SKY_WATER.includes(tileAt(x, y).look);
@@ -247,16 +247,18 @@ function skyInWater(cx, cy, sh, now, a){
   const g = skyG, W = VW*T, H = VH*T, moon = moonSpot();
   g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.clearRect(0, 0, W, H);
   g.save(); g.beginPath(); for (const [x, y, w, h] of pools) g.rect(x, y, w, h); g.clip();   // the water: the sky's window
-  for (const [, , , , x, y] of pools){   // stars: one or two little ones in most squares, twinkling, and here and there a bigger one
+  // stars: single pale blue dots (SKY_STAR), one or two in most squares, each shimmering slowly and never going out, so that
+  // nothing in the water looks like the gold cross that twinkles on something with a word to find (sparkle, js/draw.js;
+  // decided 10 November 2026, after playing it: a few bigger stars, cream crosses that flared, were taken for it)
+  for (const [, , , , x, y] of pools){
     const X = x*T - cx, Y = y*T - cy;
     for (let i = 0; i < 2; i++){
       if (rnd(x, y, 980 + i) < .45) continue;
-      g.globalAlpha = .3 + .55 * Math.max(0, Math.sin(now / 650 + x * 3 + y * 5 + i * 2));
-      R(g, X + 2 + Math.floor(rnd(x, y, 960 + i) * 12), Y + 2 + Math.floor(rnd(x, y, 970 + i) * 12), 1, 1, '#E6ECFF');
+      g.globalAlpha = .45 + .25 * Math.sin(now / 1100 + x * 3 + y * 5 + i * 2);
+      R(g, X + 2 + Math.floor(rnd(x, y, 960 + i) * 12), Y + 2 + Math.floor(rnd(x, y, 970 + i) * 12), 1, 1, SKY_STAR);
     }
-    g.globalAlpha = 1;
-    if (rnd(x, y, 990) > .88){ const sx = X + 5 + Math.floor(rnd(x, y, 991) * 6), sy = Y + 5 + Math.floor(rnd(x, y, 992) * 6); R(g, sx - 1, sy, 3, 1, '#FFF6C8'); R(g, sx, sy - 1, 1, 3, '#FFF6C8'); if ((now / 400 + x * 7 + y) % 6 < 1) R(g, sx - 2, sy, 5, 1, '#FFFFFF'); }
   }
+  g.globalAlpha = 1;
   if (moon){
     const mx = Math.round(moon[0] - cx), my = Math.round(moon[1] - cy), wob = Math.floor(now / 500) % 3;
     g.globalCompositeOperation = 'destination-out'; disc(g, mx, my, 8, '#000');                       // no stars where the moon is

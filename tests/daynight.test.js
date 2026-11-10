@@ -309,4 +309,10 @@ test('the night sky is in the water: the moon where a place’s water has most r
   g.run("enterPlace('homeGround'); pl.x = 21; pl.y = 14; pl.px = pl.x * T; pl.py = pl.y * T");
   assert.deepEqual(calls('skyInWater(camX(), camY(), VH * T, 1000, 1)'), ['sky'], 'with the pond in view, the sky is put on the screen');
   assert.deepEqual(calls('skyInWater(0, 0, 16, 1000, 1)'), [], 'with no water in view, nothing is');
+  // the stars are single pale blue dots, never a gold cross that flares: that's the sparkle on something with a word to
+  // find (decided 10 November 2026, after playing it: a few bigger stars in the river were taken for it)
+  const fills = get(g, `(() => { const out = [], was = skyG.fillRect; skyG.fillRect = function(x, y, w, h){ out.push([this.fillStyle, w, h]); }; try { skyInWater(camX(), camY(), VH * T, 1000, 1); } finally { skyG.fillRect = was; } return out; })()`);
+  const stars = fills.filter(([c]) => c === g.run('SKY_STAR'));
+  assert.ok(stars.length >= 4 && stars.every(([, w, h]) => w === 1 && h === 1), `stars are single dots: ${stars.length}`);
+  assert.ok(!fills.some(([c]) => ['#FFE27A', '#FFF6C8', '#FFFFFF'].includes(c)), 'nothing in the water in the sparkle’s gold or white');
 });
