@@ -2216,6 +2216,15 @@ function mapObjects(){
 // trees, which rustle, have two pictures of their own, base and top, drawn every frame, with leafy (the squares where
 // walking in makes it rustle) and rustle (when it last did).
 let OBJECT_PIECES = [];
+// A layer or a picture for big objects, w by h in today's pixels. (The new look, on trial, js/newlook.js: in a place drawn
+// at double detail it's twice as big each way, and still drawn on in today's pixels, so an object with no new art yet is
+// drawn as it always was, each pixel two by two. hi: how many times bigger, 1 as a rule.)
+const hiOf = c => typeof c.hi === 'number' ? c.hi : 1;   // how many times bigger a layer or picture is than today's pixels (1 unless sizeLayer made it bigger)
+function sizeLayer(c, w, h){
+  const s = NEW_LOOK ? hiScale() : 1; c.width = w*s; c.height = h*s; c.hi = s;
+  const g = c.getContext('2d'); if (s !== 1){ g.imageSmoothingEnabled = false; g.scale(s, s); }
+  return g;
+}
 const PIECE_UP = 32, PIECE_SIDE = 16;   // room in its picture above and beside an object's squares, for what reaches out of them
 const LEAFY = ['tree', 'peachTree', 'appleTree', 'durianTree'];   // what has leaves: they go over the characters beside it too, and rustle
 const COLLECTABLE = [];   // the squares in the place you're in with something to collect (a part of their onLook has sparkle)
@@ -2227,8 +2236,8 @@ function pieceOf(o){
     leafy: wide && o.look !== 'tree' ? [[o.x-1, o.y], [o.x+1, o.y]] : null,   // (where walking in makes a wide fruit tree rustle: the squares right beside it)
     crawl: OVER_OBJECTS.includes(o.look)};   // (one you crawl through, which shakes as you do: crawlThrough, js/draw.js)
   if (p.leafy || p.crawl) for (const [k, parts, over] of [['base', p.under, false], ['top', p.over, true]]){   // its own pictures
-    const c = p[k] = document.createElement('canvas'); c.width = pw; c.height = ph;
-    drawObject(c.getContext('2d'), p, parts, over, null, x0, y0);
+    const c = p[k] = document.createElement('canvas');
+    drawObject(sizeLayer(c, pw, ph), p, parts, over, null, x0, y0);
   }
   return p;
 }
@@ -2243,7 +2252,7 @@ function drawObject(g, p, parts, over, clip, ox = 0, oy = 0){
   if (drawSeason) try {   // in a season (js/seasons.js): its picture for the season, on the canvas the pieces share, then here
     g.drawImage(seasonObject(p, !over), 0, 0, p.pw, p.ph, p.x0, p.y0, p.pw, p.ph); drawn = true;
   } catch (e){ seasonTrouble(e); }
-  if (!drawn){ shadows = !over; OBJECT_ART[p.look](g, p); shadows = true; }
+  if (!drawn && !(NEW_LOOK && drawHiObject(g, p, over))){ shadows = !over; OBJECT_ART[p.look](g, p); shadows = true; }   // (the new look, on trial: from its picture at double detail, if it has one, js/newlook.js)
   g.restore();
 }
 // If a season's colours can't be drawn (a phone that won't make a canvas, say), what was being drawn is drawn as it is
@@ -2320,7 +2329,7 @@ function buildMap(){   // the place you're in: the ground, then the big objects'
   if (mapCanvas.width !== COLS*T || mapCanvas.height !== ROWS*T){ mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T; }   // a place of another size
   drawTiles();
   OBJECT_PIECES = mapObjects().map(pieceOf);
-  for (const c of [baseCanvas, topCanvas]){ c.width = COLS*T; c.height = ROWS*T; }   // (which clears them)
+  for (const c of [baseCanvas, topCanvas]) sizeLayer(c, COLS*T, ROWS*T);   // (which clears them)
   bakeObjects();
   afterDrawing();
 }

@@ -335,9 +335,9 @@ function drawEntityMonkey(kind, X, Y, dir, now, bob, step = 0, seed = 0){
 const RUSTLE = 320;   // how long a rustle lasts (ms)
 const shakeOf = (p, now) => { const t = now - p.rustle; return t < RUSTLE ? Math.round(Math.sin(t / 45) * (1 - t / RUSTLE)) : 0; };   // (a pixel at most)
 function drawPiece(p, pic, cx, cy, now){
-  const X = p.x0 - cx, Y = p.y0 - cy;
-  if (X > VW*T || Y > VH*T || X + pic.width < 0 || Y + pic.height < 0) return;
-  b.drawImage(pic, X + shakeOf(p, now), Y);
+  const X = p.x0 - cx, Y = p.y0 - cy, s = hiOf(pic);   // (s: the new look, on trial, as drawLayer)
+  if (X > VW*T || Y > VH*T || X + pic.width / s < 0 || Y + pic.height / s < 0) return;
+  if (s === 1) b.drawImage(pic, X + shakeOf(p, now), Y); else b.drawImage(pic, X + shakeOf(p, now), Y, pic.width / s, pic.height / s);
 }
 // Walking through a peach or apple tree's wide branches, into a square right beside it (its leafy squares, js/art.js),
 // makes it rustle once, gently, as you reach them, and a couple of leaves fall. Walking behind a tree, into a corner by
@@ -598,8 +598,9 @@ const camAlong = (at, size, view) => size < view ? -Math.round((view - size) / 2
 const camX = () => camAlong(pl.px + 8 - VW*T/2, COLS*T, VW*T);   // the left of the view
 const camY = () => camAlong((pl.mv && pl.mv.slip ? pl.mv.fy*T : pl.py) + 8 - VH*T/2, ROWS*T, VH*T);   // the top of the view (still while you slip down a bank, so you can see yourself slip)
 function drawLayer(c, cx, cy){   // one of the map's layers (mapCanvas, baseCanvas, topCanvas), as much of it as the view shows, where it shows
-  const x = Math.max(0, cx), y = Math.max(0, cy), w = Math.min(c.width, cx + VW*T) - x, h = Math.min(c.height, cy + VH*T) - y;
-  if (w > 0 && h > 0) b.drawImage(c, x, y, w, h, x - cx, y - cy, w, h);   // (never asking for anything off its edges, which some browsers won't draw)
+  const s = hiOf(c);   // (the new look, on trial: a layer at double detail is twice as big each way, js/newlook.js)
+  const x = Math.max(0, cx), y = Math.max(0, cy), w = Math.min(c.width / s, cx + VW*T) - x, h = Math.min(c.height / s, cy + VH*T) - y;
+  if (w > 0 && h > 0) b.drawImage(c, x*s, y*s, w*s, h*s, x - cx, y - cy, w, h);   // (never asking for anything off its edges, which some browsers won't draw)
 }
 function placeTalk(cy = camY()){
   if (talkBox.hidden){
@@ -731,7 +732,7 @@ function drawGrassBits(cx, cy, now){   // bits of grass flung up as you push int
 }
 function coverFeet(x, y, w, h, cx, cy){   // the grass over someone's feet, [x, y, w, h] in map pixels (feetInGrass): parted, if it is
   const tx = Math.floor(x / T), ty = Math.floor(y / T), s = stirred.get(tx + ',' + ty);
-  if (hiArt()) b.drawImage(thingCanvas, x, y, w, h, x - cx, y - cy, w, h);   // (the new look, on trial: just the tufts, cut out of today's square, js/newlook.js)
+  if (hiArt()){ const k = hiOf(thingCanvas); b.drawImage(thingCanvas, x*k, y*k, w*k, h*k, x - cx, y - cy, w, h); }   // (the new look, on trial: just the tufts, cut out of today's square, js/newlook.js)
   else if (s && s.pic) b.drawImage(s.pic, x - tx*T, y - ty*T, w, h, x - cx, y - cy, w, h);
   else b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);
 }

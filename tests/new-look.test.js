@@ -92,21 +92,60 @@ const firstDrawn = game => game.run(`(() => { const out = [], was = b.drawImage;
 
 test('switched off, the meadow is drawn from the map’s own ground, as ever', () => {
   const game = withLook(null);
-  game.run("HI_PICTURES['art/meadow-ground.png'] = {width: 768, height: 704};");   // (even if a picture were there)
+  game.run("HI_PICTURES['art/meadow-ground.png'] = {width: 768, height: 704}; HI_PICTURES['art/things.png'] = {width: 512, height: 119};");   // (even if a picture were there)
   assert.match(firstDrawn(game), /^map /);
 });
 
 test('switched on, the meadow’s ground comes from its picture, a pixel of it a pixel of the screen, then today’s things over it', () => {
   const game = withLook('new');
   assert.match(firstDrawn(game), /^map /, 'till the picture has loaded, the map’s own ground');
-  game.run("HI_PICTURES['art/meadow-ground.png'] = {width: 768, height: 704}; cutOutThings();");
+  game.run("HI_PICTURES['art/meadow-ground.png'] = {width: 768, height: 704}; HI_PICTURES['art/things.png'] = {width: 512, height: 119}; buildMap();");
   const [cx, cy] = game.run('camX() + "," + camY()').split(',').map(Number);
   assert.equal(firstDrawn(game), `picture ${cx * 2},${cy * 2},480,320,0,0,240,160 | things`);
 });
 
 test('a place with no picture is drawn the old way, switch or no switch', () => {
   const game = loadGame({save: {...SAVE, pos: {place: 'path', x: 15, y: 17, dir: 'up'}}, storage: {'xiaohouzi-look': 'new'}});
-  game.run("HI_PICTURES['art/meadow-ground.png'] = {width: 768, height: 704};");
+  game.run("HI_PICTURES['art/meadow-ground.png'] = {width: 768, height: 704}; HI_PICTURES['art/things.png'] = {width: 512, height: 119};");
   assert.equal(game.run('PLACE'), 'path');
   assert.match(firstDrawn(game), /^map /);
+});
+
+// ---- step 3: what stands on the ground, from one sheet at double detail (tools/art/sheet.js, js/newlook.js) ----
+const loaded = "HI_PICTURES['art/meadow-ground.png'] = {width: 768, height: 704}; HI_PICTURES['art/things.png'] = {width: 512, height: 119};";
+
+test('every thing on the sheet is inside it, and each shadow has its thing', () => {
+  const game = withLook(null);
+  const things = JSON.parse(game.run('JSON.stringify(ART.things)'));
+  for (const [name, [x, y, w, h]] of Object.entries(things.where)){
+    assert.ok(x >= 0 && y >= 0 && x + w <= things.w && y + h <= things.h, `${name} is on the sheet`);
+    if (name.endsWith('Shadow')) assert.ok(things.where[name.slice(0, -6)], `${name} is a thing's shadow`);
+  }
+});
+
+test('everything in the meadow has a picture: its big objects, and what takes a square of its ground', () => {
+  const game = withLook('new');
+  game.run(loaded + ' buildMap();');
+  const objects = game.run("[...new Set(OBJECT_PIECES.map(p => hiName(p.look, p)))].filter(n => !ART.things.where[n]).join()");
+  assert.equal(objects, '', 'big objects with no picture');
+  const ground = game.run(`(() => { const art = hiArt(), out = new Set();
+    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++){ const look = tileAt(x, y).look; if (!art.covers.includes(look) && !OBJECT_ART[look] && !ART.things.where[hiName(look, {x, y, w: 1, h: 1})]) out.add(look); }
+    return [...out].join(); })()`);
+  assert.equal(ground, '', 'things on the ground with no picture (they’d keep today’s drawing, cut out)');
+});
+
+test('switched on, a big object is drawn from the sheet into a layer twice as big; switched off, as ever', () => {
+  const on = withLook('new');
+  on.run(loaded + ' buildMap();');
+  assert.equal(on.run('baseCanvas.hi + "," + topCanvas.hi + "," + thingCanvas.hi'), '2,2,2');
+  assert.equal(on.run('baseCanvas.width + "x" + baseCanvas.height'), on.run('COLS*T*2 + "x" + ROWS*T*2'));
+  const drew = on.run(`(() => { const p = OBJECT_PIECES.find(p => p.look === 'stone'), out = [], g = {drawImage: (img, ...a) => out.push(img === HI_PICTURES['art/things.png'] ? a.join() : 'other')};
+    return drawHiObject(g, p, false) + ' ' + out.length + ' ' + out[out.length - 1]; })()`);
+  const [sx, sy, w, h, ax, ay] = JSON.parse(on.run('JSON.stringify(ART.things.where.stone)'));
+  const [px, py] = on.run("(() => { const p = OBJECT_PIECES.find(p => p.look === 'stone'); return p.x + ',' + p.y; })()").split(',').map(Number);
+  assert.equal(drew, `true 2 ${[sx, sy, w, h, px * 16 - ax / 2, py * 16 - ay / 2, w / 2, h / 2].join()}`, 'its shadow, then the stone, a pixel of the sheet a pixel of the layer');
+  const off = withLook(null);
+  off.run(loaded + ' buildMap();');
+  assert.equal(off.run('baseCanvas.hi + "," + baseCanvas.width'), '1,' + off.run('COLS*T'));
+  assert.equal(off.run("drawHiObject({drawImage(){}}, OBJECT_PIECES[0], false)"), false);
 });
