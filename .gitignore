@@ -3,3 +3,6 @@
 
 # The Azure key for making voice clips (tools/try-voices.js): it stays on this computer, never on GitHub
 voice-key.txt
+
+# Pictures the drawing tools make to look at (tools/art/mockups.js): made again whenever wanted, never part of the game
+tools/art/out/
