@@ -8375,6 +8375,27 @@ const ICONS = {
       "......abba......"
     ]
   },
+  '🌅': {
+    palette: {a:'#5A3F16', b:'#F2A82E', c:'#5E4D2E', d:'#522A14', e:'#FFD27A', f:'#D9642A', g:'#F28C38', h:'#3F434E', i:'#9FB4E0'},
+    rows: [
+      "................",
+      "................",
+      ".......aa.......",
+      "...aa.abba.aa...",
+      "..abbaabbaabba..",
+      "...aba.cd.aba...",
+      "aa.abacefdaba.aa",
+      "bba.ceeggefd.abb",
+      "abbceggggggfabba",
+      ".aaceggggggfdaa.",
+      "..dffffffffffd..",
+      "..hhhhhhhhhhhh..",
+      ".hiiiiiiiiiiiih.",
+      "..hhhhhhhhhhhh..",
+      "................",
+      "................"
+    ]
+  },
   '⭐': {
     palette: {a:'#5E573D', b:'#513B12', c:'#FFF1A8', d:'#D89A22', e:'#F2C14E'},
     rows: [

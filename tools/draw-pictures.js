@@ -1910,6 +1910,11 @@ const ICON_DRAWINGS = {
     for (let i = 0; i < 8; i++){ const a = i * Math.PI / 4, c = Math.cos(a), s = Math.sin(a); p.flat(path([[8 + c * 5.6, 8 + s * 5.6], [8 + c * 7.4, 8 + s * 7.4]], .7), '#F2A82E'); }   // its rays
     p.fill(O(8, 8, 4.2), '#F7C948', {light: '#FFF1A8', dark: '#E0A030'});
   },
+  '🌅': p => {   // a low sun, half over the horizon: evening and dawn (the time of day in the screen's corner, js/daynight.js)
+    for (const deg of [-155, -122, -90, -58, -25]){ const a = deg * Math.PI / 180, c = Math.cos(a), s = Math.sin(a); p.flat(path([[8 + c * 6, 11 + s * 6], [8 + c * 7.8, 11 + s * 7.8]], .7), '#F2A82E'); }   // its rays
+    p.fill(and(O(8, 11, 4.6), Rc(0, 0, 16, 11, 0)), '#F28C38', {light: '#FFD27A', dark: '#D9642A'});
+    p.flat(Rc(1.5, 11.6, 13, 1.4, .6), '#9FB4E0');   // the horizon
+  },
   '⭐': p => {   // a star: a new word, a new friend
     const pts = [...Array(10)].map((_, i) => { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 3.3 : 7.6; return [8 + r * Math.cos(a), 8.7 + r * Math.sin(a)]; });
     p.fill(Pg(pts), GOLD, {light: '#FFF1A8', dark: '#D89A22'});

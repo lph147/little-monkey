@@ -260,3 +260,53 @@ test('the light: evening warmth, the dark of night (lighter indoors), and dawn; 
   assert.ok(get(g, 'INDOOR_DARK < NIGHT_DARK && NIGHT_DARK <= .5'), 'night stays readable, and lighter still indoors');
   g.run("enterPlace('cave'); drawWorld(performance.now())");
 });
+
+// The time of day in the screen's corner, and the night sky in the water (decided 10 November 2026, after playing it: the
+// moon and stars were painted over the map, on the trees, though the world is seen from above).
+test('the time of day, in the screen’s top right corner: a sun, a low sun in the evening and at dawn, a moon at night; nothing before the day goes round', () => {
+  const pro = game(1, {chapter: 0}, {place: 'meadow', x: 7, y: 3, dir: 'up'});
+  pro.run('updateHUD()');
+  assert.equal(pro.el('#sky').hidden, true, 'the prologue is always day: nothing in the corner');
+  const g = game(1, CH1, {place: 'homeGround', x: 11, y: 8, dir: 'down'}), sky = g.el('#sky');
+  const at = f => { g.run(`S.clock.t = DAY_MS * ${f}; tickClock(1000)`); return [sky.hidden, g.run('SKY_ICONS[skyShown][1]'), (sky.innerHTML.match(/<img class="icon"/g) || []).length]; };
+  const icon = f => { at(f); return g.run('SKY_ICONS[skyShown][0]'); };
+  assert.deepEqual(at(.2), [false, 'Daytime', 1], 'by day, the sun');
+  assert.deepEqual(at(.7), [false, 'Evening', 1]);
+  assert.deepEqual(at(.8), [false, 'Night', 1]);
+  assert.deepEqual(at(.98), [false, 'Dawn', 1]);
+  assert.notEqual(icon(.2), icon(.8), 'the sun and the moon are different pictures');
+  assert.notEqual(icon(.2), icon(.7), 'and so is the low sun');
+  assert.equal(icon(.7), icon(.98), 'evening and dawn share it');
+  for (const f of [.2, .7, .8]) assert.ok(g.run(`!!ICONS[ICON_KEYS[${JSON.stringify(icon(f).replace(/️/g, ''))}]]`), 'each a pixel icon of the game’s');
+  g.run("mode = 'title'; drawHUD()");
+  assert.equal(sky.hidden, true, 'only out on the map');
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
+  assert.match(css, /\.saybox\.top:not\(\[hidden\]\) ~ \.sky\{display:none\}/, 'a message at the top of the screen goes over it');
+  assert.match(css, /\.screen:has\(> \.talk\.top:not\(\[hidden\]\)\) > \.sky\{top:auto;bottom:8px\}/, 'and with the speech box at the top, it goes to the bottom corner');
+});
+
+test('the night sky is in the water: the moon where a place’s water has most room for it, stars in open water, in from the banks; nothing over the land', () => {
+  const g = game(1, CH1, {place: 'homeGround', x: 21, y: 14, dir: 'down'});
+  assert.equal(g.run('typeof nightSky'), 'undefined', 'no moon and stars painted over the map');
+  assert.deepEqual(get(g, '[18, 19, 20].map(x => [15, 16].map(y => tileAt(x, y).look).join())'), ['water,water', 'water,water', 'water,water'], 'the home ground’s pond, three squares by two');
+  const [mx, my] = get(g, 'moonSpot()');
+  assert.ok(mx >= 18 * 16 + 12 && mx <= 21 * 16 - 12 && my === 16 * 16, `the moon lies in the middle of the pond, clear of its banks: ${mx}, ${my}`);
+  assert.deepEqual(get(g, 'moonSpot()'), [mx, my], 'worked out once for the place');
+  // the water in view: each square of the pond in from its banks, so nothing shines on the earth
+  const pools = get(g, 'waterInView(camX(), camY(), VH * T)'), cx = g.run('camX()'), cy = g.run('camY()');
+  const corner = pools.find(p => p[4] === 18 && p[5] === 15), middle = pools.find(p => p[4] === 19 && p[5] === 16);
+  assert.deepEqual(corner.slice(0, 4), [18 * 16 - cx + 4, 15 * 16 - cy + 4, 12, 12], 'the pond’s top left square: four pixels in from its top and its left');
+  assert.deepEqual(middle.slice(0, 4), [19 * 16 - cx, 16 * 16 - cy, 16, 12], 'its bottom middle square: in from the bottom only');
+  assert.ok(pools.every(p => ['water', 'sea'].includes(g.run(`tileAt(${p[4]}, ${p[5]}).look`))), 'only open water: not the shallows, a bridge or stepping stones');
+  // a brook one square wide has no room for the moon; a cave has no sky
+  g.run("enterPlace('hillside')");
+  const hill = get(g, 'moonSpot()');
+  assert.ok(hill && get(g, `[0, 1].every(dx => [0, 1].every(dy => tileAt(${hill[0] / 16} - 1 + dx, ${hill[1] / 16} - 1 + dy).look === 'water'))`), 'on the hillside, in the brook where it’s two squares wide');
+  g.run("enterPlace('cave')");
+  assert.equal(get(g, 'moonSpot()'), null, 'the Water Curtain Cave’s stream, one square wide: no moon');
+  // drawn only where there's water in view, over the dark
+  const calls = code => get(g, `(() => { const seen = []; const was = b.drawImage; b.drawImage = (c, ...r) => { seen.push(c === skyCanvas ? 'sky' : 'other'); }; try { ${code}; } finally { b.drawImage = was; } return seen; })()`);
+  g.run("enterPlace('homeGround'); pl.x = 21; pl.y = 14; pl.px = pl.x * T; pl.py = pl.y * T");
+  assert.deepEqual(calls('skyInWater(camX(), camY(), VH * T, 1000, 1)'), ['sky'], 'with the pond in view, the sky is put on the screen');
+  assert.deepEqual(calls('skyInWater(0, 0, 16, 1000, 1)'), [], 'with no water in view, nothing is');
+});

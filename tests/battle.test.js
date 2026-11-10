@@ -150,15 +150,33 @@ test('when you’re hurt, the old monkey lets you rest', () => {
   assert.equal(g.run('S.health'), 50);
 });
 
-test('your health on the map while you’re hurt: a bar with its number, green, yellow under half, red at a fifth or less', () => {
+test('your health on the map, only when it matters: a small bar for a few seconds after it changes, and all the while it’s low; green, yellow under half, red at a fifth or less', () => {
   const g = fighting({health: 20});
   g.run('updateHUD()');
-  const hud = g.game.el('#hud');
-  assert.equal(hud.hidden, false);
-  assert.match(hud.innerHTML, /<span class="hpbar"><i class="y" style="width:40%"><\/i><\/span><span class="hpnum">20\/50<\/span>/, 'a yellow bar, 40% of the way, and 20/50');
+  const hud = g.game.el('#hud'), later = () => g.run('hudUntil = 0; drawHUD()');   // (its few seconds over)
+  assert.equal(hud.hidden, false, 'a game that opens with you hurt shows it');
+  assert.match(hud.innerHTML, /<span class="hpbar"><i class="y" style="width:40%"><\/i><\/span><\/div>/, 'a yellow bar, 40% of the way');
+  assert.doesNotMatch(hud.innerHTML, /hpnum/, 'without its number, which a battle and your bag show');
   assert.deepEqual([50, 26, 25, 11, 10, 0].map(n => g.run(`healthCls(${n}, 50)`)), ['g', 'g', 'y', 'y', 'r', 'r']);
+  assert.ok(g.run('HUD_MS') >= 3000 && g.run('hudUntil') > g.run('performance.now()'), 'for a few seconds');
+  later();
+  assert.equal(hud.hidden, true, 'then it goes, though you’re still hurt (20 of 50 isn’t low)');
+  g.run('S.health = 16; updateHUD()'); later();
+  assert.equal(hud.hidden, false, 'at a third or less it stays');
+  assert.equal(hud.className, 'hud low', 'its heart beating');
   g.run('S.health = 50; updateHUD()');
-  assert.equal(hud.hidden, true, 'full: no bar');
+  assert.equal(hud.hidden, false, 'healed: the full bar shows for a moment too');
+  assert.match(hud.innerHTML, /<i class="g" style="width:100%">/);
+  assert.equal(hud.className, 'hud');
+  later();
+  assert.equal(hud.hidden, true, 'then nothing, while you’re well');
+  g.run("mode = 'battle'; S.health = 30; drawHUD()");
+  assert.equal(hud.hidden, true, 'never in a battle, which has its own');
+  g.run("mode = 'play'; drawHUD()");
+  assert.equal(hud.hidden, false, 'back on the map after a fight, it shows what you have left');
+  const full = fighting({});
+  full.run('updateHUD()');
+  assert.equal(full.game.el('#hud').hidden, true, 'a game that opens with your health full shows nothing');
 });
 
 test('wild creatures jump out of the long grass, now and then, not every step', async () => {

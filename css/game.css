@@ -947,13 +947,26 @@ rt.hid{visibility:hidden}
 .act .z{font-family:var(--text);font-size:1.5rem;font-weight:700;line-height:1.1}
 .act .p{font-size:.85rem}
 .act .e{font:.75rem var(--pixel);color:var(--jade);text-align:center}
-.hud{position:absolute;left:14px;top:14px;display:flex;gap:3px;padding:4px 6px;background:rgba(14,26,51,.75);border-radius:6px;z-index:4;pointer-events:none}
+/* Your health on the map, in the screen's top left corner (drawHUD, js/main.js): a small heart and a short bar, there only
+   when it matters, fading as it goes (away); its heart beats while it's low. And in the top right corner, the time of
+   day (drawSky, js/daynight.js): a sun, a low sun or a moon on a small round plate. (Decided 10 November 2026, after
+   playing it: a big bar with its number sat there whenever you were hurt at all, and the moon was painted over the map.) */
+.hud{position:absolute;left:8px;top:8px;display:flex;gap:3px;padding:3px 5px;background:rgba(14,26,51,.6);border-radius:5px;z-index:4;pointer-events:none;transition:opacity .5s}
 .hud[hidden]{display:none}
+.hud.away{opacity:0}
 .saybox.top:not([hidden]) ~ .hud{display:none}   /* a message at the top of the screen goes over where your health is: it comes back as the message goes (decided 7 November 2026, after playing it: they overlapped) */
-.screen:has(> .talk.top:not([hidden])) > .hud{top:auto;bottom:14px}   /* (with the speech box at the top, your health goes to the bottom corner, not under it) */
-.hud .hp{margin:0;gap:6px}
-.hud .hpbar{min-width:90px;border-color:#0B1410}
-.hud .hpnum{color:#fff}
+.screen:has(> .talk.top:not([hidden])) > .hud{top:auto;bottom:8px}   /* (with the speech box at the top, your health goes to the bottom corner, not under it) */
+.hud .hp{margin:0;gap:4px}
+.hud .hp .heart{width:11px;height:10px}
+.hud .hpbar{min-width:46px;height:8px;border-width:1px;border-color:#0B1410}
+.hud.low .hp .heart{animation:beat .9s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}18%{transform:scale(1.3)}36%{transform:scale(1)}}
+.sky{position:absolute;right:8px;top:8px;width:22px;height:22px;display:grid;place-items:center;background:rgba(14,26,51,.6);border-radius:50%;z-index:4;pointer-events:none}
+.sky[hidden]{display:none}
+.sky .icon{width:16px;height:16px;vertical-align:0}
+.saybox.top:not([hidden]) ~ .sky{display:none}
+.screen:has(> .talk.top:not([hidden])) > .sky{top:auto;bottom:8px}
+@media (prefers-reduced-motion: reduce){.hud{transition:none}.hud.low .hp .heart{animation:none}}
 .hud .smell{display:flex;align-items:center;gap:4px;color:#fff;font-family:var(--pixel);font-size:.85rem;line-height:1}   /* smelling of durian: it, and the time left (drawHUD, js/main.js) */
 .hud .smell .pix{width:16px;height:16px;image-rendering:pixelated}
 .hud .hp + .smell{margin-left:6px}

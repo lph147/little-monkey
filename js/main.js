@@ -154,14 +154,26 @@ function updateCtx(now){
 // After anything happens. Select has a red dot while there's a task you haven't looked at in your task
 // list, and a new task is announced with a message once you're free and the last message has gone (this
 // runs again when it goes: see toast in js/helpers.js).
-// What's at the top of the screen: your health while you're hurt, and while you smell of durian, the durian and the time
-// left (isStinky, js/input.js).
+// What's at the top of the screen. In the left corner, your health, only when it matters (decided 10 November 2026, after
+// playing it: you only heal by eating or sleeping, so one scratch left a big bar with its number up for good): for a few
+// seconds after it changes, HUD_MS (after a fight, or after eating, full again), then it fades; and all the while it's
+// low, a third or less (HUD_LOW), its heart beating, so you know before you walk into long grass. A small heart and a
+// short bar, without its number, which a battle and your bag show. And while you smell of durian, the durian and the
+// time left (isStinky, js/input.js). In the right corner, the time of day (drawSky, js/daynight.js).
+const HUD_MS = 5000, HUD_LOW = 1 / 3, HUD_FADE_MS = 500;
+let hudWas = null, hudUntil = 0, hudTimer = 0;   // (your health when the map last showed it; till when it shows; and the timer that takes it away)
 function drawHUD(){
+  drawSky();
   const hud = $('#hud'); if (!hud) return;
-  const smell = mode === 'play' && isStinky(), secs = Math.ceil(stinkLeft / 1000);
-  hud.hidden = mode !== 'play' || (!hurt() && !smell);
-  if (!hud.hidden) hud.innerHTML = (hurt() ? healthHTML(health(), maxHealth(), true) : '')
+  clearTimeout(hudTimer);
+  const play = mode === 'play', now = performance.now(), smell = play && isStinky(), secs = Math.ceil(stinkLeft / 1000);
+  if (play && health() !== hudWas){ if (hudWas !== null || hurt()) hudUntil = now + HUD_MS; hudWas = health(); }   // (a game that opens with your health full shows nothing)
+  const low = hurt() && health() <= maxHealth() * HUD_LOW, shown = play && (low || now < hudUntil);
+  hud.hidden = !shown && !smell;
+  hud.className = 'hud' + (shown && low ? ' low' : '');   // (low: its heart beats; and no longer fading away)
+  if (!hud.hidden) hud.innerHTML = (shown ? healthHTML(health(), maxHealth()) : '')
     + (smell ? `<span class="smell" role="img" aria-label="You smell of ${esc(WORDS[stinkFood] ? WORDS[stinkFood].en : 'durian')}: ${secs} seconds left">${picHTML(stinkFood)}${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}</span>` : '');
+  if (shown && !low) hudTimer = setTimeout(() => { if (!smell) hud.className = 'hud away'; hudTimer = setTimeout(drawHUD, HUD_FADE_MS); }, Math.max(0, hudUntil - now));   // (its time up: it fades, then it's gone)
 }
 function updateHUD(){
   drawHUD();

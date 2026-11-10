@@ -200,7 +200,7 @@ test('the game tells the page how small its screen is (data-screen), for the but
   assert.match(css, /data-screen=small\],\[data-screen=tiny\]\) :is\(#nextBtn,#beginBtn,\.talk \.next,\.titlecard \.btn\)\{padding-left:15px\}/, 'room for the A badge (OK read UK)');
   assert.match(css, /data-screen=tiny\]\) #skipBtn\{padding-right:15px\}/, 'and for B');
   assert.doesNotMatch(css, /\.talk \.gloss\.tip/, 'no "Tap any word…" in the speech box (a bubble, once, instead)');
-  assert.match(css, /\.screen:has\(> \.talk\.top:not\(\[hidden\]\)\) > \.hud\{top:auto;bottom:14px\}/, 'with the speech box at the top, your health goes to the bottom');
+  assert.match(css, /\.screen:has\(> \.talk\.top:not\(\[hidden\]\)\) > \.hud\{top:auto;bottom:8px\}/, 'with the speech box at the top, your health goes to the bottom');
 });
 
 test('pinyin is never smaller than 10.5px, wherever it is, so its tone marks can be read on a small phone', () => {

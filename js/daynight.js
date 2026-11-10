@@ -32,6 +32,7 @@ function noteCaught(w){ if (S.clock && !(S.clock.caught || (S.clock.caught = [])
 let clockLast = 0, clockSaved = 0;
 function tickClock(now){
   const dt = clockLast ? clamp(now - clockLast, 0, 250) : 0; clockLast = now;
+  if (mode === 'play' && skyPart() !== skyShown) drawSky();   // (the sun or the moon in the screen's corner, as the time of day changes)
   if (sleepAt){ nightPasses(now); return; }   // (asleep at bedtime: the night going by)
   if (!clockOn() || !modal.hidden || talkNext) return;
   S.clock.t = (S.clock.t || 0) + dt;
@@ -144,7 +145,7 @@ function lightNow(){
   const k = (f - DAWN) / (1 - DAWN); return {dark:1 - k, warm:0, rose:Math.sin(k * Math.PI)};
 }
 // The light, each frame, over the world (drawWorld, js/draw.js): the evening's warmth, then the dark blue of night, lamplit
-// windows and doorways, lanterns and fires glowing through it, and outdoors the moon and stars, and fireflies; at dawn,
+// windows and doorways, lanterns and fires glowing through it, and outdoors the moon and stars in the water, and fireflies; at dawn,
 // a rosy light. Not in a place that's always night (its own night, js/mountain.js), nor in the master's year's evening
 // (js/seasons.js draws its own).
 function drawDaylight(cx, cy, sh, now){
@@ -157,7 +158,7 @@ function drawDaylight(cx, cy, sh, now){
   if (L.rose){ b.globalAlpha = L.rose * .14; R(b, 0, 0, W, sh, '#FF9EB0'); }
   b.globalAlpha = 1;
   if (L.dark > .25) lamplight(cx, cy, Math.min(1, (L.dark - .25) / .5), now);
-  if (!inside && L.dark > .4 && !GLOOM) nightSky(W, sh, now, Math.min(1, (L.dark - .4) / .4));
+  if (!inside && L.dark > .4 && !GLOOM) skyInWater(cx, cy, sh, now, Math.min(1, (L.dark - .4) / .4));
   if (!inside && L.dark > .6 && (AREA.number === 1 || P.borrowed || P.fireflies) && fireflyPlace()) fireflies(cx, cy, sh, now, (L.dark - .6) / .4);   // (on Flower Fruit Mountain, and over the human world's rice fields: a place's fireflies)
   if (!inside && L.dark > .5 && P.nightBats) nightBats(cx, cy, now, P.nightBats, Math.min(1, (L.dark - .5) / .3));   // (bats round the town's lanterns)
   if (L.dark > .25) glowingAnimals(cx, cy, now, Math.min(1, (L.dark - .25) / .5));   // (fireflies you've met glowing, a moth at its lamp)
@@ -188,14 +189,91 @@ function lamplight(cx, cy, k, now){
   b.globalAlpha = 1;
   if (typeof drawFires === 'function') drawFires(cx, cy, now);
 }
-// The night sky over a place outdoors: the moon, and stars twinkling (as the cave by night's: drawNight, js/mountain.js).
-function nightSky(W, sh, now, a){
-  b.globalAlpha = a;
-  disc(b, W - 34, 18, 7, '#F2EBC2'); disc(b, W - 30, 15, 7, '#1A2448');   // the moon
-  b.globalAlpha = a * .25; disc(b, W - 35, 19, 11, '#F2EBC2');
-  for (const [x, y] of [[W - 56, 12], [W - 48, 26], [W - 62, 30], [W - 90, 14], [W - 120, 22]]){ const tw = (now / 400 + x) % 6 < 1; b.globalAlpha = a; R(b, x - 1, y, 3, 1, '#FFF6C8'); R(b, x, y - 1, 1, 3, '#FFF6C8'); if (tw) R(b, x - 2, y, 5, 1, '#FFFFFF'); }
-  for (let i = 0; i < 22; i++){ b.globalAlpha = a * (.5 + .5 * Math.sin(now / 700 + i * 2.1)); R(b, Math.floor(rnd(i, 7, 940) * W), Math.floor(rnd(i, 8, 941) * Math.min(sh, VH*T) * .35), 1, 1, '#C8D0F0'); }
-  b.globalAlpha = 1;
+// The time of day, in the screen's top right corner (decided 10 November 2026, after playing it: the moon and stars were
+// painted over the map, on the trees, though you see the world from above): a sun by day, a low sun in the evening and at
+// dawn, a moon at night, on a small round plate, wherever the day goes round, so you know when the animals and treasures
+// of the day or the night are about. A place that's always night shows its moon, and the master's year's evening its low sun.
+const SKY_ICONS = {day:['☀️', 'Daytime'], evening:['🌅', 'Evening'], night:['🌙', 'Night'], dawn:['🌅', 'Dawn']};
+function skyPart(){
+  const P = PLACES[PLACE] || {};
+  if (P.night) return 'night';
+  if (AREA.seasons && AREA.seasons.evening && seasonNow() && matches(AREA.seasons.evening)) return 'evening';
+  return dayPart();
+}
+let skyShown = null;   // (what the corner shows now)
+function drawSky(){
+  const el = $('#sky'); if (!el) return;
+  const part = mode === 'play' ? skyPart() : null;
+  el.hidden = !part;
+  if (part && part !== skyShown){ el.innerHTML = pixelIcons(SKY_ICONS[part][0]); el.setAttribute('aria-label', SKY_ICONS[part][1]); }
+  skyShown = part;
+}
+// The night sky, where you'd really see it from above: in the water (decided the same day). Stars twinkle in every square
+// of open water in view, and the moon lies in the place's water where there's most room for it (moonSpot: the middle of
+// a pond, or of a river two squares wide; a brook one square wide has only stars). Never over a bank (SKY_EDGE pixels in
+// from one), nor over anything on the water or above it: a tree's leaves, someone standing or swimming in it. It's drawn
+// on a canvas of its own, the screen's size (the water its window, then what's over the water rubbed out), and put on
+// the screen over the dark, so it shines.
+const SKY_WATER = ['water', 'sea'], SKY_EDGE = 4, MOON_ROOM = 2;   // (MOON_ROOM: the open water the moon needs every way from its middle, in half squares)
+const skyCanvas = document.createElement('canvas'); skyCanvas.width = VW*T; skyCanvas.height = VH*T;
+const skyG = skyCanvas.getContext('2d');
+const skyWet = (x, y) => x >= 0 && y >= 0 && x < COLS && y < ROWS && SKY_WATER.includes(tileAt(x, y).look);
+let moonPlace = null, moonAt = null;   // (worked out once for the place you're in)
+function moonSpot(){   // where the moon lies in this place's water, [x, y] in the map's pixels (null: nowhere with room for it)
+  if (moonPlace === PLACE) return moonAt;
+  moonPlace = PLACE; moonAt = null;
+  // every point half a square apart: how many half squares of water lie every way from it (4 at most); the most wins, and of those, the nearest the middle of the map
+  const open = (hx, hy, r) => { for (let y = Math.floor((hy - r) / 2); y < Math.ceil((hy + r) / 2); y++) for (let x = Math.floor((hx - r) / 2); x < Math.ceil((hx + r) / 2); x++) if (!skyWet(x, y)) return false; return true; };
+  let best = MOON_ROOM - 1, near = 0;
+  for (let hy = 1; hy < ROWS * 2; hy++) for (let hx = 1; hx < COLS * 2; hx++){
+    if (!skyWet(Math.floor(hx / 2), Math.floor(hy / 2))) continue;
+    let r = 0; while (r < 4 && open(hx, hy, r + 1)) r++;
+    const d = Math.hypot(hx - COLS, hy - ROWS);
+    if (r > best || (r === best && moonAt && d < near)){ best = r; near = d; moonAt = [hx * T / 2, hy * T / 2]; }
+  }
+  return moonAt;
+}
+function waterInView(cx, cy, sh){   // the water in view, a rectangle a square, [x, y, w, h] on the screen, in from each bank it has; and which square, [.., x, y]
+  const out = [];
+  for (let y = Math.floor(cy / T); y*T < cy + sh; y++) for (let x = Math.floor(cx / T); x*T < cx + VW*T; x++){
+    if (!skyWet(x, y)) continue;
+    const l = noBank(x - 1, y) ? 0 : SKY_EDGE, r = noBank(x + 1, y) ? 0 : SKY_EDGE, t = noBank(x, y - 1) ? 0 : SKY_EDGE, d = noBank(x, y + 1) ? 0 : SKY_EDGE;
+    out.push([x*T - cx + l, y*T - cy + t, T - l - r, T - t - d, x, y]);
+  }
+  return out;
+}
+function skyInWater(cx, cy, sh, now, a){
+  const pools = waterInView(cx, cy, sh); if (!pools.length) return;
+  const g = skyG, W = VW*T, H = VH*T, moon = moonSpot();
+  g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.clearRect(0, 0, W, H);
+  g.save(); g.beginPath(); for (const [x, y, w, h] of pools) g.rect(x, y, w, h); g.clip();   // the water: the sky's window
+  for (const [, , , , x, y] of pools){   // stars: one or two little ones in most squares, twinkling, and here and there a bigger one
+    const X = x*T - cx, Y = y*T - cy;
+    for (let i = 0; i < 2; i++){
+      if (rnd(x, y, 980 + i) < .45) continue;
+      g.globalAlpha = .3 + .55 * Math.max(0, Math.sin(now / 650 + x * 3 + y * 5 + i * 2));
+      R(g, X + 2 + Math.floor(rnd(x, y, 960 + i) * 12), Y + 2 + Math.floor(rnd(x, y, 970 + i) * 12), 1, 1, '#E6ECFF');
+    }
+    g.globalAlpha = 1;
+    if (rnd(x, y, 990) > .88){ const sx = X + 5 + Math.floor(rnd(x, y, 991) * 6), sy = Y + 5 + Math.floor(rnd(x, y, 992) * 6); R(g, sx - 1, sy, 3, 1, '#FFF6C8'); R(g, sx, sy - 1, 1, 3, '#FFF6C8'); if ((now / 400 + x * 7 + y) % 6 < 1) R(g, sx - 2, sy, 5, 1, '#FFFFFF'); }
+  }
+  if (moon){
+    const mx = Math.round(moon[0] - cx), my = Math.round(moon[1] - cy), wob = Math.floor(now / 500) % 3;
+    g.globalCompositeOperation = 'destination-out'; disc(g, mx, my, 8, '#000');                       // no stars where the moon is
+    g.globalCompositeOperation = 'source-over'; disc(g, mx - 1, my + 1, 6, '#F2EBC2');                // the moon:
+    g.globalCompositeOperation = 'destination-out'; disc(g, mx + 3, my - 2, 6, '#000');               // a crescent,
+    R(g, mx - 8, my - 1 + wob, 9, 1, '#000'); R(g, mx - 6, my + 4 - wob, 8, 1, '#000');               // rippling,
+    g.globalCompositeOperation = 'destination-over'; g.globalAlpha = .22; disc(g, mx - 1, my + 1, 9, '#F2EBC2');   // its glow on the water behind it
+  }
+  g.restore();
+  g.globalCompositeOperation = 'destination-out';   // and whatever's over the water hides it
+  for (const c of [baseCanvas, topCanvas]){ const x = Math.max(0, cx), y = Math.max(0, cy), w = Math.min(c.width, cx + W) - x, h = Math.min(c.height, cy + H) - y; if (w > 0 && h > 0) g.drawImage(c, x, y, w, h, x - cx, y - cy, w, h); }   // (as drawLayer, js/draw.js)
+  for (const p of OBJECT_PIECES) if (!p.baked) for (const pic of [p.base, p.top]) if (pic) g.drawImage(pic, p.x0 - cx, p.y0 - cy);   // the fruit trees
+  const hide = (x, y) => R(g, x*T - cx - 2, y*T - cy - 10, T + 4, T + 10, '#000');
+  for (const n of [...NPCS, ...FOLLOWERS]) hide(n.x, n.y);   // someone in the water, such as the little monkeys splashing in the brook
+  if (canWild()) for (const an of ANIMALS) if (an.swims && atSpot(an)) hide(an.at[0], an.at[1]);   // or swimming on it, such as the duck
+  g.globalCompositeOperation = 'source-over';
+  b.globalAlpha = a; b.drawImage(skyCanvas, 0, 0); b.globalAlpha = 1;
 }
 // Fireflies, on Flower Fruit Mountain at night (not in winter, nor among thick trees): little green-gold lights drifting
 // and blinking over the grass.
