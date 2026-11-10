@@ -285,12 +285,12 @@ test('the time of day, in the screen’s top right corner: a sun, a low sun in t
   assert.match(css, /\.screen:has\(> \.talk\.top:not\(\[hidden\]\)\) > \.sky\{top:auto;bottom:8px\}/, 'and with the speech box at the top, it goes to the bottom corner');
 });
 
-test('the night sky is in the water: the moon where a place’s water has most room for it, stars in open water, in from the banks; nothing over the land', () => {
+test('the night sky is in the water: the moon in the middle of a pond, never in a river, a brook or the sea; stars in open water, in from the banks; nothing over the land', () => {
   const g = game(1, CH1, {place: 'homeGround', x: 21, y: 14, dir: 'down'});
   assert.equal(g.run('typeof nightSky'), 'undefined', 'no moon and stars painted over the map');
   assert.deepEqual(get(g, '[18, 19, 20].map(x => [15, 16].map(y => tileAt(x, y).look).join())'), ['water,water', 'water,water', 'water,water'], 'the home ground’s pond, three squares by two');
   const [mx, my] = get(g, 'moonSpot()');
-  assert.ok(mx >= 18 * 16 + 12 && mx <= 21 * 16 - 12 && my === 16 * 16, `the moon lies in the middle of the pond, clear of its banks: ${mx}, ${my}`);
+  assert.deepEqual([mx, my], [19.5 * 16, 16 * 16], 'the moon lies in the very middle of the pond');
   assert.deepEqual(get(g, 'moonSpot()'), [mx, my], 'worked out once for the place');
   // the water in view: each square of the pond in from its banks, so nothing shines on the earth
   const pools = get(g, 'waterInView(camX(), camY(), VH * T)'), cx = g.run('camX()'), cy = g.run('camY()');
@@ -298,12 +298,21 @@ test('the night sky is in the water: the moon where a place’s water has most r
   assert.deepEqual(corner.slice(0, 4), [18 * 16 - cx + 4, 15 * 16 - cy + 4, 12, 12], 'the pond’s top left square: four pixels in from its top and its left');
   assert.deepEqual(middle.slice(0, 4), [19 * 16 - cx, 16 * 16 - cy, 16, 12], 'its bottom middle square: in from the bottom only');
   assert.ok(pools.every(p => ['water', 'sea'].includes(g.run(`tileAt(${p[4]}, ${p[5]}).look`))), 'only open water: not the shallows, a bridge or stepping stones');
-  // a brook one square wide has no room for the moon; a cave has no sky
-  g.run("enterPlace('hillside')");
-  const hill = get(g, 'moonSpot()');
-  assert.ok(hill && get(g, `[0, 1].every(dx => [0, 1].every(dy => tileAt(${hill[0] / 16} - 1 + dx, ${hill[1] / 16} - 1 + dy).look === 'water'))`), 'on the hillside, in the brook where it’s two squares wide');
-  g.run("enterPlace('cave')");
-  assert.equal(get(g, 'moonSpot()'), null, 'the Water Curtain Cave’s stream, one square wide: no moon');
+  // only in still water, a pond or a pool (decided 10 November 2026, after playing it: in a river it didn't feel natural, and
+  // one river runs through several places, so you met its moon again and again)
+  const moonIn = place => { g.run(`enterPlace('${place}')`); return get(g, 'moonSpot()'); };
+  for (const [place, x0, y0, x1, y1] of [['meadow', 9, 9, 12, 11], ['flowerValley', 0, 0, 99, 99], ['pasture', 0, 0, 99, 99]]){
+    const m = moonIn(place);
+    assert.ok(m && m[0] > x0 * 16 && m[0] < (x1 + 1) * 16 && m[1] > y0 * 16 && m[1] < (y1 + 1) * 16, `a moon in the pond: ${place}`);
+    assert.ok(get(g, `[0, 1].every(dx => [0, 1].every(dy => tileAt(Math.ceil(${m[0]} / 16) - 1 + dx, Math.ceil(${m[1]} / 16) - 1 + dy).look === 'water'))`), `with water all round it: ${place}`);
+  }
+  for (const place of ['path', 'valley', 'falls', 'hillside', 'riverside', 'hotSprings']) assert.equal(moonIn(place), null, `no moon in a river or a brook: ${place}`);
+  assert.equal(moonIn('southSlope'), null, 'nor in the south slope’s brook, though the trees shut it in at both ends: it’s far too long for a pond');
+  assert.equal(moonIn('shore'), null, 'nor in the sea');
+  assert.equal(moonIn('cave'), null, 'nor in the Water Curtain Cave’s stream, one square wide');
+  assert.equal(get(g, 'pondSquares().size'), 0, 'that stream is far too long to be a pond');
+  g.run("enterPlace('meadow')");
+  assert.equal(get(g, 'pondSquares().size'), 12, 'the meadow’s pond is a pond, twelve squares; its river, which runs off the map, isn’t');
   // drawn only where there's water in view, over the dark
   const calls = code => get(g, `(() => { const seen = []; const was = b.drawImage; b.drawImage = (c, ...r) => { seen.push(c === skyCanvas ? 'sky' : 'other'); }; try { ${code}; } finally { b.drawImage = was; } return seen; })()`);
   g.run("enterPlace('homeGround'); pl.x = 21; pl.y = 14; pl.px = pl.x * T; pl.py = pl.y * T");

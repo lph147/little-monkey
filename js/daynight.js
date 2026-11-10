@@ -208,27 +208,52 @@ function drawSky(){
   if (part && part !== skyShown){ el.innerHTML = pixelIcons(SKY_ICONS[part][0]); el.setAttribute('aria-label', SKY_ICONS[part][1]); }
   skyShown = part;
 }
-// The night sky, where you'd really see it from above: in the water (decided the same day). Stars twinkle in every square
-// of open water in view, and the moon lies in the place's water where there's most room for it (moonSpot: the middle of
-// a pond, or of a river two squares wide; a brook one square wide has only stars). Never over a bank (SKY_EDGE pixels in
-// from one), nor over anything on the water or above it: a tree's leaves, someone standing or swimming in it. It's drawn
-// on a canvas of its own, the screen's size (the water its window, then what's over the water rubbed out), and put on
-// the screen over the dark, so it shines.
-const SKY_WATER = ['water', 'sea'], SKY_EDGE = 4, MOON_ROOM = 2, SKY_STAR = '#BFD0F5';   // (MOON_ROOM: the open water the moon needs every way from its middle, in half squares)
+// The night sky, where you'd really see it from above: in the water (decided the same day). Stars shimmer in every square
+// of open water in view. The moon lies only in still water, a pond or a pool, in its middle (moonSpot; decided 10 November
+// 2026, after playing it: in a river it didn't feel natural, and one river runs through several places, so you met its
+// moon again and again; nor in the sea, for now): rivers, brooks and the sea have stars alone. Never over a bank (SKY_EDGE
+// pixels in from one), nor over anything on the water or above it: a tree's leaves, someone standing or swimming in it.
+// It's drawn on a canvas of its own, the screen's size (the water its window, then what's over the water rubbed out), and
+// put on the screen over the dark, so it shines.
+const SKY_WATER = ['water', 'sea'], SKY_EDGE = 4, MOON_ROOM = 2, MOON_POND = 8, SKY_STAR = '#BFD0F5';   // (MOON_ROOM: the open water the moon needs every way from its middle, in half squares; MOON_POND: a pond is no longer than this, in squares)
 const skyCanvas = document.createElement('canvas'); skyCanvas.width = VW*T; skyCanvas.height = VH*T;
 const skyG = skyCanvas.getContext('2d');
 const skyWet = (x, y) => x >= 0 && y >= 0 && x < COLS && y < ROWS && SKY_WATER.includes(tileAt(x, y).look);
+// The place's ponds: each stretch of water that's shut in (it never reaches the map's edge, as a river does, even under a
+// bridge, stepping stones or a walkway) and no longer than MOON_POND squares either way (a brook can be shut in too, behind
+// the trees at each end, such as the south slope's). Each square of open water in one, 'x,y', with its pond's middle (in
+// half squares).
+function pondSquares(){
+  const joined = (x, y) => { if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return false; const l = tileAt(x, y).look; return WATERY.includes(l) || WET_TOO.includes(l) || OVER_WATER.includes(l); };
+  const seen = new Set(), ponds = new Map();
+  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++){
+    if (!joined(x, y) || seen.has(x + ',' + y)) continue;
+    const todo = [[x, y]], all = []; let edge = false, x0 = x, x1 = x, y0 = y, y1 = y;
+    seen.add(x + ',' + y);
+    while (todo.length){
+      const [a, c] = todo.pop(); all.push([a, c]);
+      if (a === 0 || c === 0 || a === COLS - 1 || c === ROWS - 1) edge = true;
+      x0 = Math.min(x0, a); x1 = Math.max(x1, a); y0 = Math.min(y0, c); y1 = Math.max(y1, c);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (joined(a + dx, c + dy) && !seen.has((a + dx) + ',' + (c + dy))){ seen.add((a + dx) + ',' + (c + dy)); todo.push([a + dx, c + dy]); }
+    }
+    if (edge || Math.max(x1 - x0, y1 - y0) + 1 > MOON_POND) continue;
+    const middle = [all.reduce((n, [a]) => n + a * 2 + 1, 0) / all.length, all.reduce((n, [, c]) => n + c * 2 + 1, 0) / all.length];
+    for (const [a, c] of all) if (tileAt(a, c).look === 'water') ponds.set(a + ',' + c, middle);
+  }
+  return ponds;
+}
 let moonPlace = null, moonAt = null;   // (worked out once for the place you're in)
-function moonSpot(){   // where the moon lies in this place's water, [x, y] in the map's pixels (null: nowhere with room for it)
+function moonSpot(){   // where the moon lies in this place's water, [x, y] in the map's pixels (null: it has no pond with room for it)
   if (moonPlace === PLACE) return moonAt;
   moonPlace = PLACE; moonAt = null;
-  // every point half a square apart: how many half squares of water lie every way from it (4 at most); the most wins, and of those, the nearest the middle of the map
-  const open = (hx, hy, r) => { for (let y = Math.floor((hy - r) / 2); y < Math.ceil((hy + r) / 2); y++) for (let x = Math.floor((hx - r) / 2); x < Math.ceil((hx + r) / 2); x++) if (!skyWet(x, y)) return false; return true; };
+  // every point half a square apart in a pond: how many half squares of its water lie every way from it (4 at most); the most wins, and of those, the nearest its pond's middle
+  const ponds = pondSquares(), still = (x, y) => ponds.has(x + ',' + y);
+  const open = (hx, hy, r) => { for (let y = Math.floor((hy - r) / 2); y < Math.ceil((hy + r) / 2); y++) for (let x = Math.floor((hx - r) / 2); x < Math.ceil((hx + r) / 2); x++) if (!still(x, y)) return false; return true; };
   let best = MOON_ROOM - 1, near = 0;
-  for (let hy = 1; hy < ROWS * 2; hy++) for (let hx = 1; hx < COLS * 2; hx++){
-    if (!skyWet(Math.floor(hx / 2), Math.floor(hy / 2))) continue;
+  if (ponds.size) for (let hy = 1; hy < ROWS * 2; hy++) for (let hx = 1; hx < COLS * 2; hx++){
+    const middle = ponds.get(Math.floor(hx / 2) + ',' + Math.floor(hy / 2)); if (!middle) continue;
     let r = 0; while (r < 4 && open(hx, hy, r + 1)) r++;
-    const d = Math.hypot(hx - COLS, hy - ROWS);
+    const d = Math.hypot(hx - middle[0], hy - middle[1]);
     if (r > best || (r === best && moonAt && d < near)){ best = r; near = d; moonAt = [hx * T / 2, hy * T / 2]; }
   }
   return moonAt;
