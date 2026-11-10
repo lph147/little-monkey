@@ -80,16 +80,85 @@ test('the hot springs: pools in the rock, edged with rounded stones where they m
 
 test('ponds and streams: their banks curve round where they turn, not a square corner', () => {
   const g = mountainGame({place: 'meadow', x: 5, y: 5, dir: 'up'});
-  const water = (x, y) => drawn(g, `LOOKS.water(ctx, ${x * 16}, ${y * 16}, ${x}, ${y})`), X = 13 * 16, Y = 11 * 16;
-  assert.deepEqual(get(g, '[tileAt(13, 11).look, tileAt(14, 11).look, tileAt(13, 10).look, tileAt(13, 12).look, tileAt(11, 10).look]'), ['water', 'grass', 'grass', 'grass', 'water'], 'the meadow’s pond, its east end');
-  const corner = water(13, 11), bank = corner.filter(([c, x, y, w, h]) => c === '#2C6B9E' && w === 1 && h === 1);
-  assert.equal(corner.filter(([c]) => c === 'clip').length, 2, 'the grass coming into its two corners there');
-  assert.ok(bank.some(([c, x, y]) => x > X + 10 && y < Y + 5) && bank.some(([c, x, y]) => x > X + 10 && y > Y + 10), 'the bank following the curve, top right and bottom right');
-  assert.equal(water(11, 10).filter(([c]) => c === 'clip').length, 0, 'in the middle of the pond, nothing');
+  const water = (x, y) => drawn(g, `LOOKS.water(ctx, ${x * 16}, ${y * 16}, ${x}, ${y})`), [lip, edge] = get(g, 'BANK_EARTH');
+  assert.deepEqual(get(g, '[tileAt(12, 9).look, tileAt(13, 9).look, tileAt(12, 8).look, tileAt(12, 11).look, tileAt(13, 11).look, tileAt(12, 12).look, tileAt(10, 10).look]'),
+    ['water', 'post', 'tree', 'water', 'grass', 'grass', 'water'], 'the meadow’s pond, its east end: the top corner and the bottom one');
+  for (const [x, y, where, inCorner] of [[12, 9, 'top right', (px, py) => px > 12 * 16 + 10 && py < 9 * 16 + 5], [12, 11, 'bottom right', (px, py) => px > 12 * 16 + 10 && py > 11 * 16 + 10]]){
+    const corner = water(x, y), dots = c => corner.filter(([col, px, py, w, h]) => col === c && w === 1 && h === 1 && inCorner(px, py));
+    assert.ok(corner.some(([c]) => c === 'clip'), where + ': the grass coming into the corner');
+    assert.ok(dots(edge).length >= 5, where + ': the bank’s dark edge following the curve');
+    assert.ok(dots(lip).length >= 5, where + ': and its pale lip, outside it');
+  }
+  assert.equal(water(10, 10).filter(([c]) => c === 'clip').length, 0, 'in the middle of the pond, nothing');
   const g2 = game({place: 'highRoad', x: 16, y: 9, dir: 'up'});
   g2.run("enterPlace('caveNight')");
   assert.deepEqual(get(g2, '[tileAt(22, 7).look, tileAt(23, 7).look]'), ['water', 'moonWater'], 'the cave’s pool at night, the moon shining in it');
-  assert.ok(!drawn(g2, 'LOOKS.water(ctx, 352, 112, 22, 7)').some(([c, x, y, w, h]) => c === '#2C6B9E' && x === 352 + 14 && w === 2 && h === 16), 'no bank against the moon, which is water too');
+  const pool = drawn(g2, 'LOOKS.water(ctx, 352, 112, 22, 7)');
+  assert.ok(!pool.some(([c, x, y, w, h]) => c === '#2C6B9E' && x === 352 + 14 && w === 2 && h === 16), 'no bank against the moon, which is water too');
+  assert.ok(!pool.some(([c]) => c === lip || c === edge), 'and no earth round a pool in the rock');
+});
+
+// A slight improvement to the original look (decided 10 November 2026, after a trial of a new look was taken out: the
+// owner found the water's edges poor, ruler-straight, a frame round the water, and liked a bank where the colour changes).
+test('the water’s edge: a bank of earth where it meets the ground, wandering against grass, a pixel in, in short runs that carry on from square to square; against rock, as it always was', () => {
+  const g = mountainGame({place: 'meadow', x: 5, y: 5, dir: 'up'});
+  const water = (x, y) => drawn(g, `LOOKS.water(ctx, ${x * 16}, ${y * 16}, ${x}, ${y})`), [lip, edge] = get(g, 'BANK_EARTH'), DEEP = '#2C6B9E', GLINT = '#8ACFF0';
+  assert.deepEqual(get(g, '[tileAt(18, 5).look, tileAt(17, 5).look, tileAt(18, 6).look, tileAt(17, 6).look, tileAt(18, 0).look, tileAt(17, 0).look, tileAt(19, 5).look, tileAt(20, 5).look]'),
+    ['water', 'grass', 'water', 'grass', 'water', 'cliffFace', 'water', 'tree'], 'the river: grass on its west bank, at the top the cliff, and trees on its east bank');
+  // against grass, to the west: on each of its sixteen rows the lip at the square's edge or a pixel in, the dark edge inside it, then the bank's shadow on the water
+  const rowsOf = (x, y, c, from) => { const rows = new Array(16).fill(-1); for (const [col, px, py, w, h] of water(x, y)) if (col === c && w === 1 && px - x * 16 >= from && px - x * 16 <= from + 1) for (let i = 0; i < h; i++) rows[py - y * 16 + i] = px - x * 16 - from; return rows; };
+  const a = rowsOf(18, 5, lip, 0), b = rowsOf(18, 6, lip, 0);
+  assert.ok(a.every(v => v === 0 || v === 1) && a.includes(0) && a.includes(1), `the bank wanders: ${a.join('')}`);
+  assert.equal(rowsOf(18, 5, edge, 1).join(''), a.join(''), 'its dark edge with it');
+  assert.equal(rowsOf(18, 5, DEEP, 2).join(''), a.join(''), 'and its shadow on the water (the light comes from the left)');
+  const run = [...a, ...b];   // (rows 80 to 111 of the map: runs of three, wherever they fall)
+  for (let i = 0; i < run.length; i++) assert.equal(run[i], run[Math.max(0, Math.floor((80 + i) / 3) * 3 - 80)], `row ${80 + i} is as the first of its run of three`);
+  assert.notEqual(Math.floor(95 / 3), Math.floor(96 / 3)); assert.equal(Math.floor(96 / 3), Math.floor(98 / 3));   // (a run starts at each multiple of three, so some lie across two squares, such as rows 111 to 113)
+  assert.ok(water(18, 5).some(([c]) => c === 'clip'), 'and the grass comes in with it');
+  assert.ok(water(18, 5).filter(([c]) => c === lip).length < 16, 'drawn a run at a time, not a pixel at a time');
+  // to the east, under the trees: the bank the same, but no shadow on the water on that side
+  const east = water(19, 5);
+  assert.ok(east.some(([c, px, py, w]) => c === lip && w === 1 && px >= 19 * 16 + 14) && east.some(([c, px, py, w]) => c === edge && w === 1 && px >= 19 * 16 + 13), 'the east bank: its lip and its edge');
+  assert.ok(!east.some(([c]) => c === DEEP), 'no shadow there');
+  // against the cliff: no earth, the water dark at its edge, its line of light whole
+  const top = water(18, 0);
+  assert.ok(!top.some(([c]) => c === lip || c === edge), 'no earth against rock');
+  assert.ok(top.some(([c, px, py, w, h]) => c === DEEP && px === 18 * 16 && w === 2 && h === 16) && top.some(([c, px, py, w, h]) => c === GLINT && px === 18 * 16 + 2 && w === 1 && h === 16), 'as it always was');
+  assert.ok(get(g, 'NO_EARTH').every(l => !get(g, 'GRASSY').includes(l)), 'nothing that’s rock is ground with grass under it');
+});
+
+test('the water’s edge elsewhere: damp sand on the shore; earth over the shallows’ pale water, never under it; and the log bridge’s shadow between the banks', () => {
+  const g = mountainGame({place: 'meadow', x: 5, y: 5, dir: 'up'});
+  const [lip] = get(g, 'BANK_EARTH'), [sandLip, sandEdge] = get(g, 'BANK_SAND');
+  const look = (x, y) => drawn(g, `LOOKS[tileAt(${x}, ${y}).look](ctx, ${x * 16}, ${y * 16}, ${x}, ${y})`);
+  const find = test => get(g, `(() => { for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if ((${test})(x, y)) return [x, y]; return null; })()`);
+  g.run("enterPlace('shore')");
+  const bySand = find("(x, y) => tileAt(x, y).look === 'water' && tileAt(x - 1, y).look === 'sand'");
+  assert.ok(bySand, 'the river running out over the sand');
+  const sandy = look(...bySand);
+  assert.ok(sandy.some(([c]) => c === sandLip) && sandy.some(([c]) => c === sandEdge), 'its bank there is damp sand');
+  g.run("enterPlace('riverside')");
+  assert.deepEqual(get(g, '[tileAt(27, 3).look, tileAt(26, 3).look]'), ['shallows', 'path'], 'the riverside’s brook, clear and shallow');
+  const brook = look(27, 3).map(([c]) => c);
+  assert.ok(brook.indexOf(lip) > brook.lastIndexOf('rgba(90,175,215,.28)'), 'its bank of earth is over the pale water');
+  g.run("enterPlace('darkPines')");
+  assert.deepEqual(get(g, '[tileAt(23, 18).look, tileAt(23, 17).look, tileAt(23, 19).look]'), ['water', 'needles', 'water'], 'the dark pines’ stream, where a dead pine will fall across it: the bank above, more of the stream below');
+  assert.ok(drawn(g, 'LOOKS.logBridge(ctx, 23 * 16, 18 * 16, 23, 18)').some(([c, x, y, w, h]) => c === '#2C6B9E' && x === 23 * 16 + 11 && y === 18 * 16 + 2 && w === 2 && h === 14), 'the log’s shadow on the water starts under the bank');
+});
+
+// The shapes of the water (decided 10 November 2026, after seeing them with their new banks).
+test('the hillside’s brook runs off the map at both sides and is never pinched; the meadow’s pond is a rounded rectangle, its fish in it', () => {
+  const g = mountainGame({place: 'meadow', x: 5, y: 5, dir: 'up'});
+  const wet = (x, y) => get(g, `WATERY.includes(tileAt(${x}, ${y}).look)`);
+  for (let y = 8; y <= 12; y++) for (let x = 8; x <= 13; x++) assert.equal(wet(x, y), x >= 9 && x <= 12 && y >= 9 && y <= 11, `the pond is four squares by three: (${x}, ${y})`);
+  for (const [x, y, place] of get(g, 'AREA.fish')) if (!place) assert.ok(wet(x, y), `the fish at (${x}, ${y}) is in the pond`);
+  g.run("enterPlace('hillside')");
+  const rows = x => [34, 35, 36, 37, 38, 39].filter(y => wet(x, y)), cols = get(g, 'COLS');
+  assert.ok(wet(0, 37) && wet(0, 38) && wet(cols - 1, 35) && wet(cols - 1, 36), 'the brook reaches the map’s edge, west and east');
+  for (let x = 0; x < cols; x++){
+    assert.ok(rows(x).length >= 2, `two squares wide or more at column ${x}`);
+    if (x) assert.ok(rows(x).filter(y => rows(x - 1).includes(y)).length >= 2, `and as wide where it bends, between columns ${x - 1} and ${x}`);
+  }
 });
 
 test('the sea of clouds below the mountain: long thin wisps running on from square to square, not round puffs', () => {

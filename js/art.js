@@ -435,7 +435,7 @@ function roundBanks(g, X, Y, x, y){
   const dry = (a, b) => { const l = tileAt(a, b).look; return !(a < 0 || b < 0 || a >= COLS || b >= ROWS) && !WATERY.includes(l) && !WET_TOO.includes(l) && !OVER_WATER.includes(l); };
   for (const [sx, sy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]){
     if (!dry(x + sx, y) || !dry(x, y + sy)) continue;
-    const land = tileAt(x + sx, y).look, ground = GRASSY.includes(land) && !['needles', 'pine', 'deadPine'].includes(land) ? LOOKS.grass : LOOKS[land] || LOOKS.grass;
+    const land = tileAt(x + sx, y).look, bank = bankOf(land), ground = GRASSY.includes(land) && !['needles', 'pine', 'deadPine'].includes(land) ? LOOKS.grass : LOOKS[land] || LOOKS.grass;
     const cx = sx < 0 ? X + BANK_ROUND : X + T - BANK_ROUND, cy = sy < 0 ? Y + BANK_ROUND : Y + T - BANK_ROUND;
     g.save(); g.beginPath();
     for (let py = 0; py < BANK_ROUND; py++) for (let px = 0; px < BANK_ROUND; px++){
@@ -443,23 +443,59 @@ function roundBanks(g, X, Y, x, y){
       if (Math.hypot(gx + .5 - cx, gy + .5 - cy) > BANK_ROUND - .5) g.rect(gx, gy, 1, 1);
     }
     g.clip(); ground(g, X, Y, x, y); g.restore();
-    for (let a = 0; a <= 90; a += 6){   // the bank, following the curve: dark, and lit where the light catches it
-      const t = a * Math.PI / 180, px = Math.round(cx + sx * Math.cos(t) * (BANK_ROUND - 1) - (sx > 0 ? 1 : 0)), py = Math.round(cy + sy * Math.sin(t) * (BANK_ROUND - 1) - (sy > 0 ? 1 : 0));
-      R(g, px, py, 1, 1, '#2C6B9E');
-      if (sy < 0 || sx < 0) R(g, px - sx, py - sy, 1, 1, '#8ACFF0');
+    const curve = [];   // the bank, following the curve
+    for (let a = 0; a <= 90; a += 6){
+      const t = a * Math.PI / 180;
+      curve.push([Math.round(cx + sx * Math.cos(t) * (BANK_ROUND - 1) - (sx > 0 ? 1 : 0)), Math.round(cy + sy * Math.sin(t) * (BANK_ROUND - 1) - (sy > 0 ? 1 : 0))]);
+    }
+    const inside = sy < 0 || sx < 0;   // (where the light comes from: the top and the left)
+    if (bank){   // earth: its pale lip outside the curve, its dark edge along it, and its shadow on the water inside
+      for (const [px, py] of curve) R(g, px + sx, py + sy, 1, 1, bank[0]);
+      for (const [px, py] of curve) R(g, px, py, 1, 1, bank[1]);
+      if (inside) for (const [px, py] of curve) if (!curve.some(([qx, qy]) => qx === px - sx && qy === py - sy)) R(g, px - sx, py - sy, 1, 1, DEEP);
+    } else for (const [px, py] of curve){   // against rock: dark water, and lit where the light catches it
+      R(g, px, py, 1, 1, DEEP);
+      if (inside) R(g, px - sx, py - sy, 1, 1, GLINT);
     }
   }
 }
-function waterBase(g, X, Y, x, y){
+// The water's edge (decided 10 November 2026, after playing it: a slight improvement to the original look, whose edges
+// were ruler-straight, a dark frame with one flat pale line). Where water meets ground that isn't rock, a bank of earth
+// all the way round (BANK_EARTH; sand's is damp sand): a pale lip where the ground stops, a dark edge under it, and along
+// the top and the left, where the light comes from, the bank's shadow on the water. Against grass the bank wanders: the
+// grass comes a pixel in here and there, in runs of three pixels that carry on from square to square, and the bank with
+// it (only a square of plain water's: not the shallows', nor one with stepping stones or a bridge on it; and not against
+// long grass or the pine wood's floor, which aren't the grass that comes in). Against rock, stone or a canal (NO_EARTH),
+// no earth: the water darker at its edge, with a pale glint along the top and the left, as it always was.
+const DEEP = '#2C6B9E', GLINT = '#8ACFF0';   // the water at its edge, and where the light catches it
+const BANK_EARTH = ['#B98A55', '#7A5230'], BANK_SAND = ['#D8BE84', '#B2945C'];   // a bank's lip and its edge
+const NO_EARTH = ['cliffFace', 'heights', 'caveFloor', 'caveWall', 'mossStone', 'karstFace', 'karstTop', 'paving', 'hotPool', 'cloudSea', 'canal', 'plankH', 'plankV'];
+const NO_WANDER = ['needles', 'pine', 'deadPine', 'tallGrass', 'woodGrass'];
+const noBank = (a, b) => a < 0 || b < 0 || a >= COLS || b >= ROWS || WATERY.includes(tileAt(a, b).look) || WET_TOO.includes(tileAt(a, b).look);   // (no bank against more water, nor the moon in the cave's pool, which is water too; nor at the map's edge, where a stream runs on)
+const bankOf = land => NO_EARTH.includes(land) ? null : land === 'sand' ? BANK_SAND : BANK_EARTH;   // (a bank's colours, by the ground beside the water; none against rock)
+function waterBase(g, X, Y, x, y, over){   // (over: something drawn on the water but under its banks of earth, such as the shallows' pebbles)
   R(g, X, Y, T, T, '#3F8FCB');
   for (let i = 0; i < 4; i++){ const px = Math.floor(rnd(x,y,i+120)*14), py = Math.floor(rnd(x,y,i+130)*16); R(g, X+px, Y+py, 2, 1, '#367FB8'); }
-  [[0,-1],[0,1],[-1,0],[1,0]].forEach(([dx,dy]) => {
-    if (WATERY.includes(tileAt(x+dx, y+dy).look) || WET_TOO.includes(tileAt(x+dx, y+dy).look) || (x+dx < 0 || x+dx >= COLS || y+dy < 0 || y+dy >= ROWS)) return;   // (no bank against the moon in the cave's pool, which is water too)
-    if (dy === -1){ R(g, X, Y, T, 2, '#2C6B9E'); R(g, X, Y+2, T, 1, '#8ACFF0'); }
-    if (dy === 1){ R(g, X, Y+14, T, 2, '#2C6B9E'); }
-    if (dx === -1){ R(g, X, Y, 2, T, '#2C6B9E'); R(g, X+2, Y, 1, T, '#8ACFF0'); }
-    if (dx === 1){ R(g, X+14, Y, 2, T, '#2C6B9E'); }
-  });
+  const sides = [[0,-1],[0,1],[-1,0],[1,0]].filter(([dx, dy]) => !noBank(x+dx, y+dy)).map(([dx, dy]) => ({dx, dy, land:tileAt(x+dx, y+dy).look, lit:dx < 0 || dy < 0}));
+  // strip(side, n, deep, i, len, c): along a side from its i-th pixel, len pixels, n in from the square's edge and deep thick, in colour c
+  const strip = ({dx, dy}, n, deep, i, len, c) => dx ? R(g, X + (dx < 0 ? n : T - n - deep), Y + i, deep, len, c) : R(g, X + i, Y + (dy < 0 ? n : T - n - deep), len, deep, c);
+  for (const s of sides) if (!bankOf(s.land)){ strip(s, 0, 2, 0, T, DEEP); if (s.lit) strip(s, 2, 1, 0, T, GLINT); }   // against rock
+  if (over) over();   // (the water's own edge is under what's drawn on it, a bank of earth over it: earth is never under water)
+  const grassIn = [];
+  for (const s of sides){
+    const {dx, dy, land, lit} = s, bank = bankOf(land);
+    if (!bank) continue;
+    const wanders = tileAt(x, y).look === 'water' && GRASSY.includes(land) && !NO_WANDER.includes(land);
+    const inletAt = i => wanders && rnd(Math.floor(((dx ? y : x) * T + i) / 3), (dx ? x : y) * 4 + dx + dy * 2, 300) < .34 ? 1 : 0;   // (how far in the grass comes at its i-th pixel: by where it is on the map, so a run carries on into the next square)
+    for (let i = 0, len; i < T; i += len){   // a run at a time, as far as the grass comes in the same
+      const inlet = inletAt(i);
+      for (len = 1; i + len < T && inletAt(i + len) === inlet; len++);
+      if (inlet) grassIn.push(dx ? [dx < 0 ? 0 : T - 1, i, 1, len] : [i, dy < 0 ? 0 : T - 1, len, 1]);
+      strip(s, inlet, 1, i, len, bank[0]); strip(s, inlet + 1, 1, i, len, bank[1]);
+      if (lit) strip(s, inlet + 2, 1, i, len, DEEP);
+    }
+  }
+  if (grassIn.length){ g.save(); g.beginPath(); for (const [px, py, w, h] of grassIn) g.rect(X+px, Y+py, w, h); g.clip(); LOOKS.grass(g, X, Y, x, y); g.restore(); }   // (the grass that comes in: this square's own, as roundBanks' corners)
 }
 // The edge between two levels (the hillside's terraces, and the rock all round the mountain), so you can see one is
 // higher than the other: the ground above comes to the edge, with a lit, rounded lip and grass hanging over it, as on a
@@ -1261,10 +1297,10 @@ const LOOKS = {
     R(g, X+9, Y+9, 1, 3, '#E0603C'); R(g, X+8, Y+10, 3, 1, '#E0603C'); },
   shoreRock: (g,X,Y,x,y) => { onGround(g,X,Y,x,y,'sand'); boulder(g, X+8, Y+15, 6, 6, (x + y) % 2 === 0); },   // a rock on the sand
   raft:      (g,X,Y,x,y) => seaBase(g,X,Y,x,y),    // the raft's square of sea, till it's built on it (OBJECT_ART)
-  shallows:  (g,X,Y,x,y) => { waterBase(g,X,Y,x,y); R(g, X, Y, T, T, 'rgba(150,225,235,.42)');
+  shallows:  (g,X,Y,x,y) => { waterBase(g,X,Y,x,y, () => { R(g, X, Y, T, T, 'rgba(150,225,235,.42)');
     for (let i = 0; i < 4; i++){ const px = 1 + Math.floor(rnd(x,y,i+140)*12), py = 1 + Math.floor(rnd(x,y,i+150)*13), c = ['#A89F8C','#C2B9A6','#8E8574'][i%3];
       R(g, X+px, Y+py, 3, 2, c); R(g, X+px, Y+py, 2, 1, 'rgba(255,255,255,.35)'); }
-    R(g, X, Y, T, T, 'rgba(90,175,215,.28)'); roundBanks(g,X,Y,x,y); },   // ripples are animated in js/draw.js
+    R(g, X, Y, T, T, 'rgba(90,175,215,.28)'); }); roundBanks(g,X,Y,x,y); },   // ripples are animated in js/draw.js
   waterfall: (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // the falling water is animated in js/draw.js
   ironBridge:(g,X,Y,x,y) => {   // an iron bridge across a stream
     waterBase(g,X,Y,x,y);
@@ -1277,7 +1313,8 @@ const LOOKS = {
   },
   logBridge:(g,X,Y,x,y) => {   // a dead pine fallen across a stream that runs from side to side: its trunk, lying across from bank to bank
     waterBase(g,X,Y,x,y);
-    R(g,X+11,Y,2,T,'#2C6B9E');                                                                  // its shadow on the water
+    const top = noBank(x, y-1) ? 0 : 2, foot = noBank(x, y+1) ? 0 : 2;
+    R(g,X+11,Y+top,2,T-top-foot,'#2C6B9E');                                                     // its shadow on the water, between the banks
     R(g,X+3,Y,9,T,'#3A2214'); R(g,X+4,Y,7,T,WOOD[1]); R(g,X+4,Y,2,T,WOOD[3]); R(g,X+9,Y,1,T,WOOD[0]);   // the trunk, lit on the left, its bark furrowed
     for (const ky of [3, 11]) R(g,X+6,Y+ky,2,2,'#3A2214');                                      // knots where its branches were
   },

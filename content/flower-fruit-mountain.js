@@ -1201,10 +1201,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YPg.............ggWWYYYY",
         "YTggGGGGgggFggg.ggWWgggY",
         "YPggGGGGggggTgg.ggWWgGgY",
-        "YTggGGGgggOOOKg.gJWWGGgY",
+        "YTggGGGggOOOOKg.gJWWGGgY",
         "YJgggggggOOOOgg.ggWWGGgY",
-        "YTgggGGGgOOOOOg.ggWWgggY",
-        "YggJgGGGggOOOgg...BBgggY",
+        "YTgggGGGgOOOOgg.ggWWgggY",
+        "YggJgGGGggggggg...BBgggY",
         "YgggggggggggggggggWWgGgY",
         "YTgGGGggggggggFgggWWGGgY",
         "YTggggg.ggggggTgggWWgggY",
@@ -1614,10 +1614,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYgEg..egugkggEgggeguggkYY",   // a slope of flowers; a peach tree in the corner
         "YYgPg..gugkgJggEFggegukgYY",
         "YYkgg...............ggegYY",
-        "YYgkJggggFgggugggJWzWWWWYY",   // the brook, winding, and its stepping stones
-        "YYgggggWWWWWWWWWWWWzWWWWYY",
-        "YYWWWWWWWWWWWWWWWWg.ggggYY",
-        "YYWWWWWgggTgggg.....ggggYY",
+        "YYgkJggggFgggugggJWzWWWWWW",   // the brook, winding, and its stepping stones: right across, off the map at both sides, and as wide where it bends as anywhere
+        "YYggggWWWWWWWWWWWWWzWWWWWW",
+        "WWWWWWWWWWWWWWWWWWW.ggggYY",
+        "WWWWWWWWggTgggg.....ggggYY",
         "YYggTggggggggggnngggggTgYY",
         "YYggggggggwTwwnnnnggggggYY",   // a hedge, and the gap grown over with long grass
         "YYwwTwwwTwgggnnnnwwwTwwTYY",
@@ -2904,7 +2904,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   },
 
   // Where fish jump out of the water now and then, one after another.
-  fish: [[11, 9], [9, 10], [12, 11], [10, 12], [6, 12, 'riverside'], [21, 11, 'riverside'], [35, 12, 'riverside'], [43, 10, 'riverside']],
+  fish: [[11, 9], [9, 10], [12, 11], [10, 11], [6, 12, 'riverside'], [21, 11, 'riverside'], [35, 12, 'riverside'], [43, 10, 'riverside']],
   // Dragonflies darting about over the water, each in its own patch, from at to to (squares, in at's place): just to look at
   // (in the book, chapter 1, the troop chases them: 赶蜻蜓)
   dragonflies: [{at:[8, 36, 'hillside'], to:[16, 37]}, {at:[20, 35, 'hillside'], to:[23, 36]}, {at:[27, 18, 'pasture'], to:[32, 19]}],
