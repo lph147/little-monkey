@@ -2297,6 +2297,7 @@ function afterDrawing(){
   COLLECTABLE.length = 0;
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if ((tileAt(x, y).onLook || []).some(p => p.sparkle)) COLLECTABLE.push([x, y]);
   buildGloom();
+  if (NEW_LOOK) cutOutThings();   // (the new look, on trial: what lies on a ground drawn at double detail, js/newlook.js)
 }
 // A phone can wipe the canvases a page keeps, to save memory, such as while the game's in the background (a browser
 // may say so, contextrestored, or not): the map's layers are drawn once for each place, so when they've been wiped,

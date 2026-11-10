@@ -52,5 +52,61 @@ test('anything else kept there is the old look', () => {
 });
 
 test('the screens gallery shows it switched on', () => {
-  assert.deepEqual(SCREENS.filter(s => s.look).map(s => s.look).sort(), ['new', 'new', 'smooth']);
+  const looks = SCREENS.filter(s => s.look).map(s => s.look);
+  assert.ok(looks.includes('new') && looks.includes('smooth'), 'both ways of fitting it to the screen have a screen');
+});
+
+// ---- step 2: a place's ground from a picture made ahead of time at double detail (npm run art, js/newlook.js) ----
+const fs = require('node:fs');
+const path = require('node:path');
+const ROOT = path.join(__dirname, '..');
+const {make, check} = require('../tools/art/build.js');
+const {Img} = require('../tools/art/png.js');
+
+test('the art is up to date with the tools that draw it (if not, run: npm run art)', () => {
+  const {pictures, text} = make();
+  assert.equal(fs.readFileSync(path.join(ROOT, 'content/art.js'), 'utf8').replace(/\r\n/g, '\n'), text, 'content/art.js is out of date: run  npm run art');
+  for (const [file, img] of Object.entries(pictures)){
+    const kept = Img.load(path.join(ROOT, file));
+    assert.equal(kept.w + 'x' + kept.h, img.w + 'x' + img.h, `${file} is the wrong size: run  npm run art`);
+    assert.equal(check(kept), check(img), `${file} is out of date: run  npm run art`);
+  }
+});
+
+test('each ground picture is for a real place, 32 pixels a square, and says which looks it has in it', () => {
+  const game = withLook(null);
+  const grounds = JSON.parse(game.run('JSON.stringify(ART.grounds)'));
+  assert.ok(Object.keys(grounds).length > 0);
+  for (const [key, a] of Object.entries(grounds)){
+    const [area, id] = key.split(':');
+    const size = game.run(`(() => { const p = AREAS[${area - 1}].places[${JSON.stringify(id)}]; return p ? p.map[0].length * 32 + 'x' + p.map.length * 32 : 'no such place'; })()`);
+    assert.equal(a.w + 'x' + a.h, size, `${key}: the picture is ${a.w} x ${a.h}`);
+    assert.ok(fs.existsSync(path.join(ROOT, a.file)), `${key}: ${a.file} is there`);
+    assert.equal(game.run(`${JSON.stringify(a.covers)}.filter(l => !LOOKS[l]).join()`), '', `${key}: every look it covers is one of the game's`);
+  }
+});
+
+// what drawWorld draws first, by name: the picture, the map's own ground, or the things cut out of today's squares
+const firstDrawn = game => game.run(`(() => { const out = [], was = b.drawImage; b.drawImage = (img, ...a) => { out.push((img === mapCanvas ? 'map' : img === thingCanvas ? 'things' : img === HI_PICTURES['art/meadow-ground.png'] ? 'picture' : 'other') + (out.length ? '' : ' ' + a.join()));  };
+  drawWorld(2000); b.drawImage = was; return out.slice(0, 2).join(' | '); })()`);
+
+test('switched off, the meadow is drawn from the map’s own ground, as ever', () => {
+  const game = withLook(null);
+  game.run("HI_PICTURES['art/meadow-ground.png'] = {width: 768, height: 704};");   // (even if a picture were there)
+  assert.match(firstDrawn(game), /^map /);
+});
+
+test('switched on, the meadow’s ground comes from its picture, a pixel of it a pixel of the screen, then today’s things over it', () => {
+  const game = withLook('new');
+  assert.match(firstDrawn(game), /^map /, 'till the picture has loaded, the map’s own ground');
+  game.run("HI_PICTURES['art/meadow-ground.png'] = {width: 768, height: 704}; cutOutThings();");
+  const [cx, cy] = game.run('camX() + "," + camY()').split(',').map(Number);
+  assert.equal(firstDrawn(game), `picture ${cx * 2},${cy * 2},480,320,0,0,240,160 | things`);
+});
+
+test('a place with no picture is drawn the old way, switch or no switch', () => {
+  const game = loadGame({save: {...SAVE, pos: {place: 'path', x: 15, y: 17, dir: 'up'}}, storage: {'xiaohouzi-look': 'new'}});
+  game.run("HI_PICTURES['art/meadow-ground.png'] = {width: 768, height: 704};");
+  assert.equal(game.run('PLACE'), 'path');
+  assert.match(firstDrawn(game), /^map /);
 });

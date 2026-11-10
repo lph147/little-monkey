@@ -731,7 +731,8 @@ function drawGrassBits(cx, cy, now){   // bits of grass flung up as you push int
 }
 function coverFeet(x, y, w, h, cx, cy){   // the grass over someone's feet, [x, y, w, h] in map pixels (feetInGrass): parted, if it is
   const tx = Math.floor(x / T), ty = Math.floor(y / T), s = stirred.get(tx + ',' + ty);
-  if (s && s.pic) b.drawImage(s.pic, x - tx*T, y - ty*T, w, h, x - cx, y - cy, w, h);
+  if (hiArt()) b.drawImage(thingCanvas, x, y, w, h, x - cx, y - cy, w, h);   // (the new look, on trial: just the tufts, cut out of today's square, js/newlook.js)
+  else if (s && s.pic) b.drawImage(s.pic, x - tx*T, y - ty*T, w, h, x - cx, y - cy, w, h);
   else b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);
 }
 // The cave just visible behind a waterfall (the place's glimpse): its dark mouth, a glint inside, and the water falling
@@ -999,8 +1000,10 @@ function drawWorld(now){
   stirGrass(now);   // (the grass you're walking through, parting round you)
   const sh = Math.min(VH*T, ROWS*T - cy);   // the part of the view the map reaches down to (for the gloom, mist and night)
   R(b, 0, 0, VW*T, VH*T, '#1E2B26');   // dark where the map doesn't reach (and the frame cleared, so nothing ever smears)
-  drawLayer(mapCanvas, cx, cy);
-  drawStirredGrass(cx, cy);   // (the grass you're walking through, parted round you)
+  if (!drawHiGround(cx, cy)){   // (the new look, on trial: the ground from its picture at double detail, if this place has one, js/newlook.js; there, the long grass doesn't part yet)
+    drawLayer(mapCanvas, cx, cy);
+    drawStirredGrass(cx, cy);   // (the grass you're walking through, parted round you)
+  }
   drawFootprints(cx, cy, now);   // (your footprints in the snow, in winter: js/seasons.js)
   drawPlaques(cx, cy); drawLanterns(cx, cy, now);   // (a plaque over a door, such as your name over your room; red lanterns for New Year: js/year.js)
   drawLayer(baseCanvas, cx, cy);   // big objects, under the characters: those that never move, all at once

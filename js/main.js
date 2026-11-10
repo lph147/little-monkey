@@ -469,7 +469,7 @@ requestAnimationFrame(frame);
 if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(() => {});
   const ownFiles = () => ['./', ...[...document.querySelectorAll('script[src], link[href]')].map(el => el.src || el.href)
-    .filter(u => new URL(u, location.href).origin === location.origin)];   // the page, its scripts, styles, icons and app description
+    .filter(u => new URL(u, location.href).origin === location.origin), ...hiFiles()];   // the page, its scripts, styles, icons and app description (and the new look's pictures, while it's on: js/newlook.js)
   const clips = () => typeof VOICE_CLIPS === 'undefined' ? [] : Object.entries(VOICE_CLIPS).flatMap(([v, c]) => Object.values(c).map(code => `audio/${v}/${code}.mp3`));
   const keep = () => navigator.serviceWorker.ready.then(r => r.active && r.active.postMessage({keepFiles:ownFiles(), keepClips:clips()})).catch(() => {});
   keep(); navigator.serviceWorker.addEventListener('controllerchange', keep);   // and again when a new version takes over
