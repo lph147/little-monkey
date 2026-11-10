@@ -324,6 +324,7 @@ function drawPuff(X, Y, p){
 const SMALL_PX = 11, SMALL = new Set(ALL_NPCS.filter(n => n.small).map(n => n.id));
 function drawEntityMonkey(kind, X, Y, dir, now, bob, step = 0, seed = 0){
   const blink = (now + seed*977) % 3600 < 130;
+  if (NEW_LOOK && drawHiMonkey(kind, X, Y, dir, blink, bob, step)) return;   // (the new look, on trial: from the monkeys' sheet at double detail, js/newlook.js)
   if (SMALL.has(kind)){
     R(b, X+5, Y+15, 6, 1, 'rgba(0,0,0,.22)');
     b.drawImage(monkeySprite(kind, dir, blink, step), X + (T - SMALL_PX) / 2, Y + T - SMALL_PX - bob, SMALL_PX, SMALL_PX); return;

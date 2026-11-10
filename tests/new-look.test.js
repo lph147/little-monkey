@@ -149,3 +149,38 @@ test('switched on, a big object is drawn from the sheet into a layer twice as bi
   assert.equal(off.run('baseCanvas.hi + "," + baseCanvas.width'), '1,' + off.run('COLS*T'));
   assert.equal(off.run("drawHiObject({drawImage(){}}, OBJECT_PIECES[0], false)"), false);
 });
+
+// ---- step 4: the monkeys at double detail: today's own drawing, twice as big each way and tidied (js/newlook.js) ----
+test('a monkey at double detail is its own rows, every pixel four, with only a staircase’s corners changed', () => {
+  const game = withLook(null);
+  const same = game.run(`(() => { let wrong = 0, changed = 0, all = 0;
+    for (const kind of ['player', 'elder', 'hungry']) for (const dir of ['down', 'up', 'left', 'right']) for (const step of [0, 1, 2]){
+      const rows = monkeyRows(kind, dir, false, step).map(r => [...r]), fine = refineRows(rows);
+      if (fine.length !== rows.length * 2 || fine[0].length !== rows[0].length * 2) wrong++;
+      rows.forEach((r, y) => r.forEach((ch, x) => { for (const [a, c] of [[0, 0], [1, 0], [0, 1], [1, 1]]){ all++; const got = fine[y * 2 + c][x * 2 + a];
+        if (got !== ch){ changed++; if (![(rows[y - 1] || [])[x], (rows[y + 1] || [])[x], r[x - 1], r[x + 1]].includes(got)) wrong++; } } }));
+    }
+    return wrong + ' ' + (changed / all < .12); })()`);
+  assert.equal(same, '0 true', 'twice the size; a changed pixel only ever takes a neighbour’s letter, and few change');
+});
+
+test('switched on, in the meadow, a monkey standing or walking is drawn at double detail, where and as big as it always was', () => {
+  const game = withLook('new');
+  game.run(loaded + ' buildMap();');
+  const drew = (kind, dir, bob, step) => game.run(`(() => { const out = [], was = b.drawImage; b.drawImage = (img, ...a) => out.push(img.hi + ':' + img.width + 'x' + img.height + ' ' + a.join());
+    const done = drawHiMonkey(${JSON.stringify(kind)}, 100, 50, ${JSON.stringify(dir)}, false, ${bob}, ${step}); b.drawImage = was; return done + ' ' + out.join(' | '); })()`);
+  assert.equal(drew('hungry', 'down', 0, 0), 'true 2:32x32 100,50,16,16');
+  assert.equal(drew('elder', 'left', 1, 2), 'true 2:32x32 100,49,16,16', 'walking, a pixel up at mid step, as ever');
+  assert.equal(drew('player', 'up', 0, 0), 'true 2:32x32 100,50,16,16');
+  assert.equal(drew('nobody', 'down', 0, 0), 'false ', 'not a monkey: today’s drawing');
+  assert.equal(game.run("hiMonkeySprite('player', 'down', false, 0) === hiMonkeySprite('player', 'down', false, 0)"), true, 'each is made once and kept');
+});
+
+test('switched off, or away from a place at double detail, monkeys are today’s', () => {
+  const off = withLook(null);
+  off.run(loaded + ' buildMap();');
+  assert.equal(off.run("drawHiMonkey('hungry', 0, 0, 'down', false, 0, 0)"), false);
+  const away = loadGame({save: {...SAVE, pos: {place: 'path', x: 15, y: 17, dir: 'up'}}, storage: {'xiaohouzi-look': 'new'}});
+  away.run(loaded + ' buildMap();');
+  assert.equal(away.run("drawHiMonkey('player', 0, 0, 'down', false, 0, 0)"), false);
+});

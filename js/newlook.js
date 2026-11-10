@@ -73,6 +73,55 @@ function drawHiGround(cx, cy){
   drawLayer(thingCanvas, cx, cy);
   return true;
 }
+// A monkey, at double detail: today's own drawing, never another. Its letter grid (monkeyRows, js/art.js: the same rows,
+// with its headband, clothes, beard and whatever it holds) is made twice as big each way, every pixel four, and then only
+// tidied: a corner between two pixels that agree becomes theirs, so a staircase turns into a slope (the rule known as
+// Scale2x); its fur, coat and hair are lit a little along the top and left and shaded along the bottom and right; its
+// skin is shaded the same way; and each eye gets a glint. The same size, the same shape, the same colours: just finer.
+// (A first try, 10 November 2026, redrew the monkeys from the 猴子 word picture, 32 by 40: the owner found them too far
+// from the game's look, and too big, a fifth taller.)
+const LIT = new Set(['f', 'C', 'D', 'c', 'h', 'n']);   // what's lit and shaded: fur, a coat, clothes, hair
+function refineRows(rows){
+  const at = (x, y) => (rows[y] || [])[x] || '.', out = [];
+  for (let y = 0; y < rows.length; y++){
+    const top = [], low = [];
+    for (let x = 0; x < rows[y].length; x++){
+      const p = at(x, y), a = at(x, y - 1), r = at(x + 1, y), l = at(x - 1, y), d = at(x, y + 1);
+      top.push(l === a && l !== d && a !== r ? a : p, a === r && a !== l && r !== d ? r : p);
+      low.push(d === l && d !== r && l !== a ? l : p, r === d && r !== a && d !== l ? d : p);
+    }
+    out.push(top, low);
+  }
+  return out;
+}
+function hiSprite(rows, pal){   // rows: strings of letters; pal: each letter's colour. A canvas twice as big each way (hi: 2).
+  const grid = refineRows(rows.map(r => [...r])), c = document.createElement('canvas'); c.width = grid[0].length; c.height = grid.length; c.hi = 2;
+  const g = c.getContext('2d'), at = (x, y) => (grid[y] || [])[x] || '.', open = ch => ch === 'o' || ch === '.';
+  grid.forEach((row, y) => row.forEach((ch, x) => {
+    let col = pal[ch]; if (!col) return;
+    const shade = open(at(x + 1, y)) || open(at(x, y + 1)), light = open(at(x - 1, y)) || open(at(x, y - 1));
+    if (LIT.has(ch)) col = shade ? mix(col, '#000000', .2) : light ? mix(col, '#FFFFFF', .3) : col;
+    else if (ch === 's' && shade) col = mix(col, '#000000', .1);
+    else if (ch === 'e' && at(x - 1, y) !== 'e' && at(x, y - 1) !== 'e') col = mix(col, '#FFFFFF', .75);   // the glint in its eye
+    R(g, x, y, 1, 1, col);
+  }));
+  return c;
+}
+function hiMonkeySprite(kind, dir, blink, step){   // as monkeySprite (js/art.js), from the same rows and colours, kept the same way
+  const stick = heldBy(kind), band = kind === 'player' ? headband() : null, worn = kind === 'player' ? CLOTHES_ON.filter(c => wearing(c)).join('') : '';
+  const k = 'hi:' + kind + dir + (blink ? 'b' : '') + step + (stick || '') + (band || '') + worn;
+  if (spriteCache[k]) return spriteCache[k];
+  const pal = {...(band ? {...PALS[kind], b: band} : PALS[kind]), ...(worn ? CLOTHES_PAL : {})};
+  return spriteCache[k] = hiSprite(monkeyRows(kind, dir, blink, step), stick ? {...pal, ...HELD[stick].pal} : pal);
+}
+// A monkey standing or walking, in a place drawn at double detail: true if it's drawn (drawEntityMonkey, js/draw.js,
+// draws today's otherwise: a little one, and a person). Where it always was, the size it always was, on its old shadow.
+function drawHiMonkey(kind, X, Y, dir, blink, bob, step){
+  if (!hiArt() || SMALL.has(kind) || PEOPLE.has(kind) || !PALS[kind]) return false;
+  R(b, X+4, Y+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, X+3, Y+14, 10, 1, 'rgba(0,0,0,.12)');
+  b.drawImage(hiMonkeySprite(kind, dir, blink, step), X, Y - bob, T, T);
+  return true;
+}
 // The same, whole, brought down to today's size, for the picture of a place the map keeps (drawPlaceNow, js/map.js).
 function hiPlaceNow(g){
   const art = hiArt(); if (!art) return false;
