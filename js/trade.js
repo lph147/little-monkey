@@ -182,13 +182,9 @@ function shopTabs(sh, now){
 // clue and their price, so you know what to look for. Choose one and say it, 我要卖＿, the treasure missing.
 async function sellCard(face, sh, asked = false){
   if (!asked && sh.sellAsk && AREA.lines[sh.sellAsk]) await showDialog(face, AREA.lines[sh.sellAsk]);
-  const tile = w => {
-    const n = S.bag[w] || 0, known = lvl(w) >= 1, price = `<span class="sprice">${MONEY()} ${priceOf(w)}</span>`;
-    if (n > 0) return `<button class="shopitem" data-w="${w}" data-label="Sell"><span class="spic" aria-hidden="true">${picHTML(w)}</span><span class="scount">×${n}</span>
-      <span class="szh">${w}</span><span class="spy">${WORDS[w].py}</span><span class="sen">${esc(WORDS[w].en)}</span>${price}</button>`;
-    return `<div class="shopitem shadow"><span class="spic" aria-hidden="true">${picHTML(w)}</span>${known ? `<span class="szh">${w}</span><span class="spy">${WORDS[w].py}</span>` : '<span class="szh">？</span>'}
-      <span class="sclue">${esc(fill((TREASURE_INFO[w] || {}).clue || ''))}</span>${price}</div>`;
-  };
+  const tile = w => (S.bag[w] || 0) > 0   // (as the Buy tab's, shopTile in js/world.js: how many you have on its picture)
+    ? shopTile({attrs:`data-w="${w}" data-label="Sell"`, word:w, en:WORDS[w].en, price:priceOf(w), count:S.bag[w]})
+    : shopTile({tag:'div', cls:' shadow', word:w, clue:fill((TREASURE_INFO[w] || {}).clue || ''), price:priceOf(w)});
   const w = await new Promise(res => {
     openCard(`<div class="qhead">${face}<p class="prompt">You have ${MONEY()} ${money()}. What will you sell?</p></div>${shopTabs(sh, 'sell')}
       <div class="menu shopgrid sellgrid">${TREASURE_WORDS.map(tile).join('')}</div>

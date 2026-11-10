@@ -1458,6 +1458,17 @@ const IS_IT_SENTENCES = () => (AREA.isIt || []).map(w => ({zh:`这 是 ${w} 吗 
 // Is there something in the shop you could buy now, that you don't have (not food or for your bag)? (The 老板's ?.) In any shop,
 // or in one (the human world's 老板 at home asks only about his own, not the town's stalls).
 const canBuy = one => (one ? [one] : Object.values(SHOPS)).some(sh => forSale(sh).some(i => !toBag(i) && money() >= i.price));
+// A tile in a shop, on its Buy or Sell tab: its picture, with how many you have on it if it says (count), and its price
+// under it, like a price tag; beside them, its Chinese and pinyin, then its English (or a clue, clue). A word you haven't caught yet shows ？ and New word,
+// not its Chinese, so buying it is how you learn it, ticked off your scroll (decided 10 November 2026, the owner's idea,
+// with the tiles half as tall, side by side: they had a picture, Chinese, pinyin, English and price one under another,
+// with room to spare). tag: button, or div for one you can't choose; cls and attrs: its own.
+function shopTile({tag = 'button', cls = '', attrs = '', pic, word, zh = word, py = (WORDS[word] || {}).py || '', en, clue, price, count}){
+  const known = lvl(word) >= 1;
+  return `<${tag} class="shopitem${known ? '' : ' unknown'}${cls}" ${attrs}><span class="sside"><span class="spic" aria-hidden="true">${picHTML(pic || word)}${count ? `<span class="scount">×${count}</span>` : ''}</span><span class="sprice">${MONEY()} ${price}</span></span>
+    <span class="stxt"><span class="sname">${known ? `<span class="szh">${zh}</span> <span class="spy">${py}</span>` : '<span class="szh">？</span> <span class="snew">New word</span>'}</span>
+    ${clue ? `<span class="sclue">${esc(clue)}</span>` : `<span class="sen">${esc(en)}</span>`}</span></${tag}>`;
+}
 async function shop(face, sh = Object.values(SHOPS)[0], asked = false){   // a shop: what it sells, and buying it by asking for it with 我要买… (asked: you've come back to its Buy tab from its Sell tab)
   const items = forSale(sh), nw = sh.teach && lvl(sh.teach) === 0 ? sh.teach : null;   // (its question can teach a word, such as 买)
   if (!asked){
@@ -1469,11 +1480,11 @@ async function shop(face, sh = Object.values(SHOPS)[0], asked = false){   // a s
   // 我不要, as a reply choice shows it: Chinese, pinyin and English (unless it's switched off). (It had no pinyin till 22
   // October 2026.)
   const no = sh.no ? `<span class="nzh">${sh.no}</span><span class="npy">${WORDS[sh.no].py}</span>${S.replyEn ? `<span class="nen">· ${esc(WORDS[sh.no].en.split(',')[0])}</span>` : ''}` : 'Not now';
-  // a card for each thing for sale: its picture, Chinese, pinyin, English and price; under its group's heading, if the shop
-  // has groups (such as Snacks, then Tools), in their order (decided 9 November 2026, the trade plan)
-  const tile = it => { const a = asSaid(it); return `<button class="shopitem${money() < it.price ? ' dear' : ''}" data-n="${items.indexOf(it)}" data-label="Choose">
-        <span class="spic" aria-hidden="true">${picHTML(a.pic)}</span><span class="szh">${a.zh}</span><span class="spy">${a.py}</span>
-        <span class="sen">${esc(a.en)}</span><span class="sprice">${MONEY()} ${it.price}</span></button>`; };
+  // a tile for each thing for sale (shopTile: its picture, Chinese and pinyin, English and price, or ？ for a word you haven't
+  // caught); under its group's heading, if the shop has groups (such as Snacks, then Tools), in their order (decided 9
+  // November 2026, the trade plan)
+  const tile = it => { const a = asSaid(it); return shopTile({cls:money() < it.price ? ' dear' : '', attrs:`data-n="${items.indexOf(it)}" data-label="Choose"`,
+    pic:a.pic, word:it.word || it.item, zh:a.zh, py:a.py, en:a.en, price:it.price}); };
   const groups = sh.groups ? Object.keys(sh.groups) : null, inGroup = g => items.filter(it => (it.group || groups[0]) === g);
   const grid = groups ? groups.filter(g => inGroup(g).length).map(g => `<p class="shopgroup">${esc(sh.groups[g])}</p>${inGroup(g).map(tile).join('')}`).join('') : items.map(tile).join('');
   const i = await new Promise(res => {

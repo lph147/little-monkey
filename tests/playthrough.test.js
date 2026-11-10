@@ -51,7 +51,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     const word = sheet.querySelectorAll('.mw').find(b => !b.classList.contains('done'));
     if (word){ word.click(); sheet.querySelector(`.mp[data-w="${word.dataset.w}"]`).click(); return; }   // matching: a word, then its picture
     const items = sheet.querySelectorAll('[data-n]');
-    if (items.length){ (items.find(b => plan.buy && b.querySelector('.szh').textContent === plan.buy) || sheet.querySelector('[data-a=no]')).click(); return; }
+    const named = b => run(`asSaid(forSale()[${b.dataset.n}]).zh`);   // (what it's called: its tile shows ？ till you know its word)
+    if (items.length){ (items.find(b => plan.buy && named(b) === plan.buy) || sheet.querySelector('[data-a=no]')).click(); return; }
     run('pressA()');   // the main button: OK, Got it, Next, Start, Give it, Say it...
   }
   const caught = () => get('Object.keys(WORDS).filter(w => lvl(w) >= 1)');

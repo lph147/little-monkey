@@ -135,18 +135,76 @@ test('a version 7 save is converted with an empty bag', () => {
   assert.ok(game.storage.get('xiaohouzi-v2-backup-v7'), 'a copy of the version 7 save is kept');
 });
 
-test('the shop shows a card for each thing: its picture, Chinese, pinyin, English and price', async () => {
-  const game = loadGame({dom: true, save: {version: VERSION, started: true, shells: 5, areas: {1: area()}, w: {'老板': {lv: 1, due: 0, ok: 0}, '买': {lv: 1, due: 0, ok: 0}}}});   // (买: his question taught it)
+test('the shop shows a tile for each thing: its picture with its price under it, and beside them its Chinese, pinyin and English', async () => {
+  const game = loadGame({dom: true, save: {version: VERSION, started: true, shells: 5, areas: {1: area()}, w: {'老板': {lv: 1, due: 0, ok: 0}, '买': {lv: 1, due: 0, ok: 0}, '苹果': {lv: 1, due: 0, ok: 0}}}});   // (买: his question taught it)
   game.run("mode = 'play'; showDialog = async () => {}; shop(speaker('boss'))");
   await new Promise(r => setImmediate(r));
   const sheet = game.el('#sheet'), cards = sheet.querySelectorAll('.shopitem');
   assert.equal(cards.length, get(game, 'forSale().length'));
   const apple = cards.find(c => c.querySelector('.szh').textContent === '苹果');
-  assert.ok(apple.querySelector('.spic .pix'), 'its pixel picture');
-  assert.equal(apple.querySelector('.spy').textContent, 'píngguǒ');
-  assert.equal(apple.querySelector('.sen').textContent, 'apple', 'and its English');
-  assert.match(apple.querySelector('.sprice').innerHTML, /<img class="money"[^>]*> 2/, 'its price, with the pixel shell');
+  assert.ok(apple.querySelector('.sside .spic .pix'), 'its pixel picture');
+  assert.match(apple.querySelector('.sside .sprice').innerHTML, /<img class="money"[^>]*> 2/, 'its price under it, with the pixel shell');
+  assert.equal(apple.querySelector('.stxt .sname .spy').textContent, 'píngguǒ', 'beside them, its Chinese and pinyin');
+  assert.equal(apple.querySelector('.stxt .sen').textContent, 'apple', 'and its English');
   assert.ok(!sheet.innerHTML.includes('🐚'), 'no emoji anywhere on the card');
+});
+
+// A word you haven't caught yet: its tile shows ？ and New word, its picture and its English, never its Chinese, so buying
+// it is how you learn it, ticked off your scroll (decided 10 November 2026, the owner's idea).
+test('a word you haven’t caught shows ？ and New word, with its picture, English and price, but not its Chinese', async () => {
+  const game = loadGame({dom: true, save: {version: VERSION, started: true, shells: 40, areas: {1: area({shop: 4, trade: 2})}, w: {'老板': {lv: 1, due: 0, ok: 0}, '买': {lv: 1, due: 0, ok: 0}, '苹果': {lv: 1, due: 0, ok: 0}}}});
+  game.run("mode = 'play'; showDialog = async () => {}; shop(speaker('boss'))");
+  await new Promise(r => setImmediate(r));
+  const cards = game.el('#sheet').querySelectorAll('.shopitem'), en = c => c.querySelector('.sen').textContent;
+  const vase = cards.find(c => en(c) === 'vase'), apple = cards.find(c => en(c) === 'apple');
+  assert.ok(vase && vase.classList.contains('unknown'), 'the vase: its word still to learn');
+  assert.equal(vase.querySelector('.szh').textContent, '？');
+  assert.equal(vase.querySelector('.snew').textContent, 'New word');
+  assert.ok(vase.querySelector('.spic .pix') && /6/.test(vase.querySelector('.sprice').textContent), 'its picture and price');
+  assert.doesNotMatch(vase.textContent, /\p{Script=Han}/u, 'and no Chinese at all: not 花瓶, nor huāpíng');
+  assert.ok(!vase.textContent.includes('huā'));
+  assert.ok(!apple.classList.contains('unknown') && apple.querySelector('.szh').textContent === '苹果', 'a word you know, as ever');
+  for (const c of cards.filter(c => c.classList.contains('unknown'))) assert.doesNotMatch(c.textContent, /\p{Script=Han}/u, `${en(c)}: no Chinese`);
+  assert.ok(cards.filter(c => c.classList.contains('unknown')).length >= 8, 'the tools and the things for the cave, and the headband');
+});
+
+test('buying one teaches its word on its card, before you ask for it, and ticks it off the scroll’s From the shop page', async () => {
+  const game = loadGame({dom: true, save: {version: VERSION, started: true, shells: 40, areas: {1: area({shop: 4, trade: 2})}, w: {'老板': {lv: 1, due: 0, ok: 0}, '买': {lv: 1, due: 0, ok: 0}}}});
+  game.run("mode = 'play'; globalThis.__seen = []; const n = showNotice; showNotice = (w, o) => { __seen.push([w, lvl('花瓶'), S.shells]); return n(w, o); }; const pq = pictureQ; pictureQ = q => { globalThis.__q = q; return pq(q); }; showDialog = async () => {}; replyWith = async () => true; shop(speaker('boss'))");
+  await new Promise(r => setImmediate(r));
+  const sheet = game.el('#sheet');
+  sheet.querySelectorAll('.shopitem').find(c => c.querySelector('.sen').textContent === 'vase').click();
+  await new Promise(r => setImmediate(r));
+  assert.deepEqual(get(game, '__seen[0]'), ['花瓶', 0, 40], 'choose it, and its new-word card comes first: 花瓶, before you ask for it and pay');
+  assert.equal(get(game, "scrollPages().find(p => p.cat === 'shop').words.filter(w => lvl(w) >= 1).length"), 0);
+  for (let i = 0; i < 40 && get(game, 'S.shells') === 40; i++){   // (as a player would: Got it, then 我要买＿, the vase)
+    const opt = sheet.querySelector(`.opt[data-i="${game.run('globalThis.__q ? __q.answerIdx : -1')}"]`);
+    if (opt && !opt.disabled) opt.click(); else game.run('pressA()');
+    game.flush(); await new Promise(r => setImmediate(r));
+  }
+  assert.deepEqual([get(game, "lvl('花瓶')"), get(game, 'S.shells'), get(game, 'S.decorNew')], [1, 34, ['花瓶']], 'caught, and bought');
+  assert.equal(get(game, "scrollPages().find(p => p.cat === 'shop').words.filter(w => lvl(w) >= 1).join()"), '花瓶', 'ticked off From the shop');
+});
+
+test('the Sell tab’s tiles are the same: how many you have on the picture, its price under it; a treasure not found yet, a shadow with ？', async () => {
+  const game = loadGame({dom: true, save: {version: VERSION, started: true, shells: 40, areas: {1: area({shop: 4, trade: 2})}, bag: {'松子': 3},
+    w: {'老板': {lv: 1, due: 0, ok: 0}, '买': {lv: 1, due: 0, ok: 0}, '卖': {lv: 1, due: 0, ok: 0}, '松子': {lv: 1, due: 0, ok: 0}}}});
+  game.run("mode = 'play'; showDialog = async () => {}; sellCard(speaker('boss'), SHOPS.shop, true)");
+  await new Promise(r => setImmediate(r));
+  const sheet = game.el('#sheet'), nuts = sheet.querySelector('button.shopitem[data-w="松子"]');
+  assert.equal(nuts.querySelector('.spic .scount').textContent, '×3', 'how many you have, on its picture');
+  assert.equal(nuts.querySelector('.szh').textContent, '松子');
+  assert.ok(nuts.querySelector('.sside .sprice'), 'what it sells for, under it');
+  const shadows = sheet.querySelectorAll('.shopitem.shadow');
+  assert.ok(shadows.length > 0 && shadows.every(c => c.querySelector('.szh').textContent === '？' && c.querySelector('.sclue')), 'the rest: ？ and a clue');
+});
+
+test('the tiles are short rows, three side by side on most phones: their picture and price, then their words', () => {
+  const css = fs.readFileSync(path.join(ROOT, 'css', 'game.css'), 'utf8');
+  assert.match(css, /\.menu\.shopgrid\{display:grid;grid-template-columns:repeat\(auto-fill,minmax\(9rem,1fr\)\);/);
+  assert.match(css, /\.shopitem\{display:flex;align-items:center;/, 'a row, not a column');
+  assert.match(css, /\.shopitem \.sside\{flex:none;display:flex;flex-direction:column;/, 'its picture, and its price under it');
+  assert.match(css, /\.shopitem\.shadow \.pix\{filter:var\(--sil\);/, 'a shadow you can see in the dark theme too');
 });
 
 test('the money symbol is a pixel shell, in cards and messages', () => {
