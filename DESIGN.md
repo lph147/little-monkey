@@ -1,6 +1,6 @@
 # 小猴子 Little Monkey — Game design
 
-Last updated 27 October 2026
+Last updated 10 November 2026
 
 Little Monkey is a vocabulary-collecting adventure through *Journey to the West*: you catch Chinese words the way Pokémon players catch creatures, hear them again and again in simple sentences from the story's characters, and earn progress by practising.
 
@@ -805,6 +805,13 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] The shop's tiles (10 November 2026): short rows, three side by side, the picture with its price under it; a word you haven't caught shows ？ and New word, never its Chinese, till you buy it
 - [ ] Daily tasks: discussed, not decided (see Treasures and trading)
 - [ ] Learning English too: built, then put on hold (9 November 2026; kept on the git branch `dual-language`: see On hold: learning English too)
+- [ ] The new look, on trial (decided 10 November 2026, after a look review, a [canvas](https://claude.ai/artifact/WNiiiRHV2vUQoJjWovYbh6) of today's screens beside redrawn ones): the review found that drawing all the art on the phone as you play, at 240 × 160 with 16 × 16 characters, now limits how good the game can look, and advised keeping the squares and all the content, drawing at double detail (32 × 32 a square, a 480 × 320 screen) and making the art ahead of time as picture files, as the word pictures are. Before deciding, a trial of one place, the meadow, in the real game behind a hidden switch: the game's address with `?look=new` on the end turns the new look on for that device, `?look=old` off; off, as it always is unless you use the link, everything is drawn exactly as it was. It touches two decided rules, only while it's on: that all pixel art is generated in code, and the 240 × 160 screen. To be decided once it's been played, and before Area 3: go on (every place converted, one at a time), adjust, or stop (the switch and its code taken out).
+  - [x] The review's drawing tools kept in the project (version 466): `tools/art/`, with `node tools/art/mockups.js` to draw its mock-up pictures again
+  - [x] The switch, and the screen at double detail with nothing new on it yet (version 467): everything drawn as today, each pixel two by two, so it looks the same (the meadow's picture is the same pixel for pixel); the title says new look beside the version and shows four word pictures at double detail, to judge its sharpness by on a phone; and `?look=smooth` fits the picture to the screen another way (made a whole number of times bigger, then brought down smoothly), to compare
+  - [ ] The meadow's ground at double detail, from a picture made ahead of time by `npm run art`: shown first, then used
+  - [ ] The meadow's things: trees, fruit trees, your stone, boulders, rocks, the sign, the post, bushes, and the long grass, the same five little tufts a square
+  - [ ] The monkeys, standing and walking, about 32 wide and 40 tall: their sheet shown first
+  - [ ] Decide together: old and new side by side on a phone, how fast it runs, what's missing, and how long the whole game would take
 - [ ] Area 3, The Eastern Sea (novel chapter 3): its own plan with mock-ups drawn by the game, then build it
 - [ ] Area 4, Heaven (chapters 4 and 5): its own plan with mock-ups, then build it
 - [ ] Area 5, Havoc in Heaven (chapters 6 and 7): its own plan with mock-ups, then build it, with the game's ending

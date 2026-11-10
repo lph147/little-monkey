@@ -2,8 +2,9 @@
 
 /* ================= PIXEL ART ================= */
 const cv = $('#screen'), sc = cv.getContext('2d');
-const buf = document.createElement('canvas'); buf.width = VW*T; buf.height = VH*T;
+const buf = document.createElement('canvas'); buf.width = VW*T*SCALE; buf.height = VH*T*SCALE;
 const b = buf.getContext('2d'); b.imageSmoothingEnabled = false;
+if (SCALE !== 1) b.scale(SCALE, SCALE);   // (the new look, on trial: js/data.js. Everything is still drawn in today's pixels, 240 x 160, each of them two by two)
 const R = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
 // Canvases kept in the phone's memory rather than on its graphics chip (willReadFrequently): those whose pixels are read
 // back, such as the season pictures' (js/seasons.js), and whatever's drawn onto one of them, which would otherwise have to

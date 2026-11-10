@@ -502,6 +502,9 @@ const SCREENS = [
   {id: 'startup-slow', title: 'Starting up, slowly', why: 'After 8 seconds on the start-up screen, it says why.', run: async () => {
     document.documentElement.classList.add('loading'); await wait(200); }},
   {id: 'title', title: 'Title screen', why: 'A new game.'},
+  {id: 'new-look-title', title: 'The new look, on trial: the title', look: 'new', why: 'With ?look=new on the game’s address (a hidden switch, 10 November 2026): the screen is drawn at double detail, 480 × 320, everything as today, each pixel two by two, so it looks the same. The version says new look, and four word pictures show at double detail, to judge its sharpness by.'},
+  {id: 'new-look-smooth', title: 'The new look, fitted the other way', look: 'smooth', why: '?look=smooth: the double-detail screen made a whole number of times bigger, then brought down to the screen’s size smoothly. To compare with ?look=new on a phone.'},
+  {id: 'new-look-playing', title: 'The new look, on trial: the meadow', look: 'new', save: 'middle', why: 'Playing with the switch on: until the meadow’s art is made at double detail, it looks exactly as it does with the switch off.', run: async () => { play(); await wait(300); }},
   {id: 'title-novoice', title: 'Title, no Chinese voice', voices: 'missing', why: 'With the game’s own voice clips there’s no warning: the device’s voice isn’t needed.'},
   {id: 'title-phone', title: 'Title, in a phone’s browser', why: 'Play full screen: on Android it goes full screen, on an iPhone it shows how to add it to the home screen. Never once it’s the app.', run: async () => {
     window.matchMedia = q => ({matches: q === '(pointer: coarse)'}); titleText(); await wait(200); }},
@@ -1784,9 +1787,10 @@ const SCREENS = [
 // What goes at the top of each frame, before the game's own scripts: pretend storage holding the
 // save, a pretend Chinese voice that says nothing, no sound effects or music, the helpers, and a
 // list of any errors.
-function prepare(save, voices, phone){   // phone: as on a phone, with no keyboard help under the console
+function prepare(save, voices, phone, look){   // phone: as on a phone, with no keyboard help under the console; look: the new look, on trial ('new' or 'smooth': js/data.js)
   const mem = {};
   if (save) mem['xiaohouzi-v2'] = JSON.stringify(save);
+  if (look) mem['xiaohouzi-look'] = look;
   const storage = {getItem: k => (k in mem ? mem[k] : null), setItem: (k, v) => { mem[k] = String(v); }, removeItem: k => { delete mem[k]; },
     clear: () => { for (const k in mem) delete mem[k]; }, key: i => Object.keys(mem)[i] || null, get length(){ return Object.keys(mem).length; }};
   Object.defineProperty(window, 'localStorage', {value: storage, configurable: true});
@@ -1827,7 +1831,7 @@ async function load(fig, s, [w, h], zoom){
   box.style.width = w * zoom + 'px'; box.style.height = h * zoom + 'px';
   const f = document.createElement('iframe');
   f.width = w; f.height = h; f.style.transform = `scale(${zoom})`; f.title = s.title;
-  const top = `<base href="${new URL('../', location.href)}"><script>(${prepare})(${JSON.stringify(s.save ? SAVES[s.save] : null)}, ${JSON.stringify(s.voices || 'zh')}, ${h < 600})<\/script>`;
+  const top = `<base href="${new URL('../', location.href)}"><script>(${prepare})(${JSON.stringify(s.save ? SAVES[s.save] : null)}, ${JSON.stringify(s.voices || 'zh')}, ${h < 600}, ${JSON.stringify(s.look || null)})<\/script>`;
   f.srcdoc = gamePage.replace(/<head>/i, '<head>' + top);
   box.replaceChildren(f);
   note.textContent = 'Loading…';
