@@ -182,12 +182,10 @@ function toFindHTML(id){
 function drawPlaceNow(){
   const c = document.createElement('canvas'); c.width = COLS*T; c.height = ROWS*T;
   const g = c.getContext && c.getContext('2d'); if (!g || !drawnFor || drawnFor.place !== PLACE) return null;
-  const put = (c, x, y) => hiOf(c) === 1 ? g.drawImage(c, x, y) : g.drawImage(c, x, y, c.width / c.hi, c.height / c.hi);   // (the new look, on trial: a layer at double detail, brought down to today's size, js/newlook.js)
-  if (!(NEW_LOOK && hiPlaceNow(g))) g.drawImage(mapCanvas, 0, 0);
-  put(baseCanvas, 0, 0);
-  for (const p of OBJECT_PIECES) if (p.base) put(p.base, p.x0, p.y0);
-  put(topCanvas, 0, 0);
-  for (const p of OBJECT_PIECES) if (p.top) put(p.top, p.x0, p.y0);
+  g.drawImage(mapCanvas, 0, 0); g.drawImage(baseCanvas, 0, 0);
+  for (const p of OBJECT_PIECES) if (p.base) g.drawImage(p.base, p.x0, p.y0);
+  g.drawImage(topCanvas, 0, 0);
+  for (const p of OBJECT_PIECES) if (p.top) g.drawImage(p.top, p.x0, p.y0);
   if (GLOOM){ g.imageSmoothingEnabled = true; g.drawImage(gloomCanvas, 0, 0, COLS, ROWS, 0, 0, COLS*T, ROWS*T); g.globalAlpha = .85; g.drawImage(beamCanvas, 0, 0); g.globalAlpha = 1; }
   return c;
 }

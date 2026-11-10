@@ -105,36 +105,9 @@ function frame(now){
     for (const [at, sound] of SCENE_SOUNDS[scene.art || scene.id] || []) if (t >= at && !introEvents[at]){ introEvents[at] = 1; SFX[sound](); }
   } else { update(now); drawWorld(now); ambience(now); practiceSounds(now); playSounds(now); }
   updateCtx(now); updateTips(now); moreCue();
-  if (NEW_LOOK && mode === 'title') lookSample();
-  fitToScreen();
+  sc.imageSmoothingEnabled = false;
+  sc.drawImage(buf, 0, 0, cv.width, cv.height);
   drawHopPics(now);   // (over the map, sharp: pictures over stepping stones)
-}
-// The picture, onto the screen. Today's pixels are each several of the screen's, so they're copied as they are. The new
-// look's (on trial: js/data.js) are about two and a half of a phone's, which copied as they are come out uneven, some two
-// wide and some three. Fitted the other way (FIT_SMOOTH), they're first made a whole number of times bigger, sharp, then
-// brought down to the screen's size smoothly: every pixel the same width, its edge a little soft. Which looks better is
-// for a phone to say (?look=new and ?look=smooth); the other goes once that's known.
-let fitCanvas = null;
-function fitToScreen(){
-  sc.imageSmoothingEnabled = false;
-  if (!FIT_SMOOTH){ sc.drawImage(buf, 0, 0, cv.width, cv.height); return; }
-  const k = Math.max(1, Math.ceil(cv.width / buf.width));
-  if (!fitCanvas) fitCanvas = document.createElement('canvas');
-  if (fitCanvas.width !== buf.width * k){ fitCanvas.width = buf.width * k; fitCanvas.height = buf.height * k; }
-  const g = fitCanvas.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(buf, 0, 0, fitCanvas.width, fitCanvas.height);
-  sc.imageSmoothingEnabled = true; sc.imageSmoothingQuality = 'high';
-  sc.drawImage(fitCanvas, 0, 0, cv.width, cv.height);
-  sc.imageSmoothingEnabled = false;
-}
-// While the new look is on trial and nothing is drawn for it yet, the title shows four of the word pictures at double
-// detail, a pixel of each a pixel of the new screen (32 x 32 in one of the map's squares), as the meadow and the monkeys
-// will be: something to judge its sharpness by on a phone, beside the old pixels all round them.
-const LOOK_SAMPLE = ['猴子', '兔子', '桃子', '树'], lookPics = {};
-function lookSample(){
-  LOOK_SAMPLE.forEach((w, i) => {
-    const s = PICTURES[w]; if (!s) return;
-    b.drawImage(lookPics[w] || (lookPics[w] = sprite(s.rows, s.palette)), 148 + i * 21, 118, T, T);
-  });
 }
 // A caption of the opening, as subtitles over the bottom of the picture: the story in Chinese, read aloud, with pinyin
 // over each word (unless that's switched off; tap a word for its meaning) and its English; 🔊 reads it again. Skip is
@@ -233,7 +206,7 @@ function toTitle(){
   $('#gameName').innerHTML = GAME_NAME.zh.map(([w, py]) => `<ruby>${w}<rt${S.pinyin ? '' : ' class="hid"'}>${py}</rt></ruby>`).join('');
   $('#gameEn').textContent = GAME_NAME.en;
   $('#titleArea').innerHTML = `<span class="pzh">${AREA.name.zh}</span> <span class="ppy">${AREA.name.py}</span><span class="pen">${esc(AREA.name.en)}</span>`;
-  $('#version').textContent = 'v' + VERSION + (NEW_LOOK ? ' · new look' + (FIT_SMOOTH ? ', smooth' : '') : '');   // (the new look, on trial: js/data.js)
+  $('#version').textContent = 'v' + VERSION;
   const n = lastPlayed(), g = n && slotSummary(n), empty = SLOTS.find(k => !slotSummary(k));
   const qp = g && g.canPractise;   // quick practice, for the game you'd continue, once it knows enough words (js/scrolls.js)
   $('#titleButtons').classList.toggle('qp', !!qp);
@@ -469,7 +442,7 @@ requestAnimationFrame(frame);
 if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(() => {});
   const ownFiles = () => ['./', ...[...document.querySelectorAll('script[src], link[href]')].map(el => el.src || el.href)
-    .filter(u => new URL(u, location.href).origin === location.origin), ...hiFiles()];   // the page, its scripts, styles, icons and app description (and the new look's pictures, while it's on: js/newlook.js)
+    .filter(u => new URL(u, location.href).origin === location.origin)];   // the page, its scripts, styles, icons and app description
   const clips = () => typeof VOICE_CLIPS === 'undefined' ? [] : Object.entries(VOICE_CLIPS).flatMap(([v, c]) => Object.values(c).map(code => `audio/${v}/${code}.mp3`));
   const keep = () => navigator.serviceWorker.ready.then(r => r.active && r.active.postMessage({keepFiles:ownFiles(), keepClips:clips()})).catch(() => {});
   keep(); navigator.serviceWorker.addEventListener('controllerchange', keep);   // and again when a new version takes over

@@ -4,23 +4,6 @@ const $ = s => document.querySelector(s);
 const T = 16, STEP = 270, TURN_DELAY = 130;
 // The screen shows 15 columns and 10 rows of the map: the shape of a Game Boy Advance's screen.
 const VW = 15, VH = 10;
-// The new look, on trial (decided 10 November 2026, after the look review: DESIGN.md's Next steps): a hidden switch. The
-// game's address with ?look=new on the end turns it on for this device (kept in the browser, never in a save), and
-// ?look=old turns it off again; ?look=smooth is the new look fitted to the screen the other way (FIT_SMOOTH, js/main.js),
-// to compare the two on a phone. While it's on, the screen is drawn at double detail (SCALE: 2, so 480 x 320), each of
-// today's pixels two by two, so that a place whose art is made at double detail can be drawn at it. Off, as it always is
-// unless you use the link, everything is drawn exactly as it was.
-const LOOK_KEY = 'xiaohouzi-look';
-const LOOK = (() => {
-  let asked = null, kept = null;
-  try { asked = new URLSearchParams(location.search).get('look'); } catch (e){}   // (what the address asks for, if anything)
-  try {
-    if (asked === 'new' || asked === 'smooth') localStorage.setItem(LOOK_KEY, asked); else if (asked === 'old') localStorage.removeItem(LOOK_KEY);
-    kept = localStorage.getItem(LOOK_KEY);
-  } catch (e){}   // (a browser that won't keep anything: the old look)
-  return kept === 'new' || kept === 'smooth' ? kept : 'old';
-})();
-const NEW_LOOK = LOOK !== 'old', FIT_SMOOTH = LOOK === 'smooth', SCALE = NEW_LOOK ? 2 : 1;
 
 /* ================= DATA ================= */
 // The rest of the engine uses these names. They are filled in from the content files.
