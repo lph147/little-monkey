@@ -1582,10 +1582,13 @@ button.tipsrow{cursor:pointer}
 }
 /* A word's characters, big on its card, each in a square of a practice grid (田字格: a red square with a dashed cross, as
    on a child's writing sheet), so you see each character on its own and how it sits in its square (inGrid, js/cards.js;
-   decided the same day). */
+   decided the same day), written with a brush as in a child's schoolbook: fonts/kai.woff, LXGW WenKai GB, the mainland
+   edition, cut down to the word bank's characters (npm run font; its licence, fonts/OFL.txt). A character it hasn't got
+   yet is in the game's ordinary font, as all of them are till it has loaded. */
+@font-face{font-family:"Little Monkey Kai";src:url(../fonts/kai.woff) format("woff");font-weight:400;font-style:normal;font-display:swap}
 .word .big:has(.ge){display:flex;flex-wrap:wrap;gap:5px;justify-content:center;line-height:1}
 .word.side .big:has(.ge){justify-content:flex-start}
-.word .big .ge{display:grid;place-items:center;width:1.32em;height:1.32em;border:2px solid #A8402B;border-radius:2px;
+.word .big .ge{display:grid;place-items:center;width:1.32em;height:1.32em;border:2px solid #A8402B;border-radius:2px;font-family:"Little Monkey Kai",var(--text);font-weight:400;
   background:repeating-linear-gradient(90deg,#C8826C 0 3px,transparent 3px 6px) center/100% 1px no-repeat,
     repeating-linear-gradient(0deg,#C8826C 0 3px,transparent 3px 6px) center/1px 100% no-repeat,
     rgba(255,250,232,.55)}

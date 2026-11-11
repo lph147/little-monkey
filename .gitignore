@@ -3,3 +3,6 @@
 
 # The Azure key for making voice clips (tools/try-voices.js): it stays on this computer, never on GitHub
 voice-key.txt
+
+# The whole brush font, 26 MB, which fonts/kai.woff is cut from (tools/make-font.js): it stays on this computer
+tools/fonts/
