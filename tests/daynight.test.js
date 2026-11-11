@@ -325,3 +325,57 @@ test('the night sky is in the water: the moon in the middle of a pond, never in 
   assert.ok(stars.length >= 4 && stars.every(([, w, h]) => w === 1 && h === 1), `stars are single dots: ${stars.length}`);
   assert.ok(!fills.some(([c]) => ['#FFE27A', '#FFF6C8', '#FFFFFF'].includes(c)), 'nothing in the water in the sparkle’s gold or white');
 });
+
+// Rain on the water, and what the time of day's badge tells you (decided 11 November 2026, from mock-ups).
+test('rain makes rings on the water, few and small in light rain, many more and bigger in heavy rain, each with a splash; and the ground’s splashes stay on the ground', () => {
+  const g = game(1, CH1, {place: 'homeGround', x: 21, y: 14, dir: 'down'}, {w: knows(['雨'])});
+  g.run('S.clock.t = RAIN_AT(S.clock.n || 0) * DAY_MS + RAIN_MS / 2');
+  assert.ok(g.run('rainNow()') > .9, 'it’s raining');
+  const fills = (kind, now) => get(g, `(() => { const out = [], was = skyG.fillRect; skyG.fillRect = function(x, y, w, h){ out.push([this.fillStyle, x, y, w, h]); }; try { rainRings(camX(), camY(), VH * T, ${now}, 1, RAIN_LOOKS.${kind}); } finally { skyG.fillRect = was; } return out; })()`);
+  const over = kind => [0, 1, 2, 3, 4, 5, 6, 7].flatMap(i => fills(kind, 1000 + i * 233)), ring = get(g, 'RAIN_RING');
+  const light = over('light'), heavy = over('heavy'), rings = list => list.filter(([c]) => c === ring).length;
+  assert.ok(rings(light) > 0, 'rings in light rain');
+  assert.ok(rings(heavy) > rings(light) * 2.5, `many more in heavy rain: ${rings(heavy)} against ${rings(light)}`);
+  assert.ok(Math.max(...heavy.filter(([c]) => c === ring).map(([, , , w]) => w)) > Math.max(...light.filter(([c]) => c === ring).map(([, , , w]) => w)), 'and bigger');
+  assert.ok(heavy.some(([c]) => c === '#FFFFFF') && !light.some(([c]) => c === '#FFFFFF'), 'a little splash as each drop lands, in heavy rain only');
+  // a ring is an oval, wider than it's tall; a bigger one has its corners cut, so it's round
+  const sides = r => get(g, `ringSides(100, 100, ${r})`), span = list => [Math.max(...list.map(([x, , w]) => x + w)) - Math.min(...list.map(([x]) => x)), Math.max(...list.map(([, y, , h]) => y + h)) - Math.min(...list.map(([, y]) => y))];
+  assert.equal(sides(2).length, 4); assert.equal(sides(4).length, 8);
+  for (const r of [1, 2, 3, 4, 5]){ const [w, h] = span(sides(r)); assert.equal(w, 2 * r + 1, `as wide as it has spread: ${r}`); assert.ok(h <= w, `never taller than wide: ${r}`); }
+  // seen through the water only, as the night sky is: put on the screen from the canvas the water is the window of
+  const calls = get(g, `(() => { const seen = [], was = b.drawImage; b.drawImage = c => { seen.push(c === skyCanvas ? 'water' : 'other'); }; try { drawRain(camX(), camY(), VH * T, 1000); } finally { b.drawImage = was; } return seen; })()`);
+  assert.deepEqual(calls, ['water'], 'the rings, through the water');
+  // the ground's splashes never land on the water
+  const splashes = get(g, `(() => { const out = [], was = b.fillRect, cx = camX(), cy = camY(); b.fillRect = function(x, y, w, h){ if (this.fillStyle === '#E8F0FA') out.push(tileAt(Math.floor((x + (w - 1) / 2 + cx) / T), Math.floor((y + cy) / T)).look); };
+    try { for (let i = 0; i < 60; i++) drawRain(cx, cy, VH * T, 1000 + i * 97); } finally { b.fillRect = was; } return out; })()`);
+  assert.ok(splashes.length > 20, `splashes on the ground: ${splashes.length}`);
+  assert.ok(!splashes.some(l => get(g, 'WATERY').includes(l)), 'none on the water');
+});
+
+test('tapping the time of day tells you what time it is and how long till it changes; at night, how many night animals you’ve found; and the map’s corner says it too', async () => {
+  const pro = game(1, {chapter: 0}, {place: 'meadow', x: 7, y: 3, dir: 'up'});
+  assert.equal(pro.run('skyWords()'), '', 'nothing before the day goes round');
+  const g = game(1, CH1, {place: 'homeGround', x: 11, y: 8, dir: 'down'});
+  const at = (f, short) => { g.run(`S.clock.t = DAY_MS * ${f}`); return g.run(`skyWords(${!!short})`); };
+  assert.equal(at(.2), '☀️ Daytime. Night falls in about 11 minutes.');
+  assert.equal(at(.7), '🌅 Evening. Night falls in about a minute.');
+  assert.equal(at(.8), '🌙 Night. The animals of the day are asleep. Night animals found: 0/4. Morning comes in about 4 minutes.');
+  g.run("S.met.push('bat')");
+  assert.match(at(.8), /Night animals found: 1\/4\./, 'as you find them');
+  assert.equal(at(.98), '🌅 Dawn. Morning is coming.');
+  assert.deepEqual([.2, .7, .8, .98].map(f => at(f, true)), ['☀️ Night in 11 min', '🌅 Night in 1 min', '🌙 Morning in 4 min', '🌅 Dawn'], 'short, for the map’s corner');
+  // a tap: a message like any other, only while you're free to move about
+  g.run('S.clock.t = DAY_MS * .2; updateHUD()');
+  assert.equal(g.run("$('#sky').onclick === skyTap"), true, 'the badge can be tapped');
+  g.run('__notes.length = 0; skyTap()');
+  assert.deepEqual(get(g, '__notes'), ['☀️ Daytime. Night falls in about 11 minutes.']);
+  g.run('__notes.length = 0; busy = true; skyTap(); busy = false');
+  assert.deepEqual(get(g, '__notes'), [], 'not in the middle of something');
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
+  assert.doesNotMatch(css, /\.sky\{[^}]*pointer-events:none/, 'the badge takes taps');
+  assert.match(css, /\.sky::after\{content:'';position:absolute;inset:-9px\}/, 'with room for a thumb');
+  // and on the map, which a keyboard or a controller can open
+  g.run("S.w['地图'] = {lv: 1, due: 0, ok: 0}; openMap()");
+  const tag = g.el('#sheet').querySelector('.maptime');
+  assert.ok(tag && /Night in 11 min/.test(tag.textContent), 'the map’s top right corner says the time of day');
+});

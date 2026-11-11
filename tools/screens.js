@@ -1643,8 +1643,11 @@ const SCREENS = [
     play(); await wait(200); S.clock.t = DAY_MS * .8; placedIn = null; placeCharacters(); await wait(500); }},
   {id: 'bedtime', title: 'Time for bed', save: 'nightCave', why: 'A at a free bed: first the day’s recap, the words you caught today to tap and hear, the questions you answered and your new friends; a quick review of today’s words if you like; then you sleep till morning.', run: async () => {
     play(); await wait(200); Object.assign(S.clock, {t: DAY_MS * .8, turn0: (S.turn || 0) - 14, caught: ['晚上', '雨']}); placedIn = null; placeCharacters(); interact(1, 1); await wait(500); }},
-  {id: 'rain', title: 'Rain', save: 'dayNight', why: 'Once a day, for a minute or two, it rains outdoors: the sky darker, streaks and splashes, the sound of rain. The first time teaches 雨 (下雨了！ It’s raining!).', run: async () => {
+  {id: 'rain', title: 'Rain', save: 'dayNight', why: 'Once a day, for a minute or two, it rains outdoors: the sky darker, streaks and splashes, and rings spreading on the water (light rain here: a few small ones). The first time teaches 雨 (下雨了！ It’s raining!).', run: async () => {
     play(); await wait(200); S.clock.t = RAIN_AT(S.clock.n) * DAY_MS + RAIN_MS / 2; await wait(500); }},
+  {id: 'rain-heavy', title: 'Heavy rain, on the pond', save: 'dayNight', why: 'Some days it pours: many more rings on the water, bigger and brighter, each with a little splash as its drop lands. The ground’s splashes stay on the ground. Tap the sun in the corner: Daytime, and how long till night falls.', run: async () => {
+    play(); await wait(200); let n = S.clock.n || 0; while (!heavyDay(n)) n++; S.clock.n = n; S.w['雨'] = S.w['雨'] || {lv: 1, due: 0, ok: 0}; S.clock.caught = []; S.clock.t = RAIN_AT(n) * DAY_MS + RAIN_MS / 2;
+    pl.x = 21; pl.y = 14; pl.px = pl.x * T; pl.py = pl.y * T; pl.dir = 'down'; await wait(500); }},
   {id: 'night-village', title: 'The village at night', save: 'a2knock', why: 'The human world’s streets are quieter at night: people go home, their windows lit; the night market, the teahouse and the boatman stay up, and anyone with a ! or ?.', run: async () => {
     play(); await wait(200); S.pos = {place: 'village', x: 22, y: 6, dir: 'down'}; placePlayer(); S.clock.t = DAY_MS * .8; placedIn = null; placeCharacters(); await wait(500); }},
   {id: 'c2-autumn', title: 'Home in autumn', save: 'c2end', why: 'Back on Flower Fruit Mountain in chapter 2, it’s autumn: red and gold leaves, golden grass, leaves drifting down, so it feels different from Area 1.', run: async () => {

@@ -206,8 +206,24 @@ function drawSky(){
   const part = mode === 'play' ? skyPart() : null;
   el.hidden = !part;
   if (part && part !== skyShown){ el.innerHTML = pixelIcons(SKY_ICONS[part][0]); el.setAttribute('aria-label', SKY_ICONS[part][1]); }
+  el.onclick = skyTap;   // (a tap tells you more: skyWords)
   skyShown = part;
 }
+// What the time of day's badge tells you when you tap it (decided 11 November 2026, from a mock-up), in a message like any
+// other: what time it is and how long till it changes, in minutes out on the map (the clock only runs there); and at
+// night, that the animals of the day are asleep, and how many of the area's night animals you've found, if it has a group
+// of them. short: just the time and how long, for the map's corner, which a keyboard or a controller can reach.
+function skyWords(short){
+  const part = skyPart(); if (!part) return '';
+  const [icon, name] = SKY_ICONS[part], clock = dayPart() === part && !(PLACES[PLACE] || {}).night;   // (by the clock, not a place that's always night, nor the master's year's evening)
+  const mins = f => Math.max(1, Math.round((f * DAY_MS - (S.clock.t || 0)) / 60000)), till = f => mins(f) === 1 ? 'about a minute' : `about ${mins(f)} minutes`;
+  const next = !clock ? '' : part === 'night' ? `Morning comes in ${till(1)}.` : part === 'dawn' ? 'Morning is coming.' : `Night falls in ${till(NIGHT)}.`;
+  if (short) return !clock || part === 'dawn' ? `${icon} ${name}` : `${icon} ${part === 'night' ? `Morning in ${mins(1)}` : `Night in ${mins(NIGHT)}`} min`;   // (short enough not to cover the map's places)
+  const night = part === 'night' ? ANIMALS.filter(a => a.group === 'night' && inChapter(a)) : [];
+  return [`${icon} ${name}.`, part === 'night' ? 'The animals of the day are asleep.' : '',
+    night.length ? `${(AREA.animalGroups || {}).night || 'Night animals'} found: ${night.filter(a => S.met.includes(a.id)).length}/${night.length}.` : '', next].filter(Boolean).join(' ');
+}
+function skyTap(){ if (canAct() && $('#saybox').hidden) toast(skyWords()); }   // (only while you're free to move about, and never over another message)
 // The night sky, where you'd really see it from above: in the water (decided the same day). Stars shimmer in every square
 // of open water in view. The moon lies only in still water, a pond or a pool, in its middle (moonSpot; decided 10 November
 // 2026, after playing it: in a river it didn't feel natural, and one river runs through several places, so you met its
@@ -267,31 +283,16 @@ function waterInView(cx, cy, sh){   // the water in view, a rectangle a square, 
   }
   return out;
 }
-function skyInWater(cx, cy, sh, now, a){
+// Something seen on the water only (the night sky in it, the rain's rings on it): painted on a canvas of its own, the
+// screen's size, through the water in view as its window (paint(g, pools): pools as waterInView gives them), then whatever
+// is over the water rubbed out of it, a tree's leaves, someone standing or swimming in it, and the canvas put on the
+// screen, a see-through (1: as painted).
+function throughWater(cx, cy, sh, a, paint){
   const pools = waterInView(cx, cy, sh); if (!pools.length) return;
-  const g = skyG, W = VW*T, H = VH*T, moon = moonSpot();
+  const g = skyG, W = VW*T, H = VH*T;
   g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.clearRect(0, 0, W, H);
-  g.save(); g.beginPath(); for (const [x, y, w, h] of pools) g.rect(x, y, w, h); g.clip();   // the water: the sky's window
-  // stars: single pale blue dots (SKY_STAR), one or two in most squares, each shimmering slowly and never going out, so that
-  // nothing in the water looks like the gold cross that twinkles on something with a word to find (sparkle, js/draw.js;
-  // decided 10 November 2026, after playing it: a few bigger stars, cream crosses that flared, were taken for it)
-  for (const [, , , , x, y] of pools){
-    const X = x*T - cx, Y = y*T - cy;
-    for (let i = 0; i < 2; i++){
-      if (rnd(x, y, 980 + i) < .45) continue;
-      g.globalAlpha = .45 + .25 * Math.sin(now / 1100 + x * 3 + y * 5 + i * 2);
-      R(g, X + 2 + Math.floor(rnd(x, y, 960 + i) * 12), Y + 2 + Math.floor(rnd(x, y, 970 + i) * 12), 1, 1, SKY_STAR);
-    }
-  }
-  g.globalAlpha = 1;
-  if (moon){
-    const mx = Math.round(moon[0] - cx), my = Math.round(moon[1] - cy), wob = Math.floor(now / 500) % 3;
-    g.globalCompositeOperation = 'destination-out'; disc(g, mx, my, 8, '#000');                       // no stars where the moon is
-    g.globalCompositeOperation = 'source-over'; disc(g, mx - 1, my + 1, 6, '#F2EBC2');                // the moon:
-    g.globalCompositeOperation = 'destination-out'; disc(g, mx + 3, my - 2, 6, '#000');               // a crescent,
-    R(g, mx - 8, my - 1 + wob, 9, 1, '#000'); R(g, mx - 6, my + 4 - wob, 8, 1, '#000');               // rippling,
-    g.globalCompositeOperation = 'destination-over'; g.globalAlpha = .22; disc(g, mx - 1, my + 1, 9, '#F2EBC2');   // its glow on the water behind it
-  }
+  g.save(); g.beginPath(); for (const [x, y, w, h] of pools) g.rect(x, y, w, h); g.clip();   // the water: its window
+  paint(g, pools);
   g.restore();
   g.globalCompositeOperation = 'destination-out';   // and whatever's over the water hides it
   for (const c of [baseCanvas, topCanvas]){ const x = Math.max(0, cx), y = Math.max(0, cy), w = Math.min(c.width, cx + W) - x, h = Math.min(c.height, cy + H) - y; if (w > 0 && h > 0) g.drawImage(c, x, y, w, h, x - cx, y - cy, w, h); }   // (as drawLayer, js/draw.js)
@@ -299,8 +300,33 @@ function skyInWater(cx, cy, sh, now, a){
   const hide = (x, y) => R(g, x*T - cx - 2, y*T - cy - 10, T + 4, T + 10, '#000');
   for (const n of [...NPCS, ...FOLLOWERS]) hide(n.x, n.y);   // someone in the water, such as the little monkeys splashing in the brook
   if (canWild()) for (const an of ANIMALS) if (an.swims && atSpot(an)) hide(an.at[0], an.at[1]);   // or swimming on it, such as the duck
-  g.globalCompositeOperation = 'source-over';
+  g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
   b.globalAlpha = a; b.drawImage(skyCanvas, 0, 0); b.globalAlpha = 1;
+}
+function skyInWater(cx, cy, sh, now, a){
+  throughWater(cx, cy, sh, a, (g, pools) => {
+    // stars: single pale blue dots (SKY_STAR), one or two in most squares, each shimmering slowly and never going out, so that
+    // nothing in the water looks like the gold cross that twinkles on something with a word to find (sparkle, js/draw.js;
+    // decided 10 November 2026, after playing it: a few bigger stars, cream crosses that flared, were taken for it)
+    for (const [, , , , x, y] of pools){
+      const X = x*T - cx, Y = y*T - cy;
+      for (let i = 0; i < 2; i++){
+        if (rnd(x, y, 980 + i) < .45) continue;
+        g.globalAlpha = .45 + .25 * Math.sin(now / 1100 + x * 3 + y * 5 + i * 2);
+        R(g, X + 2 + Math.floor(rnd(x, y, 960 + i) * 12), Y + 2 + Math.floor(rnd(x, y, 970 + i) * 12), 1, 1, SKY_STAR);
+      }
+    }
+    g.globalAlpha = 1;
+    const moon = moonSpot();
+    if (moon){
+      const mx = Math.round(moon[0] - cx), my = Math.round(moon[1] - cy), wob = Math.floor(now / 500) % 3;
+      g.globalCompositeOperation = 'destination-out'; disc(g, mx, my, 8, '#000');                       // no stars where the moon is
+      g.globalCompositeOperation = 'source-over'; disc(g, mx - 1, my + 1, 6, '#F2EBC2');                // the moon:
+      g.globalCompositeOperation = 'destination-out'; disc(g, mx + 3, my - 2, 6, '#000');               // a crescent,
+      R(g, mx - 8, my - 1 + wob, 9, 1, '#000'); R(g, mx - 6, my + 4 - wob, 8, 1, '#000');               // rippling,
+      g.globalCompositeOperation = 'destination-over'; g.globalAlpha = .22; disc(g, mx - 1, my + 1, 9, '#F2EBC2');   // its glow on the water behind it
+    }
+  });
 }
 // Fireflies, on Flower Fruit Mountain at night (not in winter, nor among thick trees): little green-gold lights drifting
 // and blinking over the grass.
@@ -361,23 +387,55 @@ function rainNow(){   // how hard it's raining now, 0 to 1 (0 when it isn't)
 }
 const rainingHere = () => rainNow() > 0 && !indoors() && !(PLACES[PLACE] || {}).night;
 const rainHere = () => rainingHere() && (rainHeavy() ? 'heavy' : 'light');   // how it's raining where you are: 'heavy', 'light', or false
-// The rain, over the world: the sky a little darker, streaks slanting down, and little splashes on the ground. Heavy rain
-// as it always was; light rain fewer, shorter and fainter drops, falling a little slower, the sky barely darker, and few
-// splashes. No sound (decided 7 November 2026, after playing it: its rush, every few seconds, wasn't wanted).
-const RAIN_LOOKS = {heavy:{dark:.16, drops:110, len:5, fall:4, splashes:14}, light:{dark:.07, drops:50, len:3, fall:5, splashes:5}};
+
+// The rain, over the world: the sky a little darker, streaks slanting down, little splashes on the ground, and on the
+// water, rings spreading where the drops land (decided 11 November 2026, from a mock-up; the ground's splashes fell on the
+// water too). Heavy rain as it always was; light rain fewer, shorter and fainter drops, falling a little slower, the sky
+// barely darker, and few splashes. Its rings follow it: in light rain one now and then in a square of water, small and
+// faint; in heavy rain three times as many, bigger and brighter, each with a little splash as its drop lands (rings: how
+// many a square at most; ringOdds: how often each comes; ringMs: how long one takes; ringSize: how far it spreads, in
+// pixels; ringLight: how bright; plop: the splash). No sound (decided 7 November 2026, after playing it: its rush, every
+// few seconds, wasn't wanted).
+const RAIN_LOOKS = {heavy:{dark:.16, drops:110, len:5, fall:4, splashes:14, rings:3, ringOdds:.8, ringMs:750, ringSize:4, ringLight:.9, plop:true},
+  light:{dark:.07, drops:50, len:3, fall:5, splashes:5, rings:1, ringOdds:.55, ringMs:1300, ringSize:3, ringLight:.6, plop:false}};
+const RAIN_RING = '#E8F4FF';
+// A ring on the water: an oval, wider than it's tall, as you see it from above and a little to the south: [x, y, w, h] each side of it.
+function ringSides(px, py, r){
+  const ry = Math.max(1, Math.round(r * .6));
+  if (r < 3) return [[px - r + 1, py - ry, 2 * r - 1, 1], [px - r + 1, py + ry, 2 * r - 1, 1], [px - r, py - ry + 1, 1, 2 * ry - 1], [px + r, py - ry + 1, 1, 2 * ry - 1]];
+  return [[px - r + 2, py - ry, 2 * r - 3, 1], [px - r + 2, py + ry, 2 * r - 3, 1], [px - r, py - ry + 2, 1, 2 * ry - 3], [px + r, py - ry + 2, 1, 2 * ry - 3],   // a bigger one's corners are cut, so it's round, not a box
+    [px - r + 1, py - ry + 1, 1, 1], [px + r - 1, py - ry + 1, 1, 1], [px - r + 1, py + ry - 1, 1, 1], [px + r - 1, py + ry - 1, 1, 1]];
+}
+function rainRings(cx, cy, sh, now, k, L){
+  throughWater(cx, cy, sh, 1, (g, pools) => {
+    for (const [X, Y, w, h, x, y] of pools){
+      if (w < 6 || h < 6) continue;
+      for (let i = 0; i < L.rings; i++){
+        const every = L.ringMs * (.8 + .4 * rnd(x, y, 700 + i)), t = (now + rnd(x, y, 710 + i) * 5000) / every, n = Math.floor(t), ph = t - n;   // (n: which drop of this square's; ph: how far its ring has spread, 0 to 1)
+        if (rnd(x + n * 7, y + i * 3, 720) > L.ringOdds) continue;
+        const px = Math.round(X + 3 + rnd(x + n, y, 730 + i) * (w - 6)), py = Math.round(Y + 3 + rnd(x, y + n, 740 + i) * (h - 6));
+        g.globalAlpha = (1 - ph) * L.ringLight * k;
+        for (const [rx, ry, rw, rh] of ringSides(px, py, Math.round(1 + ph * L.ringSize))) R(g, rx, ry, rw, rh, RAIN_RING);
+        if (L.plop && ph < .18){ g.globalAlpha = k; R(g, px, py - 2, 1, 2, '#FFFFFF'); }
+      }
+    }
+    g.globalAlpha = 1;
+  });
+}
 function drawRain(cx, cy, sh, now){
   const k = rainNow(); if (!k || indoors() || (PLACES[PLACE] || {}).night) return;
   const W = VW*T, L = RAIN_LOOKS[rainHeavy() ? 'heavy' : 'light'];
-  b.globalAlpha = L.dark * k; R(b, 0, 0, W, sh, '#1A2436');
+  b.globalAlpha = L.dark * k; R(b, 0, 0, W, sh, '#1A2436'); b.globalAlpha = 1;
+  rainRings(cx, cy, sh, now, k, L);
   b.globalAlpha = .55;
   for (let i = 0; i < Math.round(L.drops * k); i++){
     const x = Math.floor(rnd(i, 4, 973) * (W + 40)) - Math.floor(now / 12 + cx) % 40, y = ((rnd(i, 5, 974) * sh + now / L.fall - cy) % sh + sh) % sh;
     for (let j = 0; j < L.len; j++) R(b, x - Math.floor(j / 2), Math.round(y) + j, 1, 1, '#D8E4F4');
   }
   b.globalAlpha = .7;
-  for (let i = 0; i < Math.round(L.splashes * k); i++){   // splashes on the ground, a ring for a moment
+  for (let i = 0; i < Math.round(L.splashes * k); i++){   // splashes on the ground, a ring for a moment (on the water, rainRings')
     const ph = (now / 420 + rnd(i, 6, 975)) % 1, sx = Math.floor(rnd(i, Math.floor(now / 420 + rnd(i, 6, 975)), 976) * W), sy = Math.floor(rnd(i, Math.floor(now / 420 + rnd(i, 6, 975)), 977) * sh);
-    if (ph < .5){ const r = Math.round(ph * 4); R(b, sx - r, sy, 1 + 2 * r, 1, '#E8F0FA'); }
+    if (ph < .5 && !WATERY.includes(tileAt(Math.floor((sx + cx) / T), Math.floor((sy + cy) / T)).look)){ const r = Math.round(ph * 4); R(b, sx - r, sy, 1 + 2 * r, 1, '#E8F0FA'); }
   }
   b.globalAlpha = 1;
 }
