@@ -1558,3 +1558,34 @@ button.tipsrow{cursor:pointer}
    till the line's all there */
 .talk .unsaid{visibility:hidden}
 .talk.typing .sentence-en,.talk.typing .btn.next{visibility:hidden}
+
+/* The scroll (decided 11 November 2026, from mock-ups made in the game): every card, the speech box, a message and a
+   place's name are aged paper, the same on a phone set to light or to dark (they followed the phone: dark green cards on
+   a dark one). Warm paper and brown ink in place of the page's own colours; fine specks and fibres (--grain: a tile made
+   as the game starts, paperGrain in js/art.js), darker towards its edges, a few faint stains, and a brown double line
+   inside its border. The console round the screen and the title screen still follow the phone. */
+#modal,.talk,.saybox,.placename{
+  --paper:#EBD9AE; --ink:#2B1D10; --muted:#6A5235; --line:#C4A76A; --bg:#DFC892;
+  --jade:#2A6E4E; --jade-ink:#FFFFFF; --gold:#A9780A; --ok:#2E8B57; --bad:#B23A32; --sil:brightness(0);
+  --who:#8E5E00; --where:#2F6497; --plate:#A9822F;
+  color:var(--ink); color-scheme:light;
+}
+.sheet,.talk,.saybox{
+  border-color:#4A3219;
+  background:radial-gradient(circle at 9% 14%,rgba(150,100,40,.20) 0 14px,transparent 46px),
+    radial-gradient(circle at 91% 84%,rgba(150,100,40,.17) 0 10px,transparent 52px),
+    radial-gradient(circle at 72% 6%,rgba(150,100,40,.12) 0 6px,transparent 30px),
+    radial-gradient(ellipse at center,transparent 52%,rgba(134,92,38,.30) 100%),
+    var(--grain,none) 0 0/128px 128px,
+    linear-gradient(#F0DFB6,#E5CE9A);
+  box-shadow:inset 0 0 0 2px var(--paper),inset 0 0 0 4px #B4915A,inset 0 0 20px rgba(110,74,30,.28);
+}
+/* A word's characters, big on its card, each in a square of a practice grid (田字格: a red square with a dashed cross, as
+   on a child's writing sheet), so you see each character on its own and how it sits in its square (inGrid, js/cards.js;
+   decided the same day). */
+.word .big:has(.ge){display:flex;flex-wrap:wrap;gap:5px;justify-content:center;line-height:1}
+.word.side .big:has(.ge){justify-content:flex-start}
+.word .big .ge{display:grid;place-items:center;width:1.32em;height:1.32em;border:2px solid #A8402B;border-radius:2px;
+  background:repeating-linear-gradient(90deg,#C8826C 0 3px,transparent 3px 6px) center/100% 1px no-repeat,
+    repeating-linear-gradient(0deg,#C8826C 0 3px,transparent 3px 6px) center/1px 100% no-repeat,
+    rgba(255,250,232,.55)}

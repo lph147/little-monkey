@@ -59,6 +59,8 @@ function openCard(html){
   const f = [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled);
   if (f) f.focus({preventScroll:true}); else if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
 }
+// A word's characters for its card, each in a square of the practice grid (css/game.css: .ge), anything else as it is.
+const inGrid = w => [...String(w)].map(c => /[㐀-鿿]/.test(c) ? `<span class="ge">${c}</span>` : esc(c)).join('');
 // The buttons the D-pad (or the arrow keys) moves between on a card, and A presses: a card's buttons along the bottom,
 // a menu's, and those in a choice (data-nav), such as a question's answers and a matching game's words and pictures,
 // with a question's 🔊 (a word you've matched already is skipped); and a shop's Buy and Sell tabs, above its tiles: up from
@@ -597,7 +599,7 @@ function showNotice(w, opts = {}){
       const howFirst = isNew && more, howBtn = `<button class="btn" data-a="made">${more}</button>`;
       openCard(`${isNew ? '<p class="label">⭐ New word to learn</p>' : `<p class="label">Word ${pips(w)}</p>`}
 
-        <div class="word side"><div class="pic" aria-hidden="true">${picHTML(opts.pic || w)}</div><div class="big">${w}</div><div class="py">${d.py}</div>
+        <div class="word side"><div class="pic" aria-hidden="true">${picHTML(opts.pic || w)}</div><div class="big">${inGrid(w)}</div><div class="py">${d.py}</div>
         <div class="en" ${en ? '' : 'hidden'}>${esc(d.en)}</div>${opts.note ? `<p class="note">${esc(opts.note)}</p>` : ''}</div>
         <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${howFirst ? `<button class="btn primary" data-a="made">${more} ▸</button>`
           : `${isNew ? '' : en ? (more ? howBtn : '') : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">${label}</button>`}</div>`);
@@ -624,7 +626,7 @@ function showPicked(f, note, {label = 'You picked', pic = f.zh} = {}){
   return new Promise(res => {
     const t = toks(f.zh), text = t.join('');
     openCard(`<p class="label">${esc(label)}</p>
-      <div class="word side"><div class="pic" aria-hidden="true">${picHTML(pic)}</div><div class="big">${text}</div><div class="py">${t.map(w => info(w)[0]).join(' ')}</div>
+      <div class="word side"><div class="pic" aria-hidden="true">${picHTML(pic)}</div><div class="big">${inGrid(text)}</div><div class="py">${t.map(w => info(w)[0]).join(' ')}</div>
       <div class="en">${esc(f.en)}</div>${note ? `<p class="note">${esc(note)}</p>` : ''}</div>
       <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button><button class="btn primary" data-a="ok">OK</button></div>`);
     say(text);

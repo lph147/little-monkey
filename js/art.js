@@ -5,6 +5,20 @@ const cv = $('#screen'), sc = cv.getContext('2d');
 const buf = document.createElement('canvas'); buf.width = VW*T; buf.height = VH*T;
 const b = buf.getContext('2d'); b.imageSmoothingEnabled = false;
 const R = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+// The grain of the cards' aged paper (css/game.css, the scroll): a tile of specks, darker and paler, and a few short
+// fibres, two pixels a speck so it stays crisp, the same every time. Made once as the game starts and handed to the css
+// as --grain (decided 11 November 2026).
+function paperGrain(){
+  const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
+  for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++){
+    const r = rnd(x, y, 5001);
+    if (r < .07) R(g, x*2, y*2, 2, 2, `rgba(120,82,34,${(.06 + rnd(x, y, 5002) * .1).toFixed(3)})`);
+    else if (r < .11) R(g, x*2, y*2, 2, 2, `rgba(255,248,220,${(.1 + rnd(x, y, 5003) * .14).toFixed(3)})`);
+  }
+  for (let i = 0; i < 14; i++){ const x = Math.floor(rnd(i, 1, 5004) * 60), y = Math.floor(rnd(i, 2, 5004) * 60), n = 2 + Math.floor(rnd(i, 3, 5004) * 4); R(g, x*2, y*2, rnd(i, 4, 5004) < .5 ? n*2 : 2, rnd(i, 4, 5004) < .5 ? 2 : n*2, 'rgba(110,74,30,.09)'); }
+  return c.toDataURL();
+}
+try { const grain = paperGrain(); if (typeof grain === 'string' && grain.startsWith('data:')) document.documentElement.style.setProperty('--grain', `url(${grain})`); } catch (e) {}   // (without it, the paper is just smooth)
 // Canvases kept in the phone's memory rather than on its graphics chip (willReadFrequently): those whose pixels are read
 // back, such as the season pictures' (js/seasons.js), and whatever's drawn onto one of them, which would otherwise have to
 // be fetched back from the graphics chip, a wait each time (decided 7 November 2026, after playing it: walking into a place

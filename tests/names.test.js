@@ -73,7 +73,7 @@ test('the colours: green as in sentences, people and places their own, gold and 
   assert.match(css, /\.hl-zh\{color:var\(--jade\);font-weight:700\}/);
   assert.match(css, /\.hl-who\{color:var\(--who\);font-weight:700\}/);
   assert.match(css, /\.hl-where\{color:var\(--where\);font-weight:700\}/);
-  assert.equal((css.match(/--who:#[0-9A-F]{6}; --where:#[0-9A-F]{6};/g) || []).length, 3, 'light, and dark (both ways it’s chosen)');
+  assert.equal((css.match(/--who:#[0-9A-F]{6}; --where:#[0-9A-F]{6};/g) || []).length, 4, 'light, and dark (both ways it’s chosen), and on the cards’ aged paper, the same on any phone (11 November 2026)');
 });
 
 test('nothing in either area is coloured by mistake: each person and place coloured in its tasks, checklist, story and messages is a name', () => {

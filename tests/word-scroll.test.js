@@ -121,7 +121,7 @@ test('a caught word has a page: picture, pinyin, level, where you found it and a
   const game = loadGame({save: {version: 5, started: true, w: {'猴子': {lv: 2, due: 0, ok: 1}}, lines: {'你好！去找老猴子吧！': 1}}});
   game.run("wordPage('猴子', () => {})");
   const html = game.el('#sheet').innerHTML;
-  for (const part of [game.run("picHTML('猴子')"), '<div class="big">猴子</div>', '<div class="py">hóuzi</div>', '<div class="en" hidden>monkey</div>',
+  for (const part of [game.run("picHTML('猴子')"), '<div class="big"><span class="ge">猴</span><span class="ge">子</span></div>', '<div class="py">hóuzi</div>', '<div class="en" hidden>monkey</div>',
     'Recognised', 'Found: The old monkey said it as he sent you to meet the troop.'])
     assert.ok(html.includes(part), `the page should include ${part}`);
   // the example is the line you've seen, with this word in bold and its English behind the English button

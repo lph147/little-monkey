@@ -340,7 +340,7 @@ function wordPage(w, back, from = 'Word Scroll', en = false){
   if (!en) say(w);
   const howBtn = `<button class="btn" data-a="made">${more}</button>`;
   openCard(`<p class="label">${from} · ${CATEGORIES[d.category].name}</p>
-    <div class="word side"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big">${w}</div><div class="py">${d.py}</div><div class="en"${en ? '' : ' hidden'}>${esc(d.en)}</div>
+    <div class="word side"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big">${inGrid(w)}</div><div class="py">${d.py}</div><div class="en"${en ? '' : ' hidden'}>${esc(d.en)}</div>
       <p class="mastery">${pips(w)} ${MASTERY[lvl(w) - 1]}</p>
       <div class="wordmore"><p class="note">Found: ${esc(fill(AREA.found[w] || AREA.name.en))}</p>
       ${ex ? `<p class="label examplehead">Example</p>${lineHTML(ex.t, w)}<div class="sentence-en"${en ? '' : ' hidden'}>${esc(ex.en)}</div>${Object.keys(S.lines).length <= TAP_TIP_LINES ? '<div class="gloss tip">Tap any word to see what it means.</div>' : ''}` : ''}</div></div>

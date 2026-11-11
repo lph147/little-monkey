@@ -18,7 +18,7 @@ test('a new game starts with being born from the stone, not a page of How to pla
   game.run('startGame()');
   const html = game.el('#sheet').innerHTML;
   assert.ok(!/How to play/.test(html), 'no How to play');
-  assert.match(html, /石头/, 'the stone’s new-word card comes first');
+  assert.ok(html.includes('<span class="ge">石</span><span class="ge">头</span>'), 'the stone’s new-word card comes first (its characters each in a square of the practice grid)');
 });
 
 test('the first tip points at the D-pad, and goes once you take a step', () => {
