@@ -136,7 +136,7 @@ async function decorate(s, who){
     await sleep(400);
     if (ds.d.chime) SFX.chime();
   }
-  if (list.length && s.by && s.line && AREA.lines[s.line]) await showDialog(speaker(s.by), AREA.lines[s.line]);
+  if (list.length && s.by && s.line && L[s.line]) await showDialog(speaker(s.by), L[s.line]);   // (L: the line ready to say, its words apart, js/data.js; AREA.lines' own, as written, broke the speech box)
 }
 // Drawing the treasures (their picture on the map now: MAP_ICONS, content/pictures.js) and the cave's things, with a fish in
 // the jar once one lives there; each low in its square, a little up for one that says (the vase, on the table).
@@ -175,13 +175,13 @@ const canSell = sh => !!sh && !!sh.sells && matches(sh.sells) && lvl('卖') >= 1
 const priceOf = w => (TREASURE_INFO[w] || {}).price || 1;
 function shopTabs(sh, now){
   if (!canSell(sh) || !(sh.items || []).length) return '';
-  const tab = (id, zh, py, en) => `<button class="tab" role="tab" data-shoptab="${id}" aria-selected="${now === id}">${zh} <span class="tpy">${py}</span> ${en}</button>`;
+  const tab = (id, zh, py, en) => `<button class="tab" role="tab" data-shoptab="${id}" data-label="${en}" aria-selected="${now === id}">${zh} <span class="tpy">${py}</span> ${en}</button>`;   // (data-label: what's under A while the D-pad has it chosen)
   return `<div class="scrolltabs shoptabs" role="tablist">${tab('buy', '买', WORDS['买'].py, 'Buy')}${tab('sell', '卖', WORDS['卖'].py, 'Sell')}</div>`;
 }
 // The Sell tab: each treasure you're carrying, how many and what it fetches; those you haven't found yet as shadows, with a
 // clue and their price, so you know what to look for. Choose one and say it, 我要卖＿, the treasure missing.
 async function sellCard(face, sh, asked = false){
-  if (!asked && sh.sellAsk && AREA.lines[sh.sellAsk]) await showDialog(face, AREA.lines[sh.sellAsk]);
+  if (!asked && sh.sellAsk && L[sh.sellAsk]) await showDialog(face, L[sh.sellAsk]);
   const tile = w => (S.bag[w] || 0) > 0   // (as the Buy tab's, shopTile in js/world.js: how many you have on its picture)
     ? shopTile({attrs:`data-w="${w}" data-label="Sell"`, word:w, en:WORDS[w].en, price:priceOf(w), count:S.bag[w]})
     : shopTile({tag:'div', cls:' shadow', word:w, clue:fill((TREASURE_INFO[w] || {}).clue || ''), price:priceOf(w)});
@@ -211,7 +211,7 @@ async function sellOne(w, face, sh, first = false){
     try {
       do {
         await showNarration(fill(sh.sellPuzzled.replace('{item}', `{${w}}`)));
-        if (sh.sellAsk && AREA.lines[sh.sellAsk]) await showDialog(face, AREA.lines[sh.sellAsk]);
+        if (sh.sellAsk && L[sh.sellAsk]) await showDialog(face, L[sh.sellAsk]);
       } while (!await gapQ({...q, options:reshuffled(seen.options || [q.gap], q.gap), again:true, seen}));
     } finally { if (n) delete n.puzzled; }
   }
@@ -219,7 +219,7 @@ async function sellOne(w, face, sh, first = false){
   S.bag[w]--; save();
   await countMoney(face, price, sh);
   earn(price); save(); SFX.fanfare();
-  if (sh.reply && await replyWith(sh.reply, {about:`${theOne(sh)} counted ${price} ${MONEY()} into your paw.`, who:sh.who}) && sh.welcome && AREA.lines[sh.welcome]) await showDialog(face, AREA.lines[sh.welcome]);
+  if (sh.reply && await replyWith(sh.reply, {about:`${theOne(sh)} counted ${price} ${MONEY()} into your paw.`, who:sh.who}) && sh.welcome && L[sh.welcome]) await showDialog(face, L[sh.welcome]);
   toast(`+${price} ${MONEY()} for the ${lvl(w) >= 1 ? wz(w) : enOf(w)}.`);
   if (!talkingTo) await runEvents();
 }

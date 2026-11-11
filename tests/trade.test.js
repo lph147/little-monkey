@@ -197,3 +197,63 @@ test('nobody ever stands on a treasure’s spot, in either area, wherever the st
     assert.ok(get(g, 'TREASURE_SPOTS.length') >= 10, `area ${area} has its treasure spots (an earlier area’s come with its places)`);
   }
 });
+
+// In a shop with Buy and Sell tabs, the D-pad moves across its tiles (11 November 2026, after playing it: left and right
+// switched the tabs, as they do the Word Scroll's, so every press to the next tile went to the other tab and the shop
+// seemed to close).
+test('in a shop with a Sell tab, left and right move between its tiles, never to the other tab; up reaches the tabs, and A presses the one chosen', async () => {
+  const game = play({areas: {1: shopOpen({trade: 2})}, w: know(['老板', '头带', '买', '卖', '松子']), shells: 30, bag: {'松子': 2}}, {dom: true});
+  game.run("showDialog = infoBox = replyWith = async () => {}; toast = () => {}; mode = 'play'");
+  const settle = async () => { for (let i = 0; i < 20; i++){ game.flush(); await new Promise(r => setImmediate(r)); } };
+  const chosen = () => get(game, "(b => b ? {n: b.dataset.n || null, tab: b.dataset.shoptab || null, a: b.dataset.a || null} : null)(chosenBtn())");
+  const onTab = () => game.run("(t => t ? t.dataset.shoptab : null)([...sheet.querySelectorAll('[data-shoptab]')].find(t => t.getAttribute('aria-selected') === 'true'))");
+  game.run("shop('', SHOPS.shop, true)"); await settle();
+  assert.equal(onTab(), 'buy', 'his shop, on its Buy tab');
+  assert.ok(game.run("sheet.querySelectorAll('[data-n]').length") >= 3, 'with things for sale');
+  assert.deepEqual(chosen(), {n: '0', tab: null, a: null}, 'the first thing chosen');
+  game.run("navFocus('right')"); await settle();
+  assert.equal(game.run('modal.hidden'), false, 'right: the shop is still open');
+  assert.equal(onTab(), 'buy', 'still on Buy');
+  assert.deepEqual(chosen(), {n: '1', tab: null, a: null}, 'the next thing chosen');
+  game.run("navFocus('left')"); await settle();
+  assert.deepEqual([onTab(), chosen().n], ['buy', '0'], 'left: back to the first, still on Buy');
+  // up from the tiles reaches the tabs (here, with no layout to go by, a step at a time), and A presses the chosen one
+  game.run("navFocus('up')"); await settle();
+  assert.equal(chosen().tab, 'sell', 'the Sell tab chosen');
+  assert.equal(onTab(), 'buy', 'but not pressed yet');
+  assert.equal(game.run("chosenBtn().dataset.label"), 'Sell', 'A says Sell');
+  game.run("chosenBtn().click()"); await settle();
+  assert.equal(onTab(), 'sell', 'A: his Sell tab');
+  assert.ok(game.run("sheet.querySelectorAll('button.shopitem').length") >= 1, 'with your pine nuts to sell');
+  game.run("navFocus('right')"); await settle();
+  assert.equal(onTab(), 'sell', 'and right there doesn’t jump back to Buy');
+  // the Word Scroll's tabs still switch with left and right
+  const src = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'js', 'cards.js'), 'utf8');
+  assert.ok(src.includes("sheet.querySelector('.shoptabs') ? [] : [...sheet.querySelectorAll('.scrolltabs .tab')]"), 'only the tabs of a list, such as the Word Scroll’s and your bag’s');
+});
+
+// His Sell tab broke the speech box (11 November 2026, after playing it: his menu just closed). The selling code gave it
+// his lines as the content writes them (AREA.lines), not ready to say, their words apart (L, js/data.js): what he asks
+// as the tab opens, and again when he's puzzled, his 不客气！ after a sale, and your line as a thing for the cave goes up.
+// The tests above answer for the speech box, so none of them saw it: this one uses the real one.
+test('his Sell tab, with the real speech box: he asks what you’ll sell, you sell, he says you’re welcome, and the tab comes back while you’ve more to sell', async () => {
+  const game = play({areas: {1: shopOpen({trade: 2})}, w: know(['老板', '头带', '买', '卖', '松子', '谢谢', '不客气']), shells: 30, bag: {'松子': 2}}, {dom: true});
+  game.run(`mode = 'play'; globalThis.__err = null; globalThis.__said = [];
+    const say0 = sayLine; sayLine = (who, line, o) => { __said.push(line && line.t ? line.t.join('') : 'not ready to say: ' + JSON.stringify(line)); return say0(who, line, o); };
+    toast = t => { __said.push('(' + t + ')'); }; gapQ = async () => true; replyWith = async () => true; countMoney = async () => {}; showNotice = async () => {}; updateHUD = () => {};`);
+  let done = false;
+  Promise.resolve(game.run("sellCard(speaker('boss'), SHOPS.shop).catch(e => { __err = String(e && e.message || e); })")).then(() => { done = true; });
+  for (let i = 0; i < 300 && !done; i++){
+    await new Promise(r => setImmediate(r)); game.flush();
+    if (game.run('!!talkNext')) game.run('talkNext()');
+    else if (!game.run('modal.hidden')) game.run("(b => b && b.click())(sheet.querySelector('button.shopitem'))");   // (the first treasure you can sell)
+  }
+  assert.equal(game.run('__err'), null, 'nothing breaks');
+  assert.equal(done, true, 'and it finishes once you’ve nothing left to sell');
+  const said = get(game, '__said');
+  assert.deepEqual(said.filter(l => !l.startsWith('(New task')), ['你要卖什么？', '不客气！', '(+2 🐚 for the 松子 (pine nuts).)', '不客气！', '(+2 🐚 for the 松子 (pine nuts).)'], 'he asks once, then each sale ends with his 不客气！ and what you got');
+  assert.equal(game.run('S.shells'), 34); assert.equal(game.run("S.bag['松子']"), 0);
+  // and nowhere does the game hand the speech box a line as the content writes it
+  const fs = require('node:fs'), path = require('node:path'), dir = path.join(__dirname, '..', 'js');
+  for (const f of fs.readdirSync(dir)) assert.doesNotMatch(fs.readFileSync(path.join(dir, f), 'utf8'), /showDialog\([^)\n]*AREA\.lines\[/, `${f}: a line for the speech box comes from L, ready to say`);
+});

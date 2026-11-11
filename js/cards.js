@@ -61,8 +61,11 @@ function openCard(html){
 }
 // The buttons the D-pad (or the arrow keys) moves between on a card, and A presses: a card's buttons along the bottom,
 // a menu's, and those in a choice (data-nav), such as a question's answers and a matching game's words and pictures,
-// with a question's 🔊 (a word you've matched already is skipped).
-const NAV_SEL = '.actions button, .menu button, [data-nav] button, .askrow button', NAVIGABLE = '.menu, [data-nav]';
+// with a question's 🔊 (a word you've matched already is skipped); and a shop's Buy and Sell tabs, above its tiles: up from
+// the tiles reaches them, and A presses the one chosen (decided 11 November 2026, after playing it: left and right switched
+// the shop's tabs, as they do the Word Scroll's, so you couldn't move across its tiles, three in a row, and the shop
+// seemed to close).
+const NAV_SEL = '.actions button, .menu button, [data-nav] button, .askrow button, .shoptabs button', NAVIGABLE = '.menu, [data-nav], .shoptabs';
 function navItems(){ return [...sheet.querySelectorAll(NAV_SEL)].filter(b => !b.disabled && !b.hidden && !b.classList.contains('done') && b.offsetParent !== null); }
 const ANSWERS = '.opts .opt, .match .mw';   // where the D-pad starts on a question: its first answer (or word to match)
 const markNav = b => { sheet.querySelectorAll('.navsel').forEach(x => x.classList.remove('navsel')); if (b && b.matches(NAV_SEL)) b.classList.add('navsel'); };
@@ -74,7 +77,7 @@ function chosenBtn(){
   return items.includes(f) ? f : items.find(b => b.classList.contains('navsel')) || null;
 }
 function navFocus(d){
-  const tabs = [...sheet.querySelectorAll('.scrolltabs .tab')];
+  const tabs = sheet.querySelector('.shoptabs') ? [] : [...sheet.querySelectorAll('.scrolltabs .tab')];   // (not a shop's: its tiles are in rows, so there the D-pad moves between them, and its tabs)
   if (tabs.length && (d === 'left' || d === 'right')){   // left and right switch the Word Scroll's tabs
     const i = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
     tabs[(i + (d === 'left' ? -1 : 1) + tabs.length) % tabs.length].click();
