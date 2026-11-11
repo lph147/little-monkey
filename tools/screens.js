@@ -1488,21 +1488,21 @@ const SCREENS = [
     play(); await wait(600); }},
   {id: 'a2-crossing', title: 'Area 2: crossing the western sea', save: 'a2harbour', why: 'The wind in the sail, the town falling behind, then mountains ahead.', run: async () => {
     play(); await wait(100); storyScene('crossSea'); introClock = 8.05; advancedTo = 2; await wait(400); }},
-  {id: 'c1-chapter', title: 'Area 2, chapter 1: the teacher’s mountain', save: 'a2far', why: 'The woodcutter’s song (歌) tells you the immortal lives up on the mountain: the prologue ends, and chapter 1 begins.', run: async () => {
+  {id: 'c1-chapter', title: 'Chapter 3: the teacher’s mountain', save: 'a2far', why: 'The woodcutter’s song (歌) tells you the immortal lives up on the mountain: Chapter 2 ends, and Chapter 3 begins.', run: async () => {
     play(); await wait(100); STEPS.chapter({chapter: 1}); await wait(500); }},
-  {id: 'c1-foot', title: 'Chapter 1: the foot of the mountain', save: 'c1foot', why: 'Pines, a rushing stream to cross by stepping stones, and the woodcutter’s hut, where he asks for things only in Chinese: wood, water, stones.', run: async () => {
+  {id: 'c1-foot', title: 'Chapter 3: the foot of the mountain', save: 'c1foot', why: 'Pines, a rushing stream to cross by stepping stones, and the woodcutter’s hut, where he asks for things only in Chinese: wood, water, stones.', run: async () => {
     play(); await wait(600); }},
   {id: 'c1-fetch', title: 'Fetching by word', save: 'c1foot', why: 'The woodcutter asks only in Chinese, its English hidden (我要三块木头。): you go and pick up what he says, as many as he says, and bring it back.', run: async () => {
     play(); await wait(100); talk(npc('woodcutter')); await wait(600); }},
   {id: 'c1-howmany', title: 'How many to pick up?', save: 'c1foot', why: 'At the woodpile (or the pebbles), choose how many to pick up: 一 to 五, each with its pinyin. Then take them to the woodcutter.', run: async () => {
     play(); await wait(100); howManyCard('木头'); await wait(400); }},
-  {id: 'c1-cliff', title: 'Chapter 1: the cliff road', save: 'c1cliff', why: 'Planks bolted up the cliff over a sea of clouds (云): gusts of wind blow across the walkway (wait for them to drop), and loose planks hang by chains to hop.', run: async () => {
+  {id: 'c1-cliff', title: 'Chapter 3: the cliff road', save: 'c1cliff', why: 'Planks bolted up the cliff over a sea of clouds (云): gusts of wind blow across the walkway (wait for them to drop), and loose planks hang by chains to hop.', run: async () => {
     play(); await wait(1200); }},
   {id: 'c1-chain', title: 'The chain and the crane', save: 'c1chain', why: 'A chain hangs down the sheer face: A to climb it, a question a pull. A crane (鹤) stands by the pool where the stream runs over the ledge.', run: async () => {
     play(); await wait(600); }},
-  {id: 'c1-pillars', title: 'Chapter 1: the stone pillars', save: 'c1pillars', why: 'Chain bridges between the pillars, mist rolling in now and then; peach trees; the mountain’s tablet (灵台方寸山) and the cave’s stone door (斜月三星洞).', run: async () => {
+  {id: 'c1-pillars', title: 'Chapter 3: the stone pillars', save: 'c1pillars', why: 'Chain bridges between the pillars, mist rolling in now and then; peach trees; the mountain’s tablet (灵台方寸山) and the cave’s stone door (斜月三星洞).', run: async () => {
     play(); await wait(600); }},
-  {id: 'c1-cave', title: 'Chapter 1: the cave', save: 'c1cave', why: 'Through the stone doors: a great hollow in the mountain, open to the sky. The hall, the pupils’ rooms in the rock, the master’s back door, a spring and its pool, peaches, leaves to sweep. The master: 我是你的师父。 (师父) 你叫什么名字？ (名字)', run: async () => {
+  {id: 'c1-cave', title: 'Chapter 3: the cave', save: 'c1cave', why: 'Through the stone doors: a great hollow in the mountain, open to the sky. The hall, the pupils’ rooms in the rock, the master’s back door, a spring and its pool, peaches, leaves to sweep. The master: 我是你的师父。 (师父) 你叫什么名字？ (名字)', run: async () => {
     play(); await wait(600); }},
   {id: 'c1-spy', title: 'I spy', save: 'c1named', why: 'A pupil says what she sees, only in Chinese (我看见水！), and you walk to it and press A. Each one found counts as a question answered.', run: async () => {
     play(); await wait(100); talk(npc('spyPupil')); await wait(300); next(); await wait(500); }},
@@ -1572,11 +1572,11 @@ const SCREENS = [
     play(); await wait(100); here().visited = [...new Set([...(here().visited || []), 'shore', 'cave'])]; closeUp('shore'); await wait(500); }},
   {id: 'c1-fly-home', title: 'Flying home', save: 'c1home', why: 'Sent home (回家): over the sea on your cloud, Flower Fruit Mountain coming up ahead.', run: async () => {
     play(); await wait(100); storyScene('flyHome'); introClock = 9; advancedTo = 2; await wait(400); }},
-  {id: 'c2-home', title: 'Home, twenty years on', save: 'c2home', why: 'Chapter 2: by your stone in the meadow. Your old friend the little monkey, grown up, is crying; the troop is hiding (a bush sparkles).', run: async () => {
+  {id: 'c2-home', title: 'Home, twenty years on', save: 'c2home', why: 'Chapter 4: by your stone in the meadow. Your old friend the little monkey, grown up, is crying; the troop is hiding (a bush sparkles).', run: async () => {
     play(); await wait(500); }},
   {id: 'c2-home-ground', title: 'The home ground, robbed', save: 'c2news', why: 'As you left it, twenty years on: the school, garden and pen, the troop greyer; the feast’s tables bare; three little demons (妖怪) on the path.', run: async () => {
     play(); await wait(500); }},
-  {id: 'c2-demon', title: 'A little demon (妖怪)', save: 'c2news', why: 'Battles come back in the human world’s chapter 2: your stick, and a little demon from the long grass.', run: async () => {
+  {id: 'c2-demon', title: 'A little demon (妖怪)', save: 'c2news', why: 'Battles come back in Chapter 4: your stick, and a little demon from the long grass.', run: async () => {
     play(); await wait(100); battle('demon'); await wait(700); }},
   {id: 'c2-lair', title: 'The demon’s mountain', save: 'c2lair', why: 'Far to the north: ash, dry grass full of little demons, dead trees burnt black and gnarled; at the top, the cages, torches (火), the cave, 水脏洞, and the little demons’ cart.', run: async () => {
     play(); await wait(500); }},
@@ -1650,7 +1650,7 @@ const SCREENS = [
     pl.x = 21; pl.y = 14; pl.px = pl.x * T; pl.py = pl.y * T; pl.dir = 'down'; await wait(500); }},
   {id: 'night-village', title: 'The village at night', save: 'a2knock', why: 'The human world’s streets are quieter at night: people go home, their windows lit; the night market, the teahouse and the boatman stay up, and anyone with a ! or ?.', run: async () => {
     play(); await wait(200); S.pos = {place: 'village', x: 22, y: 6, dir: 'down'}; placePlayer(); S.clock.t = DAY_MS * .8; placedIn = null; placeCharacters(); await wait(500); }},
-  {id: 'c2-autumn', title: 'Home in autumn', save: 'c2end', why: 'Back on Flower Fruit Mountain in chapter 2, it’s autumn: red and gold leaves, golden grass, leaves drifting down, so it feels different from Area 1.', run: async () => {
+  {id: 'c2-autumn', title: 'Home in autumn', save: 'c2end', why: 'Back on Flower Fruit Mountain in Chapter 4, it’s autumn: red and gold leaves, golden grass, leaves drifting down, so it feels different from Area 1.', run: async () => {
     play(); await wait(500); }},
   {id: 'c2-autumn-edges', title: 'Home in autumn: the cliffs’ edges', save: 'c2hill', why: 'Everything green and growing turns, not only the ground between: the grass at the cliffs’ lips and feet, the tufts on the rock, the corners of the steps and the lichen on the lookout’s stone, gold; the cliffs’ shadows brown, never green on the golden grass.', run: async () => {
     play(); await wait(500); }},

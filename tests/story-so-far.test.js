@@ -91,13 +91,16 @@ test('in the human world, Flower Fruit Mountain folds into one line at the top; 
   run('storyPage(() => {})');
   const fold = sheet.querySelector('.storyfold');
   assert.match(text(fold), /^▸ Flower Fruit Mountain ?Born from a stone, king of the monkeys, the troop’s new home and the great feast, then a raft across the sea\. Tap to read it\.$/);
-  assert.deepEqual(sheet.querySelectorAll('.storych').map(text), ['Prologue: The human world', 'Chapter 1: The teacher’s mountain'], 'then the human world’s story');
+  // chapters numbered through the whole story (decided 11 November 2026): the human world carries on from Chapter 1
+  assert.deepEqual(sheet.querySelectorAll('.storych').map(text), ['Chapter 2: The human world', 'Chapter 3: The teacher’s mountain'], 'then the human world’s story');
   assert.match(text(sheet.querySelector('.storypart.now')), /^The climb · Part 1 ?Now ?You’ve crossed the western sea, and the immortal lives up this mountain!/);
   assert.deepEqual(sheet.querySelectorAll('.watch').map(b => b.dataset.watch), ['drift', 'yearsPass', 'manyYearsLater', 'crossSea']);
   fold.click();
   assert.equal(sheet.querySelector('.storyfold').getAttribute('aria-expanded'), 'true');
   assert.equal(parts(sheet).length, 9 + 6, 'Flower Fruit Mountain’s nine parts, then the human world’s six');
   assert.ok(['opening', 'becomingKing', 'buildingSchool', 'feast'].every(id => sheet.querySelector(`.watch[data-watch="${id}"][data-area="1"]`)), 'with all its scenes, its story done');
+  assert.deepEqual(sheet.querySelectorAll('.storych').map(text), ['Prologue: The Water Curtain Cave', 'Chapter 1: The Great Feast', 'Chapter 2: The human world', 'Chapter 3: The teacher’s mountain'],
+    'unfolded, the chapters run on through both areas, never starting again');
   sheet.querySelector('.storyfold').click();
   assert.equal(parts(sheet).length, 6, 'folded again');
 });

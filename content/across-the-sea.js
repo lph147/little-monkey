@@ -299,10 +299,12 @@ const ACROSS_THE_SEA = {
   // run off into their hut, and the old one drops his coat as he goes. (人, the first people you've seen, as you see them.)
   begin: LANDING,
 
+  // The story's chapters here: numbered through the whole story, so they carry on from Flower Fruit Mountain's Prologue
+  // and Chapter 1 (decided 11 November 2026). The code still counts this area's from 0 (chapter:0 is Chapter 2).
   chapters: [
-    {name:'Prologue', title:'The human world'},
-    {name:'Chapter 1', title:'The teacher’s mountain'},
-    {name:'Chapter 2', title:'The Demon of Havoc'}
+    {name:'Chapter 2', title:'The human world'},
+    {name:'Chapter 3', title:'The teacher’s mountain'},
+    {name:'Chapter 4', title:'The Demon of Havoc'}
   ],
 
   // The journey's goal, and the story's parts within each chapter (decided 5 November 2026, after playing it: the human
@@ -353,7 +355,7 @@ const ACROSS_THE_SEA = {
       now:'Learn to change into things, and to fly.'},
     {id:'home', chapter:1, name:'Part 8', title:'Showing off', when:{pine:1},
       text:'Showing off to the pupils has made the master angry…',
-      now:[{if:{sentHome:0}, text:'The master wants to see you.'}, {text:'That’s the end of chapter 1.'}]},
+      now:[{if:{sentHome:0}, text:'The master wants to see you.'}, {text:'That’s the end of Chapter 3.'}]},
     {id:'homeAgain', chapter:2, name:'Part 1', title:'Home again', when:{chapter:2}, card:false,
       story:'The master has sent you home. After twenty years away, you’re back on Flower Fruit Mountain, by the stone you were born from. But where is the troop?',
       now:'Home, after twenty years. Find the troop: they’re hiding.'},

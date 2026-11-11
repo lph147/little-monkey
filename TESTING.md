@@ -1,5 +1,7 @@
 # Testing Little Monkey
 
+Chapters are numbered through the whole story (decided 11 November 2026): Prologue and Chapter 1 on Flower Fruit Mountain, Chapters 2, 3 and 4 across the sea (the human world, the teacher's mountain, the Demon of Havoc). The checks below from before then count within each area: Area 2's prologue, chapter 1 and chapter 2 are Chapters 2, 3 and 4.
+
 ## Automated tests
 
 Run these in the project folder before every commit:

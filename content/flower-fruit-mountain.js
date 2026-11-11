@@ -61,6 +61,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // The story's chapters here, in order: each has its name and title, shown on a card when it begins (the
   // chapter step), and its own items on the checklist below. The prologue is everything from being born to
   // becoming king and counting the troop in; chapter 1 is the troop's new home and the feast, then leaving.
+  // Their names are numbered through the whole story: the human world carries on with Chapter 2.
   chapters: [
     {name:'Prologue', title:'The Water Curtain Cave'},
     {name:'Chapter 1', title:'The Great Feast'}
