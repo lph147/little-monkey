@@ -183,3 +183,17 @@ test('at home in the human world’s chapter 2: Flower Fruit Mountain’s treasu
   for (const id of ['bee', 'goat', 'bat']) assert.ok(!past.includes(id), `${id} isn’t (many, it leaves its spot, or sleeps somewhere else)`);
   assert.ok(get(game, "ANIMALS.find(a => a.id === 'squirrel').at")[2] === 'ffmMeadow', 'each at its spot, in the place here');
 });
+
+// A treasure someone stands on can't be taken: A talks to them first, and its glint looks as if they sparkle (11 November
+// 2026, after playing it: at home in the human world's chapter 2, a little monkey stood on the home ground's red feather,
+// whose spot comes with the place from Flower Fruit Mountain).
+test('nobody ever stands on a treasure’s spot, in either area, wherever the story puts them', () => {
+  for (const area of [1, 2]){
+    const g = area === 1 ? base : loadGame({save: {version: VERSION, started: true, area: 2, areas: {1: {chapter: 1, done: true}, 2: {}}}});
+    const clashes = get(g, `TREASURE_SPOTS.flatMap(sp => { const first = Object.keys(AREA.places)[0], who = [];
+      for (const c of AREA.characters) for (const at of [c, ...(c.moves || [])]) if ((at.place || c.place || first) === sp.place && at.x === sp.x && at.y === sp.y) who.push(c.id);
+      return who.length ? [sp.w + ' at ' + sp.place + ' ' + sp.x + ',' + sp.y + ': ' + [...new Set(who)].join(', ')] : []; })`);
+    assert.deepEqual(clashes, [], `area ${area}`);
+    assert.ok(get(g, 'TREASURE_SPOTS.length') >= 10, `area ${area} has its treasure spots (an earlier area’s come with its places)`);
+  }
+});

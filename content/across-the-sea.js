@@ -1858,7 +1858,8 @@ const ACROSS_THE_SEA = {
       moves:[{if:{freed1:0}, place:'hut', x:10, y:0}, {if:{homeAgain:0}, place:'lair', x:4, y:4, facing:'down'}], palette:{o:'#4A2C17', f:'#D9A050', s:'#F8DAB4', m:'#C98E6A', e:'#24160C'}},
     {id:'baby2', place:'ffmHomeGround', x:6, y:11, facing:'left', small:true, name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
       moves:[{if:{freed2:0}, place:'hut', x:11, y:0}, {if:{homeAgain:0}, place:'lair', x:6, y:4, facing:'down'}], palette:{o:'#4A2C17', f:'#CC8D45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
-    {id:'baby3', place:'ffmHomeGround', x:5, y:12, facing:'left', small:true, name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
+    // (baby3 not at 5, 12: the home ground's red feather lies there, a treasure, and nobody can stand on one)
+    {id:'baby3', place:'ffmHomeGround', x:6, y:12, facing:'left', small:true, name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
       moves:[{if:{freed3:0}, place:'hut', x:12, y:0}, {if:{homeAgain:0}, place:'lair', x:8, y:4, facing:'down'}], palette:{o:'#40250F', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
     {id:'baby4', place:'ffmHomeGround', x:13, y:12, facing:'left', small:true, name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
       moves:[{if:{freed4:0}, place:'hut', x:13, y:0}, {if:{homeAgain:0}, place:'lair', x:4, y:7, facing:'right'}], palette:{o:'#4A2C17', f:'#E0A858', s:'#F8DAB4', m:'#C98E6A', e:'#24160C'}},
