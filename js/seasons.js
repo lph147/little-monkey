@@ -163,7 +163,7 @@ function seasonal(fn, kind){
   return wrapped;
 }
 const GROUND_KIND = {grass:'green', tall:'green', lawn:'green', mossStone:'green', path:'earth', earth:'earth', sand:'sand', paving:'swept', slab:'swept',
-  pier:'swept', stoneSteps:'swept', veg:'field', rice:'field', canal:'water', waterBase:'water', seaBase:'water', heights:'rockTop', karstTop:'rockTop',
+  pier:'swept', stoneSteps:'swept', veg:'field', rice:'field', canal:'water', waterBase:'water', innerBankDraw:'water', seaBase:'water', heights:'rockTop', karstTop:'rockTop',
   slabs:'rockTop', cliffFace:'face', karstFace:'face', chainFace:'face', planks:'wood', loosePlank:'wood',
   longGrass:'plant', tallGrass:'plant', woodGrass:'plant', bush:'plant', bank:'plant', fern:'plant', mushrooms:'plant', hoofprints:'plant', grassPlot:'plant', melonVines:'plant',
   tallFlowers:'plant', whiteFlowers:'plant', yellowFlowers:'plant', redFlowers:'plant', pinkFlowers:'plant', blueFlowers:'plant', orangeFlowers:'plant',

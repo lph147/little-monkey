@@ -307,7 +307,7 @@ test('the night sky is in the water: the moon in the middle of a pond, never in 
     assert.ok(get(g, `[0, 1].every(dx => [0, 1].every(dy => tileAt(Math.ceil(${m[0]} / 16) - 1 + dx, Math.ceil(${m[1]} / 16) - 1 + dy).look === 'water'))`), `with water all round it: ${place}`);
   }
   for (const place of ['path', 'valley', 'falls', 'hillside', 'riverside', 'hotSprings']) assert.equal(moonIn(place), null, `no moon in a river or a brook: ${place}`);
-  assert.equal(moonIn('southSlope'), null, 'nor in the south slope’s brook, though the trees shut it in at both ends: it’s far too long for a pond');
+  assert.equal(moonIn('southSlope'), null, 'nor in the south slope’s brook');
   assert.equal(moonIn('shore'), null, 'nor in the sea');
   assert.equal(moonIn('cave'), null, 'nor in the Water Curtain Cave’s stream, one square wide');
   assert.equal(get(g, 'pondSquares().size'), 0, 'that stream is far too long to be a pond');

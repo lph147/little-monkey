@@ -34,7 +34,7 @@ const GREEN_BY_LOOK = `(() => {
   }
   return by;
 })()`;
-const EVERGREEN = ['pine', 'needles', 'archPost', 'mushrooms', 'deadPine', 'hollowLog', 'stump', 'crackedRock', 'pebble', 'boulder', 'water'];   // (the pine woods' floor, and what stands on it)
+const EVERGREEN = ['pine', 'needles', 'archPost', 'mushrooms', 'deadPine', 'hollowLog', 'stump', 'crackedRock', 'pebble', 'boulder', 'water', 'logBridge'];   // (the pine woods' floor, and what stands on it; and their water, where the floor comes into its corners and a pixel in along its banks, under the log across it too)
 const PINE_WOODS = ['ffmHillside', 'ffmSouthSlope', 'ffmDarkPines', 'ffmPasture', 'ffmPineWood'];
 const GREEN_ANYWAY = ['melon', 'gardenMelon', 'grapeCliff', 'besideGrapes', 'hotPool', 'stoneBed', 'stoneTable'];   // (melons, grapes, jade water, the cave's leaf beds)
 

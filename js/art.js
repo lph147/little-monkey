@@ -462,15 +462,16 @@ function roundBanks(g, X, Y, x, y){
 // The water's edge (decided 10 November 2026, after playing it: a slight improvement to the original look, whose edges
 // were ruler-straight, a dark frame with one flat pale line). Where water meets ground that isn't rock, a bank of earth
 // all the way round (BANK_EARTH; sand's is damp sand): a pale lip where the ground stops, a dark edge under it, and along
-// the top and the left, where the light comes from, the bank's shadow on the water. Against grass the bank wanders: the
-// grass comes a pixel in here and there, in runs of three pixels that carry on from square to square, and the bank with
-// it (only a square of plain water's: not the shallows', nor one with stepping stones or a bridge on it; and not against
-// long grass or the pine wood's floor, which aren't the grass that comes in). Against rock, stone or a canal (NO_EARTH),
-// no earth: the water darker at its edge, with a pale glint along the top and the left, as it always was.
+// the top and the left, where the light comes from, the bank's shadow on the water. Against anything growing the bank
+// wanders: the ground comes a pixel in here and there, in runs of three pixels that carry on from square to square, and
+// the bank with it; grass, or the ground's own where it isn't plain grass (INLET: long grass, tall grass, the pine wood's
+// floor), and along the shallows and under stepping stones as anywhere (decided 11 November 2026, from a mock-up: there
+// it went ruler-straight again). Straight against a path or sand. Against rock, stone or a canal (NO_EARTH), no earth:
+// the water darker at its edge, with a pale glint along the top and the left, as it always was.
 const DEEP = '#2C6B9E', GLINT = '#8ACFF0';   // the water at its edge, and where the light catches it
 const BANK_EARTH = ['#B98A55', '#7A5230'], BANK_SAND = ['#D8BE84', '#B2945C'];   // a bank's lip and its edge
 const NO_EARTH = ['cliffFace', 'heights', 'caveFloor', 'caveWall', 'mossStone', 'karstFace', 'karstTop', 'paving', 'hotPool', 'cloudSea', 'canal', 'plankH', 'plankV'];
-const NO_WANDER = ['needles', 'pine', 'deadPine', 'tallGrass', 'woodGrass'];
+const INLET = {tallGrass:'tallGrass', woodGrass:'woodGrass', longGrass:'longGrass', needles:'needles', pine:'needles', deadPine:'needles'};   // (whose own ground comes in with the bank, not grass)
 const noBank = (a, b) => a < 0 || b < 0 || a >= COLS || b >= ROWS || WATERY.includes(tileAt(a, b).look) || WET_TOO.includes(tileAt(a, b).look);   // (no bank against more water, nor the moon in the cave's pool, which is water too; nor at the map's edge, where a stream runs on)
 const bankOf = land => NO_EARTH.includes(land) ? null : land === 'sand' ? BANK_SAND : BANK_EARTH;   // (a bank's colours, by the ground beside the water; none against rock)
 function waterBase(g, X, Y, x, y, over){   // (over: something drawn on the water but under its banks of earth, such as the shallows' pebbles)
@@ -485,18 +486,57 @@ function waterBase(g, X, Y, x, y, over){   // (over: something drawn on the wate
   for (const s of sides){
     const {dx, dy, land, lit} = s, bank = bankOf(land);
     if (!bank) continue;
-    const wanders = tileAt(x, y).look === 'water' && GRASSY.includes(land) && !NO_WANDER.includes(land);
+    const wanders = GRASSY.includes(land) || land === 'longGrass', ground = INLET[land] || 'grass';
     const inletAt = i => wanders && rnd(Math.floor(((dx ? y : x) * T + i) / 3), (dx ? x : y) * 4 + dx + dy * 2, 300) < .34 ? 1 : 0;   // (how far in the grass comes at its i-th pixel: by where it is on the map, so a run carries on into the next square)
     for (let i = 0, len; i < T; i += len){   // a run at a time, as far as the grass comes in the same
       const inlet = inletAt(i);
       for (len = 1; i + len < T && inletAt(i + len) === inlet; len++);
-      if (inlet) grassIn.push(dx ? [dx < 0 ? 0 : T - 1, i, 1, len] : [i, dy < 0 ? 0 : T - 1, len, 1]);
+      if (inlet) grassIn.push([...(dx ? [dx < 0 ? 0 : T - 1, i, 1, len] : [i, dy < 0 ? 0 : T - 1, len, 1]), ground]);
       strip(s, inlet, 1, i, len, bank[0]); strip(s, inlet + 1, 1, i, len, bank[1]);
       if (lit) strip(s, inlet + 2, 1, i, len, DEEP);
     }
   }
-  if (grassIn.length){ g.save(); g.beginPath(); for (const [px, py, w, h] of grassIn) g.rect(X+px, Y+py, w, h); g.clip(); LOOKS.grass(g, X, Y, x, y); g.restore(); }   // (the grass that comes in: this square's own, as roundBanks' corners)
+  for (const kind of new Set(grassIn.map(r => r[4]))){   // the ground that comes in: this square's own, as roundBanks' corners, each kind in its own look (and its season's colours)
+    g.save(); g.beginPath(); for (const [px, py, w, h, k] of grassIn) if (k === kind) g.rect(X+px, Y+py, w, h); g.clip(); LOOKS[kind](g, X, Y, x, y); g.restore();
+  }
 }
+// Where a bank turns inwards, a corner of land sticking out into the water, it's rounded too, as where it turns outwards
+// (roundBanks), so a brook's bends flow (decided 11 November 2026, from a mock-up: they were square notches, and a bend
+// looked like a step). Round the corner point, a quarter circle BANK_IN pixels across: the land's corner cut back, the
+// bank's lip, then its dark edge, and where the light comes from its shadow on the water; water beyond. Each of the four
+// squares round the point draws the part of it that's its own (drawSquare, after its look), so a square drawn again by
+// itself, or a square of tall grass you walk through (drawStirred, js/draw.js), has its corner as the map has. Only
+// where the one square of land has earth for a bank (not rock) and the other three are plain water.
+const BANK_IN = 6;
+function innerCorners(x, y){   // the corners of this square where a bank turns inwards: each [cornerX, cornerY, sx, sy, bank], the corner point in squares, the way the water lies from the land, and the bank's colours
+  const out = [], plain = (a, b) => a >= 0 && b >= 0 && a < COLS && b < ROWS && tileAt(a, b).look === 'water';
+  for (const [px, py] of [[x, y], [x + 1, y], [x, y + 1], [x + 1, y + 1]]){
+    const land = [[px - 1, py - 1], [px, py - 1], [px - 1, py], [px, py]].filter(([a, b]) => !plain(a, b));
+    if (land.length !== 1) continue;
+    const [lx, ly] = land[0];
+    if (lx < 0 || ly < 0 || lx >= COLS || ly >= ROWS) continue;
+    const look = tileAt(lx, ly).look;
+    if (WATERY.includes(look) || WET_TOO.includes(look) || OVER_WATER.includes(look) || !bankOf(look)) continue;
+    out.push([px, py, lx === px - 1 ? 1 : -1, ly === py - 1 ? 1 : -1, bankOf(look)]);
+  }
+  return out;
+}
+function innerBankDraw(g, X, Y, x, y, corners){
+  for (const [px, py, sx, sy, bank] of corners){
+    const PX = X + (px - x) * T, PY = Y + (py - y) * T;   // the corner point, on what's being drawn
+    for (let v = -BANK_IN; v <= 3; v++) for (let u = -BANK_IN; u <= 3; u++){   // (u, v: pixels from the point towards the water, each way; under 0, in the land's square)
+      const gx = sx > 0 ? PX + u : PX - 1 - u, gy = sy > 0 ? PY + v : PY - 1 - v;
+      if (gx < X || gy < Y || gx >= X + T || gy >= Y + T) continue;   // (only this square's own pixels)
+      const d = Math.hypot(u + .5 + BANK_IN, v + .5 + BANK_IN);
+      if (d <= BANK_IN) continue;   // the land, as it is
+      const lit = u >= v ? sx > 0 : sy > 0;   // (the light comes from the top and the left)
+      R(g, gx, gy, 1, 1, d <= BANK_IN + 1 ? bank[0] : d <= BANK_IN + 2 ? bank[1] : d <= BANK_IN + 3 && lit ? DEEP : '#3F8FCB');
+    }
+  }
+}
+function innerBank(g, X, Y, x, y){ const corners = innerCorners(x, y); if (corners.length) innerBankDraw(g, X, Y, x, y, corners); }   // (innerBankDraw is drawn for the season, as water is: js/seasons.js)
+// A square of the map, drawn whole: its look, its corners where a bank turns inwards, and a cliff's shadow over it.
+function drawSquare(g, X, Y, x, y){ LOOKS[tileAt(x, y).look](g, X, Y, x, y); innerBank(g, X, Y, x, y); castShadow(g, X, Y, x, y); }
 // The edge between two levels (the hillside's terraces, and the rock all round the mountain), so you can see one is
 // higher than the other: the ground above comes to the edge, with a lit, rounded lip and grass hanging over it, as on a
 // ledge; then a drop two squares high, the same all along, in rock (a cliff) or in grass (a bank you can hop down), lit
@@ -2319,7 +2359,7 @@ function drawTiles(clip, x0 = 0, y0 = 0, x1 = COLS - 1, y1 = ROWS - 1){
   const box = clip || [0, 0, COLS*T, ROWS*T], g = staged(0, box) || mg;   // (in a season, in memory first: just the box)
   if (clip && g === mg){ mg.save(); mg.beginPath(); mg.rect(...clip); mg.clip(); mg.clearRect(...clip); }
   for (let y = Math.max(0, y0); y <= Math.min(ROWS - 1, y1); y++) for (let x = Math.max(0, x0); x <= Math.min(COLS - 1, x1); x++){
-    LOOKS[tileAt(x, y).look](g, x*T, y*T, x, y); castShadow(g, x*T, y*T, x, y);
+    drawSquare(g, x*T, y*T, x, y);
   }
   if (g !== mg) handOver(0, mapCanvas, box); else if (clip) mg.restore();
 }

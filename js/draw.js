@@ -689,7 +689,7 @@ function drawStirred(s, x, y, k){   // the square, parted k, on its little canva
   if (s.pic && s.k === k && s.lit === lit) return;   // (as it was: standing in it, or flattened a moment)
   if (!s.pic){ s.pic = spareStirPics.pop() || document.createElement('canvas'); s.pic.width = s.pic.height = T; }
   const g = s.pic.getContext('2d');
-  tall(g, 0, 0, x, y, s.pal, k ? stirBend(s, k) : null, lit); castShadow(g, 0, 0, x, y); g.drawImage(overGrass(x, y), 0, 0);
+  tall(g, 0, 0, x, y, s.pal, k ? stirBend(s, k) : null, lit); innerBank(g, 0, 0, x, y); castShadow(g, 0, 0, x, y); g.drawImage(overGrass(x, y), 0, 0);   // (innerBank: its corner, where a bank turns inwards round it, as the map has it)
   s.k = k; s.lit = lit;
 }
 function unstir(key){ const s = stirred.get(key); if (s.pic && spareStirPics.length < 24) spareStirPics.push(s.pic); stirred.delete(key); }

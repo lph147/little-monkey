@@ -161,6 +161,51 @@ test('the hillside’s brook runs off the map at both sides and is never pinched
   }
 });
 
+// More of the water's edge (decided 11 November 2026, from mock-ups drawn by the game).
+test('where a bank turns inwards its corner is rounded too, each square round the corner drawing its own part; and the bank wanders against long grass and along stepping stones as anywhere', () => {
+  const g = mountainGame({place: 'meadow', x: 5, y: 5, dir: 'up'});
+  const [lip, edge] = get(g, 'BANK_EARTH'), DEEP = '#2C6B9E';
+  g.run("enterPlace('hillside')");
+  assert.deepEqual(get(g, '[tileAt(5, 36).look, tileAt(6, 36).look, tileAt(5, 37).look, tileAt(6, 37).look]'), ['grass', 'water', 'water', 'water'], 'the hillside’s brook, where it bends: a corner of grass with water to its right, below it, and beyond');
+  assert.deepEqual(get(g, 'innerCorners(5, 36).map(c => c.slice(0, 4))'), [[6, 37, 1, 1]], 'the grass’s bottom right corner, the water lying right and down from it');
+  const square = (x, y) => drawn(g, `drawSquare(ctx, ${x * 16}, ${y * 16}, ${x}, ${y})`), dots = (fills, c) => fills.filter(([col, px, py, w, h]) => col === c && w === 1 && h === 1);
+  const land = square(5, 36), inLand = ([, px, py]) => px >= 5 * 16 + 10 && px < 6 * 16 && py >= 36 * 16 + 10 && py < 37 * 16;
+  assert.ok(dots(land, lip).filter(inLand).length >= 4 && dots(land, edge).filter(inLand).length >= 1, 'the land’s corner cut back: the bank’s lip and its edge round it');
+  assert.ok(land.every(([c, px, py, w, h]) => c === 'clip' || (px >= 5 * 16 && py >= 36 * 16 && px + w <= 6 * 16 && py + h <= 37 * 16) || w > 1 || h > 1), 'never a pixel outside its own square');
+  const beside = square(6, 36), near = ([, px, py]) => px < 6 * 16 + 4 && py >= 36 * 16 + 10;
+  assert.ok(dots(beside, DEEP).filter(near).length >= 2 && dots(beside, edge).filter(near).length >= 1, 'and the square of water beside the corner draws its part: the bank’s edge, and its shadow where the light comes from');
+  for (const [x, y] of [[6, 36], [5, 37]]) assert.ok(get(g, `innerCorners(${x}, ${y}).length`) === 1, `the water beside it knows the corner too: ${x}, ${y}`);
+  g.run("enterPlace('meadow')");
+  assert.equal(get(g, 'innerCorners(10, 10).length'), 0, 'none in the middle of a pond');
+  assert.equal(get(g, 'innerCorners(12, 8).length'), 0, 'nor where the pond’s own corner turns outwards (the tree by its top right corner)');
+  assert.equal(get(g, "GROUND_KIND.innerBankDraw"), 'water', 'drawn for the season, as water is');
+  // against long grass, and under stepping stones: the bank a pixel in here and there, the ground that comes in the long grass's own
+  g.run("enterPlace('southSlope')");
+  assert.deepEqual(get(g, '[tileAt(6, 24).look, tileAt(6, 25).look, tileAt(12, 23).look, tileAt(12, 22).look]'), ['water', 'longGrass', 'hopStone', 'grass'], 'the south slope’s brook: long grass below it, and its stepping stones under the grass');
+  const look = (x, y) => drawn(g, `LOOKS[tileAt(${x}, ${y}).look](ctx, ${x * 16}, ${y * 16}, ${x}, ${y})`);
+  const below = [4, 5, 6, 7, 8, 9].flatMap(x => look(x, 24).filter(([c, px, py, w, h]) => c === lip && h === 1 && py >= 24 * 16 + 14).map(([, , py]) => py - 24 * 16));
+  assert.ok(below.includes(15) && below.includes(14), 'the bank wanders against long grass');
+  assert.ok([4, 5, 6, 7, 8, 9].some(x => look(x, 24).some(([c]) => c === get(g, 'LONG[0]'))), 'and it’s the long grass’s own ground that comes in');
+  const stones = [12, 13, 14].flatMap(x => look(x, 23).filter(([c, px, py, w, h]) => c === lip && h === 1 && py <= 23 * 16 + 1).map(([, , py]) => py - 23 * 16));
+  assert.ok(stones.includes(0) && stones.includes(1), 'and along the stepping stones');
+});
+
+test('the south slope’s brook runs off the map at both sides too; and where a brook leaves one row of the edge’s trees beside it, bushes, not two little trees', () => {
+  const g = mountainGame({place: 'meadow', x: 5, y: 5, dir: 'up'});
+  const looks = list => get(g, `${JSON.stringify(list)}.map(([x, y]) => tileAt(x, y).look)`);
+  g.run("enterPlace('southSlope')");
+  const cols = get(g, 'COLS');
+  assert.ok(looks([[0, 23], [1, 23], [0, 24], [1, 24], [cols - 2, 23], [cols - 1, 23], [cols - 2, 24], [cols - 1, 24]]).every(l => l === 'water'), 'the brook reaches the map’s edge, west and east');
+  assert.deepEqual(looks([[0, 22], [1, 22], [cols - 2, 22], [cols - 1, 22]]), ['bush', 'bush', 'bush', 'bush'], 'bushes beside it at each end');
+  g.run("enterPlace('hillside')");
+  assert.deepEqual(looks([[0, 36], [1, 36], [24, 34], [25, 34]]), ['bush', 'bush', 'bush', 'bush'], 'and beside the hillside’s brook');
+  for (const place of ['southSlope', 'hillside']){
+    g.run(`enterPlace('${place}')`);
+    const small = get(g, 'mapObjects().filter(o => o.look === "tree" && o.w === 1 && (o.x < 2 || o.x >= COLS - 2)).map(o => [o.x, o.y])');
+    for (const [x, y] of small) assert.ok(!get(g, `[[0, -1], [0, 1]].some(([dx, dy]) => WATERY.includes(tileAt(${x} + dx, ${y} + dy).look))`), `no little tree left at the edge beside the brook: ${place} ${x}, ${y}`);
+  }
+});
+
 test('the sea of clouds below the mountain: long thin wisps running on from square to square, not round puffs', () => {
   const g = game({place: 'highRoad', x: 16, y: 9, dir: 'up'});
   const wisps = x => drawn(g, `cloudSea(ctx, ${x * 16}, 32, ${x}, 2)`).filter(([c]) => c === '#EAF0F5' || c === '#F4F7FA');

@@ -1613,9 +1613,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "MMMMM==MMMvvvvvvvvMMMMMMMM",
         "YYgEg..egugkggEgggeguggkYY",   // a slope of flowers; a peach tree in the corner
         "YYgPg..gugkgJggEFggegukgYY",
-        "YYkgg...............ggegYY",
+        "YYkgg...............ggegww",   // (bushes at the edge, beside the brook: one row of its trees would be two little trees)
         "YYgkJggggFgggugggJWzWWWWWW",   // the brook, winding, and its stepping stones: right across, off the map at both sides, and as wide where it bends as anywhere
-        "YYggggWWWWWWWWWWWWWzWWWWWW",
+        "wwggggWWWWWWWWWWWWWzWWWWWW",
         "WWWWWWWWWWWWWWWWWWW.ggggYY",
         "WWWWWWWWggTgggg.....ggggYY",
         "YYggTggggggggggnngggggTgYY",
@@ -1794,9 +1794,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "MMMMMMMMMMMMvvvvvMMMM==MMM",
         "YYggggggoGGGgggggTnnn..gYY",
         "YYggPggGGGGGg.....nnn..gYY",   // a peach tree in the corner; long grass between the steps and the brook
-        "YYgggggggWWgg.....nnn.ogYY",
-        "YYWWWWWWWWWWzzzWWWWWWWWWYY",   // the brook, and its stepping stones, a row of three, and another
-        "YYWWWWWWWWWWzzzWWWWWWWWWYY",
+        "wwgggggggWWgg.....nnn.ogww",   // (bushes at each end, beside the brook: one row of the edge's trees would be two little trees)
+        "WWWWWWWWWWWWzzzWWWWWWWWWWW",   // the brook, right across, off the map at both sides, and its stepping stones, a row of three, and another
+        "WWWWWWWWWWWWzzzWWWWWWWWWWW",
         "YYggnnnnnngcg..WgggoggggYY",   // fresh grass by the brook (c), for the hungry cow
         "YYggnnnnnnnnnnngnnnnnnggYY",
         "YYg....nnnnnnnngnnnnnnggYY",   // west to the steps, through long grass
