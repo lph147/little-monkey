@@ -738,7 +738,7 @@ const SCREENS = [
     S.w['野猪'] = {lv: 1, due: 0, ok: 0}; battle('boar'); await wait(1200);
     click('.act[data-act=hit]'); await wait(400); await right(); await right(); click('.act[data-act=hit]'); await wait(400); await right(); await right();
     click('.act[data-act=hit]'); await wait(400); click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(600); }},
-  {id: 'hurt-map', title: 'Hurt: your health on the map', save: 'hurt', why: 'While you’re hurt, your health shows at the top left: a bar (yellow, under half) and its number, 20/50. Full again, it goes.', run: async () => { play(); await wait(300); }},
+  {id: 'hurt-map', title: 'Hurt: your health on the map', save: 'hurt', why: 'Your health shows at the top left only when it matters: a small heart and a short bar, no number. Here it’s low (15 of 50, a third or less), so it stays, its heart beating. Hurt but not low, it shows for a few seconds after it changes, then fades.', run: async () => { play(); await wait(300); S.health = 15; updateHUD(); await wait(200); }},
   {id: 'hurt', title: 'Hurt: your health, and resting', save: 'hurt', why: 'Your health shows while you’re hurt (a bar, with its number); the old monkey lets you rest.', run: async () => {
     play(); await wait(300); talk(npc('elder')); await wait(600); }},
   {id: 'path-top', title: 'The top of the path', save: 'atTheTop', why: 'Facing the waterfall: where the river comes from.', run: async () => { play(); await wait(500); }},
