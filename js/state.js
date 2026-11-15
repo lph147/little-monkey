@@ -398,7 +398,10 @@ const MONEY = () => coinsNow() ? '🪙' : '🐚';
 function earn(n){ if (coinsNow()) S.coins = (S.coins || 0) + n; else S.shells += n; }
 function spend(n){ if (coinsNow()) S.coins = (S.coins || 0) - n; else S.shells -= n; }
 // What you have, as the menu, your tasks and the end of an area show it: your money now, and the other if you have any.
-const moneyHTML = () => [coinsNow() || S.coins ? `<span>🪙 ${S.coins || 0}</span>` : '', !coinsNow() || S.shells ? `<span>🐚 ${S.shells}</span>` : ''].join('');
+// Your shells have a name once you know it, 贝壳 (decided 8 November 2026: the shells you've collected all game turn out to be
+// 贝壳, under the sea in Area 3), green as a word you know, tap it to hear it.
+const shellWord = () => typeof WORDS !== 'undefined' && WORDS['贝壳'] && lvl('贝壳') >= 1 ? ' <b class="hl-zh" data-say="贝壳">贝壳</b>' : '';
+const moneyHTML = () => [coinsNow() || S.coins ? `<span>🪙 ${S.coins || 0}</span>` : '', !coinsNow() || S.shells ? `<span>🐚 ${S.shells}${shellWord()}</span>` : ''].join('');
 const lvl = w => (S.w[w] && S.w[w].lv) || 0;
 function rec(w){ if (!S.w[w]) S.w[w] = {lv:0, ok:0}; return S.w[w]; }
 // A line you hear (sayLine, js/cards.js; a boss's, js/battle.js): it's noted as heard (S.lines: how many times; S.lineDay:

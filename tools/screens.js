@@ -489,6 +489,9 @@ SAVES.c2end = c2(SAVES.c2king, {king: 2, homeAgain: 1, unload: 6, party: 1, part
 SAVES.c2hill = {...SAVES.c2end, pos: {place: 'ffmHillside', x: 22, y: 21, dir: 'up'}};
 // Area 3, the Eastern Sea (15 November 2026): the end of Chapter 4, by the iron bridge in the Water Curtain Cave; and on the seabed
 SAVES.c2dive = c2(SAVES.c2end, {ch2: 1, stickGiven: 1}, [], {place: 'ffmCave', x: 7, y: 5, dir: 'down'});
+SAVES.a3turtle = {...SAVES.c2dive, area: 3, w: {...SAVES.c2dive.w, ...knows(1, ['泡泡'])}, areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀', turtle: 0}}, pos: {place: 'seabed', x: 12, y: 6, dir: 'right'}};   // (the sea turtle from your shore, saying hello)
+SAVES.a3stars = {...SAVES.c2dive, area: 3, w: {...SAVES.c2dive.w, ...knows(1, ['泡泡', '沙子', '贝壳', '水草', '游', '海星'])}, areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀', turtle: 2, starFriends: 3,
+  out: {starfish: [[7, 12, 1], [9, 13, 1], [5, 10, 1], [4, 13, 0]]}}}, pos: {place: 'seabed', x: 7, y: 11, dir: 'down'}};   // (four starfish out on the sand, three of them friends, by the seaweed)
 SAVES.a3seabed = {...SAVES.c2dive, area: 3, areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀'}}, pos: {place: 'seabed', x: 11, y: 6, dir: 'down'}};   // (home in autumn: on the hillside's lookout)
 SAVES.c2south = {...SAVES.c2end, pos: {place: 'ffmSouthSlope', x: 9, y: 15, dir: 'up'}};   // (and the south slope's)
 
@@ -1870,7 +1873,13 @@ SCREENS.push(
   {id: 'a3-dive', title: 'The dive', save: 'a3seabed', why: 'Down from the iron bridge in a bubble of air, past fish, until the seabed comes up out of the blue (js/sea.js).', run: async () => {
     play(); await wait(300); storyScene('dive'); await wait(4200); }},
   {id: 'a3-seabed', title: 'The seabed', save: 'a3seabed', why: 'Under the sea: sand, shells, seaweed, rocks and coral, light rippling over the seabed, shafts of light, bubbles rising, and you in your bubble of air, the water’s tint kept off you inside it.', run: async () => {
-    play(); await wait(500); }}
+    play(); await wait(500); }},
+  {id: 'a3-turtle', title: 'The sea turtle', save: 'a3turtle', why: 'The sea turtle from your shore swims over the sand to meet you: 你在泡泡里！ (泡泡, bubble), in its own voice, its face on the name plate.', run: async () => {
+    play(); await wait(100); showDialog(speaker('turtle'), L.inBubble); await wait(500); }},
+  {id: 'a3-starfish', title: 'Starfish on the sand', save: 'a3stars', why: 'Five starfish hide in the seaweed; each you meet stays out on the sand in its own colour (red, orange, yellow…), and one that still wants to play has a ! over it. Fish swim by in little schools.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'a3-shells', title: 'Your shells are 贝壳', save: 'a3stars', why: 'Once you know 贝壳, your money says so: 🐚 7 贝壳, in your bag, on the Tasks page and in the shop.', run: async () => {
+    play(); await wait(100); pressBag(); await wait(400); }}
 );
 if (typeof module !== 'undefined') module.exports = {SCREENS, SAVES};   // for the tests
 else {

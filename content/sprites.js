@@ -374,6 +374,14 @@ const MAP_SPRITES = {
   '混世魔王': {   // the Demon of Havoc (Area 2's boss, at his cave's door), facing you, his broadsword raised: big, on a 22 × 22 canvas, drawn with the shape kit from his picture in tools/draw-pictures.js
     palette: {a:'#272529', b:'#131110', c:'#393839', d:'#8C929C', e:'#474239', f:'#55556A', g:'#16161C', h:'#E4E7EB', i:'#B9B19C', j:'#2C2C34', k:'#555352', l:'#898474', m:'#38342C', n:'#D8DCE2', o:'#1A1A1E', p:'#A8832C', q:'#3E3142', r:'#9A7ABA', s:'#7A5A9A', t:'#54386E', u:'#271B2A', v:'#403642', w:'#A28CB8', x:'#5F4678', y:'#423315', z:'#F4D440', A:'#2B202D', B:'#473459', C:'#2A1020', D:'#D8A838', E:'#151210', F:'#FAFAF5', G:'#5C5A55'},
     rows: ["..........ab.cddcc....","....e...aafgbbcdhdc...","...eie.affjjfgbkhldc..","....eiafjjjjjjgmlndc..","....eiojjjjjjjjolndc..",".....bgpppppppppcdddc.","......qrsssssstuvwwxpy","......qrszzszztuAxsxA.","....aaqrsssssstuafxgb.","...affgBssssssBfojgb..","..afjjjgBBCCCBfjojgb..","..bgoojofffDffojojgb..","..EojoojjjjDjjjoogb...","..afjofjjjjDjjjjgb....","..afjofjjjjDjjFjgFG...","..afjofjjjjDjjjjgb....","..afgypppppppppppy....",".Axwxbgjjjjjjjjgb.....","..AxxAbggggggggb......","...AA.afjgbbafgb......","......bgggb.bggb......",".......bbb...bb......."]
+  },
+  // Area 3, the Eastern Sea (15 November 2026)
+  '海星': {   // starfish, lying flat on the sand, seen from above (Chapter 5: five of them, hiding in the seabed's seaweed)
+    // small: 12 pixels, low in its square, drawn with the shape kit. tint: its body colour, red, which the game turns
+    // into each starfish's own (tinted in js/art.js), every colour of it lighter or darker as it is here
+    tint: '#E0453A',
+    palette: {a:'#5B3B32', b:'#421712', c:'#F79A88', d:'#A82A22', e:'#E0453A'},
+    rows: ["................","................","................",".......ab.......","......acdb......",".....aaccab.....","...bacceecdbb...","..bddeeeeeeddb..","...baceeeedca...","....aceeeedb....","....aceddedb....","....accabdca....","....bdb..bdb....",".....b....b.....","................","................"]
   }
 };
 // A water buffalo (Area 2, in the fields: not a word of its own): the cow's drawing, dark slate grey all over, with no

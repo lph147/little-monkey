@@ -130,7 +130,7 @@ function inColours(i){
   return i.colours.map(c => ({...i, word:i.item, colour:c, item:c === i.colour ? i.item : `${c} 的 ${i.item}`}));
 }
 const CLOTHES = (AREA.wardrobe || []).flatMap(inColours);   // everything you could wear (the wardrobe's), in each of its colours
-const ALL_NPCS = AREA.characters.map(c => ({id:c.id, place:placeOf(c), x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word, flies:!!c.flies, small:!!c.small && !c.person,   // (small: a little one, such as a baby monkey or a calf, drawn smaller: js/draw.js)
+const ALL_NPCS = AREA.characters.map(c => ({id:c.id, place:placeOf(c), x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word, flies:!!c.flies, swims:!!c.swims, small:!!c.small && !c.person,   // (small: a little one, such as a baby monkey or a calf, drawn smaller: js/draw.js)
   colour:c.colour, pecks:!!c.pecks, shoo:c.shoo, scuttles:!!c.scuttles, cart:!!c.cart,   // (scuttles: sideways, as a crab does: scuttle, js/world.js; cart: a cart, drawCart in js/havoc.js)
      // (a bird: its colour; pecking at its square; what you're told as you shoo it off: shooAway, js/world.js)
   home:{place:placeOf(c), x:c.x, y:c.y, facing:c.facing}, moves:c.moves}));   // home: where the content puts them; moves: where they go as the story goes on (placeCharacters)

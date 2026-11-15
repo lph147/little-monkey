@@ -449,12 +449,21 @@ function drawSwimmer(a, X, Y, now){
 // One of several of a kind out where it came out (stays), such as a bee over the flowers in their valley: hovering, bobbing,
 // looking your way, its wings a blur as they beat, its shadow on the ground below; hopping as you meet it, and for joy, with
 // a heart, as it becomes your friend (meetHop). Gives how high it hovers.
-function drawHover(a, x, y, X, Y, now){
+function drawHover(a, x, y, X, Y, now, colour = null){
+  if (a.lies) return drawLying(a, x, y, X, Y, now, colour);   // (one that lies on the ground, such as a starfish on the sand)
   const hover = 5 + Math.round(Math.sin(now / 300 + x * 1.7 + y) * 2) + meetHop(a, X, Y, now, [x, y]);
   R(b, X + 5, Y + 14, 6, 1, 'rgba(0,0,0,.16)');
-  b.drawImage(towardsYou(a, x), X, Y - hover);
+  b.drawImage(towardsYou(a, x, false, colour), X, Y - hover);
   if (Math.floor(now / 90 + x) % 2) R(b, X + 4, Y - hover + 3, 8, 1, 'rgba(255,255,255,.7)');   // the wings' blur
   return hover;
+}
+// One of several of a kind that lies on the ground where it came out (lies), such as each starfish on the seabed's sand,
+// in its own colour: still, but for a little stir of its arms now and then, and a hop when you meet it.
+function drawLying(a, x, y, X, Y, now, colour){
+  const hop = meetHop(a, X, Y, now, [x, y]), stir = Math.floor(now / 140 + x * 7 + y * 3) % 40 === 0 ? 1 : 0;
+  R(b, X + 3, Y + 15, 10, 1, 'rgba(0,0,0,.14)');
+  b.drawImage(towardsYou(a, x, false, colour), X, Y - hop - stir);
+  return hop;
 }
 // Those flying off together (the fly step, js/world.js), such as the six bees to join the swarm: each from where it was
 // to the square they're going to, one a little after another, in an arc, wobbling as bees do, and gone as it gets there.
@@ -550,12 +559,13 @@ function drawFlying(n, X, Y, now, k){
   if (n.look === 'swarm'){ drawSwarm(X, Y - hover + 4, now, k); return; }
   const spr = mapSprite(n.look), faces = MAP_SPRITES[n.look].faces, side = n.dir === 'left' || n.dir === 'right';
   b.drawImage(faces && side && n.dir !== faces ? mirrored(spr) : spr, X, Y - hover);   // (facing the way it's going, or you)
+  if (n.swims){ if (Math.floor(now / 500 + k) % 2) R(b, X + 2, Y - hover + 9, 2, 1, 'rgba(255,255,255,.45)'); return; }   // (swimming, such as the sea turtle under the sea: its flippers stirring the water, no wings)
   if (Math.floor(now / 90) % 2) R(b, X + 5, Y - hover + 2, 6, 1, 'rgba(255,255,255,.7)');   // the wings' blur
 }
 const TALL_LOOKS = ['tallGrass', 'woodGrass'];   // tall grass animals hide in (the meadow's, or on the pine wood's floor)
 function drawFoe(cx, cy, now){
   if (!foe || foe.spot) return;   // (one met at its own spot is drawn there: meetHop)
-  const X = foe.x*T - cx, Y = foe.y*T - cy, e = now - foe.t0, spr = towardsYou(foe.a, foe.x);   // (looking at you)
+  const X = foe.x*T - cx, Y = foe.y*T - cy, e = now - foe.t0, spr = towardsYou(foe.a, foe.x, false, foe.colour);   // (looking at you)
   if (foe.state === 'in'){
     const rise = foe.big ? RISE_MS : 280;   // (a big one rears up slowly, twice your size)
     const k = clamp(e / rise, 0, 1), h = Math.max(1, Math.round(spr.height * k)), jump = e > rise && e < rise + 240 ? Math.round(Math.sin((e - rise) / 240 * Math.PI) * (foe.big ? 2 : 4)) : 0;
@@ -1041,7 +1051,7 @@ function drawWorld(now){
   for (const o of outHere()){
     const X = o.x*T - cx, Y = o.y*T - cy;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
-    const hover = drawHover(o.a, o.x, o.y, X, Y, now);
+    const hover = drawHover(o.a, o.x, o.y, X, Y, now, o.colour);
     if (!o.friend && !(foe && foe.x === o.x && foe.y === o.y)) bubbles.push([X + 10, Y - 8 - hover, '!']);
   }
   drawFlyers(cx, cy, now);

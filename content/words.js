@@ -291,7 +291,14 @@ const WORD_BANK = {
   '刀': {py:'dāo', en:'broadsword, knife', pic:'🗡️', area:2, category:'items', alike:['棍子', '斧头']},   // (the Demon of Havoc's, yours once you've beaten him)
   '车': {py:'chē', en:'cart', pic:'🛒', area:2, category:'items'},   // (the little demons' cart, piled with the troop's things)
   '臭豆腐': {py:'chòudòufu', en:'stinky tofu', pic:'🧆', area:2, category:'food', alike:['包子']},
-  '飞蛾': {py:"fēi'é", en:'moth', pic:'🪰', area:2, category:'animals', alike:['蝴蝶']},   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
+  '飞蛾': {py:"fēi'é", en:'moth', pic:'🪰', area:2, category:'animals', alike:['蝴蝶']},
+  // Area 3, the Eastern Sea (Chapter 5, built a step at a time from 15 November 2026): the seabed's
+  '泡泡': {py:'pàopao', en:'bubble', pic:'🫧', area:3, category:'nature'},   // (your bubble of air, the sea turtle's first word for you)
+  '沙子': {py:'shāzi', en:'sand', pic:'🏖️', area:3, category:'nature'},   // (the seabed: press A at it)
+  '贝壳': {py:'bèiké', en:'shell', pic:'🐚', area:3, category:'nature', alike:['珍珠']},   // (the shells you've collected all game: your money says 贝壳 once you know it)
+  '水草': {py:'shuǐcǎo', en:'seaweed', pic:'🌱', area:3, category:'nature', alike:['草']},   // (round the seabed's edges, where the starfish hide)
+  '游': {py:'yóu', en:'to swim', pic:'🏊', area:3, category:'actions', alike:['海']},   // (the sea turtle: 我游，你走。)
+  '海星': {py:'hǎixīng', en:'starfish', pic:'✴️', area:3, category:'animals', alike:['星星']},   // (five, hiding in the seabed's seaweed, each its own colour)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
 
   // Heard in sentences
   '换': {py:'huàn', en:'to change, to swap'},
@@ -501,6 +508,8 @@ const MADE = {
   '鱼缸': {parts:[['鱼', 'yú', 'fish'], ['缸', 'gāng', 'jar']]},
   '风铃': {parts:[['风', 'fēng', 'wind'], ['铃', 'líng', 'bell']]},
   '灯笼': {parts:[['灯', 'dēng', 'lamp'], ['笼', 'long', 'cage']]},   // (a lamp in a cage of bamboo and paper)
+  '水草': {parts:[['水', 'shuǐ', 'water'], ['草', 'cǎo', 'grass']]},   // (grass that grows in the water)
+  '海星': {parts:[['海', 'hǎi', 'sea'], ['星', 'xīng', 'star', '星星']]},   // (a star of the sea)
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},
   '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not', '不客气'], ['要', 'yào', 'to want']]},

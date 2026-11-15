@@ -1424,6 +1424,17 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | Chinese | Pinyin | English | Said by | Notes |
 | --- | --- | --- | --- | --- |
 | 太臭了！ | tài chòu le! | It’s so smelly! |  |  |
+| 你好！ | nǐ hǎo! | Hello! | 海龟 (sea turtle) |  |
+| 好久不见！ | hǎojiǔ bú jiàn! | Long time no see! | 海龟 (sea turtle) |  |
+| 你在泡泡里！ | nǐ zài pàopao lǐ! | You’re in a bubble! | 海龟 (sea turtle) |  |
+| 我游，你走。 | wǒ yóu, nǐ zǒu. | I swim, you walk. | 海龟 (sea turtle) |  |
+| 你有五个海星朋友了！ | nǐ yǒu wǔ gè hǎixīng péngyou le! | You’ve got five starfish friends now! | 海龟 (sea turtle) |  |
+| 我们玩吧！ | wǒmen wán ba! | Let’s play! |  |  |
+| 一！ | yī! | One! |  |  |
+| 二！ | èr! | Two! |  |  |
+| 三！ | sān! | Three! |  |  |
+| 四！ | sì! | Four! |  |  |
+| 五！ | wǔ! | Five! |  |  |
 
 ### Sentences the player completes (one word missing)
 
@@ -1443,11 +1454,33 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 我戴橙色的头带 | wǒ dài chéngsè de tóudài | I wear my orange headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴粉色的头带 | wǒ dài fěnsè de tóudài | I wear my pink headband. | You, in the wardrobe (a headband in each colour) |  |
 
+### What you pick and see
+
+What a card shows when you pick a flower for the big monkey (a red flower, and so on), and when you look at a flower whose colour you know (each square of flowers is all one colour).
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 红色的海星 | hóngsè de hǎixīng | A red starfish |  |
+| 橙色的海星 | chéngsè de hǎixīng | An orange starfish |  |
+| 黄色的海星 | huángsè de hǎixīng | A yellow starfish |  |
+| 粉色的海星 | fěnsè de hǎixīng | A pink starfish |  |
+| 蓝色的海星 | lánsè de hǎixīng | A blue starfish |  |
+
 ### The sign
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
 | 海 | hǎi | The sea |  |
+
+### Example sentences on word pages
+
+For words that no line or story sentence uses, shown on the word's page in the Word Scroll.
+
+| Chinese | Pinyin | English | For the word | Notes |
+| --- | --- | --- | --- | --- |
+| 海里有很多沙子。 | hǎi lǐ yǒu hěn duō shāzi. | There’s lots of sand in the sea. | 沙子 |  |
+| 我有很多贝壳。 | wǒ yǒu hěn duō bèiké. | I have lots of shells. | 贝壳 |  |
+| 海星在水草里。 | hǎixīng zài shuǐcǎo lǐ. | The starfish are in the seaweed. | 水草 |  |
 
 ### Scene: the dive
 
@@ -1464,6 +1497,28 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 牌子 | páizi | Sign |  |
 | 东海 | Dōng Hǎi | The Eastern Sea |  |
 | 海底 | hǎidǐ | The seabed |  |
+
+### Words to collect
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 泡泡 | pàopao | bubble |  |
+| 沙子 | shāzi | sand |  |
+| 贝壳 | bèiké | shell |  |
+| 水草 | shuǐcǎo | seaweed |  |
+| 游 | yóu | to swim |  |
+| 海星 | hǎixīng | starfish |  |
+
+### How words are made
+
+Shown on a word's new-word card and its page in the Word Scroll (new on 23 October 2026, not checked yet): its parts and
+what they add up to, the clue inside it, or the picture it was drawn from. Please check that each is true, well known and
+simply put. A part's pinyin is as it's said in the word.
+
+| Word | Pinyin | How it’s made | Notes |
+| --- | --- | --- | --- |
+| 水草 | shuǐcǎo | 水 shuǐ (water) + 草 cǎo (grass) = 水草 (seaweed) |  |
+| 海星 | hǎixīng | 海 hǎi (sea) + 星 xīng (star) = 海星 (starfish) |  |
 
 ### Words only heard in sentences
 
@@ -1823,8 +1878,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 美猴王坐木筏走了。 | Měi Hóuwáng zuò mùfá zǒu le. | The Monkey King sailed away on his raft. | New on 29 October 2026 (in the game), the end of chapter 1: The scene of you sailing away, the troop waving from the shore, after 再见！ and 我们等你！ |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 | 这是我的地图。 | zhè shì wǒ de dìtú. | This is my map. | New on 31 October 2026 (in the game): the example on 地图 (dìtú, map)’s page. The big monkey gives you a map in chapter 1, as he sends you up to the pine wood, and you catch 地图 the first time you open it. Its How it’s made card says 地 (dì, ground) + 图 (tú, picture) = 地图, a picture of the ground: is that a fair way to explain it? |  |
-| 你在泡泡里！ | Nǐ zài pàopao li! | You’re in a bubble! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the sea turtle, as you land on the seabed, teaching 泡泡 (bubble). Is it natural? |  |
-| 我游，你走。 | Wǒ yóu, nǐ zǒu. | I swim, you walk. | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the sea turtle, swimming ahead as you walk, teaching 游 (to swim). Is it natural? |  |
 | 小心！有鲨鱼！ | Xiǎoxīn! Yǒu shāyú! | Careful! A shark! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the sea turtle, as your first shark comes out of the seaweed, teaching the phrase 小心. Is it natural? |  |
 | 我有八只脚！ | Wǒ yǒu bā zhī jiǎo! | I’ve got eight feet! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the octopus, teaching 脚. For a child, is it 八只脚, or 八条腿 (legs)?. Is it natural? |  |
 | 我有几只脚？ | Wǒ yǒu jǐ zhī jiǎo? | How many feet have I got? | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the octopus’s counting game, teaching 几. Is it natural? |  |

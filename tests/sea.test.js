@@ -70,7 +70,7 @@ test('arriving in the Eastern Sea: your broadsword in your paw, the dive, Chapte
   assert.equal(get(g, 'here().weapon'), '刀', 'your broadsword, from Chapter 4');
   assert.equal(get(g, 'here().landed'), 1);
   assert.ok(get(g, '__notes').includes('chapter: Chapter 5'), 'Chapter 5’s card');
-  assert.match(get(g, '__notes').join(' '), /To be continued/, 'where the built part stops, it says so');
+  assert.match(get(g, '__notes').join(' '), /A sea turtle is swimming towards you/, 'and the sea turtle from your shore swims up (step 2: tests/seabed.test.js)');
   assert.deepEqual(get(g, '[PLACE, S.pos.x, S.pos.y, S.area]'), ['seabed', 11, 6, 3], 'on the seabed, where you land');
   assert.equal(g.run('underwater()'), true);
   assert.equal(g.run('placeSong()'), 'sea', 'the sea’s own tune');

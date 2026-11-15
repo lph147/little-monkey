@@ -216,7 +216,7 @@ function asleepSprite(){
 // picture everywhere else, in encounters and the Friends list (content/pictures.js).
 const ANIMALS = [...AREA.animals, ...PAST_ANIMALS].map(a => ({id:a.id, past:!!a.past, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters, many:a.many || 0, counts:a.counts, counted:a.counted || [], stays:a.stays || null,
   spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette),
-  waits:!!a.waits, perch:a.perch || 0, glints:a.glints || null, roams:a.roams || [], clue:a.clue || '', swims:!!a.swims, leaves:!!a.leaves, time:a.time || null, awake:a.awake || null, sleepsAt:a.sleepsAt || null, hangs:!!a.hangs, glows:a.glows || null, group:a.group || null}));   // (time: when it's about, by day or after dark, unless the story needs it, awake: awakeNow)   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
+  waits:!!a.waits, perch:a.perch || 0, glints:a.glints || null, roams:a.roams || [], clue:a.clue || '', swims:!!a.swims, lies:!!a.lies, colours:a.colours || null, leaves:!!a.leaves, time:a.time || null, awake:a.awake || null, sleepsAt:a.sleepsAt || null, hangs:!!a.hangs, glows:a.glows || null, group:a.group || null}));   // (time: when it's about, by day or after dark, unless the story needs it, awake: awakeNow)   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
 // Whether an animal is out yet: once the story has reached its chapter (decided 30 October 2026, so a chapter's new
 // friends, such as the duck on the home ground's stream, aren't there in the prologue).
 const inChapter = a => a.chapter <= ((here() || {}).chapter || 0);
@@ -228,13 +228,30 @@ function mirrored(spr){
   if (!mirrors.has(spr)){ const c = document.createElement('canvas'); c.width = spr.width; c.height = spr.height; const g = c.getContext('2d'); g.translate(spr.width, 0); g.scale(-1, 1); g.drawImage(spr, 0, 0); mirrors.set(spr, c); }
   return mirrors.get(spr);
 }
-const towardsYou = (a, x, away = false) => { const want = pl.x < x ? 'left' : pl.x > x ? 'right' : null; return want && a.faces && (a.faces !== want) !== away ? mirrored(a.spr) : a.spr; };
+const towardsYou = (a, x, away = false, colour = null) => { const want = pl.x < x ? 'left' : pl.x > x ? 'right' : null, s = colour ? tinted(a, colour) : a.spr; return want && a.faces && (a.faces !== want) !== away ? mirrored(s) : s; };
+// One of several of a kind that comes in colours (colours), such as the five starfish on the seabed, each its own: its map
+// sprite in that colour, each shade of its body's colour (its sprite's tint) as much lighter or darker as it is there
+// (decided 15 November 2026, the Eastern Sea's plan). Made once for each colour.
+const tints = new Map();
+function tinted(a, colour){
+  const def = MAP_SPRITES[a.hz], to = PAINT[colour];
+  if (!def.tint || !to) return a.spr;
+  if (!tints.has(a.hz + colour)){
+    const lum = c => { const n = parseInt(c.slice(1), 16); return .299 * (n >> 16) + .587 * (n >> 8 & 255) + .114 * (n & 255); };
+    const base = lum(def.tint), palette = {};
+    for (const [k, c] of Object.entries(def.palette)){ const r = lum(c) / base; palette[k] = r >= 1 ? mix(to, '#FFFFFF', Math.min(.85, (r - 1) * .7)) : mix(to, '#000000', Math.min(.9, 1 - r)); }
+    tints.set(a.hz + colour, sprite(def.rows, palette));
+  }
+  return tints.get(a.hz + colour);
+}
+// The colour of each one out (in the order you met them: out), such as the third starfish's, yellow.
+const colourOf = (a, i) => a.colours ? a.colours[i % a.colours.length] : null;
 const GRASS_ANIMALS = ANIMALS.filter(a => !a.at);
 // One of several of a kind (many) that stays out once you've met it (stays), such as each bee in their valley, hovering where
 // it came out: the area's progress keeps where (out: by the animal's id, each [x, y, 1 once it's your friend, else 0]).
 // Those out in the place you're in, once animals appear: {a, x, y, friend}.
 const outOf = a => (here().out || {})[a.id] || [];
-const outHere = () => canWild() ? ANIMALS.filter(a => a.stays && a.place === PLACE && awakeNow(a)).flatMap(a => outOf(a).map(([x, y, f]) => ({a, x, y, friend:!!f}))) : [];
+const outHere = () => canWild() ? ANIMALS.filter(a => a.stays && a.place === PLACE && awakeNow(a)).flatMap(a => outOf(a).map(([x, y, f], i) => ({a, x, y, friend:!!f, colour:colourOf(a, i)}))) : [];
 const outAt = (x, y) => outHere().find(o => o.x === x && o.y === y);
 // An animal living at this spot, or out there, once animals appear (you can't walk through it).
 // An animal at its own spot (at) in the place you're in, out now: one that leaves its spot once it's your friend (leaves)

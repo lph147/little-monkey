@@ -1810,8 +1810,65 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(17, 12.6, 2, 1), '#F7A24A'); p.fill(Pg([[18.9, 12.6], [20.3, 11.6], [20.3, 13.6]]), '#F7A24A');   // and another
     p.dot(12, 11, '#2B1A10'); p.dot(16, 12, '#2B1A10');
     p.flat(path([[8, 17], [10.5, 15.5]], .5), '#A8C8B0');                                     // the glaze shining
-  }
+  },
+
+  // Area 3, the Eastern Sea (Chapter 5): the seabed's words (15 November 2026)
+  '泡泡': p => {   // bubbles: round bubbles of air rising, big and small, each a thin bright ring with a shine (unlike 水: a drop)
+    const bubble = (x, y, r) => {
+      p.fill(O(x, y, r, r), '#CFEAF8', {light: '#EAF7FD', dark: '#9CCCE8'});                 // see-through blue
+      p.flat(and(O(x, y, r, r), not(O(x, y, r - 1.1, r - 1.1))), '#6FB2DC');                   // its rim
+      p.flat(O(x - r * .38, y - r * .38, r * .28, r * .22), '#FFFFFF');                        // the shine
+    };
+    bubble(13, 19, 9); bubble(25, 10, 5); bubble(26, 25, 3.4); bubble(6, 6, 3); bubble(18, 4, 2);
+  },
+  '沙子': p => {   // sand: a heap of golden sand, ripples drawn in it by the water, grains scattered (unlike 石头: a stone)
+    p.fill(and(O(16, 31, 15.5, 15), Rc(0, 10, 32, 22)), '#E8C984', {light: '#F6E2AE', dark: '#C9A35C', edge: true});
+    [[[6, 24], [11, 22], [16, 23]], [[13, 18], [18, 16.5], [23, 17.5]], [[18, 26], [23, 24.5], [28, 25.5]]].forEach(r => p.flat(path(r, .45), '#C9A35C'));   // ripples
+    [[9, 28], [14, 25], [21, 21], [25, 28], [11, 19], [27, 22], [17, 29], [5, 28], [20, 14]].forEach(([x, y]) => p.dot(x, y, '#B88E46'));   // grains
+    [[12, 27], [23, 19], [7, 25]].forEach(([x, y]) => p.dot(x, y, '#FFF4D2'));
+  },
+  '贝壳': p => {   // shells: a scallop shell, its ridges fanning out, and a little spiral shell beside it, on the sand (unlike 珍珠: a pearl in an open shell)
+    p.fill(and(O(16, 30, 15, 3.4), Rc(0, 28, 32, 4)), '#E8C984');                           // the sand
+    p.fill(Pg([[11, 29], [3, 17], [6, 9], [11, 6], [16, 5], [21, 6], [26, 9], [29, 17], [21, 29]]), '#F2B9A8', {light: '#FBDCD0', dark: '#CF8A78', edge: true});   // the scallop
+    [-12, -6, 0, 6, 12].forEach(dx => p.flat(path([[16, 28], [16 + dx, 7.5]], .5), '#D99886'));   // its ridges
+    p.fill(Rc(11, 27, 10, 3, 1), '#E7A894', {edge: true});                                    // its hinge
+    p.fill(O(27, 26.5, 3.6, 2.6), '#F4E2C8', {dark: '#C8A884', edge: true});                  // the little spiral shell
+    p.flat(path([[25, 26.5], [27, 25], [29, 26.5], [27.5, 28]], .4), '#B8946A');
+  },
+  '水草': p => {   // seaweed: green ribbons swaying up out of the sand, under the water, bubbles rising (unlike 草: a tuft on the ground)
+    p.fill(Rc(0, 0, 32, 32), '#6FB8DA');                                                      // the water
+    p.flat(Rc(0, 0, 32, 6), '#8ACBE6');
+    p.fill(Rc(0, 27, 32, 5), '#E8C984');                                                      // the sand
+    const ribbon = (x, c, sway) => p.fill(path([[x, 29], [x + sway, 22], [x - sway, 15], [x + sway, 8], [x, 3]], 1.6), c, {light: '#8FD47A'});
+    ribbon(7, '#3E9A4E', 1.6); ribbon(13, '#4FAE58', -1.8); ribbon(19, '#3E9A4E', 1.4); ribbon(25, '#4FAE58', -1.6);
+    p.flat(O(22, 9, 1.2, 1.2), '#EAF7FD'); p.flat(O(10, 5, .9, .9), '#EAF7FD');               // bubbles
+  },
+  '游': p => {   // to swim: a monkey swimming in the sea, one arm reaching over the water, splashes (unlike 跑 and 跳: in the water)
+    p.fill(Rc(0, 17, 32, 15), BLUE);                                                          // the water
+    p.flat(or(Rc(2, 25, 5, 1), Rc(14, 28, 6, 1), Rc(24, 24, 5, 1)), '#8ACFF0');
+    p.fill(path([[19, 17], [24, 10], [28, 12]], 1.5), FUR);                                    // an arm over the water
+    p.fill(O(12, 15, 5.6, 5), FUR, {edge: true});                                             // its head
+    p.flat(or(O(10.4, 15, 2.1, 2.3), O(14, 15, 2.1, 2.3), O(12, 17.4, 2.8, 1.6)), SKIN);
+    p.eye(9, 14); p.eye(13, 14);
+    p.fill(and(Rc(0, 17, 32, 3), not(O(12, 15, 6, 5.4))), BLUE);                              // the water round its chin
+    p.flat(path([[3, 17], [6, 15.5], [9, 17]], .55), '#EAF7FD');                               // splashes
+    p.flat(path([[22, 17], [25, 15], [28, 17]], .55), '#EAF7FD');
+    p.dot(27, 9, '#EAF7FD'); p.dot(29, 10, '#EAF7FD');
+  },
+  '海星': p => starfish(p, '#E0453A', '#F79A88', '#A82A22'),   // a starfish, red
+  '橙色 的 海星': p => starfish(p, '#F08A2E', '#FFC07A', '#B85E14'),   // an orange starfish (a red one is 海星's own)
+  '黄色 的 海星': p => starfish(p, '#F2C93A', '#FFE89A', '#BE8E1E'),   // a yellow starfish
+  '粉色 的 海星': p => starfish(p, '#F28CB4', '#FFC8DC', '#C45A86'),   // a pink starfish
+  '蓝色 的 海星': p => starfish(p, '#4A86DA', '#9CC4F4', '#2A5CA8')    // a blue starfish
 };
+// A starfish lying on the sand, its five arms one colour (body), little bumps on them (unlike 星星: stars in the sky)
+function starfish(p, body, light, dark){
+  p.fill(and(O(16, 30, 14, 2.6), Rc(0, 28, 32, 4)), '#E8C984');                             // the sand
+  const arm = Array.from({length: 10}, (_, i) => { const a = -Math.PI / 2 + i * Math.PI / 5, k = i % 2 ? 5.2 : 13; return [16 + Math.cos(a) * k, 16.5 + Math.sin(a) * k]; });
+  p.fill(Pg(arm), body, {light, dark, edge: true});
+  for (let i = 0; i < 5; i++){ const a = -Math.PI / 2 + i * 2 * Math.PI / 5; [4, 7.5, 10.5].forEach(k => p.dot(Math.round(16 + Math.cos(a) * k), Math.round(16.5 + Math.sin(a) * k), light)); }
+  p.flat(O(16, 16.5, 1.6, 1.6), dark);                                                        // its middle
+}
 function splat(p, c){   // a smooth, round dab of paint, for a colour, with two little drops
   p.fill(or(O(15.5, 17, 10.5, 9), O(23, 21.5, 4.6, 4)), c);
   p.fill(O(27, 8.5, 2), c); p.fill(O(5.5, 27, 1.6), c);

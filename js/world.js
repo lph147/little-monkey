@@ -263,7 +263,7 @@ function promptFor(x, y){
   const n = npcAt(x, y) || followerAt(x, y);
   if (n && n.asleep) return 'Look';   // (asleep for the night: js/daynight.js)
   if (n){ const p = talkPart(n); return (p && p.label) || n.label || 'Talk'; }   // (what their talk says A does, such as Pull at a cart)
-  if (animalAt(x, y)) return asleepNow(animalAt(x, y)) ? 'Look' : 'Meet';   // (one asleep, for the night or the day: animalAsleep)
+  if (animalAt(x, y)) return asleepNow(animalAt(x, y)) || friendInColour(x, y) ? 'Look' : 'Meet';   // (one asleep, for the night or the day: animalAsleep)
   if (BIRD_WORD && birdAt(x, y)) return 'Look';
   const way = exitAt(x, y);
   if (way && way.by === 'A' && isOpen(way)) return way.label || 'Go';   // a way you go through by pressing A, such as jumping through the waterfall
@@ -1562,9 +1562,12 @@ async function lookAt(t){   // the card for the word you learn by looking at a t
 // such as 红色 的 花, or its word's own if it's that colour already, such as 花's pink flower); till then, its word's card,
 // with that picture, so it's the colour you looked at (decided 26 October 2026: after you'd picked the big monkey's three
 // flowers, they all went back to being called 花).
+// One of several of a kind in colours, out at (x, y) and your friend now, such as a red starfish on the seabed: A shows what
+// it is, such as 红色的海星 (a red starfish), as a coloured flower does (decided 15 November 2026, the Eastern Sea's plan).
+const friendInColour = (x, y) => { const o = outAt(x, y); return !!(o && o.friend && o.colour); };
 const coloured = t => { const c = WORDS[t.colour].en; return {zh:`${t.colour} 的 ${t.word}`, en:`${/^[aeiou]/.test(c) ? 'An' : 'A'} ${c} ${WORDS[t.word].en}`}; };
 const COLOURED = () => [...new Map([...[AREA.legend, ...Object.values(AREA.places).map(p => p.legend || {})].flatMap(l => Object.values(l)).filter(t => t.colour && t.word),
-  ...((AREA.birds || {}).colours || []).map(colour => ({word:AREA.birds.word, colour})), ...colouredThings()].map(t => [coloured(t).zh, coloured(t)])).values()];   // every one there is, such as 粉色的花 and 黄色的鸟 (for the voices and CHINESE.md)
+  ...((AREA.birds || {}).colours || []).map(colour => ({word:AREA.birds.word, colour})), ...colouredThings(), ...ANIMALS.filter(a => a.colours && !a.past).flatMap(a => a.colours.map(colour => ({word:a.hz, colour})))].map(t => [coloured(t).zh, coloured(t)])).values()];   // every one there is, such as 粉色的花 and 黄色的鸟 (for the voices and CHINESE.md)
 const colourPic = t => PICTURES[coloured(t).zh] ? coloured(t).zh : t.word;
 const stepCard = t => ({...(t.stepNote ? {note:t.stepNote} : {}), ...(t.colour ? {pic:colourPic(t)} : {})});   // (stepping on it first, such as onto a red flower)
 async function gather(t, x, y){   // pick up something for a request, such as fruit or water
@@ -1639,6 +1642,7 @@ async function interact(x, y){
   const a = animalAt(x, y);
   if (a && asleepNow(a)) return toast(animalAsleep(a));   // (a day animal at night, or a night one by day: js/art.js)
   if (a && a.waits && lvl(a.hz) === 0 && !await practiseFirst(a.id)) return;   // (an animal whose word is new waits for a little practice: waits)
+  if (a && friendInColour(x, y)){ await lookAt({word:a.hz, colour:outAt(x, y).colour}); return; }   // (one of several of a kind in colours, your friend now: 红色的海星)
   if (a) return wildAppears(a, {x, y, d:pl.dir});
   const bd = birdAt(x, y);
   if (bd && BIRD_WORD){ await lookAt({word:BIRD_WORD, colour:bd.colour, note:AREA.birds.note}); shooBird(bd); return; }   // (such as 黄色的鸟, once you know its colour)
@@ -2021,7 +2025,7 @@ async function wildAppears(a, spot = findSpot()){
   pl.dir = spot.d;
   const was = outAt(spot.x, spot.y);
   const atHome = !!a.at && a.place === PLACE && a.at[0] === spot.x && a.at[1] === spot.y;   // (not a friend jumping out of the grass somewhere it roams)
-  foe = {a, x:spot.x, y:spot.y, t0:performance.now(), state:'in', spot:atHome || !!was};   // (spot: one at its own spot, or out, stays there)
+  foe = {a, x:spot.x, y:spot.y, t0:performance.now(), state:'in', spot:atHome || !!was, colour:was ? was.colour : colourOf(a, outOf(a).length)};   // (one of several in colours, such as the starfish: the next one's colour)   // (spot: one at its own spot, or out, stays there)
   alertUntil = performance.now() + 1000;
   SFX.encounter();
   await sleep(1100);

@@ -71,11 +71,27 @@ function makeSeaLight(){
 let bubbleKeep = null;   // what's round you, as it was before the water's tint, for inside your bubble
 const RING = (() => { const out = new Set(); for (let t = 0; t < 96; t++){ const a = t / 96 * Math.PI * 2; out.add(Math.round(Math.cos(a) * 12) + ',' + Math.round(Math.sin(a) * 12)); } return [...out].map(s => s.split(',').map(Number)); })();
 const SEA_BEAMS = [[18, 14], [92, 9], [150, 18], [206, 8]];   // shafts of light from above: where each starts, and how wide
+// Little fish swimming over the seabed in schools (a place's schools: each [its row, how many, its map drawing, squares a
+// second, which way: -1 left, 1 right]), one after another a little apart, up and down a little, round and round the place,
+// in front of everything but you in your bubble (decided 15 November 2026: the Eastern Sea's plan, fish that swim over the
+// sea floor, instead of leaping out of water).
+function drawSchools(cx, cy, now){
+  for (const [row, n, art, speed, way] of PLACES[PLACE].schools || []){
+    const spr = mapArtPic(art), span = COLS * T + 120, lead = (now * speed * T / 1000 + row * 97) % span;
+    for (let i = 0; i < n; i++){
+      const along = (lead - i * 10 - (i % 2) * 3 + span) % span - 60, x = way > 0 ? along : COLS * T - along;
+      const X = Math.round(x - cx), Y = Math.round(row * T + 3 + (i % 3) * 4 + Math.sin(now / 420 + i * 1.3) * 1.5 - cy);
+      if (X < -16 || X > VW * T + 16 || Y < -16 || Y > VH * T + 16) continue;
+      b.drawImage(way > 0 ? mirrored(spr) : spr, X, Y);   // (each drawn heading left: turned round to swim right)
+    }
+  }
+}
 function drawSea(cx, cy, sh, now){
   if (!underwater()) return;
   const W = VW * T, H = VH * T, PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
   if (!bubbleKeep){ bubbleKeep = document.createElement('canvas'); bubbleKeep.width = 32; bubbleKeep.height = 32; }
   const kg = bubbleKeep.getContext('2d'); kg.clearRect(0, 0, 32, 32); kg.drawImage(buf, PX - 8, PY - 9, 32, 32, 0, 0, 32, 32);
+  drawSchools(cx, cy, now);   // little fish swimming over the seabed, under the water's blue
   // the light rippling over the seabed, square by square (not down in the deep)
   if (!seaLight) seaLight = makeSeaLight();
   const f = Math.floor(now / 160) % 8, x0 = Math.floor(cx / T), y0 = Math.floor(cy / T);
@@ -93,6 +109,10 @@ function drawSea(cx, cy, sh, now){
   b.globalAlpha = .09; b.fillStyle = '#E6FBFF';   // shafts of light, drifting a little as you move
   for (const [sx, w] of SEA_BEAMS){ const x = ((sx - cx * .25) % (W + 60) + W + 60) % (W + 60) - 30; b.beginPath(); b.moveTo(x, -2); b.lineTo(x + w, -2); b.lineTo(x + w + 46, H + 2); b.lineTo(x + 46, H + 2); b.closePath(); b.fill(); }
   b.restore();
+  // what comes in colours, such as the starfish on the sand, drawn again over the water's blue, so each is the colour it's
+  // called (decided 15 November 2026, after looking at it: under the haze the yellow one was green, the red one maroon)
+  for (const o of outHere()) if (o.colour && o.a.lies) drawLying(o.a, o.x, o.y, o.x * T - cx, o.y * T - cy, now, o.colour);
+  if (foe && foe.colour) drawFoe(cx, cy, now);
   // bubbles rising
   for (let i = 0; i < 7; i++){
     const bx = Math.round((i * 61 + 23 - cx * .5) % W + W) % W, by = Math.round(H - ((now * .018 + i * 47) % (H + 24)));

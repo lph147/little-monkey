@@ -11,6 +11,7 @@ const {loadGame, ROOT} = require('./fake-browser');
 // again for Area 2), as the page plays the area of the save it's given (js/data.js).
 const game = loadGame(process.env.LM_AREA ? {save:{version:34, area:+process.env.LM_AREA, w:{}, started:true}} : {});
 const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
+const EARLIER_ANIMALS = get('AREAS.filter(a => a.number < AREA.number).flatMap(a => a.animals.map(x => x.id))');
 const BANK = get('WORD_BANK'), PICTURES = get('PICTURES'), MAP_SPRITES = get('MAP_SPRITES'), AREA = get('AREA'), PUNCT = get('[...PUNCT]');
 const LOOKS = get('Object.keys(LOOKS)'), ACTIONS = get('Object.keys(ACTIONS)'), STEPS = get('Object.keys(STEPS)');   // what the engine can draw and do
 const STEP_OPTIONS = get('STEP_OPTIONS'), COUNTS = get('Object.keys(COUNTS)');
@@ -404,7 +405,7 @@ test('every if only checks things the game knows about', () => {
       if (k === 'holding') for (const id of Object.keys(v)) assert.ok(AREA.requests[id] || (AREA.holdingFor || {})[id], `${where} checks holding for "${id}", which isn't a request (nor something carried for someone: holdingFor)`);
       if (k === 'place') assert.ok(AREA.places[v], `${where} checks place ${v}, which isn't a place`);
       if (k === 'near') assert.ok(AREA.characters.some(c => c.id === v), `${where} checks near "${v}", who isn't a character`);
-      if (k === 'friends') for (const id of Object.keys(v)) assert.ok(AREA.animals.some(a => a.id === id) || AREA.characters.some(c => c.id === id), `${where} checks friends for "${id}", who isn't an animal or a character`);
+      if (k === 'friends') for (const id of Object.keys(v)) assert.ok(AREA.animals.some(a => a.id === id) || AREA.characters.some(c => c.id === id) || EARLIER_ANIMALS.includes(id), `${where} checks friends for "${id}", who isn't an animal or a character (here or in an area before)`);   // (a friend from an earlier area, such as the sea turtle from Flower Fruit Mountain's shore, in the Eastern Sea)
       if (k === 'following') for (const id of Object.keys(v)) assert.ok(AREA.characters.some(c => c.id === id), `${where} checks following for "${id}", who isn't a character`);
       if (k === 'at') assert.ok(onMap(v) && canWalk(v), `${where} checks at ${JSON.stringify(v)}, which isn't somewhere you can stand`);
       if (k === 'bought') for (const w of Object.keys(v)) assert.ok(AREA.shop.items.some(i => i.item === w), `${where} checks bought for ${w}, which the shop doesn't sell`);
@@ -491,7 +492,8 @@ test('every line is said somewhere', () => {
     ...(AREA.hideSeek ? [AREA.hideSeek.count, AREA.hideSeek.coming, AREA.hideSeek.found, ...AREA.hideSeek.spots.map(p => p.say)] : []),
     ...AREA.characters.filter(c => c.calls).map(c => c.calls), ...AREA.characters.filter(c => c.nightCalls).map(c => c.nightCalls),   // (calling out what they sell as you walk past, and at night: callOut, js/world.js)
     ...allSteps().filter(([, s]) => s.recap || s.face).flatMap(([, s]) => [s.count, s.line, ...Object.values(s.lines || {})].filter(Boolean)),   // (the master's classes: js/year.js)
-    ...(AREA.smallTalk || []).map(t => t.say)   // (what people say about the weather, js/world.js)
+    ...(AREA.smallTalk || []).map(t => t.say),   // (what people say about the weather, js/world.js)
+    ...(AREA.animalsPlay ? [AREA.animalsPlay.say] : [])   // (what an animal says as it comes out to play: wildAppears, js/world.js)
   ]);
   for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);
 });
