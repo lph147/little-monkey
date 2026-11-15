@@ -1,6 +1,7 @@
 // The menu's Tips page (decided 9 November 2026, the four ideas plan): every tip you've had, to read again. About Chinese
 // first, each opening its card again (the goat's drum, 二 or 两?, the words that sound alike), then How to play: each
-// button tip you've had, its button drawn, and How to play ▸, the whole guide, which was in Settings. Only what you've had.
+// button tip you've had, its button drawn, and How to play ▸, the whole guide, which was in Settings. Only what you've had,
+// and last, always, where to choose your screen (the console or edge to edge: screenCard in js/main.js).
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -25,12 +26,12 @@ test('the menu’s Tips button, between Settings and Save, opens the Tips page; 
   assert.equal(run('document.activeElement && document.activeElement.dataset.m'), 'tips', 'Back: the menu, on Tips');
 });
 
-test('only the tips you’ve had: a new player has just the first, and the page says more come as you play', () => {
+test('only the tips you’ve had: a new player has just the first (and where to choose your screen), and the page says more come as you play', () => {
   const {sheet, run} = game({tips: {walk: 1}});
   run('tipsPage(() => {})');
   assert.match(sheet.textContent, /Every tip you’ve had, to read again\. More come as you play\./);
   assert.equal(sheet.querySelector('.tipsrow[data-tip]'), null, 'no tips about Chinese yet');
-  assert.deepEqual(rows(sheet), ['Hold an arrow to walk. Tap it to turn on the spot.']);
+  assert.deepEqual(rows(sheet), ['Hold an arrow to walk. Tap it to turn on the spot.', 'Your screen: the console, with the buttons beside the map, or edge to edge, with them over it. Choose it in Settings, Screen.']);
   assert.ok(sheet.querySelector('.tipsrow .tkey.pad'), 'with the D-pad drawn');
 });
 
@@ -39,7 +40,7 @@ test('the tips about Chinese: the drum card once you’ve had it, 二 or 两? on
   run('tipsPage(() => {})');
   const chinese = sheet.querySelectorAll('.tipsrow[data-tip]').map(r => [r.querySelector('.tipskey').textContent, r.querySelector('b').textContent]);
   assert.deepEqual(chinese, [['山羊shānyáng', 'One character, one syllable'], ['二 两èr · liǎng', '二 or 两?'], ['河 喝hé · hē', 'Sounds like: 河 and 喝']]);
-  assert.deepEqual(rows(sheet).slice(3), ['Hold an arrow to walk. Tap it to turn on the spot.', 'Press A to talk to someone, or to look at what you’re facing.', 'Hold B as you walk, to run.'], 'then the button tips you’ve had');
+  assert.deepEqual(rows(sheet).slice(3), ['Hold an arrow to walk. Tap it to turn on the spot.', 'Press A to talk to someone, or to look at what you’re facing.', 'Hold B as you walk, to run.', 'Your screen: the console, with the buttons beside the map, or edge to edge, with them over it. Choose it in Settings, Screen.'], 'then the button tips you’ve had, and where to choose your screen');
 });
 
 test('each tip about Chinese opens its card again, and Back comes back to it', async () => {

@@ -1790,22 +1790,27 @@ const SCREENS = [
   {id: 'howto-3', title: 'How to play, 3 of 3', save: 'middle', run: async () => { play(); await wait(100); howToPlay(); await wait(100); click('[data-a=next]'); await wait(100); click('[data-a=next]'); await wait(300); }},
   {id: 'story', title: 'The Story Scroll', save: 'middle', run: async () => { play(); await wait(100); storyScroll(); await wait(400); }},
   {id: 'word-test', title: 'The word test', save: 'middle', why: 'Matching words to pictures. It comes back as the troop’s send-off at the end of Area 1.', run: async () => { play(); await wait(100); wordTest(); await wait(400); }},
-  // Full screen (Settings' Controls, decided 15 November 2026, to try it): the map edge to edge, the same buttons over it
-  {id: 'full-screen', title: 'Full screen', save: 'bySplashers', why: 'Settings’ Controls, Full screen: the map edge to edge, as many squares across as fill the phone, the same buttons over it in the game’s colours.', run: async () => {
+  // Your screen (Settings' Screen, decided 15 November 2026; each player chooses, the first time on a phone or tablet): the
+  // console, or the map edge to edge with the same buttons over it
+  {id: 'screen-choice', title: 'Choose your screen', why: 'The first time the game opens on a phone or tablet, over the title screen: the console, edge to edge or glass, each a small picture of a phone held sideways. Tapping one tries it behind the card; Play like this keeps it.', run: async () => {
+    screenCard({first: true, back: titleText}); await wait(400); }},
+  {id: 'screen-choice-edge', title: 'Choose your screen, trying edge to edge', why: 'Edge to edge tapped: the title screen between the real buttons behind the card, which sits between them too.', run: async () => {
+    screenCard({first: true, back: titleText}); await wait(100); click('.scrtile[data-scr="overlay"]'); await wait(400); }},
+  {id: 'full-screen', title: 'Edge to edge', save: 'bySplashers', why: 'Settings’ Screen, Edge to edge: the map filling the phone, as many squares across as fit, the same buttons over it in the game’s colours.', run: async () => {
     setControls('overlay'); play(); await wait(500); }},
-  {id: 'full-glass', title: 'Full screen, glass', save: 'bySplashers', why: 'Settings’ Controls, Glass: full screen with see-through white buttons, as in the phone advert that gave the idea.', run: async () => {
+  {id: 'full-glass', title: 'Edge to edge, glass', save: 'bySplashers', why: 'Settings’ Screen, Glass: edge to edge with see-through white buttons, as in the phone advert that gave the idea.', run: async () => {
     setControls('glass'); play(); await wait(500); }},
-  {id: 'full-talk', title: 'Full screen, talking', save: 'bigHello', why: 'The speech box between the two sets of buttons. While someone talks, Tasks, Menu, Bag and Map go, the D-pad and B fade, and A glows.', run: async () => {
+  {id: 'full-talk', title: 'Edge to edge, talking', save: 'bigHello', why: 'The speech box between the two sets of buttons. While someone talks, Tasks, Menu, Bag and Map go, the D-pad and B fade, and A glows.', run: async () => {
     setControls('overlay'); play(); await wait(100); talk(npc('big')); await wait(500); }},
-  {id: 'full-talk-top', title: 'Full screen, talking at the top', save: 'lowTalk', why: 'Where the speech box would cover you, it goes to the top, the whole width of the screen.', run: async () => {
+  {id: 'full-talk-top', title: 'Edge to edge, talking at the top', save: 'lowTalk', why: 'Where the speech box would cover you, it goes to the top, the whole width of the screen.', run: async () => {
     setControls('overlay'); play(); await wait(100); talk(npc('playful')); await wait(200); finishTyping(); await wait(400); }},
-  {id: 'full-card', title: 'Full screen, a card', save: 'middle', why: 'Cards sit between the buttons too, so nothing you read is under a thumb.', run: async () => {
+  {id: 'full-card', title: 'Edge to edge, a card', save: 'middle', why: 'Cards sit between the buttons too, so nothing you read is under a thumb.', run: async () => {
     setControls('overlay'); play(); await wait(100); openMenu(); await wait(400); }},
-  {id: 'full-night', title: 'Full screen at night', save: 'dayNight', why: 'At night the buttons must still be easy to find on the dark map; the moon in the pond and the stars in the river, right across the wider view.', run: async () => {
+  {id: 'full-night', title: 'Edge to edge at night', save: 'dayNight', why: 'At night the buttons must still be easy to find on the dark map; the moon in the pond and the stars in the river, right across the wider view.', run: async () => {
     setControls('overlay'); play(); await wait(200); S.pos = {place: 'meadow', x: 9, y: 8, dir: 'down'}; placePlayer(); S.clock.t = DAY_MS * .85; placedIn = null; placeCharacters(); await wait(500); }},
-  {id: 'full-title', title: 'Full screen, the title screen', why: 'The title screen and the scenes, drawn for 15 by 10, are as big as fits between the buttons.', run: async () => {
+  {id: 'full-title', title: 'Edge to edge, the title screen', why: 'The title screen and the scenes, drawn for 15 by 10, are as big as fits between the buttons.', run: async () => {
     setControls('overlay'); await wait(300); }},
-  {id: 'full-scene', title: 'Full screen, a scene', save: 'home', why: 'A scene between the buttons, its captions on it, as on the title screen.', run: async () => {
+  {id: 'full-scene', title: 'Edge to edge, a scene', save: 'home', why: 'A scene between the buttons, its captions on it, as on the title screen.', run: async () => {
     setControls('overlay'); play(); await wait(100); storyScene('becomingKing'); introClock = 5.55; advancedTo = 2; await wait(400); }}
 ];
 

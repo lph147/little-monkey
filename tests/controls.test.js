@@ -1,7 +1,8 @@
-// Controls (Settings' Controls, decided 15 November 2026, to try it): the console, a Game Boy Advance held sideways, as it
-// always was; or full screen, the map edge to edge with the same buttons over it, in the game's colours or as glass. Kept
-// for the device, not for each game. Full screen, the map shows as many squares as fill the phone; the title screen and
-// the scenes, drawn for 15 by 10, are as big as fits between the buttons (fit and fitFull in js/main.js).
+// Your screen (Settings' Screen, decided 15 November 2026; each player chooses, on a card the first time on a phone or
+// tablet): the console, a Game Boy Advance held sideways, as it always was; or edge to edge, the map filling the phone with
+// the same buttons over it, in the game's colours or as glass. Kept for the device, not for each game.
+// Edge to edge, the map shows as many squares as fill the phone; the title screen and the scenes, drawn for 15 by 10, are
+// as big as fits between the buttons (fit and fitFull in js/main.js).
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -76,25 +77,86 @@ test('glass: full screen too, with see-through white buttons', () => {
   assert.ok(classes(g).includes('overlay') && classes(g).includes('glass'));
 });
 
-test('Settings’ Controls goes round the console, full screen and glass, kept for this device, not in the game’s save', () => {
-  const g = phone(null, {dom: true, save: {version: 8, started: true}});
-  const sheet = g.el('#sheet'), button = () => sheet.querySelector('[data-m="controls"]');
-  g.run('openSettings()');
-  assert.match(button().textContent, /Controls\s*Console/);
-  button().click();
-  assert.match(button().textContent, /Full screen/);
-  assert.equal(g.storage.get(KEY), 'overlay');
-  assert.equal(g.run('VW'), 347 / 16, 'the screen changes straight away');
-  assert.equal(g.run('document.activeElement.dataset.m'), 'controls', 'and the button stays chosen');
-  button().click();
-  assert.match(button().textContent, /Glass/);
+// The screen card, opened on a pretend phone (touch) or computer: tile(c) is its picture of c, and chosen() what it's on.
+const tile = (g, c) => g.el('#sheet').querySelector(`.scrtile[data-scr="${c}"]`);
+const chosen = g => g.el('#sheet').querySelector('.scrtile.sel').dataset.scr;
+const cardOpen = g => !g.run('modal.hidden') && /Choose your screen/.test(g.el('#sheet').textContent);
+
+test('the first time the game opens on a phone or tablet, a card over the title screen asks which screen', () => {
+  const g = loadGame({html: true, dom: true, touch: true});
+  assert.equal(g.run('mode'), 'title');
+  assert.ok(cardOpen(g), 'Choose your screen');
+  assert.equal(chosen(g), 'console', 'the console chosen to start with');
+  assert.deepEqual(['console', 'overlay', 'glass'].map(c => tile(g, c).querySelector('b').textContent), ['Console', 'Edge to edge', 'Glass']);
+  assert.match(g.el('#sheet').textContent, /change it any time: MENU ▸ Settings ▸ Screen/, 'and where to change it');
+  assert.equal(g.el('#sheet').querySelector('[data-a=back]'), null, 'nothing to go back to: you choose one');
+  assert.equal(g.run('document.activeElement.dataset.scr'), 'console', 'the D-pad starts on the one chosen');
+});
+
+test('the screen card isn’t there on a computer, once one’s chosen, or when the page loads again to play', () => {
+  assert.ok(!cardOpen(loadGame({html: true, dom: true})), 'a computer: the console, and Settings has it');
+  assert.ok(!cardOpen(loadGame({html: true, dom: true, touch: true, storage: {[KEY]: 'console'}})), 'chosen already, even the console');
+  const g = loadGame({html: true, dom: true, touch: true, save: AREA1, session: {'xiaohouzi-v2-go': JSON.stringify({area: 1, slot: 1, action: 'continue'})}});
+  assert.equal(g.run('mode'), 'play');
+  assert.ok(!cardOpen(g), 'going on with a game: never in the way');
+});
+
+test('tapping a screen tries it behind the card, without keeping it, and Play like this keeps it', () => {
+  const g = loadGame({html: true, dom: true, touch: true});
+  g.run('innerWidth = 852; innerHeight = 393; fit()');
+  tile(g, 'overlay').click();
+  assert.equal(chosen(g), 'overlay');
+  assert.ok(classes(g).includes('overlay'), 'the buttons over the screen straight away');
+  assert.match(g.el('#sheet').textContent, /The map fills your phone, so you see more of it/);
+  assert.equal(g.storage.get(KEY), undefined, 'only trying it: loaded again, it would ask again');
+  assert.equal(g.run('document.activeElement.dataset.scr'), 'overlay', 'and it stays chosen, for the D-pad');
+  tile(g, 'glass').click();
   assert.ok(classes(g).includes('glass'));
+  g.el('#sheet').querySelector('[data-a=keep]').click();
+  assert.equal(g.storage.get(KEY), 'glass', 'kept for this device');
+  assert.equal(g.run('modal.hidden'), true);
+  assert.equal(g.run('mode'), 'title', 'back to the title screen, in it');
+  assert.ok(!/glass|overlay/.test(g.run('JSON.stringify(S)')), 'nothing about it in the game’s save');
+});
+
+test('on a phone or tablet, the title screen says your screen, and tapping it opens the card again, with Back', () => {
+  const g = loadGame({html: true, dom: true, touch: true, storage: {[KEY]: 'overlay'}});
+  assert.match(g.el('#titleText').innerHTML, /Screen: Edge to edge ▸/);
+  g.el('#screenBtn').onclick();
+  assert.ok(cardOpen(g));
+  assert.equal(chosen(g), 'overlay');
+  tile(g, 'console').click();
+  assert.ok(!classes(g).includes('overlay'), 'trying the console');
+  g.el('#sheet').querySelector('[data-a=back]').click();
+  assert.ok(classes(g).includes('overlay'), 'Back puts back the one you had');
+  assert.equal(g.storage.get(KEY), 'overlay');
+  assert.match(g.el('#titleText').innerHTML, /Screen: Edge to edge/);
+  assert.doesNotMatch(loadGame({html: true, dom: true}).el('#titleText').innerHTML, /Screen:/, 'not on a computer');
+});
+
+test('Settings’ Screen opens the same card, and Done keeps what you chose, back in Settings', () => {
+  const g = phone(null, {dom: true, save: {version: 8, started: true}});
+  const sheet = g.el('#sheet'), button = () => sheet.querySelector('[data-m="screen"]');
+  g.run('openSettings()');
+  assert.match(button().textContent, /Screen\s*Console/);
   button().click();
-  assert.match(button().textContent, /Console/);
+  assert.ok(cardOpen(g));
+  tile(g, 'overlay').click();
+  assert.equal(g.run('VW'), 347 / 16, 'the screen changes straight away');
+  sheet.querySelector('[data-a=keep]').click();
+  assert.equal(g.storage.get(KEY), 'overlay');
+  assert.match(button().textContent, /Screen\s*Edge to edge/, 'back in Settings');
+  assert.equal(g.run('document.activeElement.dataset.m'), 'screen', 'and the button stays chosen');
+  button().click(); tile(g, 'console').click(); sheet.querySelector('[data-a=keep]').click();
   assert.deepEqual(view(g), [15, 10, 240, 160], 'back to the console');
   assert.ok(!classes(g).includes('overlay'));
   assert.deepEqual(['left', 'top', 'width', 'height'].map(k => g.el('#screenWrap').style[k]), ['', '', '', ''], 'the console’s own layout places the screen again');
-  assert.ok(!/controls/i.test(g.run('JSON.stringify(S)')), 'nothing about it in the game’s save');
+});
+
+test('the Tips page always says where to choose your screen', () => {
+  const g = phone(null, {dom: true, save: {version: 8, started: true}});
+  g.run('tipsPage(() => {})');
+  assert.match(g.el('#sheet').textContent, /Your screen: the console[^]*Settings, Screen/);
 });
 
 test('full screen, the map is drawn right across the screen, to its far edge', () => {

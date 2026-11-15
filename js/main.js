@@ -5,20 +5,74 @@
 // the left, A and B, with Bag and Map, on the right. Each side is SIDE_WING wide (as .console is in css/game.css), and the
 // screen is as big as fits between them. When the window is taller than it is wide (a phone held
 // upright), a card asks you to turn it, and the game waits.
-// Or full screen (Settings' Controls; decided 15 November 2026, to try it, after a phone's advert showed a Game Boy game
-// played that way): the map edge to edge, the same buttons over it in its bottom corners (fitFull, below).
+// Or edge to edge (Settings' Screen; decided 15 November 2026, after a phone's advert showed a Game Boy game played that
+// way, and the same day, that each player chooses): the map edge to edge, the same buttons over it in its bottom corners
+// (fitFull, below).
 const SIDE_WING = 150;
 let upright = false;
-// Controls: 'console', as a Game Boy Advance, as it always was; 'overlay', full screen, the buttons over the map in the
-// game's colours; 'glass', the same with see-through white buttons. Kept for this device (KEY-controls), not for each
-// game: it's about the phone you're holding, and the title screen needs it before a game is chosen.
+// The screen: 'console', as a Game Boy Advance, as it always was; 'overlay', edge to edge, the buttons over the map in
+// the game's colours; 'glass', the same with see-through white buttons. Kept for this device (KEY-controls), not for each
+// game: it's about the phone you're holding, and the title screen needs it before a game is chosen. (In the code it's
+// still the controls; players see Screen, as the title screen's ⛶ Play full screen is something else: the browser's.)
 const CONTROLS = ['console', 'overlay', 'glass'], CONTROLS_KEY = KEY + '-controls';
 let controlsNow = (() => { try { const c = localStorage.getItem(CONTROLS_KEY); return CONTROLS.includes(c) ? c : 'console'; } catch(e) { return 'console'; } })();
 const fullScreen = () => controlsNow !== 'console';
-function setControls(c){
+// keep: kept for this device (false, only trying it, on the screen card, till you choose it)
+function setControls(c, keep = true){
   if (!CONTROLS.includes(c)) return;
-  controlsNow = c; try { localStorage.setItem(CONTROLS_KEY, c); } catch(e) {}
+  controlsNow = c; if (keep) try { localStorage.setItem(CONTROLS_KEY, c); } catch(e) {}
   fit();
+}
+// Choosing your screen (screenCard): each with its name, and what it's like, under the pictures.
+const SCREENS = {
+  console: {name:'Console', text:'Like a games console: the buttons are beside the screen.'},
+  overlay: {name:'Edge to edge', text:'The map fills your phone, so you see more of it, and the buttons sit over it.'},
+  glass: {name:'Glass', text:'Edge to edge, with see-through white buttons.'}
+};
+const touchScreen = () => media('(pointer: coarse)');   // a phone or a tablet (js/fullscreen.js)
+const screenChosen = () => { try { return CONTROLS.includes(localStorage.getItem(CONTROLS_KEY)); } catch(e) { return true; } };   // (if it can't be kept, it never asks)
+// The first time the game opens on a phone or tablet, before a screen's chosen, the card asks which, over the title screen.
+const screenDue = () => touchScreen() && !screenChosen();
+// A small picture of a phone held sideways, as each screen looks: the same bit of meadow (a path, trees and a pond, your
+// monkey in the middle), in the console's screen between its buttons, or edge to edge, showing more of it, the buttons over it.
+function screenPic(c){
+  const full = c !== 'console';
+  const [sx, sy, sw, sh] = full ? [3, 3, 90, 42] : [30, 6, 36, 24];   // the screen, in the picture
+  const k = sh / 42, shown = sw / k;   // (the meadow is drawn 90 by 42: 10 rows either way, so in the console it's smaller and shows less of it)
+  const tree = (x, y) => `<rect class="trunk" x="${x - 1}" y="${y}" width="2" height="5"/><circle class="leaf" cx="${x}" cy="${y - 1}" r="4.6"/>`;
+  const meadow = `<rect class="grass" width="90" height="42"/><rect class="path" y="25" width="90" height="6"/>
+    <ellipse class="pond" cx="80" cy="11" rx="8" ry="4.5"/>${tree(6, 12)}${tree(29, 10)}${tree(62, 15)}${tree(87, 33)}${tree(15, 38)}
+    <circle class="fur" cx="45" cy="27.5" r="3"/><circle class="face" cx="45" cy="28.2" r="1.7"/>`;
+  const id = 'scr-' + c;
+  const pad = full ? `<g class="pad"><path d="M10 28h4v4h4v4h-4v4h-4v-4H6v-4h4z"/></g>`
+    : `<g class="pad"><path d="M12 19h4v4h4v4h-4v4h-4v-4H8v-4h4z"/></g>`;
+  const ab = full ? `<circle class="kb" cx="77" cy="37" r="3.2"/><circle class="ka" cx="84" cy="32" r="3.4"/>`
+    : `<circle class="kb" cx="79" cy="26" r="3.2"/><circle class="ka" cx="86" cy="21" r="3.4"/>`;
+  return `<svg class="scrpic ${c}" viewBox="0 0 96 48" aria-hidden="true">
+    <rect class="${full ? 'phone' : 'shell'}" x=".5" y=".5" width="95" height="47" rx="8"/>
+    ${full ? '' : `<rect class="bezel" x="${sx - 2}" y="${sy - 2}" width="${sw + 4}" height="${sh + 4}" rx="3"/>`}
+    <clipPath id="${id}"><rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" rx="${full ? 5 : 1}"/></clipPath>
+    <g clip-path="url(#${id})"><g transform="translate(${sx - (90 - shown) / 2 * k} ${sy}) scale(${k})">${meadow}</g></g>
+    ${pad}${ab}</svg>`;
+}
+// The screen card: the three side by side, the one you're trying chosen; tapping one (or A at it) changes the screen
+// behind the card straight away, only trying it, and the main button keeps it. first: the first time (Play like this,
+// with no going back); otherwise from the title screen's Screen link or Settings, with Back, which puts back the one you
+// had, and then back.
+function screenCard({first = false, back} = {}){
+  const had = controlsNow;
+  const show = focus => {
+    openCard(`<p class="label">Choose your screen</p>
+      <div class="screens" data-nav>${CONTROLS.map(c => `<button class="scrtile${c === controlsNow ? ' sel' : ''}" data-scr="${c}" aria-pressed="${c === controlsNow}" data-label="Try it">${screenPic(c)}<b>${SCREENS[c].name}</b></button>`).join('')}</div>
+      <p class="scrabout">${SCREENS[controlsNow].text}</p>
+      <p class="small scrwhere">${first ? '<span class="try">Tap one to try it. </span>' : ''}You can change it any time: <span class="tkey pill">MENU</span> ▸ Settings ▸ Screen.</p>
+      <div class="actions">${first ? '' : '<button class="btn" data-a="back" data-b>Back</button>'}<button class="btn primary" data-a="keep" data-label="${first ? 'Play' : 'Done'}">${first ? 'Play like this' : 'Done'}</button></div>`);
+    sheet.querySelectorAll('.scrtile').forEach(b => b.onclick = () => { const c = b.dataset.scr; if (c !== controlsNow){ SFX.blip(); setControls(c, false); } show(c); });
+    on('[data-a=keep]', () => { SFX.blip(); setControls(controlsNow); closeCard(); if (back) back(); });
+    on('[data-a=back]', () => { if (controlsNow !== had) setControls(had, false); closeCard(); if (back) back(); });
+    const f = sheet.querySelector(focus ? `.scrtile[data-scr="${focus}"]` : '.scrtile.sel'); if (f) f.focus();
+  };
+  show();
 }
 // The shape fit() made the screen: 'console'; or full screen, 'map', or 'scene' for the title screen and the scenes, drawn
 // for 15 by 10. Each frame checks it's still the shape wanted (frame, below), so a scene starting or ending fits it again.
@@ -251,8 +305,11 @@ function titleText(){   // the title screen's words, under its name: for a first
   const problem = voiceProblem(), first = !SLOTS.some(slotSummary);
   $('#titleText').innerHTML = pixelIcons((first && !problem ? '<p id="goal">Turn your sound on: every word is spoken aloud.</p>' : '')
     + (problem ? `<p class="small warn">${VOICE_SHORT[problem]} <button class="linkbtn" id="voiceHelp">How to fix it</button></p>` : '')
-    + fullscreenHTML());   // (⛶, as a pixel icon)
+    + fullscreenHTML()   // (⛶, as a pixel icon)
+    + (touchScreen() ? `<p class="scrlink"><button class="linkbtn" id="screenBtn">Screen: ${SCREENS[controlsNow].name} ▸</button></p>` : ''));   // (on a phone or tablet: your screen, to change it)
   wireFullscreen();
+  const sb = $('#screenBtn');
+  if (sb) sb.onclick = () => { SFX.blip(); screenCard({back:titleText}); };
   const vh = $('#voiceHelp');
   if (vh) vh.onclick = () => { openCard(`<p class="label">Hearing Chinese</p><p>${VOICE_HELP[problem]}</p><div class="actions"><button class="btn primary" data-a="ok" data-b>OK</button></div>`); on('[data-a=ok]', closeCard); };
 }
@@ -404,7 +461,7 @@ function howToPlay(){
          <li><span class="kbd pad">✚</span><span><b>Walk</b> by holding a direction. Tap it to turn on the spot. You can slide your thumb between directions.</span></li>
          <li><span class="kbd a">A</span><span><b>Talk, look and choose.</b> When someone talks, A moves on. On cards, A presses the button with the red A badge.</span></li>
          <li><span class="kbd b">B</span><span><b>Back.</b> Closes a card or message, pressing the button with the blue B badge.</span></li>
-         <li><span class="kbd menu">☰</span><span><b>Menu</b> opens the menu: the Word Scroll, friends and settings. <b>Tasks</b> shows your tasks.</span></li>
+         <li><span class="kbd menu">☰</span><span><b>Menu</b> opens the menu: the Word Scroll, friends and settings (in <b>Screen</b>, the buttons beside the map or over it). <b>Tasks</b> shows your tasks.</span></li>
          <li><span class="kbd menu">☰</span><span><b>Bag</b> opens your bag. <b>Map</b> opens your map, once the old monkey has given you one.</span></li>
        </ul>`,
       `<p class="label">How to play · 2 of 3</p>
@@ -505,7 +562,7 @@ function wayInto(place){
 window.addEventListener('resize', fit);
 // Then the start-up screen (in index.html) goes, and the console shows, its full size, with the whole title. (It goes even
 // if setting up fails, so it never says the connection is slow when it isn't.)
-try { setUpGame(); fit(); toTitle(); const g = goAction(); if (g) doGoAction(g); }
+try { setUpGame(); fit(); toTitle(); const g = goAction(); if (g) doGoAction(g); else if (screenDue()) screenCard({first:true, back:titleText}); }   // (the first time on a phone or tablet: which screen)
 finally { if (document.documentElement) document.documentElement.classList.remove('loading'); }
 requestAnimationFrame(frame);
 // The app (sw.js): lets the game be installed on a phone's home screen, full screen, and played offline.

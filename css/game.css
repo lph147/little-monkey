@@ -1266,6 +1266,31 @@ rt.hid{visibility:hidden}
 .titletext p{margin:0}
 .titletext .warn{color:#FFB4A8;margin-top:.3rem}
 .titletext .fs{margin-top:.3rem}   /* Play full screen, on a phone's browser */
+.titletext .scrlink{margin-top:.3rem}   /* Screen: …, on a phone or tablet */
+/* Choosing your screen (screenCard in js/main.js): three small pictures of a phone held sideways, side by side, the same
+   bit of meadow in each: in the console's screen, between its buttons, or edge to edge with the buttons over it */
+.screens{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;margin:.35rem 0 .25rem}
+.scrtile{position:relative;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.35rem .3rem .3rem;border:2px solid var(--line);border-radius:8px;background:transparent;color:inherit;font:600 .85rem var(--pixel);cursor:pointer}
+.scrtile.sel{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 16%,transparent)}
+.sheet:has(.screens .navsel) .actions .btn.primary::before{display:none}   /* (the A badge on the one you've chosen with the D-pad) */
+.scrpic{display:block;width:100%;max-width:8rem;height:auto}
+.scrpic .shell{fill:var(--shell);stroke:var(--shell-edge)} .scrpic .phone{fill:#161616} .scrpic .bezel{fill:var(--bezel)}
+.scrpic .grass{fill:#7DB356} .scrpic .path{fill:#D8C08A} .scrpic .pond{fill:#5B9BD5} .scrpic .trunk{fill:#6B4A2B} .scrpic .leaf{fill:#3E7D3A}
+.scrpic .fur{fill:#9A6A3A} .scrpic .face{fill:#F1D3A6}
+.scrpic.console .pad path{fill:var(--pad)} .scrpic.console .ka{fill:var(--btnA)} .scrpic.console .kb{fill:var(--btnB)}
+.scrpic.overlay .pad path{fill:rgba(30,43,38,.55);stroke:rgba(247,236,210,.85);stroke-width:.6}
+.scrpic.overlay .ka{fill:rgba(184,50,58,.85);stroke:rgba(255,236,214,.85);stroke-width:.6}
+.scrpic.overlay .kb{fill:rgba(61,106,147,.85);stroke:rgba(255,236,214,.85);stroke-width:.6}
+.scrpic.glass .pad path,.scrpic.glass .ka,.scrpic.glass .kb{fill:rgba(255,255,255,.55);stroke:rgba(60,66,64,.5);stroke-width:.6}
+.scrabout{margin:.25rem 0 .1rem;min-height:2.7em}
+.scrwhere{margin:0;color:var(--muted)}
+@container (max-height:260px){   /* the smallest phones, in the console: the pictures smaller, so where to change it shows too */
+  .screens{gap:.3rem;margin:.1rem 0}
+  .scrtile{padding:.1rem .2rem;gap:0;font-size:.72rem}
+  .scrpic{max-width:4.6rem}
+  .scrabout{min-height:0;margin:.1rem 0 0}
+  .scrwhere .try{display:none}
+}
 .steps{margin:.4rem 0;padding-left:1.4rem}
 .steps li{margin:.25rem 0}
 .appicon{width:1.4em;height:1.4em;vertical-align:middle;border-radius:22%}

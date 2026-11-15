@@ -66,7 +66,8 @@ function scriptsIn(page, root = ROOT){
 // screen showing (class loading).
 // {canvas: pixelCanvas} makes each canvas the game makes one that keeps its pixels (pixel-canvas.js), for tests that
 // check the colours it draws.
-function loadGame({save, storage: stored = {}, session: tab = {}, root = ROOT, page = ENTRY, dom = false, html = false, canvas = null} = {}){
+// touch: a phone or tablet, whose screen is touched (matchMedia's (pointer: coarse)); otherwise a computer.
+function loadGame({save, storage: stored = {}, session: tab = {}, root = ROOT, page = ENTRY, dom = false, html = false, canvas = null, touch = false} = {}){
   const elements = {}, storage = new Map(Object.entries(stored)), session = new Map(Object.entries(tab)), frames = [], listeners = {}, reloads = {count: 0};
   const timers = new Map(); let nextTimer = 1, clock = 1000 - 1000 / 60;
   if (save !== undefined) storage.set(SAVE_KEY, typeof save === 'string' ? save : JSON.stringify(save));
@@ -110,6 +111,7 @@ function loadGame({save, storage: stored = {}, session: tab = {}, root = ROOT, p
     clearTimeout: id => { timers.delete(id); },
     setInterval: () => 0, clearInterval(){},
     addEventListener(){},
+    ...(touch ? {matchMedia: q => ({matches: q === '(pointer: coarse)'})} : {}),
     console
   });
   vm.runInContext('globalThis.window = globalThis;', win);

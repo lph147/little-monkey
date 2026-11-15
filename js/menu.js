@@ -56,12 +56,14 @@ function chineseTips(){
   }
   return rows;
 }
+// Always under How to play, the last of it: where to choose your screen (screenCard in js/main.js).
+const SCREEN_TIP = {key:'<span class="tkey pill">MENU</span>', text:'Your screen: the console, with the buttons beside the map, or edge to edge, with them over it. Choose it in <b>Settings</b>, Screen.'};
 function tipsPage(back, focus){
   const chinese = chineseTips(), buttons = TIP_PAGE.filter(t => t.ids.some(id => S.tips[id]));
   const row = r => `<button class="tipsrow" data-tip="${esc(r.id)}" data-label="Open"><span class="tipskey zh">${esc(r.zh)}<small>${esc(r.py)}</small></span><span class="tipstxt"><b>${esc(r.title)}</b><span>${esc(r.text)}</span></span><span class="tipsgo" aria-hidden="true">▸</span></button>`;
   openCard(`<p class="label">💡 Tips</p><p class="small tipsintro">Every tip you’ve had, to read again. More come as you play.</p>
     ${chinese.length ? `<p class="tipsec">About Chinese</p><div class="tipslist" data-nav>${chinese.map(row).join('')}</div>` : ''}
-    <p class="tipsec">How to play</p><div class="tipslist">${buttons.length ? buttons.map(t => `<div class="tipsrow plain"><span class="tipskey">${t.key}</span><span class="tipstxt"><span>${t.text}</span></span></div>`).join('') : '<p class="hint">None yet.</p>'}</div>
+    <p class="tipsec">How to play</p><div class="tipslist">${[...buttons, SCREEN_TIP].map(t => `<div class="tipsrow plain"><span class="tipskey">${t.key}</span><span class="tipstxt"><span>${t.text}</span></span></div>`).join('')}</div>
     <div class="actions"><button class="btn" data-a="howto">How to play ▸</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   sheet.querySelectorAll('.tipsrow[data-tip]').forEach(b => b.onclick = () => { SFX.blip(); chinese.find(r => r.id === b.dataset.tip).card(() => tipsPage(back, b.dataset.tip)); });
   on('[data-a=howto]', () => howToPlay().then(() => tipsPage(back, 'howto')));
@@ -290,8 +292,7 @@ function storyPage(back, focus, open){
 // itself. (How to play is on the Tips page, and the scenes to watch again are in Story so far, each under its part:
 // decided 9 November 2026, the four ideas plan.)
 const SPEED_SAMPLE = '你好';   // (what's said as you change the voice speed)
-// Controls (setControls in js/main.js): each tap the next, the console, full screen in the game's colours, or with glass buttons
-const CONTROLS_SHOWN = {console:'Console', overlay:'Full screen', glass:'Glass'};
+// Screen (screenCard in js/main.js): the console, or edge to edge with the buttons over the map, coloured or glass
 function openSettings(focusId){
   openCard(`<p class="label">Settings</p>
     <div class="menu twocol">
@@ -301,7 +302,7 @@ function openSettings(focusId){
       <button class="btn" data-m="replyEn" data-label="English">English on replies <span class="val">${S.replyEn ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="typed" data-label="Typed">Typed lines <span class="val">${typedLines() ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="fps" data-label="FPS">Frames a second <span class="val">${S.fps ? 'On' : 'Off'}</span></button>
-      <button class="btn" data-m="controls" data-label="Controls">Controls <span class="val">${CONTROLS_SHOWN[controlsNow]}</span></button>
+      <button class="btn" data-m="screen" data-label="Screen">Screen <span class="val">${SCREENS[controlsNow].name}</span></button>
       <button class="btn" data-m="title" data-label="Your games">Title screen: your games</button>
     </div>
     <div class="actions"><span class="speedrow"><span class="slabel">Voice speed</span><span class="qpcount"><button class="btn" data-a="slower" aria-label="Slower"${voiceSpeed() <= VOICE_SPEEDS.at(-1) ? ' disabled' : ''}>−</button><b class="qpn">${Math.round(voiceSpeed() * 100)}%</b><button class="btn" data-a="faster" aria-label="Faster"${voiceSpeed() >= 1 ? ' disabled' : ''}>+</button></span></span><button class="btn" data-a="back" data-b>Back</button></div>`);
@@ -318,7 +319,7 @@ function openSettings(focusId){
     replyEn: () => { S.replyEn = !S.replyEn; save(); openSettings('replyEn'); },
     typed: () => { S.typed = !typedLines(); save(); openSettings('typed'); },
     fps: () => { S.fps = !S.fps; save(); openSettings('fps'); },
-    controls: () => { setControls(CONTROLS[(CONTROLS.indexOf(controlsNow) + 1) % CONTROLS.length]); openSettings('controls'); },
+    screen: () => screenCard({back:() => openSettings('screen')}),
     title: () => { closeCard(); toTitle(); }
   };
   sheet.querySelectorAll('[data-m]').forEach(bt => bt.onclick = () => { SFX.blip(); act[bt.dataset.m](bt); });
