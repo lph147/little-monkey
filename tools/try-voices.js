@@ -26,31 +26,35 @@ const OUT = path.join(__dirname, 'try-voices');
 // game, 20% and 35% slower, and Xiaoxiao HD: all sounded much the same, and still strange, while the Pixel's own voice
 // (Google's) sounded much better. Round 5 tries Google's voices: Google Standard (cmn-CN-Standard-A) was chosen. noPinyin: the voice isn't given an item's ph.
 // provider: 'google' for Google's voices (Azure's otherwise); speed: Google's speaking rate (1 is normal).
-const ROUND = 'Round 5: Google’s voices for words on their own, since This device (your Pixel’s voice, which is Google’s) sounded much better than Xiaoxiao on single words. Which is as good as This device? Do the longer words (猴子, 苹果, 不客气) sound good too?';
-const VOICES = [   // Google's names checked with --list-google once the key is in; change any that aren't there
-  {id:'r5-xiaoxiao', name:'zh-CN-XiaoxiaoNeural', rate:null, tidy:true, label:'Xiaoxiao', about:'as in the game now'},
-  {id:'r5-g-standard', provider:'google', name:'cmn-CN-Standard-A', label:'Google Standard', about:'Google’s plainest voice'},
-  {id:'r5-g-wavenet', provider:'google', name:'cmn-CN-Wavenet-A', label:'Google WaveNet', about:'Google’s older natural voice'},
-  {id:'r5-g-chirp-1', provider:'google', name:'cmn-CN-Chirp3-HD-Kore', label:'Google HD 1', about:'Google’s newest voices'},
-  {id:'r5-g-chirp-2', provider:'google', name:'cmn-CN-Chirp3-HD-Aoede', label:'Google HD 2', about:'another of the newest'},
+// Round 6 (15 November 2026): voices for Area 3's new characters (the Eastern Sea, Chapters 5 and 6), before they speak in the
+// game. Round 5's choice stands for words on their own (Google Standard), and Yunxi (chatty) and Yunze for lines.
+const ROUND = 'Round 6: voices for the Eastern Sea’s new characters. The Dragon King, the Great White Planet and the ten kings of the underworld want older men’s voices, each unlike the others and unlike the old monkey’s (Yunze, here to compare). The Dragon Queen wants a woman’s. The sea turtle could be kind and old, or speak as the other animal friends do (Yunxi). Which suits each?';
+const VOICES = [
+  {id:'r6-yunxi', name:'zh-CN-YunxiNeural', rate:null, tidy:true, style:'chat', label:'Yunxi (chatty)', about:'everyone’s voice now', only:["turtle1","turtle2","turtle3"]},
+  {id:'r6-yunze', name:'zh-CN-YunzeNeural', rate:null, tidy:true, label:'Yunze', about:'the old monkey’s voice now, to compare', only:["king1","king2","king3"]},
+  {id:'r6-yunye', name:'zh-CN-YunyeNeural', rate:null, tidy:true, label:'Yunye', about:'a grown man, a storyteller', only:["king1","king2","king3","planet1","planet2","below1","below2"]},
+  {id:'r6-yunyang', name:'zh-CN-YunyangNeural', rate:null, tidy:true, label:'Yunyang', about:'a deep, steady man', only:["king1","king2","king3","planet1","planet2","below1","below2"]},
+  {id:'r6-yunhao', name:'zh-CN-YunhaoNeural', rate:null, tidy:true, label:'Yunhao', about:'a lively man', only:["king1","king2","king3","below1","below2"]},
+  {id:'r6-yunjian', name:'zh-CN-YunjianNeural', rate:null, tidy:true, label:'Yunjian', about:'a strong, bold man', only:["king1","king2","king3","below1","below2"]},
+  {id:'r6-xiaorui', name:'zh-CN-XiaoruiNeural', rate:null, tidy:true, label:'Xiaorui', about:'an older woman', only:["queen1","queen2","turtle1","turtle2","turtle3"]},
+  {id:'r6-xiaoqiu', name:'zh-CN-XiaoqiuNeural', rate:null, tidy:true, label:'Xiaoqiu', about:'a calm, grown woman', only:["queen1","queen2","turtle1","turtle2","turtle3"]},
+  {id:'r6-xiaohan', name:'zh-CN-XiaohanNeural', rate:null, tidy:true, label:'Xiaohan', about:'a warm woman', only:["queen1","queen2","turtle1","turtle2","turtle3"]},
 ];
 
-// `ph` gives the voice the pinyin (tone numbers, a space before each), to see if a reading can be fixed.
+// Lines each character will say (drafts for the native speaker, as in the Area 3 plan).
 const ITEMS = [
-  {id:'shui', zh:'水', py:'shuǐ', en:'water', ph:'shui 3', listen:'Third tone: dips low, then rises.'},
-  {id:'cao', zh:'草', py:'cǎo', en:'grass', ph:'cao 3', listen:'Third tone: dips low, then rises.'},
-  {id:'he1', zh:'喝', py:'hē', en:'to drink', ph:'he 1', listen:'hē, high and level (not hè, to shout).'},
-  {id:'niao', zh:'鸟', py:'niǎo', en:'bird', ph:'niao 3', listen:'Third tone.'},
-  {id:'wo', zh:'我', py:'wǒ', en:'I, me', ph:'wo 3', listen:'Third tone.'},
-  {id:'hao', zh:'好', py:'hǎo', en:'good', ph:'hao 3', listen:'hǎo, third tone (not hào).'},
-  {id:'you', zh:'有', py:'yǒu', en:'to have', ph:'you 3', listen:'Third tone.'},
-  {id:'he2', zh:'和', py:'hé', en:'and', ph:'he 2', listen:'hé, rising (it has other readings).'},
-  {id:'yao', zh:'要', py:'yào', en:'to want', ph:'yao 4', listen:'yào, falling (not yāo).'},
-  {id:'le', zh:'了', py:'le', en:'(a change)', ph:'le 5', listen:'le, light (not liǎo).'},
-  {id:'shan', zh:'山', py:'shān', en:'mountain', listen:'High and level.'},
-  {id:'houzi', zh:'猴子', py:'hóuzi', en:'monkey', listen:'子 is light and short.'},
-  {id:'pingguo', zh:'苹果', py:'píngguǒ', en:'apple', listen:'Rising, then low.'},
-  {id:'bukeqi', zh:'不客气', py:'bú kèqi', en:'you’re welcome', listen:'不 changes to bú, and 气 is light.'},
+  {id:'king1', zh:'欢迎！欢迎！', py:'Huānyíng! Huānyíng!', en:'Welcome! Welcome! (the Dragon King)', listen:'Grand, and pleased to see you.'},
+  {id:'king2', zh:'这个多少斤？', py:'Zhège duōshao jīn?', en:'How many jin is this one? (the Dragon King)', listen:'A question, kindly.'},
+  {id:'king3', zh:'一万三千五百斤！给你！', py:'Yíwàn sānqiān wǔbǎi jīn! Gěi nǐ!', en:'Thirteen thousand five hundred jin! Here you are! (the Dragon King)', listen:'Big numbers, said clearly.'},
+  {id:'queen1', zh:'宝库里有一根铁柱子，它有光！', py:'Bǎokù li yǒu yì gēn tiě zhùzi, tā yǒu guāng!', en:'In the treasury there’s an iron pillar, and it’s glowing! (the Dragon Queen)', listen:'A whisper of a secret.'},
+  {id:'queen2', zh:'你好！你是谁？', py:'Nǐ hǎo! Nǐ shì shéi?', en:'Hello! Who are you? (the Dragon Queen)', listen:'Kind, curious.'},
+  {id:'turtle1', zh:'你好！好久不见！', py:'Nǐ hǎo! Hǎojiǔ bú jiàn!', en:'Hello! Long time no see! (the sea turtle)', listen:'An old friend, glad to see you.'},
+  {id:'turtle2', zh:'你在泡泡里！', py:'Nǐ zài pàopao li!', en:'You’re in a bubble! (the sea turtle)', listen:'Amused.'},
+  {id:'turtle3', zh:'小心！有鲨鱼！', py:'Xiǎoxīn! Yǒu shāyú!', en:'Careful! A shark! (the sea turtle)', listen:'A warning.'},
+  {id:'planet1', zh:'玉皇大帝请你去天宫。', py:'Yùhuáng Dàdì qǐng nǐ qù Tiāngōng.', en:'The Jade Emperor invites you to Heaven. (the Great White Planet)', listen:'Gentle, wise, very old.'},
+  {id:'planet2', zh:'你好，孙悟空！', py:'Nǐ hǎo, Sūn Wùkōng!', en:'Hello, Sun Wukong! (the Great White Planet)', listen:'Warm.'},
+  {id:'below1', zh:'找你的名字！', py:'Zhǎo nǐ de míngzi!', en:'Find your name! (one of the ten kings)', listen:'Stern, but scared of you.'},
+  {id:'below2', zh:'我们怕你！', py:'Wǒmen pà nǐ!', en:'We’re scared of you! (the ten kings)', listen:'Nervous.'},
 ];
 
 const RATE = '-15%';   // a little slower than normal: the game's clips so far

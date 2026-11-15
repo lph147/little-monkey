@@ -35,10 +35,12 @@ test('CHINESE.md is up to date with the content (if not, run: npm run chinese)',
   assert.equal(fs.readFileSync(FILE, 'utf8').replace(/\r\n/g, '\n'), sheet(), 'CHINESE.md is out of date: run npm run chinese');
 });
 
-test('draft sentences waiting to be checked only use words in the word bank (a name gives its own pinyin)', () => {
+test('draft sentences waiting to be checked only use words in the word bank (a name gives its own pinyin, as does a line planned for an area not built yet)', () => {
   const {DRAFTS} = require('../tools/chinese-sheet');
   const {loadGame} = require('./fake-browser');
   const bank = JSON.parse(loadGame().run('JSON.stringify(WORD_BANK)'));
   for (const d of DRAFTS.filter(d => !d.py)) for (const w of d.zh.split(' ')) assert.ok(bank[w] || ['。', '！', '，', '？', '、', '……'].includes(w), `the draft "${d.zh}" uses ${w}, which isn't in the word bank`);
-  for (const d of DRAFTS.filter(d => d.py)) assert.ok(!d.zh.includes(' ') && d.py.split(' ').length === [...d.zh].length, `the name "${d.zh}": its pinyin (${d.py}) says each character`);
+  for (const d of DRAFTS.filter(d => d.py && !d.planned)) assert.ok(!d.zh.includes(' ') && d.py.split(' ').length === [...d.zh].length, `the name "${d.zh}": its pinyin (${d.py}) says each character`);
+  // (a planned line's new words join the word bank as its step is built, and the line moves into the game)
+  for (const d of DRAFTS.filter(d => d.planned)) assert.ok(d.py && /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/.test(d.py), `the planned line "${d.zh}" gives its pinyin, with its tones`);
 });

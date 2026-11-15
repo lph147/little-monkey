@@ -1417,6 +1417,54 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 小妖怪 | xiǎo yāoguài | A little demon! |  |
 | 大妖怪 | dà yāoguài | A big demon! |  |
 
+## 东海 The Eastern Sea
+
+### Lines characters say
+
+| Chinese | Pinyin | English | Said by | Notes |
+| --- | --- | --- | --- | --- |
+| 太臭了！ | tài chòu le! | It’s so smelly! |  |  |
+
+### Sentences the player completes (one word missing)
+
+| Chinese | Pinyin | English | Said to | Notes |
+| --- | --- | --- | --- | --- |
+| 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
+| 这是我的衣服 | zhè shì wǒ de yīfu | These are my clothes. | You, in the wardrobe |  |
+| 我戴帽子 | wǒ dài màozi | I wear my hat. | You, in the wardrobe |  |
+| 这是我的鞋 | zhè shì wǒ de xié | These are my shoes. | You, in the wardrobe |  |
+| 我戴红色的头带 | wǒ dài hóngsè de tóudài | I wear my red headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴黄色的头带 | wǒ dài huángsè de tóudài | I wear my yellow headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴白色的头带 | wǒ dài báisè de tóudài | I wear my white headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴黑色的头带 | wǒ dài hēisè de tóudài | I wear my black headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴蓝色的头带 | wǒ dài lánsè de tóudài | I wear my blue headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴绿色的头带 | wǒ dài lǜsè de tóudài | I wear my green headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴棕色的头带 | wǒ dài zōngsè de tóudài | I wear my brown headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴橙色的头带 | wǒ dài chéngsè de tóudài | I wear my orange headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴粉色的头带 | wǒ dài fěnsè de tóudài | I wear my pink headband. | You, in the wardrobe (a headband in each colour) |  |
+
+### The sign
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 海 | hǎi | The sea |  |
+
+### Scene: the dive
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 一，二，三，跳！ | yī, èr, sān, tiào! | One, two, three, jump! |  |
+| 水里有很多鱼。 | shuǐ lǐ yǒu hěn duō yú. | There are lots of fish in the water. |  |
+| 孙悟空在海下面！ | Sūn Wùkōng zài hǎi xiàmiàn! | Sun Wukong is under the sea! |  |
+
+### Names
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 牌子 | páizi | Sign |  |
+| 东海 | Dōng Hǎi | The Eastern Sea |  |
+| 海底 | hǎidǐ | The seabed |  |
+
 ### Words only heard in sentences
 
 | Chinese | Pinyin | English | Notes |
@@ -1775,6 +1823,44 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 美猴王坐木筏走了。 | Měi Hóuwáng zuò mùfá zǒu le. | The Monkey King sailed away on his raft. | New on 29 October 2026 (in the game), the end of chapter 1: The scene of you sailing away, the troop waving from the shore, after 再见！ and 我们等你！ |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 | 这是我的地图。 | zhè shì wǒ de dìtú. | This is my map. | New on 31 October 2026 (in the game): the example on 地图 (dìtú, map)’s page. The big monkey gives you a map in chapter 1, as he sends you up to the pine wood, and you catch 地图 the first time you open it. Its How it’s made card says 地 (dì, ground) + 图 (tú, picture) = 地图, a picture of the ground: is that a fair way to explain it? |  |
+| 你在泡泡里！ | Nǐ zài pàopao li! | You’re in a bubble! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the sea turtle, as you land on the seabed, teaching 泡泡 (bubble). Is it natural? |  |
+| 我游，你走。 | Wǒ yóu, nǐ zǒu. | I swim, you walk. | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the sea turtle, swimming ahead as you walk, teaching 游 (to swim). Is it natural? |  |
+| 小心！有鲨鱼！ | Xiǎoxīn! Yǒu shāyú! | Careful! A shark! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the sea turtle, as your first shark comes out of the seaweed, teaching the phrase 小心. Is it natural? |  |
+| 我有八只脚！ | Wǒ yǒu bā zhī jiǎo! | I’ve got eight feet! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the octopus, teaching 脚. For a child, is it 八只脚, or 八条腿 (legs)?. Is it natural? |  |
+| 我有几只脚？ | Wǒ yǒu jǐ zhī jiǎo? | How many feet have I got? | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the octopus’s counting game, teaching 几. Is it natural? |  |
+| 一，二，三，游！ | Yī, èr, sān, yóu! | One, two, three, swim! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the dolphin, starting a race (as the PE teacher’s 一，二，三，跑！). Is it natural? |  |
+| 海豚很快！ | Hǎitún hěn kuài! | The dolphin is fast! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the sea turtle, after the race, teaching 快. Is it natural? |  |
+| 我很慢。 | Wǒ hěn màn. | I’m slow. | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the sea turtle, puffing along behind, teaching 慢. Is it natural? |  |
+| 这里很深！ | Zhèlǐ hěn shēn! | It’s deep here! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the edge of the trench, teaching 深. Is it natural? |  |
+| 下面有光！ | Xiàmiàn yǒu guāng! | There’s light down there! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the palace’s glow at the bottom of the trench, teaching 光. Is it natural? |  |
+| 十，二十，三十……一百！ | Shí, èrshí, sānshí… yìbǎi! | Ten, twenty, thirty… a hundred! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the crab general, counting the shrimp soldiers in rows of ten, teaching 百. Is it natural? |  |
+| 一百个虾兵！ | Yìbǎi ge xiābīng! | A hundred shrimp soldiers! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the crab general. Is 个 right for soldiers here, or 名?. Is it natural? |  |
+| 欢迎！欢迎！ | Huānyíng! Huānyíng! | Welcome! Welcome! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon King, meeting you, teaching the phrase 欢迎. Is it natural? |  |
+| 太重了！ | Tài zhòng le! | Too heavy! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the shrimp soldiers, carrying a great broadsword in, teaching 重. Is it natural? |  |
+| 这把大刀，八百斤！ | Zhè bǎ dàdāo, bābǎi jīn! | This broadsword: eight hundred jin! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon King, as it’s weighed, teaching 斤 (the broadsword’s weight is the game’s own). Is it natural? |  |
+| 太轻了！ | Tài qīng le! | Too light! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: you, lifting it in one paw, teaching 轻. Is it natural? |  |
+| 这个多少斤？ | Zhège duōshao jīn? | How many jin is this one? | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon King, as you weigh the halberd yourself, teaching 多少. Is it natural? |  |
+| 三千六百斤！ | Sānqiān liùbǎi jīn! | Three thousand six hundred jin! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the nine-pronged fork, weighed, teaching 千 (3,600 and 7,200 jin are the book’s weights for the fork and the halberd, as I remember them: please check). Is it natural? |  |
+| 宝库里有一根铁柱子，它有光！ | Bǎokù li yǒu yì gēn tiě zhùzi, tā yǒu guāng! | In the treasury there’s an iron pillar, and it’s glowing! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon Queen, whispering. Is 宝库 right for the sea’s treasury (the book has 海藏)?. Is it natural? |  |
+| 太长了！ | Tài cháng le! | It’s too long! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the pillar, taller than the palace, teaching 长. Is it natural? |  |
+| 变短！变小！ | Biàn duǎn! Biàn xiǎo! | Get shorter! Get smaller! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: you, to the pillar, teaching 短. Is it natural? |  |
+| 一万三千五百斤！ | Yíwàn sānqiān wǔbǎi jīn! | Thirteen thousand five hundred jin! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon King, reading the staff’s writing, 如意金箍棒 一万三千五百斤, teaching 万. Is it natural? |  |
+| 给你！ | Gěi nǐ! | Here you are! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon King handing you the staff, and his three brothers their gifts, teaching 给. Is it natural? |  |
+| 金箍棒在哪里？ | Jīngūbàng zài nǎlǐ? | Where’s the staff? | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: a little monkey, once the staff has gone into your ear. Is it natural? |  |
+| 在我的耳朵里！ | Zài wǒ de ěrduo li! | In my ear! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: you, answering, teaching 在. Is it natural? |  |
+| 树太高了！ | Shù tài gāo le! | The tree’s too tall! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the troop, at the tallest peach tree, teaching 高. Is it natural? |  |
+| 我们怕你！ | Wǒmen pà nǐ! | We’re scared of you! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the ten kings of the underworld, in the dream, teaching 怕. Is it natural? |  |
+| 找你的名字！ | Zhǎo nǐ de míngzi! | Find your name! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the ten kings, opening the book of names, teaching 找. Is it natural? |  |
+| 醒醒！是梦！ | Xǐngxing! Shì mèng! | Wake up! It was a dream! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the old monkey, waking you, teaching 醒 and then 梦. Is it natural? |  |
+| 我们不会老了！ | Wǒmen bú huì lǎo le! | We won’t grow old now! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the troop, once you’ve crossed out their names. Is it natural? |  |
+| 玉皇大帝请你去天宫。 | Yùhuáng Dàdì qǐng nǐ qù Tiāngōng. | The Jade Emperor invites you to Heaven. | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Great White Planet, at the end of Area 3, teaching 请. Is it natural? |  |
+| 东海龙王 | Dōnghǎi Lóngwáng | the Dragon King of the Eastern Sea | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: a name. Is it natural? |  |
+| 龙婆 | Lóngpó | the Dragon Queen | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: a name. Is 龙婆 right for a child, or 龙王的妻子 / 龙后?. Is it natural? |  |
+| 夜叉 | yèchā | a sea guard (a yaksha) | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: a name, for the guard at the palace gate. Is it natural? |  |
+| 虾兵，蟹将 | xiābīng, xièjiàng | shrimp soldiers, crab generals | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: names. Is it natural? |  |
+| 太白金星 | Tàibái Jīnxīng | the Great White Planet | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: a name. Is it natural? |  |
+| 海底，水草林，珊瑚礁，海沟，龙宫，水晶宫，海藏，地府 | hǎidǐ, shuǐcǎo lín, shānhú jiāo, hǎigōu, Lónggōng, Shuǐjīng Gōng, hǎicáng, dìfǔ | the seabed, the seaweed forest, the coral reef, the trench, the Dragon Palace, the Crystal Palace, the treasury, the underworld | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the places’ names. Is 水草林 natural for a seaweed forest?. Is it natural? |  |
+| 十个王 | shí ge wáng | ten kings | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: what to call the ten kings of the underworld on screen, gently (a name without 死 or 阎王, if that’s better for children). Is it natural? |  |
 
 ## Questions
 

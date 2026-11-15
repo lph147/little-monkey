@@ -11,7 +11,7 @@ const VW = 15, VH = 10;
 // chosen as the page loads, so everything below is built from it. Going to another (sailing on, or continuing a game that's
 // in another area) saves, notes where to go (GO_KEY, for this tab only) and loads the page again: toArea in js/main.js
 // (decided 4 November 2026: the human world, Area 2's prologue).
-const AREAS = [FLOWER_FRUIT_MOUNTAIN, ACROSS_THE_SEA];
+const AREAS = [FLOWER_FRUIT_MOUNTAIN, ACROSS_THE_SEA, EASTERN_SEA];
 const GO_KEY = 'xiaohouzi-v2-go';
 function areaToPlay(){
   try { const go = JSON.parse(sessionStorage.getItem(GO_KEY) || 'null'); if (go && go.area) return go.area; } catch(e) {}

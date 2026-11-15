@@ -1,202 +1,246 @@
 {
- "round": "Round 5: Google’s voices for words on their own, since This device (your Pixel’s voice, which is Google’s) sounded much better than Xiaoxiao on single words. Which is as good as This device? Do the longer words (猴子, 苹果, 不客气) sound good too?",
+ "round": "Round 6: voices for the Eastern Sea’s new characters. The Dragon King, the Great White Planet and the ten kings of the underworld want older men’s voices, each unlike the others and unlike the old monkey’s (Yunze, here to compare). The Dragon Queen wants a woman’s. The sea turtle could be kind and old, or speak as the other animal friends do (Yunxi). Which suits each?",
  "voices": [
   {
-   "id": "r5-xiaoxiao",
-   "label": "Xiaoxiao",
-   "about": "as in the game now"
+   "id": "r6-yunxi",
+   "label": "Yunxi (chatty)",
+   "about": "everyone’s voice now",
+   "only": [
+    "turtle1",
+    "turtle2",
+    "turtle3"
+   ]
   },
   {
-   "id": "r5-g-standard",
-   "label": "Google Standard",
-   "about": "Google’s plainest voice"
+   "id": "r6-yunze",
+   "label": "Yunze",
+   "about": "the old monkey’s voice now, to compare",
+   "only": [
+    "king1",
+    "king2",
+    "king3"
+   ]
   },
   {
-   "id": "r5-g-wavenet",
-   "label": "Google WaveNet",
-   "about": "Google’s older natural voice"
+   "id": "r6-yunye",
+   "label": "Yunye",
+   "about": "a grown man, a storyteller",
+   "only": [
+    "king1",
+    "king2",
+    "king3",
+    "planet1",
+    "planet2",
+    "below1",
+    "below2"
+   ]
   },
   {
-   "id": "r5-g-chirp-1",
-   "label": "Google HD 1",
-   "about": "Google’s newest voices"
+   "id": "r6-yunyang",
+   "label": "Yunyang",
+   "about": "a deep, steady man",
+   "only": [
+    "king1",
+    "king2",
+    "king3",
+    "planet1",
+    "planet2",
+    "below1",
+    "below2"
+   ]
   },
   {
-   "id": "r5-g-chirp-2",
-   "label": "Google HD 2",
-   "about": "another of the newest"
+   "id": "r6-yunhao",
+   "label": "Yunhao",
+   "about": "a lively man",
+   "only": [
+    "king1",
+    "king2",
+    "king3",
+    "below1",
+    "below2"
+   ]
+  },
+  {
+   "id": "r6-yunjian",
+   "label": "Yunjian",
+   "about": "a strong, bold man",
+   "only": [
+    "king1",
+    "king2",
+    "king3",
+    "below1",
+    "below2"
+   ]
+  },
+  {
+   "id": "r6-xiaorui",
+   "label": "Xiaorui",
+   "about": "an older woman",
+   "only": [
+    "queen1",
+    "queen2",
+    "turtle1",
+    "turtle2",
+    "turtle3"
+   ]
+  },
+  {
+   "id": "r6-xiaoqiu",
+   "label": "Xiaoqiu",
+   "about": "a calm, grown woman",
+   "only": [
+    "queen1",
+    "queen2",
+    "turtle1",
+    "turtle2",
+    "turtle3"
+   ]
+  },
+  {
+   "id": "r6-xiaohan",
+   "label": "Xiaohan",
+   "about": "a warm woman",
+   "only": [
+    "queen1",
+    "queen2",
+    "turtle1",
+    "turtle2",
+    "turtle3"
+   ]
   }
  ],
  "items": [
   {
-   "id": "shui",
-   "zh": "水",
-   "py": "shuǐ",
-   "en": "water",
-   "listen": "Third tone: dips low, then rises."
+   "id": "king1",
+   "zh": "欢迎！欢迎！",
+   "py": "Huānyíng! Huānyíng!",
+   "en": "Welcome! Welcome! (the Dragon King)",
+   "listen": "Grand, and pleased to see you."
   },
   {
-   "id": "cao",
-   "zh": "草",
-   "py": "cǎo",
-   "en": "grass",
-   "listen": "Third tone: dips low, then rises."
+   "id": "king2",
+   "zh": "这个多少斤？",
+   "py": "Zhège duōshao jīn?",
+   "en": "How many jin is this one? (the Dragon King)",
+   "listen": "A question, kindly."
   },
   {
-   "id": "he1",
-   "zh": "喝",
-   "py": "hē",
-   "en": "to drink",
-   "listen": "hē, high and level (not hè, to shout)."
+   "id": "king3",
+   "zh": "一万三千五百斤！给你！",
+   "py": "Yíwàn sānqiān wǔbǎi jīn! Gěi nǐ!",
+   "en": "Thirteen thousand five hundred jin! Here you are! (the Dragon King)",
+   "listen": "Big numbers, said clearly."
   },
   {
-   "id": "niao",
-   "zh": "鸟",
-   "py": "niǎo",
-   "en": "bird",
-   "listen": "Third tone."
+   "id": "queen1",
+   "zh": "宝库里有一根铁柱子，它有光！",
+   "py": "Bǎokù li yǒu yì gēn tiě zhùzi, tā yǒu guāng!",
+   "en": "In the treasury there’s an iron pillar, and it’s glowing! (the Dragon Queen)",
+   "listen": "A whisper of a secret."
   },
   {
-   "id": "wo",
-   "zh": "我",
-   "py": "wǒ",
-   "en": "I, me",
-   "listen": "Third tone."
+   "id": "queen2",
+   "zh": "你好！你是谁？",
+   "py": "Nǐ hǎo! Nǐ shì shéi?",
+   "en": "Hello! Who are you? (the Dragon Queen)",
+   "listen": "Kind, curious."
   },
   {
-   "id": "hao",
-   "zh": "好",
-   "py": "hǎo",
-   "en": "good",
-   "listen": "hǎo, third tone (not hào)."
+   "id": "turtle1",
+   "zh": "你好！好久不见！",
+   "py": "Nǐ hǎo! Hǎojiǔ bú jiàn!",
+   "en": "Hello! Long time no see! (the sea turtle)",
+   "listen": "An old friend, glad to see you."
   },
   {
-   "id": "you",
-   "zh": "有",
-   "py": "yǒu",
-   "en": "to have",
-   "listen": "Third tone."
+   "id": "turtle2",
+   "zh": "你在泡泡里！",
+   "py": "Nǐ zài pàopao li!",
+   "en": "You’re in a bubble! (the sea turtle)",
+   "listen": "Amused."
   },
   {
-   "id": "he2",
-   "zh": "和",
-   "py": "hé",
-   "en": "and",
-   "listen": "hé, rising (it has other readings)."
+   "id": "turtle3",
+   "zh": "小心！有鲨鱼！",
+   "py": "Xiǎoxīn! Yǒu shāyú!",
+   "en": "Careful! A shark! (the sea turtle)",
+   "listen": "A warning."
   },
   {
-   "id": "yao",
-   "zh": "要",
-   "py": "yào",
-   "en": "to want",
-   "listen": "yào, falling (not yāo)."
+   "id": "planet1",
+   "zh": "玉皇大帝请你去天宫。",
+   "py": "Yùhuáng Dàdì qǐng nǐ qù Tiāngōng.",
+   "en": "The Jade Emperor invites you to Heaven. (the Great White Planet)",
+   "listen": "Gentle, wise, very old."
   },
   {
-   "id": "le",
-   "zh": "了",
-   "py": "le",
-   "en": "(a change)",
-   "listen": "le, light (not liǎo)."
+   "id": "planet2",
+   "zh": "你好，孙悟空！",
+   "py": "Nǐ hǎo, Sūn Wùkōng!",
+   "en": "Hello, Sun Wukong! (the Great White Planet)",
+   "listen": "Warm."
   },
   {
-   "id": "shan",
-   "zh": "山",
-   "py": "shān",
-   "en": "mountain",
-   "listen": "High and level."
+   "id": "below1",
+   "zh": "找你的名字！",
+   "py": "Zhǎo nǐ de míngzi!",
+   "en": "Find your name! (one of the ten kings)",
+   "listen": "Stern, but scared of you."
   },
   {
-   "id": "houzi",
-   "zh": "猴子",
-   "py": "hóuzi",
-   "en": "monkey",
-   "listen": "子 is light and short."
-  },
-  {
-   "id": "pingguo",
-   "zh": "苹果",
-   "py": "píngguǒ",
-   "en": "apple",
-   "listen": "Rising, then low."
-  },
-  {
-   "id": "bukeqi",
-   "zh": "不客气",
-   "py": "bú kèqi",
-   "en": "you’re welcome",
-   "listen": "不 changes to bú, and 气 is light."
+   "id": "below2",
+   "zh": "我们怕你！",
+   "py": "Wǒmen pà nǐ!",
+   "en": "We’re scared of you! (the ten kings)",
+   "listen": "Nervous."
   }
  ],
  "made": [
-  "r5-xiaoxiao-shui.mp3",
-  "r5-xiaoxiao-cao.mp3",
-  "r5-xiaoxiao-he1.mp3",
-  "r5-xiaoxiao-niao.mp3",
-  "r5-xiaoxiao-wo.mp3",
-  "r5-xiaoxiao-hao.mp3",
-  "r5-xiaoxiao-you.mp3",
-  "r5-xiaoxiao-he2.mp3",
-  "r5-xiaoxiao-yao.mp3",
-  "r5-xiaoxiao-le.mp3",
-  "r5-xiaoxiao-shan.mp3",
-  "r5-xiaoxiao-houzi.mp3",
-  "r5-xiaoxiao-pingguo.mp3",
-  "r5-xiaoxiao-bukeqi.mp3",
-  "r5-g-standard-shui.mp3",
-  "r5-g-standard-cao.mp3",
-  "r5-g-standard-he1.mp3",
-  "r5-g-standard-niao.mp3",
-  "r5-g-standard-wo.mp3",
-  "r5-g-standard-hao.mp3",
-  "r5-g-standard-you.mp3",
-  "r5-g-standard-he2.mp3",
-  "r5-g-standard-yao.mp3",
-  "r5-g-standard-le.mp3",
-  "r5-g-standard-shan.mp3",
-  "r5-g-standard-houzi.mp3",
-  "r5-g-standard-pingguo.mp3",
-  "r5-g-standard-bukeqi.mp3",
-  "r5-g-wavenet-shui.mp3",
-  "r5-g-wavenet-cao.mp3",
-  "r5-g-wavenet-he1.mp3",
-  "r5-g-wavenet-niao.mp3",
-  "r5-g-wavenet-wo.mp3",
-  "r5-g-wavenet-hao.mp3",
-  "r5-g-wavenet-you.mp3",
-  "r5-g-wavenet-he2.mp3",
-  "r5-g-wavenet-yao.mp3",
-  "r5-g-wavenet-le.mp3",
-  "r5-g-wavenet-shan.mp3",
-  "r5-g-wavenet-houzi.mp3",
-  "r5-g-wavenet-pingguo.mp3",
-  "r5-g-wavenet-bukeqi.mp3",
-  "r5-g-chirp-1-shui.mp3",
-  "r5-g-chirp-1-cao.mp3",
-  "r5-g-chirp-1-he1.mp3",
-  "r5-g-chirp-1-niao.mp3",
-  "r5-g-chirp-1-wo.mp3",
-  "r5-g-chirp-1-hao.mp3",
-  "r5-g-chirp-1-you.mp3",
-  "r5-g-chirp-1-he2.mp3",
-  "r5-g-chirp-1-yao.mp3",
-  "r5-g-chirp-1-le.mp3",
-  "r5-g-chirp-1-shan.mp3",
-  "r5-g-chirp-1-houzi.mp3",
-  "r5-g-chirp-1-pingguo.mp3",
-  "r5-g-chirp-1-bukeqi.mp3",
-  "r5-g-chirp-2-shui.mp3",
-  "r5-g-chirp-2-cao.mp3",
-  "r5-g-chirp-2-he1.mp3",
-  "r5-g-chirp-2-niao.mp3",
-  "r5-g-chirp-2-wo.mp3",
-  "r5-g-chirp-2-hao.mp3",
-  "r5-g-chirp-2-you.mp3",
-  "r5-g-chirp-2-he2.mp3",
-  "r5-g-chirp-2-yao.mp3",
-  "r5-g-chirp-2-le.mp3",
-  "r5-g-chirp-2-shan.mp3",
-  "r5-g-chirp-2-houzi.mp3",
-  "r5-g-chirp-2-pingguo.mp3",
-  "r5-g-chirp-2-bukeqi.mp3"
+  "r6-yunxi-turtle1.mp3",
+  "r6-yunxi-turtle2.mp3",
+  "r6-yunxi-turtle3.mp3",
+  "r6-yunze-king1.mp3",
+  "r6-yunze-king2.mp3",
+  "r6-yunze-king3.mp3",
+  "r6-yunye-king1.mp3",
+  "r6-yunye-king2.mp3",
+  "r6-yunye-king3.mp3",
+  "r6-yunye-planet1.mp3",
+  "r6-yunye-planet2.mp3",
+  "r6-yunye-below1.mp3",
+  "r6-yunye-below2.mp3",
+  "r6-yunyang-king1.mp3",
+  "r6-yunyang-king2.mp3",
+  "r6-yunyang-king3.mp3",
+  "r6-yunyang-planet1.mp3",
+  "r6-yunyang-planet2.mp3",
+  "r6-yunyang-below1.mp3",
+  "r6-yunyang-below2.mp3",
+  "r6-yunhao-king1.mp3",
+  "r6-yunhao-king2.mp3",
+  "r6-yunhao-king3.mp3",
+  "r6-yunhao-below1.mp3",
+  "r6-yunhao-below2.mp3",
+  "r6-yunjian-king1.mp3",
+  "r6-yunjian-king2.mp3",
+  "r6-yunjian-king3.mp3",
+  "r6-yunjian-below1.mp3",
+  "r6-yunjian-below2.mp3",
+  "r6-xiaorui-queen1.mp3",
+  "r6-xiaorui-queen2.mp3",
+  "r6-xiaorui-turtle1.mp3",
+  "r6-xiaorui-turtle2.mp3",
+  "r6-xiaorui-turtle3.mp3",
+  "r6-xiaoqiu-queen1.mp3",
+  "r6-xiaoqiu-queen2.mp3",
+  "r6-xiaoqiu-turtle1.mp3",
+  "r6-xiaoqiu-turtle2.mp3",
+  "r6-xiaoqiu-turtle3.mp3",
+  "r6-xiaohan-queen1.mp3",
+  "r6-xiaohan-queen2.mp3",
+  "r6-xiaohan-turtle1.mp3",
+  "r6-xiaohan-turtle2.mp3",
+  "r6-xiaohan-turtle3.mp3"
  ]
 }

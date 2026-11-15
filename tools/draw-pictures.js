@@ -2085,8 +2085,77 @@ function fishJar(p, fish){
   else p.flat(path([[5, 6.4], [6.5, 6]], .3), '#9AD2F0');
 }
 
+// Bigger things on the map, any size (Area 3, the Eastern Sea, decided 15 November 2026 from the mock-ups drawn by the
+// game): each {size, draw}, drawn on a square of that size with the same shapes, then cropped to what's drawn (MAP_ART in
+// content/pictures.js, drawn by js/sea.js).
+const MAP_ART_DRAWINGS = {
+  rock: {size: 18, draw: p => {   // a sea rock, blue-grey, a little weed on top
+    p.fill(or(O(7, 11, 6, 5), O(12, 12, 5, 4)), '#6F8590', {light: '#98ACB6'});
+    [[4, 7], [5, 7], [6, 6], [11, 8], [12, 8]].forEach(([x, y]) => p.dot(x, y, '#5C8A5A'));
+    [[6, 12], [10, 13], [8, 14]].forEach(([x, y]) => p.dot(x, y, '#56686F'));
+  }},
+  rockBig: {size: 26, draw: p => {   // a big sea rock
+    p.fill(or(O(10, 15, 9, 8), O(17, 17, 7, 6)), '#6A7E8A', {light: '#94A8B4'});
+    [[5, 9], [6, 8], [7, 8], [8, 8], [14, 10], [15, 10], [16, 11]].forEach(([x, y]) => p.dot(x, y, '#5C8A5A'));
+    [[8, 17], [13, 19], [18, 18], [11, 14]].forEach(([x, y]) => p.dot(x, y, '#52646E'));
+  }},
+  coral: {size: 22, draw: p => {   // branching coral, pink
+    [[[11, 21], [11, 14], [8, 9], [6, 4]], [[11, 15], [15, 10], [16, 5]], [[8, 10], [4, 8], [3, 4]], [[15, 11], [19, 9], [20, 5]], [[11, 14], [12, 8], [11, 2]]]
+      .forEach(b => p.fill(path(b, 1.3), '#E8728A', {light: '#F8A8B8'}));
+    [[6, 4], [16, 5], [3, 4], [20, 5], [11, 2]].forEach(([x, y]) => p.fill(O(x, y, 1.6, 1.6), '#F8B8C4', {light: '#FFE0E6'}));
+  }},
+  coralOrange: {size: 22, draw: p => {   // branching coral, orange
+    [[[10, 21], [10, 13], [6, 7]], [[10, 14], [14, 9], [14, 3]], [[6, 8], [3, 4]], [[14, 9], [18, 6]], [[10, 13], [10, 5]]]
+      .forEach(b => p.fill(path(b, 1.4), '#F08A3A', {light: '#F8B870'}));
+    [[6, 7], [14, 3], [3, 4], [18, 6], [10, 5]].forEach(([x, y]) => p.fill(O(x, y, 1.6, 1.6), '#F8C890', {light: '#FFE6C4'}));
+  }},
+  fan: {size: 18, draw: p => {   // a purple sea fan
+    for (let i = 0; i < 7; i++){ const a = Math.PI * (1.08 + i * .14); p.fill(path([[9, 17], [9 + 6.75 * Math.cos(a), 17 + 12.35 * Math.sin(a)]], .55), '#9A5AC8'); }
+    p.flat(and(O(9, 10, 7, 7), (x, y) => y < 15 && (x + y) % 3 === 0), '#C08AE8');
+  }},
+  brain: {size: 16, draw: p => {   // a round brain coral
+    p.fill(and(O(8, 11, 7, 5.5), (x, y) => y <= 13), '#D8A86A', {light: '#F0CC94'});
+    [[4, 9], [6, 8], [8, 9], [10, 8], [12, 9], [5, 11], [7, 12], [9, 11], [11, 12]].forEach(([x, y]) => p.dot(x, y, '#B07E44'));
+  }},
+  clam: {size: 18, draw: p => {   // a giant clam, open
+    p.fill(and(O(9, 12, 8, 5), (x, y) => y >= 11), '#8FA8BC', {light: '#B8CCDC'});
+    p.fill(and(O(9, 10, 8, 5.5), (x, y) => y <= 10), '#9FB8CC', {light: '#C8DAE8'});
+    [3, 6, 9, 12, 15].forEach(x => p.flat(Rc(x, 6, 1, 4), '#7A92A6'));
+    p.flat(Rc(3, 10, 13, 2), '#E8C0D4');
+  }},
+  shell: {size: 8, draw: p => { p.fill(and(O(4, 5, 3.4, 3), (x, y) => y <= 6), '#F4E2D0', {light: '#FFF6EC'}); [2, 4, 6].forEach(x => p.dot(x, 4, '#D8B8A0')); p.fill(Rc(3, 6, 3, 1), '#E8CDB6'); }},
+  shellPink: {size: 8, draw: p => { p.fill(and(O(4, 5, 3.4, 3), (x, y) => y <= 6), '#F4C0C8', {light: '#FFE2E6'}); [2, 4, 6].forEach(x => p.dot(x, 4, '#D89AA6')); p.fill(Rc(3, 6, 3, 1), '#E8A8B4'); }},
+  conch: {size: 9, draw: p => { p.fill(Pg([[1, 7], [4, 1], [8, 6], [5, 8]]), '#F0D8B8', {light: '#FFF2DE'}); p.dot(4, 3, '#C8A880'); p.dot(5, 5, '#C8A880'); p.dot(3, 6, '#E8A8A0'); }},
+  fishYellow: {size: 10, draw: p => smallFish(p, '#F2C14E', '#FFFFFF')},   // little fish swimming over the seabed
+  fishBlue: {size: 10, draw: p => smallFish(p, '#4E9AE0', '#F2C14E')}
+};
+function smallFish(p, c, stripe){   // a little fish, side on, head to the left
+  p.fill(Pg([[6, 4.5], [9.5, 1.5], [9.5, 7.5]]), mix(c, '#000000', .15));
+  p.fill(O(4.2, 4.5, 3.6, 2.4), c, {light: mix(c, '#FFFFFF', .45)});
+  p.flat(Rc(4, 2, 1, 5), stripe);
+  p.dot(2, 4, '#111418');
+}
+
 function icon(name){ const cells = draw(name, ICON_DRAWINGS[name], 16); N = 16; return rowsOf(cells, name); }
 function mapIcon(name){ const cells = draw(name, MAP_DRAWINGS[name], 16); N = 16; return rowsOf(cells, name); }
+function mapArt(name){   // a bigger map drawing, cropped to what's drawn
+  const d = MAP_ART_DRAWINGS[name], n = d.size, cells = draw(name, d.draw, n);
+  let x0 = n, y0 = n, x1 = -1, y1 = -1;
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (cells[y * n + x]){ x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+  const palette = {}, letter = {}, rows = [];
+  for (let y = y0; y <= y1; y++){
+    let row = '';
+    for (let x = x0; x <= x1; x++){
+      const k = cells[y * n + x];
+      if (!k){ row += '.'; continue; }
+      if (!letter[k]){ const l = LETTERS[Object.keys(letter).length]; if (!l) throw new Error(name + ' has too many colours'); letter[k] = l; palette[l] = k; }
+      row += letter[k];
+    }
+    rows.push(row);
+  }
+  N = 32;
+  return {palette, rows};
+}
 
 // Each picture as rows of letters and a palette, as content/pictures.js has them.
 const LETTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -2131,8 +2200,14 @@ ${Object.keys(ICON_DRAWINGS).map(k => entry(k, icon(k))).join(',\n')}
 const MAP_ICONS = {
 ${Object.keys(MAP_DRAWINGS).map(k => entry(k, mapIcon(k))).join(',\n')}
 };
+
+// Bigger things on the map, by name, each its own size: the Eastern Sea's rocks, coral, shells and fish (drawn by
+// js/sea.js).
+const MAP_ART = {
+${Object.keys(MAP_ART_DRAWINGS).map(k => entry(k, mapArt(k))).join(',\n')}
+};
 `;
 }
 const FILE = path_.join(__dirname, '../content/pictures.js');
-if (require.main === module){ fs.writeFileSync(FILE, text()); console.log('Wrote content/pictures.js (' + Object.keys(DRAWINGS).length + ' pictures, ' + Object.keys(ICON_DRAWINGS).length + ' icons, ' + Object.keys(MAP_DRAWINGS).length + ' things on the map)'); }
-module.exports = {text, FILE, DRAWINGS, picture, ICON_DRAWINGS, icon, MAP_DRAWINGS, mapIcon};
+if (require.main === module){ fs.writeFileSync(FILE, text()); console.log('Wrote content/pictures.js (' + Object.keys(DRAWINGS).length + ' pictures, ' + Object.keys(ICON_DRAWINGS).length + ' icons, ' + Object.keys(MAP_DRAWINGS).length + ' things on the map, ' + Object.keys(MAP_ART_DRAWINGS).length + ' bigger ones)'); }
+module.exports = {text, FILE, DRAWINGS, picture, ICON_DRAWINGS, icon, MAP_DRAWINGS, mapIcon, MAP_ART_DRAWINGS, mapArt};

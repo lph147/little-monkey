@@ -15,6 +15,9 @@ const BANK = get('WORD_BANK'), PICTURES = get('PICTURES'), MAP_SPRITES = get('MA
 const LOOKS = get('Object.keys(LOOKS)'), ACTIONS = get('Object.keys(ACTIONS)'), STEPS = get('Object.keys(STEPS)');   // what the engine can draw and do
 const STEP_OPTIONS = get('STEP_OPTIONS'), COUNTS = get('Object.keys(COUNTS)');
 const remembered = [...Object.keys(AREA.progress), ...Object.keys(AREA.requests), 'done'];   // what the area keeps in the save
+// An area being built a step at a time (Area 3, the Eastern Sea, from 15 November 2026): with fewer than three parts of its
+// story so far, it has no animals or much text yet, so the checks that count those wait till it has.
+const youngArea = (AREA.parts || []).length < 3;
 const placeholders = text => [...String(text).matchAll(/\{([^}|]+)(?:\|[^}]*)?\}/g)].map(m => m[1]);   // (a word's, without the English that fits the sentence: {石头|stones})
 // A step, and the steps inside it for if you win (a battle's, or a word game's)
 const withWins = (where, s, who) => [[where, s, who], ...[...(s.win || []), ...((s.wordGame || {}).win || [])].flatMap(w => withWins(`${where}, if you win`, w, who)),
@@ -250,7 +253,8 @@ test('the area has a name, and somewhere for animals to hide', () => {
   const n = AREA.name;
   assert.ok(n && n.zh && n.py && n.en, 'the area needs a name with zh, py and en');
   const hiding = Object.values(AREA.legend).filter(t => t.animals);
-  assert.ok(hiding.length && hiding.every(t => knownHere(t.word)), 'some legend tile needs animals:true and a word, such as 草');
+  assert.ok((youngArea && !AREA.animals.length) || hiding.length, 'some legend tile needs animals:true and a word, such as 草');
+  assert.ok(hiding.every(t => knownHere(t.word)), 'where animals hide needs a word you can know here, such as 草');
   for (const k of ['notReady', 'ready', 'tryAgain', 'passButton', 'failButton', 'done', 'notBuilt']) assert.ok(AREA.exit[k], `exit needs ${k}`);
   const back = AREA.exit.returnTo;
   assert.ok(onMap([back.x, back.y, back.place]) && canWalk([back.x, back.y, back.place]), `exit.returnTo ${back.x},${back.y} isn't a walkable tile`);
@@ -518,7 +522,7 @@ test('English text writes at most two words as 汉字 (English) in a sentence, n
   // Decided 22 October 2026: every word you knew written that way piled up, and read as Chinese with English grammar.)
   const texts = [];
   (function walk(o){ if (typeof o === 'string'){ if (/\{/.test(o) && /[a-z]/i.test(o)) texts.push(o); } else if (o && typeof o === 'object') for (const k in o) walk(o[k]); })(AREA);
-  assert.ok(texts.length > 30);
+  assert.ok(youngArea || texts.length > 30);
   for (const t of texts) for (const sentence of sentencesOf(t)){
     assert.ok(wordsIn(sentence).length <= 2, `"${sentence}" writes ${wordsIn(sentence).length} words as 汉字 (English): two at most, best one, the word it's about`);
     for (const [, a, b] of sentence.matchAll(/\{([^}|]+)[^}]*\}[\s,]*(?=\{([^}|]+)[^}]*\})/g))

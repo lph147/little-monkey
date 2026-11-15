@@ -194,6 +194,12 @@ const PUPIL_SPY = {spy:'spyGame', rounds:3, things:[{word:'树', say:'spyTree'},
 const TWO_WEN = [{if:{new:'两'}, say:'twoWen', teach:'两'}, {if:{knows:'两'}, say:'twoWen'},
   {if:{new:'两'}, newWord:'两', note:'Two of something is 两, two coins: 两文钱. Counting is still 二: 一，二，三！'}];
 const AT_HOME = (id, own = {}) => ({borrow:id, from:1, wild:['demon'], noMap:HOME_MAP, ...own});
+// The iron bridge in the Water Curtain Cave: once Chapter 4 is over (ch2), A at it dives into the water under it, down to the
+// Eastern Sea and the Dragon King's palace (Area 3: content/eastern-sea.js), after the raft's card, as Ready to dive?
+// (decided 15 November 2026, the Area 3 plan).
+const DIVE_BRIDGE = {look:'ironBridge', walk:true, onLook:[{if:{ch2:1}, label:'Dive', do:[
+  {readyToSail:true, title:'Ready to dive?', go:'Dive', later:'The water under the iron bridge goes all the way down to the sea. Come back whenever you’re ready to dive.'},
+  {sail:3}]}]};
 // The stone beds in the Water Curtain Cave, at home: sleep in one till morning (js/daynight.js), as you did there.
 const HOME_BED = {look:'stoneBed', word:'床', landmark:true, note:'Beds of smooth stone, enough for the whole troop.',
   onLook:[{if:{knows:'床'}, label:'Sleep', do:[{sleep:'You wake up with your health full.'}]}]};
@@ -301,6 +307,8 @@ const ACROSS_THE_SEA = {
 
   // The story's chapters here: numbered through the whole story, so they carry on from Flower Fruit Mountain's Prologue
   // and Chapter 1 (decided 11 November 2026). The code still counts this area's from 0 (chapter:0 is Chapter 2).
+  // In Story so far in a later area, this area's story folded into one line (as Flower Fruit Mountain's is here).
+  storyFold:'Across the sea to the human world, years among people, the master’s cave and his secret lessons, then home to beat the Demon of Havoc.',
   chapters: [
     {name:'Chapter 2', title:'The human world'},
     {name:'Chapter 3', title:'The teacher’s mountain'},
@@ -372,7 +380,7 @@ const ACROSS_THE_SEA = {
     {id:'home2', chapter:2, name:'Part 5', title:'Home', when:{king:2},
       text:'The Demon of Havoc has run off for good. Take the little monkeys home!',
       now:[{if:{party:0}, text:'Home with the little monkeys and the {车|cart}: put the troop’s things back on the feast’s {桌子|tables}.'}, {if:{ch2:0}, text:'Home with the little monkeys: celebrate with the troop.'},
-        {text:'That’s the end of Area 2.'}]}
+        {text:'That’s the end of Area 2. When you’re ready, dive from the iron bridge in the Water Curtain Cave.'}]}
   ],
 
   // What this area remembers in your save, and the values it starts with.
@@ -643,10 +651,11 @@ const ACROSS_THE_SEA = {
     {id:'c2putBack', main:true, if:{homeAgain:1, party:0, any:CART_THINGS.slice(0, 4).map(w => ({lifted:w}))}, text:'Put it down on the big {桌子|table}', arrow:[17, 7, 'ffmHomeGround']},
     {id:'c2putMilk', main:true, if:{homeAgain:1, party:0, lifted:'牛奶'}, text:'Put the {牛奶|milk} down on the table beside the big one', arrow:[22, 7, 'ffmHomeGround']},
     {id:'c2stick', main:true, if:{homeAgain:1, stickGiven:0}, text:'Give your {棍子|stick} to the little monkey in training', arrow:'trainee'},
-    {id:'c2end', main:true, if:{stickGiven:1, ch2:0}, text:'The {老|old} monkey wants to talk to you', arrow:'elder'}
+    {id:'c2end', main:true, if:{stickGiven:1, ch2:0}, text:'The {老|old} monkey wants to talk to you', arrow:'elder'},
+    {id:'c2dive', main:true, if:{ch2:1}, text:'Dive from the iron bridge in the Water Curtain Cave, down to the Dragon King’s palace under the {海|sea}', arrow:[7, 6, 'ffmCave']}   // (to Area 3, the Eastern Sea)
   ],
   hints: [
-    {if:{ch2:1}, text:'That’s the end of Area 2! The Dragon King’s palace, under the {海|sea}, is still to come. Until then, practise your words, and visit your {朋友|friends}.'},
+    {if:{ch2:1}, text:'That’s the end of Area 2! When you’re ready, dive from the iron bridge in the Water Curtain Cave, down to the Dragon King’s palace under the {海|sea}.'},
     {if:{north:1, king:{below:2}}, text:'Far to the north lives {混世魔王}. Fly there on your {云|cloud}, from the home ground.'},
     {if:{chapter:2}, text:'Find someone with a ! over them.'},
     {if:{door:2}, text:'Find someone in the {洞|cave} with a ! over them.'},
@@ -870,7 +879,7 @@ const ACROSS_THE_SEA = {
 
   // The end of Area 2 (the end of chapter 2, as the book's second chapter ends), then what's to come.
   areaEnd: {title:'The end of Area 2', text:['The troop’s little ones are home, and the Demon of Havoc has gone for good.',
-    'To be continued: under the sea, to the Dragon King’s palace (Area 3). Until then, practise your words, and visit your friends.']},
+    'The water under the iron bridge in the Water Curtain Cave goes all the way down to the sea. When you’re ready, dive from the bridge, to the Dragon King’s palace (Area 3)!']},
 
   // Fishing (js/fishing.js), with the rod you brought from Flower Fruit Mountain: in the sea, and the village's stream.
   fishing: {
@@ -1599,7 +1608,7 @@ const ACROSS_THE_SEA = {
     // chapter 2: home, as you left it (Flower Fruit Mountain's places, borrowed: AT_HOME), with squares of its own: the
     // bushes the troop hides behind, the feast's tables, bare, and your cloud
     ffmMeadow: AT_HOME('meadow', {put:[[2, 10, 'あ']], legend:{'あ':HIDING('foundBig', 'big', 2, 10, {knows:'哭'})}}),
-    ffmPath: AT_HOME('path'), ffmValley: AT_HOME('valley'), ffmFalls: AT_HOME('falls'), ffmCave: AT_HOME('cave', {indoors:true, legend:{'D':HOME_BED}}),
+    ffmPath: AT_HOME('path'), ffmValley: AT_HOME('valley'), ffmFalls: AT_HOME('falls'), ffmCave: AT_HOME('cave', {indoors:true, legend:{'D':HOME_BED, 'I':DIVE_BRIDGE}}),
     ffmHomeGround: AT_HOME('homeGround', {
       put:[[3, 12, 'い'], [13, 12, 'え'], [12, 7, 'エ'], [13, 7, 'オ'], [14, 7, 'カ'], [15, 7, 'キ'], [16, 7, 'ア'], [17, 7, 'ア'], [18, 7, 'ア'], [21, 7, 'イ'], [22, 7, 'イ'], [23, 7, 'イ'], [24, 7, 'ク']],
       legend:{'い':HIDING('foundHungry', 'hungry', 3, 12, {foundBig:1}),

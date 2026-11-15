@@ -338,7 +338,7 @@ function summaryOf(s, n){
   const area = (s.areas || {})[A.number] || {}, chapter = A.chapters[area.chapter || 0] || A.chapters[0];
   // how full your scroll is: each area's words and phrases you've found, of all of them, so far (a gold seal for one that's full)
   const scroll = AREAS.filter(a => a.number <= A.number).map(a => { const ws = Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === a.number && (!WORD_BANK[w].later || (s.w[w] && s.w[w].lv > 0)));
-    return {area:a.name, found:ws.filter(w => s.w[w] && s.w[w].lv > 0).length, of:ws.length}; });
+    return {area:a.name, found:ws.filter(w => s.w[w] && s.w[w].lv > 0).length, of:ws.length}; }).filter(a => a.of);   // (an area with no words yet, as Area 3 at first, isn't shown: 0/0 isn't a full scroll)
   return {n, shells:s.shells || 0, coins:s.coins || 0, friends:s.friends.length, area:A.name, scroll,
     words:Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area && WORD_BANK[w].area <= A.number && !WORD_BANK[w].phrase && s.w[w] && s.w[w].lv > 0).length,   // (as the menu counts them: phrases aren't words caught)
     chapter, played:slotsInfo().played[n] || 0,

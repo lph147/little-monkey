@@ -259,12 +259,12 @@ Object.assign(STEPS, {
   // The Ready to sail? card (below); Not yet: what changes (wait, such as the raft waiting at the shore, the troop gone home)
   // and what you're told (later), and the steps after it don't run.
   async readyToSail(s){
-    const r = await readyCard();
+    const r = await readyCard(s.title, s.go);
     if (r === STOP){ Object.assign(here(), s.wait || {}); save(); placeCharacters(); if (s.later) toast(fill(s.later)); }
     return r;
   }
 });
-Object.assign(STEP_OPTIONS, {readyToSail:['wait', 'later']});
+Object.assign(STEP_OPTIONS, {readyToSail:['wait', 'later', 'title', 'go']});   // (title and go: the card's, such as Ready to dive? and Dive, at the iron bridge: Area 2's end)
 
 /* ================= READY TO SAIL? ================= */
 // The card at your raft (decided 9 November 2026, the trade plan): each page of your scroll, red where words are still to
@@ -272,7 +272,7 @@ Object.assign(STEP_OPTIONS, {readyToSail:['wait', 'later']});
 // those out only at night); and the words that need practice. Sail away (A), Not yet (B: the raft waits at the shore, the
 // troop goes home), or Quick practice first, coming back to the card. Anything you miss can still be found later in the
 // story. Gives STOP for Not yet, so the raft's steps stop.
-function readyCard(){
+function readyCard(title = 'Ready to sail?', go = 'Sail away'){
   return new Promise(res => {
     const pages = scrollPages().filter(p => p.area === AREA.number);
     const pageRow = p => { const got = p.words.filter(w => lvl(w) >= 1).length, full = got === p.words.length;
@@ -283,14 +283,14 @@ function readyCard(){
       .sort((a, c) => c.left.length - a.left.length).slice(0, 4)
       .map(({id, left}) => `<span class="rstill">${esc(PLACES[id].name.en)} <b>${left.length}</b>${left.some(x => x.time === 'night') ? ' 🌙' : ''}</span>`).join('');
     const need = practiceWords().length;
-    openCard(`<p class="label">Ready to sail?</p>
+    openCard(`<p class="label">${esc(title)}</p>
       <p class="small">Your Word Scroll</p><div class="rpages">${pages.map(pageRow).join('')}</div>
       <div class="stats"><span>${met}/${friends.length} animal friends</span>${kinds ? `<span>${found}/${kinds} treasures</span>` : ''}${need ? `<span><b>${need}</b> word${need === 1 ? '' : 's'} need practice</span>` : ''}</div>
       ${still ? `<p class="small">Still to find:</p><div class="rstills">${still}</div>` : ''}
       <p class="note">Anything you miss can still be found later in the story.</p>
-      <div class="actions"><button class="btn" data-a="later" data-b>Not yet</button>${need ? '<button class="btn" data-a="practise">Quick practice</button>' : ''}<button class="btn primary" data-a="go">Sail away</button></div>`);
+      <div class="actions"><button class="btn" data-a="later" data-b>Not yet</button>${need ? '<button class="btn" data-a="practise">Quick practice</button>' : ''}<button class="btn primary" data-a="go">${esc(go)}</button></div>`);
     on('[data-a=go]', () => { closeCard(); res(); });
     on('[data-a=later]', () => { closeCard(); res(STOP); });
-    on('[data-a=practise]', () => { closeCard(); quickPractice(() => { closeCard(); readyCard().then(res); }); });
+    on('[data-a=practise]', () => { closeCard(); quickPractice(() => { closeCard(); readyCard(title, go).then(res); }); });
   });
 }

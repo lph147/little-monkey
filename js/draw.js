@@ -1148,6 +1148,7 @@ function drawWorld(now){
     b.drawImage(towardsYou(a, a.at[0]), 0, 0, 16, 16, X + 4, Y - 5 - bob - meetHop(a, X, Y - 8, now), 10, 10);
   }
   if (GLOOM){ drawGloom(cx, cy, sh, now); drawSparkles(cx, cy, now); }   // a gloomy place, such as the pine wood
+  drawSea(cx, cy, sh, now);   // under the sea: the water over everything, and you in your bubble of air (js/sea.js)
   drawMist(cx, cy, sh, now);   // wisps of cloud drifting past, and mist rolling in (a place's clouds and mist: js/mountain.js)
   drawWeather(cx, cy, sh, now);   // the season's weather, petals, leaves or snow falling, and the evening (js/seasons.js)
   drawRain(cx, cy, sh, now);   // rain, every so often (js/daynight.js)

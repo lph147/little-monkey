@@ -385,7 +385,7 @@ function rainNow(){   // how hard it's raining now, 0 to 1 (0 when it isn't)
   if (t < 0 || t > RAIN_MS) return 0;
   return Math.min(1, t / RAIN_FADE, (RAIN_MS - t) / RAIN_FADE);
 }
-const rainingHere = () => rainNow() > 0 && !indoors() && !(PLACES[PLACE] || {}).night;
+const rainingHere = () => rainNow() > 0 && !indoors() && !(PLACES[PLACE] || {}).night && !(PLACES[PLACE] || {}).underwater;   // (never under the sea: js/sea.js)
 const rainHere = () => rainingHere() && (rainHeavy() ? 'heavy' : 'light');   // how it's raining where you are: 'heavy', 'light', or false
 
 // The rain, over the world: the sky a little darker, streaks slanting down, little splashes on the ground, and on the

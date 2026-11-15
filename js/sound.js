@@ -517,6 +517,33 @@ function sigh(a, t){   // the wind sighing through the trees, very softly, into 
 }
 // The songs: how fast (beats a minute), how many beats before it loops, its notes, how each is played, and its echo
 // (how much comes back each time, and how loud it is).
+// The sea's song (Area 3, the Eastern Sea, decided 15 November 2026): slow and dreamy, as the cave's is, on the five notes
+// of G (G A B D E), bells over a low hum on roots a bar apart, a little arpeggio of soft bells, and bubbles rising now and
+// then in place of the cave's drips; the tune again an octave down on the xun the second time round.
+const SEA_MEL = [[79,3],[76,1],[74,2],[71,2], [74,3],[76,1],[79,4], [81,2],[79,1],[76,1],[74,2],[71,2], [69,3],[71,1],[74,4]];
+const SEA_ROOTS = [43,40,38,43];
+const SEA_PLINKS = {43:[67,74,79], 40:[64,71,76], 38:[62,69,74]};
+const SEA_BUBBLES = [[2.5,1400],[3,1700],[11.5,1500],[12,1850],[19.5,1300],[20,1600],[27.5,1450],[28,1800]];
+const SEA_EVENTS = (() => {
+  const ev = []; let bt = 0, prev = 0;
+  SEA_MEL.forEach(([m,d]) => { ev.push({b:bt, m, d, k:'mel', prev}); prev = m; bt += d; });
+  SEA_ROOTS.forEach((r,i) => {
+    ev.push({b:i*8, m:r, k:'hum'});
+    SEA_PLINKS[r].forEach((m,j) => ev.push({b:i*8 + [1, 3.5, 6][j], m, k:'plink'}));
+  });
+  SEA_BUBBLES.forEach(([b,f]) => ev.push({b, f, k:'bubble'}));
+  return ev.sort((a,c) => a.b - c.b);
+})();
+function playSeaEvent(a, ev, t, pass){
+  const beat = 60 / SONGS.sea.bpm;
+  if (ev.k === 'mel'){
+    if (!ev.m) return;
+    if (pass === 0) bell(a, midi(ev.m), t, .05, Math.min(ev.d * beat + 1.8, 3.4));
+    else xun(a, midi(ev.m - 12), t, ev.d * beat * .92);
+  } else if (ev.k === 'plink') bell(a, midi(ev.m + 12), t, .014, 1.6);
+  else if (ev.k === 'hum') hum(a, midi(ev.m), t, 8 * beat);
+  else if (ev.k === 'bubble') drip(a, t, ev.f);
+}
 const SONGS = {
   home: {bpm:BPM, beats:LOOP_BEATS, events:EVENTS, play:playEvent, echo:[.32, .3]},
   battle: {bpm:116, beats:32, events:BATTLE_EVENTS, play:playBattleEvent, echo:[.32, .3]},
@@ -524,6 +551,7 @@ const SONGS = {
   pineWood: {bpm:50, beats:32, events:PINE_EVENTS, play:playPineEvent, echo:[.45, .45]},
   pineBattle: {bpm:100, beats:32, events:PINE_BATTLE_EVENTS, play:playPineBattleEvent, echo:[.26, .22]},   // (less echo, so the tune stays clear)
   boss: {bpm:132, beats:32, events:BOSS_EVENTS, play:playBossEvent, echo:[.24, .2]},
+  sea: {bpm:60, beats:32, events:SEA_EVENTS, play:playSeaEvent, echo:[.5, .5]},   // (under the sea, Area 3)
   village: {bpm:92, beats:64, events:VILLAGE_EVENTS, play:playVillageEvent, echo:[.22, .2]}   // (the human world's, Area 2)
 };
 const placeSong = () => (PLACES[PLACE] && SONGS[PLACES[PLACE].music]) ? PLACES[PLACE].music : 'home';   // the place you're in's own song, if it has one

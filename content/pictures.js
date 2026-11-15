@@ -9137,3 +9137,218 @@ const MAP_ICONS = {
     ]
   }
 };
+
+// Bigger things on the map, by name, each its own size: the Eastern Sea's rocks, coral, shells and fish (drawn by
+// js/sea.js).
+const MAP_ART = {
+  'rock': {
+    palette: {a:'#3D4141', b:'#2A3624', c:'#282B2B', d:'#98ACB6', e:'#5C8A5A', f:'#576870', g:'#6F8590', h:'#56686F'},
+    rows: [
+      "....aabaac........",
+      "...addeddfc.......",
+      "..adeeggggfcbc....",
+      ".adggggggggeefcc..",
+      "adggggggggggggdfc.",
+      "adggggggggggggggfc",
+      "adggggggggggggggfc",
+      "cfgggghgggggggggfc",
+      ".cfggggggghgggggfc",
+      "..cfgggghgggggffc.",
+      "...cffffffffffcc..",
+      "....cccccccccc...."
+    ]
+  },
+  'rockBig': {
+    palette: {a:'#3C3F40', b:'#272929', c:'#94A8B4', d:'#53626C', e:'#5C8A5A', f:'#6A7E8A', g:'#52646E'},
+    rows: [
+      ".......aaaaab............",
+      ".....aacccccdbb..........",
+      "...aaceeeffffcdbb........",
+      "..accefffffffffcdb.......",
+      "..acffffffffffeedbab.....",
+      ".acfffffffffffffeccdbb...",
+      "acffffffffffffffffffcdb..",
+      "acffffffffffffffffffffdb.",
+      "acfffffffffgffffffffffdb.",
+      "acfffffffffffffffffffffdb",
+      "acfffffffffffffffffffffdb",
+      "bdffffffgffffffffffffffdb",
+      ".bdfffffffffffffffgffffdb",
+      "..acfffffffffgffffffffdb.",
+      "..bddfffffffffffffffffdb.",
+      "...bbddffffffdffffffddb..",
+      ".....bbddddddbddddddbb...",
+      ".......bbbbbb.bbbbbb....."
+    ]
+  },
+  'coral': {
+    palette: {a:'#5E5150', b:'#FFE0E6', c:'#C19099', d:'#4A3838', e:'#F8B8C4', f:'#B5596C', g:'#462629', h:'#5C3F42', i:'#F8A8B8', j:'#E8728A'},
+    rows: [
+      ".........abcd.........",
+      "..ad.ad.abeecd........",
+      ".abcabcddceecd.ad..ad.",
+      "abeeceecddccfgabcdabcd",
+      "dceeceecdhijfabeecbeec",
+      ".dccfccfghijfdceecceec",
+      ".gfjfhifggfjfhicchiccd",
+      "..hijfijfghifhijfhijfg",
+      "..gfjjiffghifhijfijfg.",
+      "...gffjjffijfhiiijjfg.",
+      "....ggffffijfiijjffg..",
+      "......ggfjijfjfffgg...",
+      "........hiijfjfgg.....",
+      "........gfifjfg.......",
+      ".........gfffg........",
+      ".........gffg.........",
+      ".........hifg.........",
+      ".........hifg.........",
+      ".........hifg.........",
+      ".........hifg.........",
+      ".........hifg.........",
+      ".........gffg........."
+    ]
+  },
+  'coralOrange': {
+    palette: {a:'#5E5346', b:'#4A3B2B', c:'#FFE6C4', d:'#C19C70', e:'#F8C890', f:'#F08A3A', g:'#5C442B', h:'#F8B870', i:'#BB6C2D', j:'#482C15'},
+    rows: [
+      ".............ab......",
+      "..ab........acdb.....",
+      ".acdb....abaceedb....",
+      "aceedb..acdbdeedbab..",
+      "bdeedbbaceedbddbacdb.",
+      ".bddfcdbdeedghiaceedb",
+      "..jiceedbddbghihdeedb",
+      "...bdeedghijghhffddb.",
+      "....bddfihijghffijb..",
+      ".....jifihighiiij....",
+      "......ghfhihffij.....",
+      "......jifhiffij......",
+      ".......jihifij.......",
+      "........jiiij........",
+      "........jiij.........",
+      "........ghij.........",
+      "........ghij.........",
+      "........ghij.........",
+      "........ghij.........",
+      "........ghij.........",
+      "........ghij.........",
+      "........jiij........."
+    ]
+  },
+  'fan': {
+    palette: {a:'#4A3651', b:'#C08AE8', c:'#78469C', d:'#332039', e:'#B88CD9', f:'#47364C'},
+    rows: [
+      ".....a..a.......",
+      "....abaabaa.....",
+      "...abaabcabaa...",
+      "..abdcbecbcaba..",
+      ".abaabfebdcbaa..",
+      "abaabcabcabaaba.",
+      ".aabdcbecbcabaa.",
+      ".abcabcebcabecba",
+      "abdcbdcbccbdcba.",
+      ".aabcabecbdcbaa.",
+      ".abdcbcebcebaaba",
+      "dcdabcabcabaabcd",
+      "dccbaabecbaabccd",
+      ".dddccceecccddd.",
+      "....ddccccdd....",
+      "......dddd......"
+    ]
+  },
+  'brain': {
+    palette: {a:'#594B36', b:'#423321', c:'#F0CC94', d:'#A88353', e:'#D8A86A', f:'#B07E44'},
+    rows: [
+      "....aaaaaaab....",
+      "...acccccccdb...",
+      "..aceeeeeeeedb..",
+      ".aceeefeeefeedb.",
+      "aceefeeefeeefedb",
+      "aceeeeeeeeeeeedb",
+      "aceeefeeefeeeedb",
+      "bdeeeeefeeefeedb",
+      ".bddddddddddddb.",
+      "..bbbbbbbbbbbb.."
+    ]
+  },
+  'clam': {
+    palette: {a:'#4C4F51', b:'#34383A', c:'#C8DAE8', d:'#7C909F', e:'#33383C', f:'#7A92A6', g:'#9FB8CC', h:'#E8C0D4', i:'#474B4D', j:'#B8CCDC', k:'#708393', l:'#303336', m:'#8FA8BC'},
+    rows: [
+      "....aaaaaaaaab....",
+      "...acccccccccdbe..",
+      "..efggfggfggfgdfe.",
+      ".acfggfggfggfggfe.",
+      "acgfggfggfggfggfdb",
+      "acgfggfggfggfggfdb",
+      "bddhhhhhhhhhhhhhdb",
+      "ijjhhhhhhhhhhhhhkl",
+      "ijmmmmmmmmmmmmmmkl",
+      "lkmmmmmmmmmmmmmmkl",
+      ".lkmmmmmmmmmmmmkl.",
+      "..lkkkmmmmmmkkkl..",
+      "...lllkkkkkklll...",
+      "......llllll......"
+    ]
+  },
+  'shell': {
+    palette: {a:'#5E5852', b:'#49423B', c:'#FFF6EC', d:'#BEB0A2', e:'#F4E2D0', f:'#D8B8A0', g:'#51443A', h:'#B5A08E', i:'#463D34'},
+    rows: [
+      "..aaab..",
+      ".acccdb.",
+      "aceeeedb",
+      "acfefefg",
+      "aceeeedb",
+      "bddhhhdb",
+      ".bbiiib."
+    ]
+  },
+  'shellPink': {
+    palette: {a:'#5E5250', b:'#493A39', c:'#FFE2E6', d:'#BE969C', e:'#F4C0C8', f:'#D89AA6', g:'#513B3C', h:'#B5838C', i:'#463334'},
+    rows: [
+      "..aaab..",
+      ".acccdb.",
+      "aceeeedb",
+      "acfefefg",
+      "aceeeedb",
+      "bddhhhdb",
+      ".bbiiib."
+    ]
+  },
+  'conch': {
+    palette: {a:'#5E574E', b:'#483F35', c:'#FFF2DE', d:'#BBA890', e:'#C8A880', f:'#F0D8B8', g:'#E8A8A0'},
+    rows: [
+      "...ab....",
+      "..acdb...",
+      "..acedb..",
+      ".acfffdb.",
+      ".acffefdb",
+      "bddgffdb.",
+      ".bbdddb..",
+      "...bbb..."
+    ]
+  },
+  'fishYellow': {
+    palette: {a:'#5C5039', b:'#5E5B58', c:'#493A1A', d:'#403217', e:'#F8DD9E', f:'#FFFFFF', g:'#BD973D', h:'#A18033', i:'#F2C14E', j:'#DDBF7B', k:'#111418'},
+    rows: [
+      "..aabc..d.",
+      ".aeefgcdhd",
+      "aeiifigjhd",
+      "aekifiighd",
+      "cgiifighhd",
+      ".cggfgcdhd",
+      "..ccbc..d."
+    ]
+  },
+  'fishBlue': {
+    palette: {a:'#3F4953', b:'#5A4720', c:'#20303F', d:'#1D2A36', e:'#9EC7EE', f:'#F2C14E', g:'#3D78AF', h:'#336694', i:'#4E9AE0', j:'#7BA8D2', k:'#111418'},
+    rows: [
+      "..aabc..d.",
+      ".aeefgcdhd",
+      "aeiifigjhd",
+      "aekifiighd",
+      "cgiifighhd",
+      ".cggfgcdhd",
+      "..ccbc..d."
+    ]
+  }
+};

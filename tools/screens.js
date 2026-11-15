@@ -486,7 +486,10 @@ SAVES.c2kingOut = c2(SAVES.c2pull, {loot: 1, king: 1, part: 13, parked: {cart: {
 SAVES.c2king = c2(SAVES.c2cart, {cartWon: 1, loot: 1, king: 1, part: 13}, ['车'], {place: 'lair', x: 14, y: 8, dir: 'up'});
 SAVES.c2unload = c2(SAVES.c2king, {king: 2, homeAgain: 1, unload: 3, part: 14, weapon: '刀'}, ['毛', '刀'], {place: 'ffmHomeGround', x: 19, y: 9, dir: 'up'});
 SAVES.c2end = c2(SAVES.c2king, {king: 2, homeAgain: 1, unload: 6, party: 1, part: 14, weapon: '刀'}, ['毛', '刀'], {place: 'ffmHomeGround', x: 13, y: 9, dir: 'down'});
-SAVES.c2hill = {...SAVES.c2end, pos: {place: 'ffmHillside', x: 22, y: 21, dir: 'up'}};   // (home in autumn: on the hillside's lookout)
+SAVES.c2hill = {...SAVES.c2end, pos: {place: 'ffmHillside', x: 22, y: 21, dir: 'up'}};
+// Area 3, the Eastern Sea (15 November 2026): the end of Chapter 4, by the iron bridge in the Water Curtain Cave; and on the seabed
+SAVES.c2dive = c2(SAVES.c2end, {ch2: 1, stickGiven: 1}, [], {place: 'ffmCave', x: 7, y: 5, dir: 'down'});
+SAVES.a3seabed = {...SAVES.c2dive, area: 3, areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀'}}, pos: {place: 'seabed', x: 11, y: 6, dir: 'down'}};   // (home in autumn: on the hillside's lookout)
 SAVES.c2south = {...SAVES.c2end, pos: {place: 'ffmSouthSlope', x: 9, y: 15, dir: 'up'}};   // (and the south slope's)
 
 // The screens, in the order you meet them. save: one of SAVES (none: a brand-new game). voices: 'zh'
@@ -1860,6 +1863,15 @@ function build(){
   }
 }
 const $ = sel => document.querySelector(sel);
+// Area 3, the Eastern Sea (Chapters 5 and 6), a step at a time from 15 November 2026
+SCREENS.push(
+  {id: 'a3-ready-dive', title: 'Ready to dive?', save: 'c2dive', why: 'At the end of Chapter 4, A at the iron bridge in the Water Curtain Cave: the raft’s card, as Ready to dive?, and down to the Eastern Sea (Area 3).', run: async () => {
+    play(); await wait(400); interact(...facing()); await wait(500); }},
+  {id: 'a3-dive', title: 'The dive', save: 'a3seabed', why: 'Down from the iron bridge in a bubble of air, past fish, until the seabed comes up out of the blue (js/sea.js).', run: async () => {
+    play(); await wait(300); storyScene('dive'); await wait(4200); }},
+  {id: 'a3-seabed', title: 'The seabed', save: 'a3seabed', why: 'Under the sea: sand, shells, seaweed, rocks and coral, light rippling over the seabed, shafts of light, bubbles rising, and you in your bubble of air, the water’s tint kept off you inside it.', run: async () => {
+    play(); await wait(500); }}
+);
 if (typeof module !== 'undefined') module.exports = {SCREENS, SAVES};   // for the tests
 else {
   const q = new URLSearchParams(location.search);
