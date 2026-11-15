@@ -493,7 +493,8 @@ test('every line is said somewhere', () => {
     ...AREA.characters.filter(c => c.calls).map(c => c.calls), ...AREA.characters.filter(c => c.nightCalls).map(c => c.nightCalls),   // (calling out what they sell as you walk past, and at night: callOut, js/world.js)
     ...allSteps().filter(([, s]) => s.recap || s.face).flatMap(([, s]) => [s.count, s.line, ...Object.values(s.lines || {})].filter(Boolean)),   // (the master's classes: js/year.js)
     ...(AREA.smallTalk || []).map(t => t.say),   // (what people say about the weather, js/world.js)
-    ...(AREA.animalsPlay ? [AREA.animalsPlay.say] : [])   // (what an animal says as it comes out to play: wildAppears, js/world.js)
+    ...(AREA.animalsPlay ? [AREA.animalsPlay.say] : []),   // (what an animal says as it comes out to play: wildAppears, js/world.js)
+    ...Object.values(AREA.races || {}).flatMap(r => [r.start, r.end].filter(Boolean))   // (a race outside a lesson: who starts it, and at the finish, js/pe.js)
   ]);
   for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);
 });
@@ -802,6 +803,7 @@ test('a task that points its arrow at someone gives them a ! or ? too, so you ca
         if (k === 'new') delete S.w[v];
         else if (k === 'knows') S.w[v] = {lv: 1, ok: 0};
         else if (k === 'holding') for (const [id, want] of Object.entries(v)) h.holding[id] = want === true ? 'it' : want;
+        else if (k === 'friends') for (const [id, want] of Object.entries(v)) S.friends = want ? [...S.friends, id] : S.friends.filter(f => f !== id);   // (such as the octopus, once it's your friend)
         else if (AREA.counters[k]){
           const cn = AREA.counters[k];
           if (cn.count === 'known') cn.words.slice(0, n).forEach(w => { S.w[w] = {lv: 1, ok: 0}; });

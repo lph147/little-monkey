@@ -60,6 +60,11 @@ function tallSeaweed(g, X, Y, x, y, bend = null, lit = false){
   }
 }
 LOOKS.tallSeaweed = (g, X, Y, x, y) => tallSeaweed(g, X, Y, x, y);
+// The dolphin's race track on the coral reef (step 4): its start, a line of grey pebbles across the sand, and its finish, a
+// line of white and pink shells.
+function raceStart(g, X, Y, x, y){ seaSand(g, X, Y, x, y); for (let yy = 1; yy < T; yy += 3) R(g, X + 7, Y + yy, 2, 2, yy % 2 ? '#8E949A' : '#A8AEB4'); }
+function raceFinish(g, X, Y, x, y){ seaSand(g, X, Y, x, y); for (let yy = 0; yy < T; yy += 4){ R(g, X + 6, Y + yy, 4, 3, (yy / 4 + y) % 2 ? '#F7C8D4' : '#FFF6EC'); R(g, X + 7, Y + yy + 2, 2, 1, '#D8A8B4'); } }
+Object.assign(LOOKS, {raceStart, raceFinish});
 STIR_LOOKS.tallSeaweed = ['#D8C79A', '#2E6A2E', '#8FCB6A']; STIR_DRAWS.tallSeaweed = tallSeaweed; TALL_LOOKS.push('tallSeaweed');   // (parting round you, and what flies up: js/draw.js)
 const UNLIT = new Set(['deepSea']);   // where the light doesn't ripple: down in the deep
 
@@ -106,6 +111,7 @@ function drawSchools(cx, cy, now){
     }
   }
 }
+const COLOUR_ART = {coral:'coral', coralOrange:'coralOrange'};   // the sea's things that can be a colour you're told, drawn again over the water's blue (drawSea)
 function drawSea(cx, cy, sh, now){
   if (!underwater()) return;
   const W = VW * T, H = VH * T, PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
@@ -132,6 +138,11 @@ function drawSea(cx, cy, sh, now){
   // what comes in colours, such as the starfish on the sand, drawn again over the water's blue, so each is the colour it's
   // called (decided 15 November 2026, after looking at it: under the haze the yellow one was green, the red one maroon)
   for (const o of outHere()) if (o.colour && o.a.lies) drawLying(o.a, o.x, o.y, o.x * T - cx, o.y * T - cy, now, o.colour);
+  for (const p of OBJECT_PIECES){   // (and coral of a colour, such as the reef's pink and orange: 粉色的珊瑚)
+    const name = COLOUR_ART[p.look]; if (!name || !tileAt(p.x, p.y).colour) continue;
+    const pic = mapArtPic(name), X = p.x * T + Math.round((p.w * T - pic.width) / 2) - cx, Y = p.y * T + p.h * T - pic.height - cy;
+    if (X < VW * T && Y < VH * T && X + pic.width > 0 && Y + pic.height > 0) b.drawImage(pic, X, Y);
+  }
   if (foe && foe.colour) drawFoe(cx, cy, now);
   drawJellies(cx, cy, now); drawInk(cx, cy, now);   // (jellyfish drifting, glowing at night; the octopus's ink)
   // bubbles rising

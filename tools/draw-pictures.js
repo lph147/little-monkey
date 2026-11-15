@@ -1895,8 +1895,58 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     [[5.5, 25.5, 2.2], [9, 24.5, 1.9], [12, 24.2, 1.7], [14.6, 24.4, 1.5], [17, 24.8, 1.3]].forEach(([x, y, r]) => p.fill(O(x, y, r, r), SKIN, {dark: '#D9A878', edge: true}));   // its toes
     p.flat(path([[22, 18], [21.5, 23]], .45), '#E8B88A');                                   // the ankle
     p.flat(Rc(17, 4, 8, 3), '#3F8FCB');                                                      // the hem of trousers
+  },
+  // the coral reef's (step 4)
+  '珊瑚': p => coral(p, '#F28CB4', '#FFC8DC', '#C45A86'),   // coral: a pink branching coral on the sand (unlike 水草: stiff branches, not ribbons)
+  '橙色 的 珊瑚': p => coral(p, '#F08A3A', '#FFC07A', '#B85E14'),   // an orange coral (a pink one is 珊瑚's own)
+  '海马': p => {   // a seahorse: upright, a horse's head and snout, a curled tail, yellow-orange with a little fin (unlike 马: no legs, in the water)
+    p.fill(path([[16, 18], [17, 24], [20, 28], [23, 27], [22, 24], [19, 25]], 2), '#E8A030', {edge: true});   // its curled tail
+    p.fill(or(O(15, 15, 5, 7), Pg([[11, 9], [17, 6], [20, 12], [15, 22], [11, 18]])), '#F2B840', {light: '#FFD878', dark: '#C88A20', edge: true});   // its body
+    p.fill(or(O(14, 7, 4.4, 3.8), Pg([[11, 6], [4, 8.5], [4, 10.5], [11, 10]])), '#F2B840', {light: '#FFD878', edge: true});   // its head and long snout
+    p.fill(Pg([[13, 3], [15, 1], [16, 4]]), '#E8A030');                                      // a little crest
+    p.fill(Pg([[19, 13], [24, 11], [23, 17]]), '#F7D06A', {edge: true});                     // the fin on its back
+    [[14, 13], [14, 16], [15, 19], [13, 10]].forEach(([x, y]) => p.flat(path([[x, y], [x + 4, y]], .4), '#C88A20'));   // its ridges
+    p.eye(14, 6);
+  },
+  '海豚': p => {   // a dolphin: leaping in an arc out of the sea, sleek and grey-blue, a beak and a smile (unlike 鲨鱼: rounder, smiling, leaping)
+    p.fill(Rc(0, 25, 32, 7), BLUE); p.flat(or(Rc(3, 27, 5, 1), Rc(20, 29, 6, 1)), '#8ACFF0');   // the sea
+    const body = or(Pg([[3, 20], [8, 12], [15, 8], [22, 8], [27, 12], [29, 17], [25, 15], [20, 13], [14, 14], [8, 18], [5, 23]]), O(17, 11, 6, 3.6));
+    p.fill(Pg([[27, 13], [31, 9], [31, 18]]), '#5E86A8', {edge: true});                     // its tail
+    p.fill(Pg([[16, 8], [19, 3], [21, 8]]), '#5E86A8', {edge: true});                        // the fin on its back
+    p.fill(body, '#7EA6C8', {light: '#A8C8E2', edge: true});
+    p.flat(and(body, (x, y) => y >= 13 && x < 22 && x > 6), '#DCE8F0');                     // its pale belly
+    p.fill(Pg([[1, 22], [4, 19.5], [5, 22]]), '#7EA6C8');                                    // its beak
+    p.eye(7, 16); p.flat(path([[3, 21], [6, 20.5]], .4), '#3A4C5C');                        // and a smile
+    p.flat(or(O(2, 24, 1.4, 1), O(7, 25, 1.2, 1)), '#EAF7FD');                              // splashes
+  },
+  '快': p => {   // fast: a cheetah dashing along, legs stretched out, speed lines behind it (unlike 跑: no monkey)
+    [[1, 13, 6], [0, 17, 7], [2, 21, 5]].forEach(([x, y, w]) => p.flat(Rc(x, y, w, 1), '#9FB8C8'));   // speed lines
+    p.fill(path([[9, 16], [5, 19], [2, 18]], 1), '#E0A848');                                  // its tail
+    p.fill(path([[11, 20], [7, 25], [5, 27]], 1.2), '#E0A848'); p.fill(path([[22, 20], [27, 25], [30, 26]], 1.2), '#E0A848');   // legs stretched out
+    p.fill(O(16, 17, 8, 3.6), '#F0BC58', {light: '#FFD88A', edge: true});                    // its long body
+    p.fill(O(25.5, 13.5, 3.6, 3.2), '#F0BC58', {light: '#FFD88A', edge: true});              // its head
+    p.fill(Pg([[24, 10], [25, 8], [26.5, 10.5]]), '#E0A848');
+    [[12, 16], [15, 15], [18, 17], [20, 15], [14, 18.5], [10, 18]].forEach(([x, y]) => p.dot(x, y, '#5A3A1A'));   // its spots
+    p.eye(26, 13); p.dot(29, 14, '#3A2414');
+    p.flat(path([[24, 15], [25.5, 17]], .4), '#3A2414');                                      // the dark line from its eye
+  },
+  '慢': p => {   // slow: a snail on the ground, its shell a spiral, a long trail behind it (unlike 乌龟: a shell like a spiral, feelers)
+    p.fill(and(O(16, 31, 15, 3), Rc(0, 29, 32, 3)), '#9BC67E');                              // the ground
+    p.flat(Rc(1, 27, 12, 1), '#C8DCE0');                                                     // its silvery trail
+    p.fill(Pg([[8, 28], [26, 28], [29, 24], [27, 22], [10, 26]]), '#C8B8A0', {edge: true});  // its body
+    p.fill(path([[26, 23], [27, 17]], .5), '#B8A890'); p.fill(path([[28, 23], [30, 18]], .5), '#B8A890');   // its feelers
+    p.dot(27, 16, '#3A2E24'); p.dot(30, 17, '#3A2E24');
+    p.fill(O(17, 18, 8, 8), '#C0783C', {light: '#E0A060', dark: '#8A4E22', edge: true});     // its shell
+    p.flat(path([[17, 18], [19, 18], [19, 20], [16, 21], [14, 18], [16, 14], [21, 15], [22, 20]], .55), '#7A4420');   // its spiral
   }
 };
+// A coral on the sand, branching up (body: its colour), its tips lighter (unlike seaweed: stiff branches)
+function coral(p, body, light, dark){
+  p.fill(and(O(16, 30, 14, 2.6), Rc(0, 28, 32, 4)), '#E8C984');                             // the sand
+  for (const b of [[[16, 29], [16, 18], [13, 11], [12, 5]], [[16, 20], [21, 13], [23, 6]], [[14, 15], [8, 10], [6, 4]], [[19, 16], [26, 12], [28, 7]], [[13, 12], [16, 6], [17, 2]]])
+    p.fill(path(b, 1.7), body, {light, dark, edge: true});
+  [[12, 5], [23, 6], [6, 4], [28, 7], [17, 2]].forEach(([x, y]) => p.fill(O(x, y, 1.6, 1.6), light));   // the tips
+}
 // A starfish lying on the sand, its five arms one colour (body), little bumps on them (unlike 星星: stars in the sky)
 function starfish(p, body, light, dark){
   p.fill(and(O(16, 30, 14, 2.6), Rc(0, 28, 32, 4)), '#E8C984');                             // the sand

@@ -13,7 +13,11 @@
 // the sand.
 // Step 3 (15 November 2026): the seaweed forest, east of the seabed, once you've found the starfish: tall seaweed where
 // sharks and jellyfish hide (鲨鱼, 水母), the turtle's warning (小心), and the octopus among the rocks (章鱼), who counts
-// its feet with you (脚, 几). The rest of the sea comes in the steps that follow.
+// its feet with you (脚, 几).
+// Step 4 (15 November 2026): the coral reef, east of the forest once you've counted the octopus's feet: coral in the colours
+// you know (珊瑚), a seahorse among it (海马), and a dolphin who wants a race (海豚), as PE's: it wins the first time, by
+// miles (快), the turtle puffing along last (慢); win one and it gives you shells. The rest of the sea comes in the steps
+// that follow.
 
 // The seabed's letters: sand, seaweed swaying up out of it, shells on the sand, and the sea's things (js/sea.js).
 // Each teaches its word as you press A at it (the sand, a shell, the seaweed). The seaweed is where the five starfish hide,
@@ -24,6 +28,13 @@ const SEA_WEED = {look:'seaweed', walk:true, word:'水草', newNote:'水草 mean
 // The seaweed forest's own letter: tall seaweed, where sharks and jellyfish hide, as wild creatures hide in long grass;
 // it parts round you as you walk through (js/sea.js).
 const FOREST_LEGEND = {'T': {look:'tallSeaweed', walk:true, word:'水草', wild:['shark', 'jelly']}};
+// The coral reef's: its coral teaches 珊瑚 (a pink one or an orange one shows its colour once you know both, as a flower does),
+// and the dolphin's race track across the sand, its start (g) and finish (f).
+const REEF_LEGEND = {
+  'C': {look:'coral', word:'珊瑚', colour:'粉色'}, 'O': {look:'coralOrange', word:'珊瑚', colour:'橙色'},
+  'F': {look:'seaFan', word:'珊瑚'}, 'M': {look:'brainCoral', word:'珊瑚'},
+  'g': {look:'raceStart', walk:true, word:'沙子'}, 'f': {look:'raceFinish', walk:true, word:'沙子'}
+};
 const SEA_LEGEND = {
   '.': SEA_FLOOR,
   'w': {...SEA_WEED, becomes:[{if:{turtle:{atLeast:2}}, to:'W'}]},
@@ -67,15 +78,19 @@ const EASTERN_SEA = {
       now:'Explore the seabed with the {海龟|sea turtle}.'},
     {id:'forest', chapter:0, name:'Part 2', title:'The seaweed forest', when:{turtle:3},
       text:'East of the seabed, the seaweed grows tall and thick, with shafts of light falling through it. Sharks hide in it, and jellyfish drift about. And somewhere among the rocks, something is watching you…',
-      now:'Explore the seaweed forest. The rest of the {海|sea} is on its way.'}
+      now:'Explore the seaweed forest.'},
+    {id:'reef', chapter:0, name:'Part 3', title:'The coral reef', when:{octopus:1},
+      text:'Further east, coral grows everywhere, pink and orange and purple, and little fish dart in and out of it. A dolphin is leaping about, looking for someone to race…',
+      now:'Race the dolphin on the coral reef. The rest of the {海|sea} is on its way.'}
   ],
 
   // The day goes round down here too: no rain under the sea, and no bed, so the night passes by itself, as in the human world.
   dayNight: {if:{}, morning:'Good morning! You wake up with your health full.', sleep:[]},
-  progress: {chapter:0, landed:0, turtle:0, starFriends:0, forest:0, octopus:0},
+  progress: {chapter:0, landed:0, turtle:0, starFriends:0, forest:0, octopus:0, dolphin:0},
   //   turtle   0 not met yet, 1 said hello (泡泡), 2 led you to the seaweed (游), 3 found all five starfish: off to the forest
   //   forest   0 not in the seaweed forest yet, 1 met your first shark there (小心, 鲨鱼)
-  //   octopus  0 hasn't counted its feet with you yet, 1 has (脚, 几)
+  //   octopus  0 hasn't counted its feet with you yet, 1 has (脚, 几): off to the coral reef
+  //   dolphin  0 hasn't raced you yet, 1 has, and won (快, 慢), 2 you've won a race
   counters: {
     seabedWords: {count:'known', words:['沙子', '贝壳', '水草'], called:{'沙子':'the sand', '贝壳':'a shell', '水草':'the seaweed'}},
     starCount: {count:'progress', key:'starFriends'}   // the starfish in the seaweed you've made friends with (of five)
@@ -96,14 +111,19 @@ const EASTERN_SEA = {
     {id:'toForest', main:true, if:{turtle:3, forest:0}, text:'Follow the {海龟|sea turtle} east, into the seaweed forest', arrow:{place:'forest'}},
     {id:'octopus', main:true, if:{forest:1, friends:{octopus:false}}, text:'Something is hiding among the {石头|rocks} in the north of the seaweed forest: go and see', arrow:[13, 2, 'forest']},
     {id:'octopus2', main:true, if:{friends:{octopus:true}, octopus:0}, text:'The {章鱼|octopus} wants to show you something', arrow:'octopus'},
-    {id:'forest', main:true, if:{octopus:1}, text:'The rest of the {海|sea} is on its way. Until then, practise your words, and fight what hides in the tall {水草|seaweed}', where:'forest'}
+    {id:'toReef', main:true, if:{octopus:1, dolphin:0, away:'reef'}, text:'Follow the {海龟|sea turtle} east, to the coral reef', arrow:{place:'reef'}},
+    {id:'dolphin', main:true, if:{octopus:1, dolphin:0, place:'reef'}, text:'Someone on the coral reef wants a race', arrow:'dolphin'},
+    {id:'dolphin2', main:true, if:{dolphin:1}, text:'Race the {海豚|dolphin} again, and win', arrow:'dolphin'},
+    {id:'reef', main:true, if:{dolphin:2}, text:'The rest of the {海|sea} is on its way. Until then, practise your words, and race the {海豚|dolphin} whenever you like', where:'reef'}
   ],
   hints: [
     {if:{turtle:0}, text:'You’re on the seabed, deep under the {海|sea}. A {海龟|sea turtle} is swimming towards you: walk up to it and press A.'},
     {if:{turtle:1}, text:'The {海龟|sea turtle} is showing you round. Things that sparkle ✨ have words: walk up to one and press A.'},
     {if:{turtle:2}, text:'Walk beside the {水草|seaweed} round the edge of the seabed: where it rustles, something is hiding. Face it and it comes out.'},
     {if:{turtle:3, forest:0}, text:'The {海龟|sea turtle} has swum east, into the seaweed forest. Walk off the {东边|east} side of the seabed to follow it.'},
-    {if:{forest:1}, text:'{鲨鱼|Sharks} and jellyfish hide in the tall seaweed, and come out as you walk through it. The {章鱼|octopus} lives among the rocks in the north. The rest of the {海|sea} is on its way.'}
+    {if:{octopus:1, dolphin:{below:2}}, text:'The {海豚|dolphin} on the coral reef wants a race: talk to it. To win, hold B as you walk, to {跑|run}, and set off as soon as it says {游|swim}.'},
+    {if:{dolphin:2}, text:'The rest of the {海|sea}, and the Dragon King’s palace, are on their way. Until then, practise your words, and race the {海豚|dolphin}.'},
+    {if:{forest:1, octopus:0}, text:'{鲨鱼|Sharks} and jellyfish hide in the tall seaweed, and come out as you walk through it. The {章鱼|octopus} lives among the rocks in the north. The rest of the {海|sea} is on its way.'}
   ],
   checklist: [
     {part:'seabed', text:'Dive from the iron {桥|bridge}, down to the seabed', done:{landed:1}},
@@ -113,11 +133,16 @@ const EASTERN_SEA = {
     {part:'forest', text:'Go into the seaweed forest', done:{forest:1}},
     {part:'forest', text:'Meet a {水母|jellyfish} in the tall seaweed', show:{forest:1}, done:{knows:'水母'}},
     {part:'forest', text:'Make friends with whoever is hiding among the {石头|rocks}', show:{forest:1}, done:{friends:{octopus:true}}},
-    {part:'forest', text:'Play the {章鱼|octopus}’s counting game', show:{friends:{octopus:true}}, done:{octopus:1}}
+    {part:'forest', text:'Play the {章鱼|octopus}’s counting game', show:{friends:{octopus:true}}, done:{octopus:1}},
+    {part:'reef', text:'Find the {珊瑚|coral} growing all over the reef', done:{knows:'珊瑚'}},
+    {part:'reef', text:'Race the {海豚|dolphin}', done:{dolphin:{atLeast:1}}},
+    {part:'reef', text:'Win a race against the {海豚|dolphin}', show:{dolphin:{atLeast:1}}, done:{dolphin:2}},
+    {part:'reef', text:'Make friends with whoever is among the {珊瑚|coral} to the north', done:{friends:{seahorse:true}}}
   ],
   bubbles: {
     turtle: [{if:{landed:1, turtle:0}, show:'!'}, {if:{turtle:1, seabedWords:3}, show:'!'}, {if:{turtle:2, starFriends:5}, show:'!'}],
-    octopus: [{if:{friends:{octopus:true}, octopus:0}, show:'!'}]
+    octopus: [{if:{friends:{octopus:true}, octopus:0}, show:'!'}],
+    dolphin: [{if:{octopus:1, dolphin:0}, show:'!'}, {if:{dolphin:1}, show:'!'}]
   },
   requests: {},
   events: [
@@ -169,7 +194,8 @@ const EASTERN_SEA = {
       music: 'sea',
       backdrop: 'sea',
       legend: FOREST_LEGEND,
-      exits: [{at:[0, 7], to:'seabed', arrive:[22, 6], facing:'left'}],
+      exits: [{at:[0, 7], to:'seabed', arrive:[22, 6], facing:'left'},
+        {at:[25, 7], to:'reef', arrive:[1, 7], facing:'right', if:{octopus:{atLeast:1}}, closed:'The seaweed grows too thick to get through here, for now.'}],
       jellies: [[5, 4], [21, 9], [12, 12], [22, 2]],
       schools: [[4, 4, 'fishBlue', .6, 1], [11, 5, 'fishYellow', .8, -1]],
       map: [
@@ -180,7 +206,7 @@ const EASTERN_SEA = {
         "wTTTT.........p......TTTTw",
         "wwTTT....TTTTTT....n..TTTw",
         "w.......TTTTTTTT.......TTw",
-        "........TTTTTTTTT........w",
+        "........TTTTTTTTT.........",
         "w..s....TTTTTTTTT....s...w",
         "wTT......TTTTTTT.........w",
         "wTTTT..........p....TTTTTw",
@@ -188,6 +214,36 @@ const EASTERN_SEA = {
         "wTTTTTTT.......O..TTTTTTTw",
         "wTTTTTTTT..F...TTTTTTTTTTw",
         "wwTTTTTTTTT...TTTTTTTTTTww",
+        "wwwwwwwwwwwwwwwwwwwwwwwwww"
+      ]
+    },
+    // The coral reef, east of the seaweed forest: coral in the colours you know all round, little fish darting through it,
+    // the seahorse among the coral to the north, and the dolphin's race track across the sand. The way on east comes later.
+    reef: {
+      name: {zh:'珊瑚礁', py:'shānhú jiāo', en:'The coral reef'},
+      onMap: [180, 42, 26, 16],
+      underwater: true,
+      music: 'sea',
+      backdrop: 'sea',
+      legend: REEF_LEGEND,
+      exits: [{at:[0, 7], to:'forest', arrive:[24, 7], facing:'left'}],
+      schools: [[3, 6, 'fishYellow', 1.1, 1], [6, 4, 'fishBlue', .9, -1], [12, 5, 'fishYellow', .7, -1]],
+      map: [
+        "wwwwwwwwwwwwwwwwwwwwwwwwww",
+        "wCC..OC..FF..CO..MC..OOCCw",
+        "wC....C.......C......C...w",
+        "wO..p.....n.......s....OCw",
+        "wF.......CC....OO.......Cw",
+        "wC...........M......p...Ow",
+        "w..s...O.............C...w",
+        ".......................s.w",
+        "wC.......................w",
+        "wO.g..........f.........Cw",
+        "wC.g..........f..........w",
+        "wF.g..........f.........Ow",
+        "wC.......................w",
+        "wOC...p....C....O...F..CCw",
+        "wwCOC..MCC..OCC..CCO..COww",
         "wwwwwwwwwwwwwwwwwwwwwwwwww"
       ]
     }
@@ -200,9 +256,11 @@ const EASTERN_SEA = {
     // the sea turtle from your shore (Area 1's friend), swimming over the sand: it greets you as you land, shows you round,
     // and swims ahead to the seaweed where the starfish hide
     {id:'turtle', place:'seabed', x:14, y:6, facing:'left', look:'海龟', flies:true, swims:true,
-      moves:[{if:{turtle:{atLeast:3}}, place:'forest', x:3, y:6, facing:'right'}, {if:{turtle:{atLeast:2}}, place:'seabed', x:5, y:12, facing:'right'}]},
+      moves:[{if:{octopus:{atLeast:1}}, place:'reef', x:2, y:6, facing:'right'}, {if:{turtle:{atLeast:3}}, place:'forest', x:3, y:6, facing:'right'}, {if:{turtle:{atLeast:2}}, place:'seabed', x:5, y:12, facing:'right'}]},
     // the octopus among the seaweed forest's rocks, once it's your friend (till then, the animal there: see animals)
-    {id:'octopus', place:'forest', x:13, y:2, facing:'down', look:'章鱼', moves:[{if:{friends:{octopus:false}}, place:'gone', x:0, y:0}]}
+    {id:'octopus', place:'forest', x:13, y:2, facing:'down', look:'章鱼', moves:[{if:{friends:{octopus:false}}, place:'gone', x:0, y:0}]},
+    // the dolphin on the coral reef, leaping about by the race track, wanting a race
+    {id:'dolphin', place:'reef', x:4, y:8, facing:'down', look:'海豚', flies:true, swims:true}
   ],
   yourNames: [{if:{}, zh:'孙悟空', py:'Sūn Wùkōng', en:'Sun Wukong (you)'}],
   sign: {name:{zh:'牌子', py:'páizi', en:'Sign'}, says:{zh:'海', en:'The sea'}, hint:''},
@@ -211,7 +269,8 @@ const EASTERN_SEA = {
   // the seabed's words, once the turtle is showing you round: the sand, a shell, the seaweed
   sparkles: [
     {word:'沙子', at:[9, 8, 'seabed'], if:{turtle:{atLeast:1}}}, {word:'贝壳', at:[10, 5, 'seabed'], if:{turtle:{atLeast:1}}},
-    {word:'水草', at:[1, 4, 'seabed'], if:{turtle:{atLeast:1}}}
+    {word:'水草', at:[1, 4, 'seabed'], if:{turtle:{atLeast:1}}},
+    {word:'珊瑚', at:[1, 8, 'reef']}
   ],
   found: {
     '泡泡': 'The sea turtle, as you landed on the seabed in your bubble of air.',
@@ -225,7 +284,12 @@ const EASTERN_SEA = {
     '水母': 'Drifting in the seaweed forest’s tall seaweed, more of them at night.',
     '章鱼': 'Among the rocks in the north of the seaweed forest, squirting ink.',
     '脚': 'The octopus in the seaweed forest, waving its eight feet.',
-    '几': 'The octopus in the seaweed forest, asking how many feet it has.'
+    '几': 'The octopus in the seaweed forest, asking how many feet it has.',
+    '珊瑚': 'All over the coral reef, pink and orange and more.',
+    '海马': 'Among the coral reef’s coral, to the north.',
+    '海豚': 'On the coral reef, wanting a race.',
+    '快': 'The sea turtle, after the dolphin won its first race: 海豚很快！',
+    '慢': 'The sea turtle, puffing along last in the dolphin’s race: 我很慢。'
   },
   practiceSentences: [
     {sentence:'我 有 几 只 脚', sentenceEn:'How many feet have I got?'}   // (几, which has no picture)
@@ -235,7 +299,9 @@ const EASTERN_SEA = {
     '贝壳': {zh:'我 有 很多 贝壳 。', en:'I have lots of shells.'},
     '水草': {zh:'海星 在 水草 里 。', en:'The starfish are in the seaweed.'},
     '水母': {zh:'海 里 有 水母 。', en:'There are jellyfish in the sea.'},
-    '章鱼': {zh:'章鱼 有 八 只 脚 。', en:'An octopus has eight feet.'}
+    '章鱼': {zh:'章鱼 有 八 只 脚 。', en:'An octopus has eight feet.'},
+    '珊瑚': {zh:'海 里 有 珊瑚 。', en:'There’s coral in the sea.'},
+    '海马': {zh:'海马 很 小 。', en:'The seahorse is small.'}
   },
   // What hides in the seaweed forest's tall seaweed (step 3): sharks, and jellyfish, more of them at night
   enemies: {
@@ -268,7 +334,10 @@ const EASTERN_SEA = {
     // the octopus among the seaweed forest's rocks, squirting ink as you meet it (inks); once it's your friend, it stays
     // there to talk to (leaves: the octopus character takes its place)
     {id:'octopus', word:'章鱼', at:[13, 2, 'forest'], leaves:true, inks:true, home:'海', chapter:0, clue:'The seaweed forest, among the rocks to the north',
-      meetNote:'An octopus pops up from behind the rocks, squirts a cloud of ink, and peeks out at you! Answer its questions to make friends.'}
+      meetNote:'An octopus pops up from behind the rocks, squirts a cloud of ink, and peeks out at you! Answer its questions to make friends.'},
+    // a seahorse among the coral reef's coral, to the north
+    {id:'seahorse', word:'海马', at:[13, 2, 'reef'], home:'珊瑚', chapter:0, clue:'The coral reef, among the coral to the north',
+      meetNote:'A seahorse bobs among the coral, its tail curled round a branch! Answer its questions to make friends.'}
   ],
   birds: {word:'鸟', note:'', colours:[]},
   hidden: [],
@@ -296,6 +365,10 @@ const EASTERN_SEA = {
     howManyFeet: {zh:'我 有 几 只 脚 ？', en:'How many feet have I got?'},
     countFeet: {zh:'这里 有 几 只 脚 ？', en:'How many feet are here?'},
     great: {zh:'太 好 了 ！', en:'Great!'},
+    letsRace: {zh:'我们 游 吧 ！', en:'Let’s swim!'},
+    startRace: {zh:'一 ， 二 ， 三 ， 游 ！', en:'One, two, three, swim!'},
+    fast: {zh:'海豚 很 快 ！', en:'The dolphin is fast!'},
+    slow: {zh:'我 很 慢 。', en:'I’m slow.'},
     play: {zh:'我们 玩 吧 ！', en:'Let’s play!'},
     count1: {zh:'一 ！', en:'One!'}, count2: {zh:'二 ！', en:'Two!'}, count3: {zh:'三 ！', en:'Three!'}, count4: {zh:'四 ！', en:'Four!'}, count5: {zh:'五 ！', en:'Five!'}
   },
@@ -324,9 +397,33 @@ const EASTERN_SEA = {
         {say:'eightFeet', teach:'脚'}, {newWord:'脚', note:'脚 means foot. The octopus calls its eight arms its feet!'},
         {say:'howManyFeet', teach:'几'}, {newWord:'几', note:'几 means how many, when it’s a few: 几只脚？ How many feet? You answer with a number: 八只脚, eight feet.'},
         {countGame:'feet'}, {set:{octopus:1}},
-        {message:'To be continued: the coral reef, and the rest of the sea, are on their way!'}]},
+        {message:'The sea turtle swims on east, to the coral reef. Follow it!'}]},
       {do:[{countGame:'feet'}]}
+    ],
+    // the dolphin: its name as you meet it (海豚), then a race, as PE's, which it wins by miles the first time; the turtle,
+    // puffing along last, says why (快, 慢); then race it again, and win (the first win: shells)
+    dolphin: [
+      {if:{dolphin:0}, do:[
+        {newWord:'海豚', met:true, note:'海豚 means dolphin. It’s the fastest swimmer in the sea, and it wants a race!'},
+        {say:'letsRace'}, {race:'first'},
+        {say:'fast', by:'turtle', teach:'快'}, {newWord:'快', note:'快 means fast: 海豚很快！ The dolphin is fast!'},
+        {say:'slow', by:'turtle', teach:'慢'}, {newWord:'慢', note:'慢 means slow: 我很慢。 The turtle is slow!'},
+        {set:{dolphin:1}},
+        {if:{knows:'跑'}, message:'Race the dolphin again! Hold B as you walk, to run, and set off as soon as it says {游|swim}.'},
+        {if:{new:'跑'}, message:'Race the dolphin again! Set off as soon as it says {游|swim}.'}]},
+      {if:{dolphin:1}, do:[{say:'letsRace'}, {race:'again', win:[{set:{dolphin:2}}, {message:'To be continued: the trench, and the rest of the sea, are on their way!'}]}]},
+      {do:[{say:'letsRace'}, {race:'again'}]}
     ]
+  },
+  // The dolphin's races on the coral reef (the race step, js/pe.js): you in the middle lane, the dolphin above, the turtle
+  // below (slow), from the pebbles to the line of shells. The first time the dolphin is far too fast; after that, it's
+  // faster than you walk and slower than you run (and slower than you walk, if you can't run yet), and your first win
+  // earns shells.
+  races: {
+    first: {word:'游', you:[2, 10, 'right'], racers:{dolphin:[2, 9, 120], turtle:[2, 11, 450]}, to:14, start:'startRace',
+      go:'Race to the line of shells! Hold B as you walk, to run.', won:'You won!', lost:'The dolphin is there already, almost before you’ve started!'},
+    again: {word:'游', you:[2, 10, 'right'], racers:{dolphin:[2, 9], turtle:[2, 11, 450]}, to:14, ms:230, walkMs:320, start:'startRace',
+      go:'Race to the line of shells! Hold B as you walk, to run.', won:'You beat the dolphin!', lost:'The dolphin won this time. Set off as soon as it says {游|swim}!', prize:5, wonKey:'dolphinWon'}
   },
   // The octopus waving some of its feet out from behind its rock, for you to count (the countGame step)
   countGames: {

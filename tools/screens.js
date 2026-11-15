@@ -497,6 +497,8 @@ SAVES.a3forestIn = {...SAVES.c2dive, area: 3, w: {...SAVES.c2dive.w, ...knows(1,
   areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 1, weapon: '刀', turtle: 3, starFriends: 5, forest: 0}}, pos: {place: 'forest', x: 2, y: 7, dir: 'right'}};   // (coming into the seaweed forest, the turtle by you)
 SAVES.a3forest = {...SAVES.a3forestIn, w: {...SAVES.a3forestIn.w, ...knows(1, A3_FOREST_WORDS)}, areas: {...SAVES.a3forestIn.areas, 3: {...SAVES.a3forestIn.areas[3], forest: 1}}, pos: {place: 'forest', x: 9, y: 4, dir: 'down'}};   // (in it, the octopus up among the rocks)
 SAVES.a3octopus = {...SAVES.a3forest, w: {...SAVES.a3forest.w, ...knows(1, ['章鱼', '脚', '几'])}, friends: [...SAVES.a3forest.friends, 'octopus'], pos: {place: 'forest', x: 13, y: 3, dir: 'up'}};   // (the octopus your friend)
+SAVES.a3reef = {...SAVES.a3octopus, areas: {...SAVES.a3octopus.areas, 3: {...SAVES.a3octopus.areas[3], part: 2, octopus: 1}}, pos: {place: 'reef', x: 6, y: 7, dir: 'down'}};   // (on the coral reef, the dolphin by its race track)
+SAVES.a3raced = {...SAVES.a3reef, w: {...SAVES.a3reef.w, ...knows(1, ['海豚'])}, areas: {...SAVES.a3reef.areas, 3: {...SAVES.a3reef.areas[3], dolphin: 1}}, pos: {place: 'reef', x: 14, y: 10, dir: 'left'}};   // (the first race over)
 SAVES.a3seabed = {...SAVES.c2dive, area: 3, areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀'}}, pos: {place: 'seabed', x: 11, y: 6, dir: 'down'}};   // (home in autumn: on the hillside's lookout)
 SAVES.c2south = {...SAVES.c2end, pos: {place: 'ffmSouthSlope', x: 9, y: 15, dir: 'up'}};   // (and the south slope's)
 
@@ -1915,6 +1917,15 @@ SCREENS.push(
     play(); await wait(100); battle('shark'); await wait(1200); }},
   {id: 'a3-octopus', title: 'The octopus’s feet', save: 'a3octopus', why: 'The octopus, your friend: 我有八只脚！ (脚), 我有几只脚？ (几), then a counting game on its feet, on the sand.', run: async () => {
     play(); await wait(100); countQ({who: 'octopus', thing: AREA.countGames.feet.thing, n: 3}); await wait(500); }},
+  {id: 'a3-reef', title: 'The coral reef', save: 'a3reef', why: 'Coral in the colours you know all round (pink, orange, purple), little fish darting through it, the seahorse among the coral to the north, and the dolphin (with a !) by its race track: pebbles at the start, a line of shells at the finish.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'a3-fast', title: '海豚很快！', save: 'a3raced', why: 'After the dolphin wins its first race by miles, the turtle, puffing in last: 海豚很快！ (快, fast), then 我很慢。 (慢, slow).', run: async () => {
+    play(); await wait(100); for (const [id, x, y] of [['dolphin', 14, 9], ['turtle', 14, 11]]){ const n = ALL_NPCS.find(c => c.id === id); Object.assign(n, {place: 'reef', x, y, dir: 'left', mv: null}); inClass.add(id); }
+    NPCS = ALL_NPCS.filter(n => n.place === PLACE); showDialog(speaker('turtle'), L.fast, {teach: '快'}); await wait(500); }},   // (the racers still at the finish beside you)
+  {id: 'a3-race', title: 'The dolphin’s race', save: 'a3raced', why: 'A race outside a lesson, as PE’s: you in the middle lane, the dolphin above, the turtle below, from the pebbles to the line of shells. Hold B as you walk, to run.', run: async () => {
+    S.pos = {place: 'reef', x: 2, y: 10, dir: 'right'}; placePlayer(); play(); await wait(100);
+    for (const [id, x, y] of [['dolphin', 8, 9], ['turtle', 4, 11]]){ const n = ALL_NPCS.find(c => c.id === id); Object.assign(n, {place: 'reef', x, y, dir: 'right', mv: null}); inClass.add(id); }
+    NPCS = ALL_NPCS.filter(n => n.place === PLACE); Object.assign(pl, {x: 6, px: 6 * T}); race = {to: 14}; await wait(500); }},
   {id: 'a3-shells', title: 'Your shells are 贝壳', save: 'a3stars', why: 'Once you know 贝壳, your money says so: 🐚 7 贝壳, in your bag, on the Tasks page and in the shop.', run: async () => {
     play(); await wait(100); pressBag(); await wait(400); }}
 );

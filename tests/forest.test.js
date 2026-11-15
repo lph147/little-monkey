@@ -40,7 +40,8 @@ test('the way east from the seabed opens once the starfish are found, and the se
   const g = game({}, {pos: {place: 'seabed', x: 22, y: 6, dir: 'right'}});
   assert.equal(g.run(`isOpen(${way})`), true);
   assert.deepEqual(get(g, 'getTasks().map(t => t.id)'), ['toForest']);
-  assert.deepEqual(get(g, 'ALL_NPCS.find(n => n.id === "turtle").moves[0]'), {if: {turtle: {atLeast: 3}}, place: 'forest', x: 3, y: 6, facing: 'right'});
+  assert.deepEqual(get(g, 'ALL_NPCS.find(n => n.id === "turtle").moves[1]'), {if: {turtle: {atLeast: 3}}, place: 'forest', x: 3, y: 6, facing: 'right'});   // (after the reef's, step 4)
+  assert.equal(get(g, '(() => { placeCharacters(); return ALL_NPCS.find(n => n.id === "turtle").place; })()'), 'forest', 'into the forest');
   assert.equal(get(g, 'PLACES.forest.name.zh'), '水草林');
 });
 
@@ -93,7 +94,7 @@ test('the octopus among the rocks: ink as you meet it, then 脚 and 几, and cou
   assert.ok(told.includes('card: 脚') && told.includes('card: 几'), 'one word, then the next');
   assert.ok(get(g, '__counted') >= 3, 'counting its feet');
   assert.equal(p(g, 'octopus'), 1);
-  assert.ok(told.some(n => /To be continued/.test(n)));
+  assert.ok(told.some(n => /swims on east, to the coral reef/.test(n)), 'and the turtle swims on (step 4: tests/reef.test.js)');
 });
 
 test('the forest drawn, by day and at night: tall seaweed, jellyfish drifting (glowing at night), the octopus’s ink', () => {

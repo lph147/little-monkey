@@ -396,6 +396,17 @@ const MAP_SPRITES = {
   '章鱼': {   // octopus, facing you, its arms curling out under it (among the seaweed forest's rocks): medium, 14 pixels, drawn with the shape kit
     palette: {a:'#5A3B2B', b:'#472114', c:'#F49A72', d:'#B84A2A', e:'#E06A44', f:'#F4A882', g:'#FFFFFF', h:'#1E1A16', i:'#361D13', j:'#823D27', k:'#55382D', l:'#E49077', m:'#A84B2F', n:'#422216'},
     rows: ["................","......aaab......",".....acccdb.....","....aceeefdb....","...aceefeeedb...","...aceeeeeedb...","..aceeeeeeeedb..","..bdeegeeegedb..","...aceheeehdb...","...ijeeeeeeji...","..klmjeeeejmmn..",".klmkljjjjmnmmn.",".nmnnmklmnmnnmn.",".mmnmmklmklmnmm.",".nn.nmmmmmmn.nn.","................"]
+  },
+  // the coral reef's (step 4)
+  '海马': {   // seahorse, upright, facing left (among the coral reef's coral): small, 12 pixels, lifted 3, drawn with the shape kit
+    faces: 'left',
+    palette: {a:'#5B4B2E', b:'#493817', c:'#F6CD79', d:'#BD9032', e:'#F2B840', f:'#1E1A16', g:'#8C6B25', h:'#C88A20', i:'#4C3611', j:'#4A3D21', k:'#5E4F2D', l:'#FFD878', m:'#C1A253', n:'#F9DE97', o:'#463213', p:'#59462A', q:'#EFBD6E', r:'#B57D25', s:'#E8A030'},
+    rows: ["................","......aab.......",".....accdb......","...bacefdb......","..bdddggghij....","...bbkleemnmj...",".....kleehmmj...",".....kleehij....",".....iheehio....","......ihgpqro...",".......pqqsro...",".......orssro...","........orro....","................","................","................"]
+  },
+  '海豚': {   // dolphin, side on, head to the left (on the coral reef, racing you): medium, 16 pixels, drawn with the shape kit
+    faces: 'left',
+    palette: {a:'#242B31', b:'#496983', c:'#3A4045', d:'#8EAAC2', e:'#424A4F', f:'#2C3339', g:'#A8C8E2', h:'#496074', i:'#62819C', j:'#7EA6C8', k:'#5E86A8', l:'#353F47', m:'#1E1A16', n:'#DCE8F0', o:'#535454', p:'#24282C'},
+    rows: ["................","................","................","................","........a.......",".......aba......",".......cdba....a",".....eabbbaef.ab","...eegghhhggicdb","..eggjjjjjjjjhkb","legmjjjjjjjjihbb","jjjnnnnnnnnnopab","lfinnnnnoooo...a","..fooooo........","................","................"]
   }
 };
 // A water buffalo (Area 2, in the fields: not a word of its own): the cow's drawing, dark slate grey all over, with no

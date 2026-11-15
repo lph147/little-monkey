@@ -304,7 +304,13 @@ const WORD_BANK = {
   '鲨鱼': {py:'shāyú', en:'shark', pic:'🦈', area:3, category:'animals', alike:['鱼']},   // (hiding in the seaweed forest's tall seaweed: a wild creature to fight)
   '水母': {py:'shuǐmǔ', en:'jellyfish', pic:'🪼', area:3, category:'animals', alike:['泡泡']},   // (in the tall seaweed too, more at night, glowing)
   '章鱼': {py:'zhāngyú', en:'octopus', pic:'🐙', area:3, category:'animals'},   // (among the seaweed forest's rocks, squirting ink)
-  '脚': {py:'jiǎo', en:'foot', pic:'🦶', area:3, category:'people', alike:['鞋']},   // (the octopus: 我有八只脚！)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
+  '脚': {py:'jiǎo', en:'foot', pic:'🦶', area:3, category:'people', alike:['鞋']},   // (the octopus: 我有八只脚！)
+  // the coral reef's
+  '珊瑚': {py:'shānhú', en:'coral', pic:'🪸', area:3, category:'nature', alike:['水草']},   // (all over the coral reef, pink, orange and more: press A at one)
+  '海马': {py:'hǎimǎ', en:'seahorse', pic:'🌊🐴', area:3, category:'animals', alike:['马']},   // (among the coral reef's coral: a friend)
+  '海豚': {py:'hǎitún', en:'dolphin', pic:'🐬', area:3, category:'animals', alike:['鲨鱼']},   // (on the coral reef, wanting a race)
+  '快': {py:'kuài', en:'fast', pic:'🐆', area:3, category:'describing', alike:['跑']},   // (the sea turtle, after the dolphin's race: 海豚很快！)
+  '慢': {py:'màn', en:'slow', pic:'🐌', area:3, category:'describing', alike:['乌龟']},   // (and the sea turtle, last: 我很慢。)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
 
   // Heard in sentences
   '换': {py:'huàn', en:'to change, to swap'},
@@ -516,6 +522,7 @@ const MADE = {
   '灯笼': {parts:[['灯', 'dēng', 'lamp'], ['笼', 'long', 'cage']]},   // (a lamp in a cage of bamboo and paper)
   '水草': {parts:[['水', 'shuǐ', 'water'], ['草', 'cǎo', 'grass']]},   // (grass that grows in the water)
   '海星': {parts:[['海', 'hǎi', 'sea'], ['星', 'xīng', 'star', '星星']]},   // (a star of the sea)
+  '海马': {parts:[['海', 'hǎi', 'sea'], ['马', 'mǎ', 'horse']]},   // (its head looks like a horse's)
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},
   '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not', '不客气'], ['要', 'yào', 'to want']]},

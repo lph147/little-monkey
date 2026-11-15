@@ -30,9 +30,11 @@ function runStep(n, x, y, ms){
 // it with his line (start: teaching its word, then its card), and it's on: hold B to run. Your classmates (racers, each
 // at the start of its lane) set off when you do, a step every ms, faster than you walk and slower than you run; the
 // first to the finish (to) wins. He says end, however you did; the first time you win, there's a prize of shells. Gives
-// whether you won.
+// whether you won. A racer can have its own speed (racers: [x, y, ms]), such as the sea turtle, slow; and a race for one
+// who can't run yet (the area's running) can have its racers slower (walkMs), so it can still be won.
 async function runRace(s, r, face, again){
-  const racers = Object.entries(r.racers).map(([id, [x, y]]) => ({n:ALL_NPCS.find(c => c.id === id), x, y})).filter(o => o.n);
+  const canRun = !AREA.running || matches(AREA.running);
+  const racers = Object.entries(r.racers).map(([id, [x, y, ms]]) => ({n:ALL_NPCS.find(c => c.id === id), x, y, ms:ms || (canRun ? r.ms : r.walkMs || r.ms)})).filter(o => o.n);
   standClass(Object.fromEntries(racers.map(o => [o.n.id, [o.x, o.y, 'right']])));
   SFX.drum(); await sleep(250); SFX.drum();
   await showDialog(face, L[r.start], again ? {} : {teach:r.word});
@@ -43,18 +45,31 @@ async function runRace(s, r, face, again){
   let place = 0, you = 0;   // (the order you all get there in)
   try {
     for (let t = 0; t < RACE_WAIT && pl.x === from && !pl.mv; t += 30) await sleep(30);   // (till you set off)
-    const running = racers.map(async o => { while (o.n.x < r.to){ runStep(o.n, o.n.x + 1, o.n.y, r.ms); await sleep(r.ms); } o.at = ++place; });
+    const running = racers.map(async o => { while (o.n.x < r.to){ runStep(o.n, o.n.x + 1, o.n.y, o.ms); await sleep(o.ms); } o.at = ++place; });
     while (!(pl.x >= r.to && !pl.mv)) await sleep(30);
     you = ++place; busy = true; held = null; queued = null; race = null;   // (you're there: the race is over for you)
     await Promise.all(running);   // (and they run on to the finish)
   } finally { busy = true; race = null; }
   const won = you === 1;
   closeMessage();
-  await showDialog(face, L[r.end]);
-  if (won && !here().raceWon){ here().raceWon = 1; earn(r.prize); save(); SFX.fanfare(); await showNarration(`${fill(r.won)} +${r.prize} ${MONEY()}`); }
-  else await showNarration(fill(won ? r.won : r.lost));
+  if (r.end) await showDialog(face, L[r.end]);
+  const key = r.wonKey || 'raceWon';   // (the first win's prize, kept in the save: PE's raceWon, or the race's own)
+  if (won && r.prize && !here()[key]){ here()[key] = 1; earn(r.prize); save(); SFX.fanfare(); await showNarration(`${fill(r.won)} +${r.prize} ${MONEY()}`); }
+  else if (won ? r.won : r.lost) await showNarration(fill(won ? r.won : r.lost));
   return won;
 }
+// A race outside a lesson (the race step: one of the area's races, by its id), such as the dolphin's on the coral reef
+// (decided 15 November 2026, the Eastern Sea's plan): you to its start (you), the racers to theirs, then the race as PE's,
+// started by the one you're talking to; then its steps, as you won or lost, the racers still at the finish beside you (such
+// as the turtle, puffing in last: 我很慢。), going back where they belong once the conversation's over (placeCharacters).
+STEPS.race = async (s, who) => {
+  const r = AREA.races[s.race];
+  await moveClass(PLACE, r.you);
+  let won = false;
+  try { won = await runRace({}, r, speaker(who), lvl(r.word) >= 1); } finally { inClass.clear(); }
+  await runSteps((won ? s.win : s.lose) || [], who);
+};
+Object.assign(STEP_OPTIONS, {race:['win', 'lose']});
 // Jogging round the track (j; again: nothing taught): the teacher says start (teaching its word, then its card), and leads
 // the class once round the loop (its corners, in order), a step every ms: you behind him, your classmates behind you
 // (the race's racers); then he says end.

@@ -1434,6 +1434,10 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 我有几只脚？ | wǒ yǒu jǐ zhī jiǎo? | How many feet have I got? | 章鱼 (octopus) |  |
 | 这里有几只脚？ | zhèlǐ yǒu jǐ zhī jiǎo? | How many feet are here? | 章鱼 (octopus) |  |
 | 太好了！ | tài hǎo le! | Great! | 章鱼 (octopus) |  |
+| 我们游吧！ | wǒmen yóu ba! | Let’s swim! | 海豚 (dolphin) |  |
+| 一，二，三，游！ | yī, èr, sān, yóu! | One, two, three, swim! |  |  |
+| 海豚很快！ | hǎitún hěn kuài! | The dolphin is fast! | 海龟 (sea turtle) |  |
+| 我很慢。 | wǒ hěn màn. | I’m slow. | 海龟 (sea turtle) |  |
 | 我们玩吧！ | wǒmen wán ba! | Let’s play! |  |  |
 | 一！ | yī! | One! |  |  |
 | 二！ | èr! | Two! |  |  |
@@ -1466,6 +1470,8 @@ What a card shows when you pick a flower for the big monkey (a red flower, and s
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
+| 粉色的珊瑚 | fěnsè de shānhú | A pink coral |  |
+| 橙色的珊瑚 | chéngsè de shānhú | An orange coral |  |
 | 红色的海星 | hóngsè de hǎixīng | A red starfish |  |
 | 橙色的海星 | chéngsè de hǎixīng | An orange starfish |  |
 | 黄色的海星 | huángsè de hǎixīng | A yellow starfish |  |
@@ -1489,6 +1495,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 海星在水草里。 | hǎixīng zài shuǐcǎo lǐ. | The starfish are in the seaweed. | 水草 |  |
 | 海里有水母。 | hǎi lǐ yǒu shuǐmǔ. | There are jellyfish in the sea. | 水母 |  |
 | 章鱼有八只脚。 | zhāngyú yǒu bā zhī jiǎo. | An octopus has eight feet. | 章鱼 |  |
+| 海里有珊瑚。 | hǎi lǐ yǒu shānhú. | There’s coral in the sea. | 珊瑚 |  |
+| 海马很小。 | hǎimǎ hěn xiǎo. | The seahorse is small. | 海马 |  |
 
 ### Scene: the dive
 
@@ -1506,6 +1514,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 东海 | Dōng Hǎi | The Eastern Sea |  |
 | 海底 | hǎidǐ | The seabed |  |
 | 水草林 | shuǐcǎo lín | The seaweed forest |  |
+| 珊瑚礁 | shānhú jiāo | The coral reef |  |
 
 ### Words to collect
 
@@ -1522,6 +1531,11 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 水母 | shuǐmǔ | jellyfish |  |
 | 章鱼 | zhāngyú | octopus |  |
 | 脚 | jiǎo | foot |  |
+| 珊瑚 | shānhú | coral |  |
+| 海马 | hǎimǎ | seahorse |  |
+| 海豚 | hǎitún | dolphin |  |
+| 快 | kuài | fast |  |
+| 慢 | màn | slow |  |
 | 几 | jǐ | how many |  |
 
 ### How words are made
@@ -1534,6 +1548,7 @@ simply put. A part's pinyin is as it's said in the word.
 | --- | --- | --- | --- |
 | 水草 | shuǐcǎo | 水 shuǐ (water) + 草 cǎo (grass) = 水草 (seaweed) |  |
 | 海星 | hǎixīng | 海 hǎi (sea) + 星 xīng (star) = 海星 (starfish) |  |
+| 海马 | hǎimǎ | 海 hǎi (sea) + 马 mǎ (horse) = 海马 (seahorse) |  |
 
 ### Big and little wild creatures
 
@@ -1903,9 +1918,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 美猴王坐木筏走了。 | Měi Hóuwáng zuò mùfá zǒu le. | The Monkey King sailed away on his raft. | New on 29 October 2026 (in the game), the end of chapter 1: The scene of you sailing away, the troop waving from the shore, after 再见！ and 我们等你！ |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 | 这是我的地图。 | zhè shì wǒ de dìtú. | This is my map. | New on 31 October 2026 (in the game): the example on 地图 (dìtú, map)’s page. The big monkey gives you a map in chapter 1, as he sends you up to the pine wood, and you catch 地图 the first time you open it. Its How it’s made card says 地 (dì, ground) + 图 (tú, picture) = 地图, a picture of the ground: is that a fair way to explain it? |  |
-| 一，二，三，游！ | Yī, èr, sān, yóu! | One, two, three, swim! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the dolphin, starting a race (as the PE teacher’s 一，二，三，跑！). Is it natural? |  |
-| 海豚很快！ | Hǎitún hěn kuài! | The dolphin is fast! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the sea turtle, after the race, teaching 快. Is it natural? |  |
-| 我很慢。 | Wǒ hěn màn. | I’m slow. | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the sea turtle, puffing along behind, teaching 慢. Is it natural? |  |
 | 这里很深！ | Zhèlǐ hěn shēn! | It’s deep here! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the edge of the trench, teaching 深. Is it natural? |  |
 | 下面有光！ | Xiàmiàn yǒu guāng! | There’s light down there! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the palace’s glow at the bottom of the trench, teaching 光. Is it natural? |  |
 | 十，二十，三十……一百！ | Shí, èrshí, sānshí… yìbǎi! | Ten, twenty, thirty… a hundred! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the crab general, counting the shrimp soldiers in rows of ten, teaching 百. Is it natural? |  |
