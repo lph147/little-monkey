@@ -2,8 +2,10 @@
 
 const $ = s => document.querySelector(s);
 const T = 16, STEP = 270, TURN_DELAY = 130;
-// The screen shows 15 columns and 10 rows of the map: the shape of a Game Boy Advance's screen.
-const VW = 15, VH = 10;
+// The screen shows 15 columns and 10 rows of the map: the shape of a Game Boy Advance's screen. Full screen (Settings'
+// Controls, decided 15 November 2026, to try it), it shows as many columns (or rows) as fill the phone, and 15 by 10
+// again for the title screen and the scenes, drawn for that shape: setView in js/art.js, from fit() in js/main.js.
+let VW = 15, VH = 10;
 
 /* ================= DATA ================= */
 // The rest of the engine uses these names. They are filled in from the content files.

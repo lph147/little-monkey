@@ -1592,3 +1592,75 @@ button.tipsrow{cursor:pointer}
   background:repeating-linear-gradient(90deg,#C8826C 0 3px,transparent 3px 6px) center/100% 1px no-repeat,
     repeating-linear-gradient(0deg,#C8826C 0 3px,transparent 3px 6px) center/1px 100% no-repeat,
     rgba(255,250,232,.55)}
+
+/* Full screen (Settings' Controls, decided 15 November 2026, to try it after a phone's advert showed a Game Boy game played
+   that way): the map edge to edge, the same buttons over it in its bottom corners, the D-pad on the left and A and B on the
+   right, with Tasks and Menu, and Bag and Map, small above them. fit() in js/main.js sizes the screen, and for the title
+   screen and the scenes (drawn for 15 by 10) the box between the buttons (#screenWrap's inline size); cards, the speech
+   box and messages sit between the two clusters (each SIDE_WING, 150px, besides the safe area), so nothing you read is
+   under a thumb. While someone's talking, Tasks, Menu, Bag and Map go, the D-pad and B fade and A glows.
+   html.overlay: the buttons in the game's colours, see-through; html.glass too: white glass, as in the advert. */
+.overlay{--safeL:env(safe-area-inset-left,0px);--safeR:env(safe-area-inset-right,0px);--safeT:env(safe-area-inset-top,0px);--safeB:env(safe-area-inset-bottom,0px);
+  --wingL:calc(var(--safeL) + 150px);--wingR:calc(var(--safeR) + 150px);--void:#1E2B26;
+  padding-left:var(--safeL);padding-right:var(--safeR)}   /* (the page's padding is the safe area all round: fitFull reads it) */
+.overlay body{background:var(--void)}
+.overlay .app{position:fixed;inset:0;padding:0;min-height:0;display:block;background:var(--void)}
+.overlay .app[hidden]{display:none}
+.overlay .console{position:absolute;inset:0;display:block;width:auto;background:none;border:0;border-radius:0;padding:0}
+.overlay .display{position:absolute;inset:0}
+.overlay .screen{position:absolute;margin:0;padding:0;border-radius:0;max-width:none;background:var(--void)}
+.overlay #screen{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:0}
+.overlay .titlecard{top:0;bottom:0;left:0}
+.overlay .titlecard:has(.slots){right:0}
+.overlay .controls{display:block}
+.overlay :is(.power,.keys){display:none}
+.overlay .fps{position:absolute;left:50%;top:calc(var(--safeT) + 4px);transform:translateX(-50%);margin:0;z-index:30;color:#FFF6E4;text-shadow:0 1px 2px #000;pointer-events:none}
+/* the buttons, where they go */
+.overlay .dpad{position:absolute;left:calc(var(--safeL) + 12px);bottom:calc(var(--safeB) + 14px);margin:0;z-index:25}
+.overlay .ab{position:absolute;right:calc(var(--safeR) + 14px);bottom:calc(var(--safeB) + 14px);margin:0;transform:none;z-index:25}
+.overlay .ablabel{transform:none;color:#FFF7E4;text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 4px rgba(0,0,0,.7)}
+.overlay .ss{position:absolute;left:calc(var(--safeL) + 16px);bottom:calc(var(--safeB) + 162px);margin:0;gap:8px;z-index:25}
+.overlay .ss.bm{left:auto;right:calc(var(--safeR) + 16px)}
+.overlay .ss .sswrap{position:relative;transform:none}
+.overlay .pill{width:58px;height:22px;border-radius:11px;box-shadow:none}
+.overlay .sslabel{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:600 10.5px var(--pixel);letter-spacing:.08em;pointer-events:none}
+.overlay .console:has(#talk:not([hidden])) .ss{visibility:hidden}
+.overlay .console:has(#talk:not([hidden])) :is(.dpad,.ab .abwrap:first-child){opacity:.35}
+.overlay .console:has(#talk:not([hidden])) #btnA{box-shadow:0 0 0 3px rgba(217,162,30,.95),0 2px 6px rgba(0,0,0,.25)}
+/* the game's colours, see-through: the D-pad a dark cross outlined in cream, A red and B blue (as their badges on cards) */
+.overlay .dpad button,.overlay .dpad .c{background:rgba(30,43,38,.52);border:0 solid rgba(247,236,210,.62)}
+.overlay .dpad .u{border-width:1.5px 1.5px 0}
+.overlay .dpad .d{border-width:0 1.5px 1.5px}
+.overlay .dpad .l{border-width:1.5px 0 1.5px 1.5px}
+.overlay .dpad .r{border-width:1.5px 1.5px 1.5px 0}
+.overlay .dpad .u::before{border-bottom-color:rgba(247,236,210,.95)}
+.overlay .dpad .d::before{border-top-color:rgba(247,236,210,.95)}
+.overlay .dpad .l::before{border-right-color:rgba(247,236,210,.95)}
+.overlay .dpad .r::before{border-left-color:rgba(247,236,210,.95)}
+.overlay .round{border:1.5px solid rgba(255,236,214,.62);color:#FFF6E4;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.overlay #btnA{background:rgba(184,50,58,.76)}
+.overlay #btnB{background:rgba(61,106,147,.76)}
+.overlay .round.ready{box-shadow:0 2px 6px rgba(0,0,0,.25),0 0 0 3px var(--gold)}
+.overlay .round:active,.overlay .round.held{box-shadow:0 0 3px rgba(0,0,0,.25)}
+.overlay .pill{background:rgba(30,43,38,.6);border:1px solid rgba(247,236,210,.5)}
+.overlay .sslabel{color:#F7ECD2}
+/* glass, as in the advert: white and see-through, dark grey arrows and letters */
+.glass .dpad button,.glass .dpad .c{background:rgba(255,255,255,.36);border-color:rgba(255,255,255,.72)}
+.glass .dpad .u::before{border-bottom-color:rgba(40,46,44,.6)}
+.glass .dpad .d::before{border-top-color:rgba(40,46,44,.6)}
+.glass .dpad .l::before{border-right-color:rgba(40,46,44,.6)}
+.glass .dpad .r::before{border-left-color:rgba(40,46,44,.6)}
+.glass .round,.glass #btnA,.glass #btnB{background:rgba(255,255,255,.36);border:2.5px solid rgba(60,66,64,.4);color:rgba(40,46,44,.74);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);box-shadow:none}
+.glass #btnA.ready{box-shadow:0 0 0 3px var(--gold)}
+.glass .pill{background:rgba(255,255,255,.36);border-color:rgba(60,66,64,.32)}
+.glass .sslabel{color:rgba(40,46,44,.82)}
+/* what's on the screen, clear of the buttons and the phone's edges */
+.overlay .talk{left:calc(var(--wingL) + 4px);right:calc(var(--wingR) + 4px);bottom:calc(var(--safeB) + 8px);max-height:calc(100% - var(--safeT) - var(--safeB) - 2.5rem)}
+.overlay .talk.top{left:calc(var(--safeL) + 10px);right:calc(var(--safeR) + 10px);top:calc(var(--safeT) + 8px);bottom:auto}
+.overlay .saybox{left:calc(var(--wingL) + 4px);right:calc(var(--wingR) + 4px);bottom:calc(var(--safeB) + 12px)}
+.overlay .saybox.top{left:calc(var(--safeL) + 14px);right:calc(var(--safeR) + 14px);top:calc(var(--safeT) + 10px);bottom:auto}
+.overlay .hud{left:calc(var(--safeL) + 12px);top:calc(var(--safeT) + 10px)}
+.overlay .screen:has(> .talk.top:not([hidden])) > .hud{top:auto;left:50%;bottom:calc(var(--safeB) + 10px);transform:translateX(-50%)}
+.overlay .sky{right:calc(var(--safeR) + 14px);top:calc(var(--safeT) + 10px)}
+.overlay #placeName{right:calc(var(--safeR) + 12px);top:calc(var(--safeT) + 12px)}
+.overlay .modal{inset:0;border-radius:0;padding:calc(var(--safeT) + 8px) calc(var(--wingR) + 4px) calc(var(--safeB) + 8px) calc(var(--wingL) + 4px)}

@@ -290,6 +290,7 @@ function waterInView(cx, cy, sh){   // the water in view, a rectangle a square, 
 function throughWater(cx, cy, sh, a, paint){
   const pools = waterInView(cx, cy, sh); if (!pools.length) return;
   const g = skyG, W = VW*T, H = VH*T;
+  if (skyCanvas.width !== W || skyCanvas.height !== H){ skyCanvas.width = W; skyCanvas.height = H; }   // (the screen's size changed: setView, js/art.js)
   g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.clearRect(0, 0, W, H);
   g.save(); g.beginPath(); for (const [x, y, w, h] of pools) g.rect(x, y, w, h); g.clip();   // the water: its window
   paint(g, pools);

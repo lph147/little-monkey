@@ -1266,8 +1266,10 @@ function drawGloom(cx, cy, sh, now){
 }
 let mistCanvas = null;
 function mistStrip(){   // soft wisps of mist, in a strip twice the screen's width, to drift across it
-  if (mistCanvas) return mistCanvas;
-  const W = 2*VW*T, H = VH*T; mistCanvas = document.createElement('canvas'); mistCanvas.width = W; mistCanvas.height = H;
+  const W = 2*VW*T, H = VH*T;
+  if (mistCanvas && mistCanvas.width === W && mistCanvas.height === H) return mistCanvas;   // (drawn again if the screen's size changed: setView, js/art.js)
+  if (!mistCanvas) mistCanvas = document.createElement('canvas');
+  mistCanvas.width = W; mistCanvas.height = H;
   const g = mistCanvas.getContext('2d');
   for (let k = 0; k < 24; k++){
     const mx = (k * 97) % W, my = (k * 53) % H, rx = 30 + (k * 13) % 40, ry = 6 + (k * 7) % 8;

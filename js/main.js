@@ -5,13 +5,35 @@
 // the left, A and B, with Bag and Map, on the right. Each side is SIDE_WING wide (as .console is in css/game.css), and the
 // screen is as big as fits between them. When the window is taller than it is wide (a phone held
 // upright), a card asks you to turn it, and the game waits.
+// Or full screen (Settings' Controls; decided 15 November 2026, to try it, after a phone's advert showed a Game Boy game
+// played that way): the map edge to edge, the same buttons over it in its bottom corners (fitFull, below).
 const SIDE_WING = 150;
 let upright = false;
+// Controls: 'console', as a Game Boy Advance, as it always was; 'overlay', full screen, the buttons over the map in the
+// game's colours; 'glass', the same with see-through white buttons. Kept for this device (KEY-controls), not for each
+// game: it's about the phone you're holding, and the title screen needs it before a game is chosen.
+const CONTROLS = ['console', 'overlay', 'glass'], CONTROLS_KEY = KEY + '-controls';
+let controlsNow = (() => { try { const c = localStorage.getItem(CONTROLS_KEY); return CONTROLS.includes(c) ? c : 'console'; } catch(e) { return 'console'; } })();
+const fullScreen = () => controlsNow !== 'console';
+function setControls(c){
+  if (!CONTROLS.includes(c)) return;
+  controlsNow = c; try { localStorage.setItem(CONTROLS_KEY, c); } catch(e) {}
+  fit();
+}
+// The shape fit() made the screen: 'console'; or full screen, 'map', or 'scene' for the title screen and the scenes, drawn
+// for 15 by 10. Each frame checks it's still the shape wanted (frame, below), so a scene starting or ending fits it again.
+let fitted = null;
+const viewShape = () => !fullScreen() ? 'console' : mode === 'title' || mode === 'intro' ? 'scene' : 'map';
 function fit(){
   upright = window.innerWidth <= window.innerHeight;
   $('#turn').hidden = !upright;
   $('.app').hidden = upright;
+  const root = document.documentElement;
+  if (root && root.classList){ root.classList.toggle('overlay', fullScreen()); root.classList.toggle('glass', controlsNow === 'glass'); }
+  fitted = viewShape();
   if (upright) return;
+  if (fitted !== 'console') return fitFull(fitted);
+  setView(15, 10); screenBox(null);
   // The room left for the screen: the window, less the two sides, the edges, the phone's safe areas and
   // the keyboard help (on a computer).
   const style = el => (window.getComputedStyle ? getComputedStyle(el) : {});
@@ -33,10 +55,46 @@ function fit(){
   cv.style.width = w + 'px'; cv.style.height = h + 'px';
   // A small phone's screen (an iPhone's, about 270px tall; the smallest, about 200px): css/game.css makes room there for
   // the A and B badges on the buttons outside the cards (the cards have container queries of their own, on #modal)
-  const root = document.documentElement;
-  if (root && root.dataset) root.dataset.screen = h < 232 ? 'tiny' : h < 282 ? 'small' : 'big';
+  if (root && root.dataset) root.dataset.screen = screenClass(h);
   cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
   sc.imageSmoothingEnabled = false;
+}
+const screenClass = h => h < 232 ? 'tiny' : h < 282 ? 'small' : 'big';
+// Full screen: the screen fills the window, the buttons over it, each cluster's room SIDE_WING wide besides the phone's safe
+// area (the notch and the rounded corners: the page's padding, css/game.css). On the map it shows as many squares as fill
+// the window, 10 rows and as many columns as fit (never fewer than 15: a nearly square screen, such as a folding phone's
+// opened out, shows more rows instead; at most FULL_MAX_VW, with dark either side of a very wide window). The title screen
+// and the scenes, drawn for 15 by 10, are as big as fits between the two clusters, so none of them is under a button, and
+// the title's words and the captions sit on them (#screenWrap, the box). Text and pictures follow that size on the map
+// too, so they never change size as a scene ends; cards, the speech box and messages sit between the clusters.
+const FULL_MAX_VW = 24;
+function fitFull(shape){
+  const style = el => (window.getComputedStyle ? getComputedStyle(el) : {});
+  const px = (s, ...sides) => sides.reduce((n, k) => n + (parseFloat(s[k]) || 0), 0);
+  const root = document.documentElement, page = style(root), W = window.innerWidth, H = window.innerHeight;
+  const roomW = W - 2 * (SIDE_WING + Math.max(px(page, 'paddingLeft'), px(page, 'paddingRight'))), roomH = H - px(page, 'paddingTop', 'paddingBottom');
+  const sh = Math.round(clamp(Math.min(roomH, roomW * 10 / 15), 140, 720)), sw = Math.round(sh * 15 / 10);   // the scenes' size
+  sizeText(sh);
+  let w = sw, h = sh;
+  if (shape === 'scene'){ setView(15, 10); screenBox([Math.round((W - sw) / 2), Math.round((H - sh) / 2), sw, sh]); }
+  else {
+    let vw = W / H * 10, vh = 10;
+    if (vw < 15){ vw = 15; vh = 15 * H / W; }
+    const bw = Math.round(Math.min(vw, FULL_MAX_VW) * T), bh = Math.round(vh * T), k = Math.min(W / bw, H / bh);   // (whole pixels)
+    setView(bw / T, bh / T); w = Math.round(bw * k); h = Math.round(bh * k);
+    screenBox([0, 0, W, H]);
+  }
+  const dpr = window.devicePixelRatio || 1;
+  cv.style.width = w + 'px'; cv.style.height = h + 'px';
+  if (root && root.dataset) root.dataset.screen = screenClass(sh);
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  sc.imageSmoothingEnabled = false;
+}
+// Where the screen's box is on the page, full screen ([left, top, width, height]), or null on the console, where the
+// console's own layout places it.
+function screenBox(box){
+  const s = ($('#screenWrap') || {}).style; if (!s) return;
+  [s.left, s.top, s.width, s.height] = box ? box.map(n => n + 'px') : ['', '', '', ''];
 }
 // Text and pictures follow the screen's height, so the same layout fits a small phone and a computer: the
 // page's text size (everything in css/game.css sized in rem), from 13px to 18px (16px on a typical Android
@@ -90,6 +148,7 @@ function frame(now){
   countFps(now, due);
   if (!due) return;
   lastFrame = now;
+  if (viewShape() !== fitted) fit();   // (full screen: the title screen or a scene, 15 by 10, after the map, or the map after them)
   if (mode === 'title') drawScene(0, now);
   else if (mode === 'intro'){
     // The scene waits at each sentence until the player presses Next.

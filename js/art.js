@@ -4,6 +4,14 @@
 const cv = $('#screen'), sc = cv.getContext('2d');
 const buf = document.createElement('canvas'); buf.width = VW*T; buf.height = VH*T;
 const b = buf.getContext('2d'); b.imageSmoothingEnabled = false;
+// How much of the map the screen shows, in squares across and down (VW and VH, js/data.js): 15 by 10 on the console, more
+// full screen (fit() in js/main.js). VW*T and VH*T are always whole pixels. The screen's picture (buf) is made that size;
+// anything else drawn the screen's size checks it as it draws (the night sky in the water, the mist). Whether it changed.
+function setView(vw, vh){
+  if (vw === VW && vh === VH) return false;
+  VW = vw; VH = vh; buf.width = Math.round(VW*T); buf.height = Math.round(VH*T); b.imageSmoothingEnabled = false;
+  return true;
+}
 const R = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
 // The grain of the cards' aged paper (css/game.css, the scroll): a tile of specks, darker and paler, and a few short
 // fibres, two pixels a speck so it stays crisp, the same every time. Made once as the game starts and handed to the css

@@ -290,6 +290,8 @@ function storyPage(back, focus, open){
 // itself. (How to play is on the Tips page, and the scenes to watch again are in Story so far, each under its part:
 // decided 9 November 2026, the four ideas plan.)
 const SPEED_SAMPLE = '你好';   // (what's said as you change the voice speed)
+// Controls (setControls in js/main.js): each tap the next, the console, full screen in the game's colours, or with glass buttons
+const CONTROLS_SHOWN = {console:'Console', overlay:'Full screen', glass:'Glass'};
 function openSettings(focusId){
   openCard(`<p class="label">Settings</p>
     <div class="menu twocol">
@@ -299,6 +301,7 @@ function openSettings(focusId){
       <button class="btn" data-m="replyEn" data-label="English">English on replies <span class="val">${S.replyEn ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="typed" data-label="Typed">Typed lines <span class="val">${typedLines() ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="fps" data-label="FPS">Frames a second <span class="val">${S.fps ? 'On' : 'Off'}</span></button>
+      <button class="btn" data-m="controls" data-label="Controls">Controls <span class="val">${CONTROLS_SHOWN[controlsNow]}</span></button>
       <button class="btn" data-m="title" data-label="Your games">Title screen: your games</button>
     </div>
     <div class="actions"><span class="speedrow"><span class="slabel">Voice speed</span><span class="qpcount"><button class="btn" data-a="slower" aria-label="Slower"${voiceSpeed() <= VOICE_SPEEDS.at(-1) ? ' disabled' : ''}>−</button><b class="qpn">${Math.round(voiceSpeed() * 100)}%</b><button class="btn" data-a="faster" aria-label="Faster"${voiceSpeed() >= 1 ? ' disabled' : ''}>+</button></span></span><button class="btn" data-a="back" data-b>Back</button></div>`);
@@ -315,6 +318,7 @@ function openSettings(focusId){
     replyEn: () => { S.replyEn = !S.replyEn; save(); openSettings('replyEn'); },
     typed: () => { S.typed = !typedLines(); save(); openSettings('typed'); },
     fps: () => { S.fps = !S.fps; save(); openSettings('fps'); },
+    controls: () => { setControls(CONTROLS[(CONTROLS.indexOf(controlsNow) + 1) % CONTROLS.length]); openSettings('controls'); },
     title: () => { closeCard(); toTitle(); }
   };
   sheet.querySelectorAll('[data-m]').forEach(bt => bt.onclick = () => { SFX.blip(); act[bt.dataset.m](bt); });

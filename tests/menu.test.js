@@ -55,11 +55,11 @@ test('Save saves the game and says so; it saves by itself anyway', () => {
   assert.match(run("document.querySelector('#saybox').innerHTML"), /Saved: Game 1, just now/);
 });
 
-test('Settings has the sound, pinyin, English on replies, typed lines, frames a second and the title screen (How to play is on the Tips page, the scenes in Story so far)', () => {
+test('Settings has the sound, pinyin, English on replies, typed lines, frames a second, the controls and the title screen (How to play is on the Tips page, the scenes in Story so far)', () => {
   const {sheet, run, items} = menuGame();
   run('openMenu()');
   sheet.querySelector('[data-m="settings"]').click();
-  assert.deepEqual(items(), ['music', 'sound', 'pinyin', 'replyEn', 'typed', 'fps', 'title'], 'saving, loading and starting again are on the title screen');
+  assert.deepEqual(items(), ['music', 'sound', 'pinyin', 'replyEn', 'typed', 'fps', 'controls', 'title'], 'saving, loading and starting again are on the title screen');
   const pinyin = run('S.pinyin');
   sheet.querySelector('[data-m="pinyin"]').click();
   assert.equal(run('S.pinyin'), !pinyin, 'Pinyin switches');
