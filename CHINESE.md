@@ -1429,6 +1429,11 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 你在泡泡里！ | nǐ zài pàopao lǐ! | You’re in a bubble! | 海龟 (sea turtle) |  |
 | 我游，你走。 | wǒ yóu, nǐ zǒu. | I swim, you walk. | 海龟 (sea turtle) |  |
 | 你有五个海星朋友了！ | nǐ yǒu wǔ gè hǎixīng péngyou le! | You’ve got five starfish friends now! | 海龟 (sea turtle) |  |
+| 小心！有鲨鱼！ | xiǎoxīn! yǒu shāyú! | Careful! A shark! |  |  |
+| 我有八只脚！ | wǒ yǒu bā zhī jiǎo! | I’ve got eight feet! | 章鱼 (octopus) |  |
+| 我有几只脚？ | wǒ yǒu jǐ zhī jiǎo? | How many feet have I got? | 章鱼 (octopus) |  |
+| 这里有几只脚？ | zhèlǐ yǒu jǐ zhī jiǎo? | How many feet are here? | 章鱼 (octopus) |  |
+| 太好了！ | tài hǎo le! | Great! | 章鱼 (octopus) |  |
 | 我们玩吧！ | wǒmen wán ba! | Let’s play! |  |  |
 | 一！ | yī! | One! |  |  |
 | 二！ | èr! | Two! |  |  |
@@ -1444,6 +1449,7 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 这是我的衣服 | zhè shì wǒ de yīfu | These are my clothes. | You, in the wardrobe |  |
 | 我戴帽子 | wǒ dài màozi | I wear my hat. | You, in the wardrobe |  |
 | 这是我的鞋 | zhè shì wǒ de xié | These are my shoes. | You, in the wardrobe |  |
+| 我有几只脚 | wǒ yǒu jǐ zhī jiǎo | How many feet have I got? | You, in a lesson at school |  |
 | 我戴红色的头带 | wǒ dài hóngsè de tóudài | I wear my red headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴黄色的头带 | wǒ dài huángsè de tóudài | I wear my yellow headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴白色的头带 | wǒ dài báisè de tóudài | I wear my white headband. | You, in the wardrobe (a headband in each colour) |  |
@@ -1481,6 +1487,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 海里有很多沙子。 | hǎi lǐ yǒu hěn duō shāzi. | There’s lots of sand in the sea. | 沙子 |  |
 | 我有很多贝壳。 | wǒ yǒu hěn duō bèiké. | I have lots of shells. | 贝壳 |  |
 | 海星在水草里。 | hǎixīng zài shuǐcǎo lǐ. | The starfish are in the seaweed. | 水草 |  |
+| 海里有水母。 | hǎi lǐ yǒu shuǐmǔ. | There are jellyfish in the sea. | 水母 |  |
+| 章鱼有八只脚。 | zhāngyú yǒu bā zhī jiǎo. | An octopus has eight feet. | 章鱼 |  |
 
 ### Scene: the dive
 
@@ -1497,6 +1505,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 牌子 | páizi | Sign |  |
 | 东海 | Dōng Hǎi | The Eastern Sea |  |
 | 海底 | hǎidǐ | The seabed |  |
+| 水草林 | shuǐcǎo lín | The seaweed forest |  |
 
 ### Words to collect
 
@@ -1508,6 +1517,12 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 水草 | shuǐcǎo | seaweed |  |
 | 游 | yóu | to swim |  |
 | 海星 | hǎixīng | starfish |  |
+| 小心 | xiǎoxīn | careful! |  |
+| 鲨鱼 | shāyú | shark |  |
+| 水母 | shuǐmǔ | jellyfish |  |
+| 章鱼 | zhāngyú | octopus |  |
+| 脚 | jiǎo | foot |  |
+| 几 | jǐ | how many |  |
 
 ### How words are made
 
@@ -1519,6 +1534,17 @@ simply put. A part's pinyin is as it's said in the word.
 | --- | --- | --- | --- |
 | 水草 | shuǐcǎo | 水 shuǐ (water) + 草 cǎo (grass) = 水草 (seaweed) |  |
 | 海星 | hǎixīng | 海 hǎi (sea) + 星 xīng (star) = 海星 (starfish) |  |
+
+### Big and little wild creatures
+
+Once you know 大 and 小, a wild creature can be a big one or a little one: its name says which, on its battle card and aloud (new on 8 November 2026, not checked yet).
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 小鲨鱼 | xiǎo shāyú | A little shark! |  |
+| 大鲨鱼 | dà shāyú | A big shark! |  |
+| 小水母 | xiǎo shuǐmǔ | A little jellyfish! |  |
+| 大水母 | dà shuǐmǔ | A big jellyfish! |  |
 
 ### Words only heard in sentences
 
@@ -1568,7 +1594,6 @@ simply put. A part's pinyin is as it's said in the word.
 | 宝贝 | bǎobèi | treasure |  |
 | 文 | wén | (counts coins: 两文钱, two coins) |  |
 | 种花 | zhòng huā | to plant flowers |  |
-| 几 | jǐ | how many |  |
 | 个 | gè | (counts things: 几个, how many) |  |
 | 们 | men | (more than one: 同学们, the class) |  |
 | 上课 | shàngkè | class begins |  |
@@ -1878,9 +1903,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 美猴王坐木筏走了。 | Měi Hóuwáng zuò mùfá zǒu le. | The Monkey King sailed away on his raft. | New on 29 October 2026 (in the game), the end of chapter 1: The scene of you sailing away, the troop waving from the shore, after 再见！ and 我们等你！ |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 | 这是我的地图。 | zhè shì wǒ de dìtú. | This is my map. | New on 31 October 2026 (in the game): the example on 地图 (dìtú, map)’s page. The big monkey gives you a map in chapter 1, as he sends you up to the pine wood, and you catch 地图 the first time you open it. Its How it’s made card says 地 (dì, ground) + 图 (tú, picture) = 地图, a picture of the ground: is that a fair way to explain it? |  |
-| 小心！有鲨鱼！ | Xiǎoxīn! Yǒu shāyú! | Careful! A shark! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the sea turtle, as your first shark comes out of the seaweed, teaching the phrase 小心. Is it natural? |  |
-| 我有八只脚！ | Wǒ yǒu bā zhī jiǎo! | I’ve got eight feet! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the octopus, teaching 脚. For a child, is it 八只脚, or 八条腿 (legs)?. Is it natural? |  |
-| 我有几只脚？ | Wǒ yǒu jǐ zhī jiǎo? | How many feet have I got? | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the octopus’s counting game, teaching 几. Is it natural? |  |
 | 一，二，三，游！ | Yī, èr, sān, yóu! | One, two, three, swim! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the dolphin, starting a race (as the PE teacher’s 一，二，三，跑！). Is it natural? |  |
 | 海豚很快！ | Hǎitún hěn kuài! | The dolphin is fast! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the sea turtle, after the race, teaching 快. Is it natural? |  |
 | 我很慢。 | Wǒ hěn màn. | I’m slow. | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the sea turtle, puffing along behind, teaching 慢. Is it natural? |  |

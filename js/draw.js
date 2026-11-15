@@ -660,6 +660,7 @@ function feetInGrass(px = pl.px, py = pl.py){   // (anyone following you too: wh
 // after it), and only when it moves; then put over the map in its place, under the big objects as the map is
 // (drawStirredGrass), and over your feet (coverFeet).
 const STIR_LOOKS = {tallGrass:TALL, longGrass:LONG, woodGrass:WOOD_TALL};
+const STIR_DRAWS = {};   // a look that parts round you drawn its own way (g, X, Y, x, y, bend, lit), such as the sea's tall seaweed (js/sea.js); otherwise as tall grass
 const STIR = {in:150, shake:240, wobble:.25, hold:260, back:1100, settle:240, swing:80, side:.45, bits:450};   // (ms, and how far: wobble, a square beside you)
 const stirred = new Map();   // 'x,y' -> {t0, dir, out: when you left it (null while you're in it), side: a square beside you, away: which way it leans, pal, pic, k}
 const overGrassAt = new Map(), spareStirPics = [];   // (what reaches into each square, kept while the map's the same; little canvases to use again)
@@ -699,7 +700,9 @@ function drawStirred(s, x, y, k){   // the square, parted k, on its little canva
   if (s.pic && s.k === k && s.lit === lit) return;   // (as it was: standing in it, or flattened a moment)
   if (!s.pic){ s.pic = spareStirPics.pop() || document.createElement('canvas'); s.pic.width = s.pic.height = T; }
   const g = s.pic.getContext('2d');
-  tall(g, 0, 0, x, y, s.pal, k ? stirBend(s, k) : null, lit); innerBank(g, 0, 0, x, y); castShadow(g, 0, 0, x, y); g.drawImage(overGrass(x, y), 0, 0);   // (innerBank: its corner, where a bank turns inwards round it, as the map has it)
+  const own = STIR_DRAWS[tileAt(x, y).look];
+  if (own) own(g, 0, 0, x, y, k ? stirBend(s, k) : null, lit); else tall(g, 0, 0, x, y, s.pal, k ? stirBend(s, k) : null, lit);
+  innerBank(g, 0, 0, x, y); castShadow(g, 0, 0, x, y); g.drawImage(overGrass(x, y), 0, 0);   // (innerBank: its corner, where a bank turns inwards round it, as the map has it)
   s.k = k; s.lit = lit;
 }
 function unstir(key){ const s = stirred.get(key); if (s.pic && spareStirPics.length < 24) spareStirPics.push(s.pic); stirred.delete(key); }

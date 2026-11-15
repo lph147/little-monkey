@@ -41,6 +41,26 @@ function deepSea(g, X, Y, x, y){
   if (seaLookAt(x, y - 1) && seaLookAt(x, y - 1) !== 'deepSea') R(g, X, Y, T, 3, 'rgba(8,20,30,.45)');
 }
 Object.assign(LOOKS, {seaSand, seaweed, deepSea, sandShell: sandWith('shell'), sandShellPink: sandWith('shellPink'), sandConch: sandWith('conch')});
+// Tall seaweed, where sharks and jellyfish hide (the sea's long grass, step 3): the sand shaded under it and four tall
+// ribbons filling the square, swaying; walking through, they part round you as grass does (bend: how far one leans at its
+// tip, by where it is across the square; lit: pushed aside, its tips catching the light). Each stays in its own square, so
+// the parted copy (js/draw.js) is just what the map has there.
+const TALL_WEED = [['#2E6A2E', '#4E9A44', '#1C4420'], ['#3A7A34', '#62AA4E', '#22501F'], ['#6E7A2C', '#96A246', '#46501A']];
+function tallSeaweed(g, X, Y, x, y, bend = null, lit = false){
+  seaSand(g, X, Y, x, y);
+  for (let i = 0; i < 6; i++) R(g, X + Math.floor(rnd(x, y, i + 800) * 15), Y + 8 + Math.floor(rnd(x, y, i + 810) * 8), 2, 1, '#B8A878');   // (the sand in its shade)
+  for (let k = 0; k < 5; k++){
+    const x0 = X + k * 3 + Math.floor(rnd(x, y, 820 + k) * 2), top = Y + Math.floor(rnd(x, y, 830 + k) * 6), ph = rnd(x, y, 840 + k) * 20;
+    const c = TALL_WEED[(x * 3 + y + k) % 3], lean = bend ? bend(x0 - X + 1) : 0;
+    for (let yy = Y + 15; yy >= top; yy--){
+      const up = (Y + 15 - yy) / 15, xx = x0 + Math.round(Math.sin((yy + ph) / 3.2) * 1.2 + lean * up * up);
+      R(g, xx, yy, 2, 1, c[0]); R(g, xx, yy, 1, 1, c[1]); R(g, xx + 2, yy, 1, 1, c[2]);
+    }
+    R(g, x0 + Math.round(Math.sin((top + ph) / 3.2) * 1.2 + lean), top, 1, 1, lit ? '#C8E89A' : c[1]);
+  }
+}
+LOOKS.tallSeaweed = (g, X, Y, x, y) => tallSeaweed(g, X, Y, x, y);
+STIR_LOOKS.tallSeaweed = ['#D8C79A', '#2E6A2E', '#8FCB6A']; STIR_DRAWS.tallSeaweed = tallSeaweed; TALL_LOOKS.push('tallSeaweed');   // (parting round you, and what flies up: js/draw.js)
 const UNLIT = new Set(['deepSea']);   // where the light doesn't ripple: down in the deep
 
 /* ================= THE SEA'S THINGS ================= */
@@ -113,6 +133,7 @@ function drawSea(cx, cy, sh, now){
   // called (decided 15 November 2026, after looking at it: under the haze the yellow one was green, the red one maroon)
   for (const o of outHere()) if (o.colour && o.a.lies) drawLying(o.a, o.x, o.y, o.x * T - cx, o.y * T - cy, now, o.colour);
   if (foe && foe.colour) drawFoe(cx, cy, now);
+  drawJellies(cx, cy, now); drawInk(cx, cy, now);   // (jellyfish drifting, glowing at night; the octopus's ink)
   // bubbles rising
   for (let i = 0; i < 7; i++){
     const bx = Math.round((i * 61 + 23 - cx * .5) % W + W) % W, by = Math.round(H - ((now * .018 + i * 47) % (H + 24)));
@@ -159,3 +180,41 @@ function drawDive(t, now){
   for (let i = 0; i < 6; i++){ const by = Math.round(my - ((now * .03 + i * 13) % 60)); R(b, mx + 6 + (i % 3) * 3, by, 1, 1, 'rgba(255,255,255,.85)'); }
 }
 Object.assign(SCENE_ART, {dive: drawDive});
+
+/* ================= FIGHTS UNDER THE SEA ================= */
+// The backdrop for battles and animals' questions under the sea (a place's backdrop, 'sea'): blue water, lighter above,
+// shafts of light, seaweed at the sides and the sandy floor (css/game.css: --backdrop-sea).
+function seaBackdrop(){
+  const W = 72, H = 128, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d'), water = g.createLinearGradient(0, 0, 0, 64);
+  water.addColorStop(0, '#7CC8E8'); water.addColorStop(1, '#3E8CBC'); g.fillStyle = water; g.fillRect(0, 0, W, 64);
+  for (const [x, w] of [[10, 6], [38, 4], [56, 7]]){ g.fillStyle = 'rgba(230,250,255,.16)'; g.beginPath(); g.moveTo(x, 0); g.lineTo(x + w, 0); g.lineTo(x + w + 16, 64); g.lineTo(x + 16, 64); g.closePath(); g.fill(); }
+  R(g, 0, 58, W, H - 58, '#E2D2A2');                                             // the sand
+  for (let i = 0; i < 70; i++) R(g, Math.floor(rnd(i, 3, 11) * W), 60 + Math.floor(rnd(i, 4, 12) * (H - 60)), 2, 1, ['#CDBB88', '#EFE2BC', '#D8C79A'][i % 3]);
+  for (const [x, top] of [[2, 30], [6, 38], [62, 34], [67, 26]]) for (let y = 60; y >= top; y--) R(g, x + Math.round(Math.sin(y / 3.4) * 1.3), y, 2, 1, y % 5 ? '#3E7A34' : '#69A84A');   // seaweed
+  for (let i = 0; i < 8; i++) R(g, Math.floor(rnd(i, 6, 13) * W), Math.floor(rnd(i, 7, 14) * 56), 1, 1, '#E8FAFF');   // bubbles
+  return c;
+}
+BACKDROPS.sea = seaBackdrop;
+if (document.documentElement) document.documentElement.style.setProperty('--backdrop-sea', `url(${seaBackdrop().toDataURL()})`);
+// Jellyfish drifting over a place (its jellies: [x, y] each), bobbing slowly up and down, over the water's blue so they
+// keep their colour, and glowing at night (step 3: the seaweed forest; the plan: more at night, glowing).
+function drawJellies(cx, cy, now){
+  const list = PLACES[PLACE].jellies; if (!list) return;
+  const spr = mapSprite('水母'), night = typeof isNight === 'function' && isNight();
+  list.forEach(([x, y], i) => {
+    const X = Math.round(x * T - cx + Math.sin(now / 2600 + i * 2) * 4), Y = Math.round(y * T - cy - 6 + Math.sin(now / 900 + i * 1.7) * 5);
+    if (X < -T || Y < -T || X > VW * T || Y > VH * T) return;
+    if (night){ const glow = b.createRadialGradient(X + 8, Y + 7, 1, X + 8, Y + 7, 12); glow.addColorStop(0, 'rgba(255,190,240,.55)'); glow.addColorStop(1, 'rgba(255,190,240,0)'); b.fillStyle = glow; b.fillRect(X - 6, Y - 6, 28, 28); }
+    b.globalAlpha = night ? 1 : .85; b.drawImage(spr, X, Y); b.globalAlpha = 1;
+  });
+}
+// The octopus squirting ink as you meet it (an animal that inks): a dark cloud billowing out round it, then thinning away.
+function drawInk(cx, cy, now){
+  if (!foe || !foe.a.inks) return;
+  const e = now - foe.t0; if (e > 1500) return;
+  const X = foe.x * T - cx + 8, Y = foe.y * T - cy + 8, k = e / 1500;
+  b.globalAlpha = .7 * (1 - k);
+  for (let i = 0; i < 7; i++){ const a = i * .9, r = 3 + k * 14; R(b, Math.round(X + Math.cos(a) * r * (.6 + (i % 3) * .2) - 3), Math.round(Y + Math.sin(a) * r * .7 - 3), 6 + (i % 2) * 2, 5, i % 2 ? '#2A1E34' : '#3E3050'); }
+  b.globalAlpha = 1;
+}

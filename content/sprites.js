@@ -382,6 +382,20 @@ const MAP_SPRITES = {
     tint: '#E0453A',
     palette: {a:'#5B3B32', b:'#421712', c:'#F79A88', d:'#A82A22', e:'#E0453A'},
     rows: ["................","................","................",".......ab.......","......acdb......",".....aaccab.....","...bacceecdbb...","..bddeeeeeeddb..","...baceeeedca...","....aceeeedb....","....aceddedb....","....accabdca....","....bdb..bdb....",".....b....b.....","................","................"]
+  },
+  // the seaweed forest's (step 3)
+  '鲨鱼': {   // shark, side on, head to the left (a wild creature in the tall seaweed): medium, 16 pixels, drawn with the shape kit
+    faces: 'left',
+    palette: {a:'#242728', b:'#495B67', c:'#3A3C3D', d:'#8E9EA9', e:'#3E4244', f:'#5E7584', g:'#9AB2C0', h:'#44545D', i:'#5C707D', j:'#2A2D2F', k:'#7690A0', l:'#FFFFFF', m:'#111418', n:'#1F2021', o:'#3A4752', p:'#E6EDF0', q:'#565554'},
+    rows: ["................","................","................","........a.......",".......aba......","......cdba.....a","....eecdfba...ab","..eeggghhhijjcdb",".eggkkkkkkkgiaba","egklmkkkkkkkkhba","jikkkkkkkkkkkhba","nooopddbpppppaba",".nnqpdbppppqqabb","....abaqqqq...ab",".....a.........a","................"]
+  },
+  '水母': {   // jellyfish, its dome and tentacles (a wild creature in the tall seaweed, drifting over it at night, glowing): small, 11 pixels, lifted 3
+    palette: {a:'#5C4D53', b:'#4C2F40', c:'#F8D4EE', d:'#C774B4', e:'#FBE6F6', f:'#E59AD2', g:'#3A2030', h:'#3E2634', i:'#9B5A8C'},
+    rows: ["................","................","....aaaaaab.....","...accccccdb....","..aceeeffffdb...","..acffgffgfdb...","..acfffffffdb...","..bdddddddddb...","...hiihhiihb....","...hiihhiih.....","..hihhiihhih....","..hihhiihhih....","...h..hh..h.....","................","................","................"]
+  },
+  '章鱼': {   // octopus, facing you, its arms curling out under it (among the seaweed forest's rocks): medium, 14 pixels, drawn with the shape kit
+    palette: {a:'#5A3B2B', b:'#472114', c:'#F49A72', d:'#B84A2A', e:'#E06A44', f:'#F4A882', g:'#FFFFFF', h:'#1E1A16', i:'#361D13', j:'#823D27', k:'#55382D', l:'#E49077', m:'#A84B2F', n:'#422216'},
+    rows: ["................","......aaab......",".....acccdb.....","....aceeefdb....","...aceefeeedb...","...aceeeeeedb...","..aceeeeeeeedb..","..bdeegeeegedb..","...aceheeehdb...","...ijeeeeeeji...","..klmjeeeejmmn..",".klmkljjjjmnmmn.",".nmnnmklmnmnnmn.",".mmnmmklmklmnmm.",".nn.nmmmmmmn.nn.","................"]
   }
 };
 // A water buffalo (Area 2, in the fields: not a word of its own): the cow's drawing, dark slate grey all over, with no

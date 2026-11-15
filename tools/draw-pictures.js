@@ -1859,7 +1859,43 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
   '橙色 的 海星': p => starfish(p, '#F08A2E', '#FFC07A', '#B85E14'),   // an orange starfish (a red one is 海星's own)
   '黄色 的 海星': p => starfish(p, '#F2C93A', '#FFE89A', '#BE8E1E'),   // a yellow starfish
   '粉色 的 海星': p => starfish(p, '#F28CB4', '#FFC8DC', '#C45A86'),   // a pink starfish
-  '蓝色 的 海星': p => starfish(p, '#4A86DA', '#9CC4F4', '#2A5CA8')    // a blue starfish
+  '蓝色 的 海星': p => starfish(p, '#4A86DA', '#9CC4F4', '#2A5CA8'),   // a blue starfish
+  // the seaweed forest's (step 3)
+  '鲨鱼': p => {   // a shark: side on, head to the left, grey-blue with a white belly, a tall fin, a crescent tail (unlike 鱼: a little round fish)
+    const body = or(O(15, 17, 12, 5.4), Pg([[2, 17], [7, 12.5], [7, 21.5]]));
+    p.fill(Pg([[24, 17], [31, 8], [29.5, 17], [31, 26]]), '#5E7584', {edge: true});        // the tail
+    p.fill(Pg([[12, 12.5], [17, 3], [20, 12.5]]), '#5E7584', {edge: true});                 // the fin on its back
+    p.fill(body, '#7690A0', {light: '#9AB2C0', edge: true});
+    p.flat(and(body, (x, y) => y >= 19 && x < 25), '#E6EDF0');                              // its white belly
+    p.fill(Pg([[11, 20], [17, 20], [10, 27]]), '#5E7584', {edge: true});                    // a side fin
+    [10, 11.5, 13].forEach(x => p.flat(path([[x, 14.5], [x - .6, 18]], .4), '#4A5F6C'));   // gills
+    p.eye(5, 14);
+    p.flat(path([[3, 19.5], [7.5, 19]], .45), '#3A4752');                                   // its mouth
+  },
+  '水母': p => {   // a jellyfish: a pale pink dome, frilled at its rim, its long trailing tentacles waving (unlike 泡泡: no tentacles)
+    p.fill(and(O(16, 13, 11, 9.5), (x, y) => y <= 14), '#E59AD2', {light: '#F8D4EE', dark: '#C774B4', edge: true});
+    p.flat(O(12, 8, 3, 2), '#FBE6F6');                                                      // its shine
+    for (let i = 0; i < 6; i++) p.fill(O(6.2 + i * 3.9, 14.5, 2.2, 1.4), '#D886C4');        // the frilled rim
+    [[8, 1.2], [12, -1.4], [16, 1.6], [20, -1.2], [24, 1.4]].forEach(([x, w]) => p.fill(path([[x, 16], [x + w, 20], [x - w, 24], [x + w, 28], [x, 31]], .6), '#C774B4'));
+    p.eye(13, 10); p.eye(18, 10);
+  },
+  '章鱼': p => {   // an octopus: a round orange-red head, big eyes, eight curling arms spread out under it (unlike 鱼: no fins)
+    const arms = [[[9, 20], [4, 23], [3, 28], [6, 30]], [[12, 22], [9, 27], [11, 31]], [[15, 23], [14, 28], [16, 31]], [[18, 23], [19, 28], [17, 31]],
+      [[21, 22], [24, 27], [22, 31]], [[23, 20], [28, 23], [29, 28], [26, 30]], [[8, 18], [3, 18], [1, 21]], [[24, 18], [29, 18], [31, 21]]];
+    arms.forEach(a => p.fill(path(a, 1.4), '#D8603C', {light: '#F08A62', edge: true}));
+    p.fill(O(16, 12, 9, 9.5), '#E06A44', {light: '#F49A72', dark: '#B84A2A', edge: true});  // its head
+    [[12, 8], [20, 9], [17, 5]].forEach(([x, y]) => p.flat(O(x, y, 1.2, 1), '#F4A882'));    // spots on it
+    p.fill(O(12.5, 15, 2.6, 2.6), '#FFFFFF', {edge: true}); p.fill(O(19.5, 15, 2.6, 2.6), '#FFFFFF', {edge: true});
+    p.flat(O(12.8, 15.4, 1.2, 1.4), '#1E1A16'); p.flat(O(19.8, 15.4, 1.2, 1.4), '#1E1A16');
+    p.flat(path([[14.5, 19], [16, 20], [17.5, 19]], .5), '#8A2E1A');                        // its smile
+  },
+  '脚': p => {   // a foot: a bare foot, side on, toes to the left, standing on the ground (unlike 鞋: no shoe)
+    p.fill(and(O(16, 31, 15, 3), Rc(0, 29, 32, 3)), '#9BC67E');                              // the ground
+    p.fill(or(Pg([[17, 6], [24, 6], [25, 22], [27, 26], [27, 29], [6, 29], [4, 26], [7, 23], [16, 21]]), O(23.5, 26, 4, 3.2)), SKIN, {dark: '#D9A878', edge: true});   // the leg and foot
+    [[5.5, 25.5, 2.2], [9, 24.5, 1.9], [12, 24.2, 1.7], [14.6, 24.4, 1.5], [17, 24.8, 1.3]].forEach(([x, y, r]) => p.fill(O(x, y, r, r), SKIN, {dark: '#D9A878', edge: true}));   // its toes
+    p.flat(path([[22, 18], [21.5, 23]], .45), '#E8B88A');                                   // the ankle
+    p.flat(Rc(17, 4, 8, 3), '#3F8FCB');                                                      // the hem of trousers
+  }
 };
 // A starfish lying on the sand, its five arms one colour (body), little bumps on them (unlike 星星: stars in the sky)
 function starfish(p, body, light, dark){

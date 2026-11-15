@@ -492,6 +492,11 @@ SAVES.c2dive = c2(SAVES.c2end, {ch2: 1, stickGiven: 1}, [], {place: 'ffmCave', x
 SAVES.a3turtle = {...SAVES.c2dive, area: 3, w: {...SAVES.c2dive.w, ...knows(1, ['泡泡'])}, areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀', turtle: 0}}, pos: {place: 'seabed', x: 12, y: 6, dir: 'right'}};   // (the sea turtle from your shore, saying hello)
 SAVES.a3stars = {...SAVES.c2dive, area: 3, w: {...SAVES.c2dive.w, ...knows(1, ['泡泡', '沙子', '贝壳', '水草', '游', '海星'])}, areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀', turtle: 2, starFriends: 3,
   out: {starfish: [[7, 12, 1], [9, 13, 1], [5, 10, 1], [4, 13, 0]]}}}, pos: {place: 'seabed', x: 7, y: 11, dir: 'down'}};   // (four starfish out on the sand, three of them friends, by the seaweed)
+const A3_FOREST_WORDS = ['泡泡', '沙子', '贝壳', '水草', '游', '海星', '小心', '鲨鱼'];
+SAVES.a3forestIn = {...SAVES.c2dive, area: 3, w: {...SAVES.c2dive.w, ...knows(1, A3_FOREST_WORDS.slice(0, 6))}, friends: [...(SAVES.c2dive.friends || []), 'starfish'],
+  areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 1, weapon: '刀', turtle: 3, starFriends: 5, forest: 0}}, pos: {place: 'forest', x: 2, y: 7, dir: 'right'}};   // (coming into the seaweed forest, the turtle by you)
+SAVES.a3forest = {...SAVES.a3forestIn, w: {...SAVES.a3forestIn.w, ...knows(1, A3_FOREST_WORDS)}, areas: {...SAVES.a3forestIn.areas, 3: {...SAVES.a3forestIn.areas[3], forest: 1}}, pos: {place: 'forest', x: 9, y: 4, dir: 'down'}};   // (in it, the octopus up among the rocks)
+SAVES.a3octopus = {...SAVES.a3forest, w: {...SAVES.a3forest.w, ...knows(1, ['章鱼', '脚', '几'])}, friends: [...SAVES.a3forest.friends, 'octopus'], pos: {place: 'forest', x: 13, y: 3, dir: 'up'}};   // (the octopus your friend)
 SAVES.a3seabed = {...SAVES.c2dive, area: 3, areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀'}}, pos: {place: 'seabed', x: 11, y: 6, dir: 'down'}};   // (home in autumn: on the hillside's lookout)
 SAVES.c2south = {...SAVES.c2end, pos: {place: 'ffmSouthSlope', x: 9, y: 15, dir: 'up'}};   // (and the south slope's)
 
@@ -1900,6 +1905,16 @@ SCREENS.push(
     play(); await wait(100); showDialog(speaker('turtle'), L.inBubble); await wait(500); }},
   {id: 'a3-starfish', title: 'Starfish on the sand', save: 'a3stars', why: 'Five starfish hide in the seaweed; each you meet stays out on the sand in its own colour (red, orange, yellow…), and one that still wants to play has a ! over it. Fish swim by in little schools.', run: async () => {
     play(); await wait(500); }},
+  {id: 'a3-forest', title: 'The seaweed forest', save: 'a3forest', why: 'Tall seaweed all round a sandy clearing (sharks and jellyfish hide in it, and it parts round you as you walk through), jellyfish drifting over it, and the octopus among the rocks to the north.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'a3-forest-night', title: 'The seaweed forest at night', save: 'a3forest', why: 'At night the jellyfish drifting over the forest glow, and more of them come out of the tall seaweed.', run: async () => {
+    S.clock.t = DAY_MS * .9; play(); await wait(500); }},
+  {id: 'a3-careful', title: '小心！', save: 'a3forestIn', why: 'Coming into the seaweed forest, the sea turtle warns you: 小心！有鲨鱼！ (小心, careful!), and your first shark shoots out of the seaweed.', run: async () => {
+    play(); await wait(100); showDialog(speaker('turtle'), L.careful); await wait(500); }},
+  {id: 'a3-shark', title: 'A shark', save: 'a3forest', why: 'A fight under the sea: its own backdrop, blue water over the sand, your broadsword against a shark.', run: async () => {
+    play(); await wait(100); battle('shark'); await wait(1200); }},
+  {id: 'a3-octopus', title: 'The octopus’s feet', save: 'a3octopus', why: 'The octopus, your friend: 我有八只脚！ (脚), 我有几只脚？ (几), then a counting game on its feet, on the sand.', run: async () => {
+    play(); await wait(100); countQ({who: 'octopus', thing: AREA.countGames.feet.thing, n: 3}); await wait(500); }},
   {id: 'a3-shells', title: 'Your shells are 贝壳', save: 'a3stars', why: 'Once you know 贝壳, your money says so: 🐚 7 贝壳, in your bag, on the Tasks page and in the shop.', run: async () => {
     play(); await wait(100); pressBag(); await wait(400); }}
 );

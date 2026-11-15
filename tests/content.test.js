@@ -441,7 +441,7 @@ test('every step does one thing, with settings that exist, using real lines and 
 test('a counting game counts things you can see, with a question about them, and says when you know too few numbers', () => {
   for (const [id, g] of Object.entries(AREA.countGames || {})){
     assert.ok(BANK[g.thing.word] && PICTURES[g.thing.word], `counting game ${id}: ${g.thing.word} needs a picture to count`);
-    assert.ok(['table', 'grass', 'tower'].includes(g.thing.on), `counting game ${id}: its things are on the table, the grass or a tower, not ${g.thing.on}`);
+    assert.ok(['table', 'grass', 'tower', 'sand'].includes(g.thing.on), `counting game ${id}: its things are on the table, the grass, a tower or sand, not ${g.thing.on}`);
     assert.ok(AREA.lines[g.thing.ask] && AREA.lines[g.thing.ask].zh.split(' ').includes(g.thing.word), `counting game ${id}: its question (${g.thing.ask}) asks how many ${g.thing.word} there are`);
     assert.ok(g.start && g.notYet, `counting game ${id} needs start and notYet`);
   }
@@ -536,7 +536,8 @@ test('a sentence in your tasks, the checklist or hints that mentions words from 
   // ({水} in the content: 水 (water), or just water till you've caught it. Names stay English, as do places' names, numbers,
   // and want and have, which are what 要 and 有 mean but aren't them in these sentences: the old monkey, the home ground, the
   // pine wood, Flower Fruit Mountain, three pieces of wood, things that sparkle have words.)
-  const names = /\b(big monkey|little monkeys?|a little|monkeys?|home ground|pine wood|Flower Fruit Mountain|wants?|have|one|two|three|four|five|six|seven|eight|nine|ten)\b/gi;
+  const places = Object.values(AREA.places).map(p => p.name.en.replace(/^the /i, '')).filter(n => n.includes(' ')).join('|');   // (a place's name, such as the seaweed forest)
+  const names = new RegExp(String.raw`\b(big monkey|little monkeys?|a little|monkeys?|home ground|pine wood|Flower Fruit Mountain|${places ? places + '|' : ''}wants?|have|one|two|three|four|five|six|seven|eight|nine|ten)\b`, 'gi');
   const meanings = Object.entries(BANK).filter(([, b]) => b.area <= AREA.number).flatMap(([w, b]) => b.en.split(/,\s*/)
     .map(e => e.replace(/^(a|an|the|to) /, '')).filter(e => e.length > 2).map(e => [w, e]));
   const texts = [...AREA.tasks.map(t => t.text), ...AREA.hints.map(h => h.text), ...AREA.checklist.map(c => c.text)];

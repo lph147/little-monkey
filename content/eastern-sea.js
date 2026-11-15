@@ -10,7 +10,10 @@
 // Step 2 (15 November 2026): the seabed. The sea turtle from your shore swims up and shows you round: your bubble (泡泡),
 // the sand (沙子), shells (贝壳: the shells you've collected all game, and your money says so from then), seaweed (水草);
 // it swims ahead while you walk (游) to the seaweed, where five starfish hide (海星), each its own colour. Fish swim over
-// the sand. The rest of the sea comes in the steps that follow.
+// the sand.
+// Step 3 (15 November 2026): the seaweed forest, east of the seabed, once you've found the starfish: tall seaweed where
+// sharks and jellyfish hide (鲨鱼, 水母), the turtle's warning (小心), and the octopus among the rocks (章鱼), who counts
+// its feet with you (脚, 几). The rest of the sea comes in the steps that follow.
 
 // The seabed's letters: sand, seaweed swaying up out of it, shells on the sand, and the sea's things (js/sea.js).
 // Each teaches its word as you press A at it (the sand, a shell, the seaweed). The seaweed is where the five starfish hide,
@@ -18,6 +21,9 @@
 const SEA_FLOOR = {look:'seaSand', walk:true, word:'沙子', newNote:'沙子 means sand. The seabed is covered in it, soft and pale.'};
 const SEA_SHELL_NOTE = '贝壳 means shell. The shells you’ve been collecting all along are 贝壳! From now on, your money says so: 🐚 贝壳.';
 const SEA_WEED = {look:'seaweed', walk:true, word:'水草', newNote:'水草 means seaweed: 水 water + 草 grass. It sways round the seabed’s edges.'};
+// The seaweed forest's own letter: tall seaweed, where sharks and jellyfish hide, as wild creatures hide in long grass;
+// it parts round you as you walk through (js/sea.js).
+const FOREST_LEGEND = {'T': {look:'tallSeaweed', walk:true, word:'水草', wild:['shark', 'jelly']}};
 const SEA_LEGEND = {
   '.': SEA_FLOOR,
   'w': {...SEA_WEED, becomes:[{if:{turtle:{atLeast:2}}, to:'W'}]},
@@ -58,13 +64,18 @@ const EASTERN_SEA = {
   parts: [
     {id:'seabed', chapter:0, name:'Part 1', title:'The seabed', when:{landed:1}, card:false,
       story:'You’ve dived from the iron bridge in the Water Curtain Cave, down through the water to the seabed, in a bubble of air. The sea turtle from your shore swims up to show you round. Somewhere down here is the Dragon King’s palace, where the finest weapons in the world are kept.',
-      now:'Explore the seabed with the {海龟|sea turtle}. The rest of the {海|sea} is on its way.'}
+      now:'Explore the seabed with the {海龟|sea turtle}.'},
+    {id:'forest', chapter:0, name:'Part 2', title:'The seaweed forest', when:{turtle:3},
+      text:'East of the seabed, the seaweed grows tall and thick, with shafts of light falling through it. Sharks hide in it, and jellyfish drift about. And somewhere among the rocks, something is watching you…',
+      now:'Explore the seaweed forest. The rest of the {海|sea} is on its way.'}
   ],
 
   // The day goes round down here too: no rain under the sea, and no bed, so the night passes by itself, as in the human world.
   dayNight: {if:{}, morning:'Good morning! You wake up with your health full.', sleep:[]},
-  progress: {chapter:0, landed:0, turtle:0, starFriends:0},
-  //   turtle   0 not met yet, 1 said hello (泡泡), 2 led you to the seaweed (游), 3 found all five starfish
+  progress: {chapter:0, landed:0, turtle:0, starFriends:0, forest:0, octopus:0},
+  //   turtle   0 not met yet, 1 said hello (泡泡), 2 led you to the seaweed (游), 3 found all five starfish: off to the forest
+  //   forest   0 not in the seaweed forest yet, 1 met your first shark there (小心, 鲨鱼)
+  //   octopus  0 hasn't counted its feet with you yet, 1 has (脚, 几)
   counters: {
     seabedWords: {count:'known', words:['沙子', '贝壳', '水草'], called:{'沙子':'the sand', '贝壳':'a shell', '水草':'the seaweed'}},
     starCount: {count:'progress', key:'starFriends'}   // the starfish in the seaweed you've made friends with (of five)
@@ -82,25 +93,41 @@ const EASTERN_SEA = {
     {id:'turtle2', main:true, if:{turtle:1, seabedWords:3}, text:'Go back to the {海龟|sea turtle}', arrow:'turtle'},
     {id:'starfish', main:true, if:{turtle:2, starFriends:{below:5}}, text:'Find the five {海星|starfish} hiding in the {水草|seaweed} ({starCount}/5)', where:'seabed'},
     {id:'turtle3', main:true, if:{turtle:2, starFriends:5}, text:'Tell the {海龟|sea turtle} you’ve found all five', arrow:'turtle'},
-    {id:'seabed', main:true, if:{turtle:3}, text:'The rest of the {海|sea} is on its way. Until then, practise your words and play with your {朋友|friends}', where:'seabed'}
+    {id:'toForest', main:true, if:{turtle:3, forest:0}, text:'Follow the {海龟|sea turtle} east, into the seaweed forest', arrow:{place:'forest'}},
+    {id:'octopus', main:true, if:{forest:1, friends:{octopus:false}}, text:'Something is hiding among the {石头|rocks} in the north of the seaweed forest: go and see', arrow:[13, 2, 'forest']},
+    {id:'octopus2', main:true, if:{friends:{octopus:true}, octopus:0}, text:'The {章鱼|octopus} wants to show you something', arrow:'octopus'},
+    {id:'forest', main:true, if:{octopus:1}, text:'The rest of the {海|sea} is on its way. Until then, practise your words, and fight what hides in the tall {水草|seaweed}', where:'forest'}
   ],
   hints: [
     {if:{turtle:0}, text:'You’re on the seabed, deep under the {海|sea}. A {海龟|sea turtle} is swimming towards you: walk up to it and press A.'},
     {if:{turtle:1}, text:'The {海龟|sea turtle} is showing you round. Things that sparkle ✨ have words: walk up to one and press A.'},
     {if:{turtle:2}, text:'Walk beside the {水草|seaweed} round the edge of the seabed: where it rustles, something is hiding. Face it and it comes out.'},
-    {if:{turtle:3}, text:'The rest of the {海|sea}, and the Dragon King’s palace, are on their way. Until then, practise your words.'}
+    {if:{turtle:3, forest:0}, text:'The {海龟|sea turtle} has swum east, into the seaweed forest. Walk off the {东边|east} side of the seabed to follow it.'},
+    {if:{forest:1}, text:'{鲨鱼|Sharks} and jellyfish hide in the tall seaweed, and come out as you walk through it. The {章鱼|octopus} lives among the rocks in the north. The rest of the {海|sea} is on its way.'}
   ],
   checklist: [
     {part:'seabed', text:'Dive from the iron {桥|bridge}, down to the seabed', done:{landed:1}},
     {part:'seabed', text:'Say hello to the {海龟|sea turtle}', show:{landed:1}, done:{turtle:{atLeast:1}}},
     {part:'seabed', text:'Find the seabed’s three words', show:{turtle:{atLeast:1}}, done:{seabedWords:3}},
-    {part:'seabed', text:'Find the five {海星|starfish}', show:{turtle:{atLeast:2}}, done:{starFriends:5}}
+    {part:'seabed', text:'Find the five {海星|starfish}', show:{turtle:{atLeast:2}}, done:{starFriends:5}},
+    {part:'forest', text:'Go into the seaweed forest', done:{forest:1}},
+    {part:'forest', text:'Meet a {水母|jellyfish} in the tall seaweed', show:{forest:1}, done:{knows:'水母'}},
+    {part:'forest', text:'Make friends with whoever is hiding among the {石头|rocks}', show:{forest:1}, done:{friends:{octopus:true}}},
+    {part:'forest', text:'Play the {章鱼|octopus}’s counting game', show:{friends:{octopus:true}}, done:{octopus:1}}
   ],
   bubbles: {
-    turtle: [{if:{landed:1, turtle:0}, show:'!'}, {if:{turtle:1, seabedWords:3}, show:'!'}, {if:{turtle:2, starFriends:5}, show:'!'}]
+    turtle: [{if:{landed:1, turtle:0}, show:'!'}, {if:{turtle:1, seabedWords:3}, show:'!'}, {if:{turtle:2, starFriends:5}, show:'!'}],
+    octopus: [{if:{friends:{octopus:true}, octopus:0}, show:'!'}]
   },
   requests: {},
-  events: [],
+  events: [
+    // into the seaweed forest: the sea turtle's warning (小心), and your first shark shoots out of the seaweed
+    {if:{place:'forest', forest:0, around:[3, 7, 'forest', 1]}, do:[
+      {say:'careful', by:'turtle', teach:'小心'}, {newWord:'小心', note:'小心 means careful! Say it when someone might get hurt.'},
+      {battle:'shark', out:true, retry:true, meet:'A {鲨鱼|shark} shoots out of the seaweed at you!', back:{at:[1, 7, 'forest'], facing:'right'},
+        lost:'You swim back to the edge of the forest to catch your breath.',
+        win:[{set:{forest:1}}, {message:'Sharks and jellyfish hide in the tall seaweed. And something is hiding among the rocks to the north…'}]}]}
+  ],
 
   places: {
     // The seabed, under the iron bridge's water: sand, shells, seaweed, rocks and coral, light rippling over it all.
@@ -109,7 +136,9 @@ const EASTERN_SEA = {
       onMap: [120, 40, 24, 16],
       underwater: true,
       music: 'sea',
-      exits: [],
+      // east, to the seaweed forest, once the starfish are found
+      exits: [{at:[23, 6], to:'forest', arrive:[1, 7], facing:'right', if:{turtle:{atLeast:3}}, closed:'The seaweed grows thick here. The sea turtle wants to show you round the seabed first.'}],
+      backdrop: 'sea',
       // little fish swimming over the sand in schools: [row, how many, map drawing, squares a second, which way]
       schools: [[3, 5, 'fishYellow', .9, -1], [10, 4, 'fishBlue', .7, 1]],
       map: [
@@ -119,7 +148,7 @@ const EASTERN_SEA = {
         "w.......n..........s...w",
         "ww..M.......p..........w",
         "w.........s.......O....w",
-        "w..p...................w",
+        "w..p....................",
         "w......R.........s.....w",
         "ww..........p.......M..w",
         "w....s.........C.......w",
@@ -129,6 +158,37 @@ const EASTERN_SEA = {
         "wwC.......s.........wwww",
         "wwww...p.......Q...wwwww",
         "wwwwwwww....wwwwwwwwwwww"
+      ]
+    },
+    // The seaweed forest, east of the seabed: tall seaweed all round a sandy clearing, sharks and jellyfish hiding in it,
+    // jellyfish drifting over it, and the octopus among the rocks to the north. The way on east comes in the next step.
+    forest: {
+      name: {zh:'水草林', py:'shuǐcǎo lín', en:'The seaweed forest'},
+      onMap: [150, 42, 26, 16],
+      underwater: true,
+      music: 'sea',
+      backdrop: 'sea',
+      legend: FOREST_LEGEND,
+      exits: [{at:[0, 7], to:'seabed', arrive:[22, 6], facing:'left'}],
+      jellies: [[5, 4], [21, 9], [12, 12], [22, 2]],
+      schools: [[4, 4, 'fishBlue', .6, 1], [11, 5, 'fishYellow', .8, -1]],
+      map: [
+        "wwwwwwwwwwwwwwwwwwwwwwwwww",
+        "wTTTTTTw...R..BB..wTTTTTTw",
+        "wTTTTTT...R....R...TTTTTTw",
+        "wTTTTT...s.R...R....TTTTTw",
+        "wTTTT.........p......TTTTw",
+        "wwTTT....TTTTTT....n..TTTw",
+        "w.......TTTTTTTT.......TTw",
+        "........TTTTTTTTT........w",
+        "w..s....TTTTTTTTT....s...w",
+        "wTT......TTTTTTT.........w",
+        "wTTTT..........p....TTTTTw",
+        "wTTTTTT....C.......TTTTTTw",
+        "wTTTTTTT.......O..TTTTTTTw",
+        "wTTTTTTTT..F...TTTTTTTTTTw",
+        "wwTTTTTTTTT...TTTTTTTTTTww",
+        "wwwwwwwwwwwwwwwwwwwwwwwwww"
       ]
     }
   },
@@ -140,7 +200,9 @@ const EASTERN_SEA = {
     // the sea turtle from your shore (Area 1's friend), swimming over the sand: it greets you as you land, shows you round,
     // and swims ahead to the seaweed where the starfish hide
     {id:'turtle', place:'seabed', x:14, y:6, facing:'left', look:'海龟', flies:true, swims:true,
-      moves:[{if:{turtle:{atLeast:2}}, place:'seabed', x:5, y:12, facing:'right'}]}
+      moves:[{if:{turtle:{atLeast:3}}, place:'forest', x:3, y:6, facing:'right'}, {if:{turtle:{atLeast:2}}, place:'seabed', x:5, y:12, facing:'right'}]},
+    // the octopus among the seaweed forest's rocks, once it's your friend (till then, the animal there: see animals)
+    {id:'octopus', place:'forest', x:13, y:2, facing:'down', look:'章鱼', moves:[{if:{friends:{octopus:false}}, place:'gone', x:0, y:0}]}
   ],
   yourNames: [{if:{}, zh:'孙悟空', py:'Sūn Wùkōng', en:'Sun Wukong (you)'}],
   sign: {name:{zh:'牌子', py:'páizi', en:'Sign'}, says:{zh:'海', en:'The sea'}, hint:''},
@@ -157,15 +219,31 @@ const EASTERN_SEA = {
     '贝壳': 'The shells on the seabed’s sand: the shells you’ve collected all along.',
     '水草': 'The seaweed round the seabed’s edges.',
     '游': 'The sea turtle, swimming ahead of you to the seaweed.',
-    '海星': 'Hiding in the seabed’s seaweed: five of them, each a different colour.'
+    '海星': 'Hiding in the seabed’s seaweed: five of them, each a different colour.',
+    '小心': 'The sea turtle, as your first shark shot out of the seaweed forest’s tall seaweed.',
+    '鲨鱼': 'Hiding in the seaweed forest’s tall seaweed.',
+    '水母': 'Drifting in the seaweed forest’s tall seaweed, more of them at night.',
+    '章鱼': 'Among the rocks in the north of the seaweed forest, squirting ink.',
+    '脚': 'The octopus in the seaweed forest, waving its eight feet.',
+    '几': 'The octopus in the seaweed forest, asking how many feet it has.'
   },
-  practiceSentences: [],
+  practiceSentences: [
+    {sentence:'我 有 几 只 脚', sentenceEn:'How many feet have I got?'}   // (几, which has no picture)
+  ],
   examples: {
     '沙子': {zh:'海 里 有 很多 沙子 。', en:'There’s lots of sand in the sea.'},
     '贝壳': {zh:'我 有 很多 贝壳 。', en:'I have lots of shells.'},
-    '水草': {zh:'海星 在 水草 里 。', en:'The starfish are in the seaweed.'}
+    '水草': {zh:'海星 在 水草 里 。', en:'The starfish are in the seaweed.'},
+    '水母': {zh:'海 里 有 水母 。', en:'There are jellyfish in the sea.'},
+    '章鱼': {zh:'章鱼 有 八 只 脚 。', en:'An octopus has eight feet.'}
   },
-  enemies: {},
+  // What hides in the seaweed forest's tall seaweed (step 3): sharks, and jellyfish, more of them at night
+  enemies: {
+    shark: {word:'鲨鱼', health:30, hits:10, attacks:['泡泡', '沙子', '贝壳', '水草', '海星'], meetNote:'A shark shoots out of the tall seaweed!', meet:'A {鲨鱼} swims at you!',
+      hide:'The {鲨鱼} darts out of sight…', attack:'The {鲨鱼} snaps at you!', away:'The {鲨鱼} swims off into the seaweed.', sniff:'The {鲨鱼} sniffs the water, and swims off!', reward:2},
+    jelly: {word:'水母', health:20, hits:8, day:.5, night:2, attacks:['泡泡', '沙子', '贝壳', '水草', '海星'], meetNote:'A jellyfish drifts out of the tall seaweed, glowing!', meet:'A {水母} drifts at you!',
+      hide:'The {水母} drifts out of sight…', attack:'The {水母} stings you!', away:'The {水母} drifts off into the seaweed.', sniff:'The {水母} drifts away from the smell!', reward:1}
+  },
   // Your broadsword from Chapter 4, in your paw (the staff comes later in Chapter 5).
   battles: {when:{knows:'妖怪'}, weapon:'棍子', hits:10, weapons:{'刀':15},
     restAt:[{at:[11, 6, 'seabed'], facing:'down', lost:'You’re worn out. You rest on the sand until your health is full again.'}]},
@@ -186,7 +264,11 @@ const EASTERN_SEA = {
       ],
       stays:{another:'Another {海星|starfish}, a new one! Answer its questions to make friends with it too ({starCount} of 5 so far).',
         again:'This {海星|starfish} still wants to play! Answer its questions to make friends ({starCount} of 5 so far).',
-        lost:'The {海星|starfish} stays on the sand: it still wants to play. Press A at it to try again.'}}
+        lost:'The {海星|starfish} stays on the sand: it still wants to play. Press A at it to try again.'}},
+    // the octopus among the seaweed forest's rocks, squirting ink as you meet it (inks); once it's your friend, it stays
+    // there to talk to (leaves: the octopus character takes its place)
+    {id:'octopus', word:'章鱼', at:[13, 2, 'forest'], leaves:true, inks:true, home:'海', chapter:0, clue:'The seaweed forest, among the rocks to the north',
+      meetNote:'An octopus pops up from behind the rocks, squirts a cloud of ink, and peeks out at you! Answer its questions to make friends.'}
   ],
   birds: {word:'鸟', note:'', colours:[]},
   hidden: [],
@@ -209,6 +291,11 @@ const EASTERN_SEA = {
     inBubble: {zh:'你 在 泡泡 里 ！', en:'You’re in a bubble!'},
     swimWalk: {zh:'我 游 ， 你 走 。', en:'I swim, you walk.'},
     fiveFriends: {zh:'你 有 五 个 海星 朋友 了 ！', en:'You’ve got five starfish friends now!'},
+    careful: {zh:'小心 ！ 有 鲨鱼 ！', en:'Careful! A shark!'},
+    eightFeet: {zh:'我 有 八 只 脚 ！', en:'I’ve got eight feet!'},
+    howManyFeet: {zh:'我 有 几 只 脚 ？', en:'How many feet have I got?'},
+    countFeet: {zh:'这里 有 几 只 脚 ？', en:'How many feet are here?'},
+    great: {zh:'太 好 了 ！', en:'Great!'},
     play: {zh:'我们 玩 吧 ！', en:'Let’s play!'},
     count1: {zh:'一 ！', en:'One!'}, count2: {zh:'二 ！', en:'Two!'}, count3: {zh:'三 ！', en:'Three!'}, count4: {zh:'四 ！', en:'Four!'}, count5: {zh:'五 ！', en:'Five!'}
   },
@@ -228,9 +315,23 @@ const EASTERN_SEA = {
         {message:'The sea turtle has brought you to the {水草|seaweed}. Five {海星|starfish} are hiding in it: find them all!'}]},
       {if:{turtle:2, starFriends:{below:5}}, do:[{message:'The sea turtle says five {海星|starfish} are hiding in the {水草|seaweed}. You’ve found {starCount} so far.'}]},
       {if:{turtle:2, starFriends:5}, do:[{say:'fiveFriends'}, {shells:5, note:'The sea turtle gives you 5 🐚 贝壳 it found on the seabed.'}, {set:{turtle:3}},
-        {message:'To be continued: the rest of the sea is on its way!'}]},
+        {message:'The sea turtle swims off east, into the seaweed forest. Follow it!'}]},
       {do:[{say:'swimWalk'}]}
+    ],
+    // the octopus, once it's your friend: its eight feet (脚), how many (几), then counting its feet with you
+    octopus: [
+      {if:{octopus:0}, do:[
+        {say:'eightFeet', teach:'脚'}, {newWord:'脚', note:'脚 means foot. The octopus calls its eight arms its feet!'},
+        {say:'howManyFeet', teach:'几'}, {newWord:'几', note:'几 means how many, when it’s a few: 几只脚？ How many feet? You answer with a number: 八只脚, eight feet.'},
+        {countGame:'feet'}, {set:{octopus:1}},
+        {message:'To be continued: the coral reef, and the rest of the sea, are on their way!'}]},
+      {do:[{countGame:'feet'}]}
     ]
+  },
+  // The octopus waving some of its feet out from behind its rock, for you to count (the countGame step)
+  countGames: {
+    feet: {thing:{word:'脚', ask:'countFeet', on:'sand'}, start:'The octopus waves some of its feet out from behind its rock. Count them? Each right answer earns a 🐚 if that number needs practice.',
+      notYet:'The octopus wants to count with you: learn more numbers, then come back!', win:[{say:'great'}]}
   },
   story: [],
   storyQuestions: [],

@@ -2,7 +2,7 @@
 // 你好 if it isn't your friend) and teaches your bubble (泡泡); the sand, a shell and the seaweed sparkle till you look
 // (沙子 贝壳 水草), and once you know 贝壳 your shells say so; it swims ahead to the seaweed (游), where five starfish hide
 // (海星), each staying out on the sand in its own colour, A at one showing it (红色的海星); then shells from the turtle, and
-// To be continued. Little fish swim over the sand.
+// off east to the seaweed forest (step 3). Little fish swim over the sand.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -14,12 +14,12 @@ const KNOWN = ['石头', '你好', '山', '水', '草', '鱼', '海', '海龟', 
 const END_OF_4 = {landed: 1, dressed: 2, chapter: 2, king: 2, homeAgain: 1, unload: 6, party: 1, stickGiven: 1, ch2: 1, weapon: '刀'};
 function game(area = {}, {friends = ['seaTurtle'], pos = {place: 'seabed', x: 11, y: 6, dir: 'down'}} = {}){
   const g = loadGame({dom: true, save: {version: 42, started: true, area: 3, shells: 7, coins: 9, met: [], friends,
-    w: Object.fromEntries(KNOWN.map(x => [x, {lv: 2, ok: 2}])), areas: {1: {chapter: 1, raft: 3, done: true}, 2: END_OF_4, 3: {chapter: 0, landed: 1, weapon: '刀', ...area}}, pos}});
+    w: Object.fromEntries(KNOWN.map(x => [x, {lv: 2, ok: 2}])), areas: {1: {chapter: 1, raft: 3, done: true}, 2: END_OF_4, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀', ...area}}, pos}});
   g.run("mode = 'play'; save = () => {}; globalThis.__notes = []; globalThis.__said = []; globalThis.__picked = []");
   g.run("showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }; showNotice = async (w, o = {}) => { __notes.push('card: ' + w); setSeen(w); }");
   g.run("showDialog = async (who, line, o = {}) => { __said.push((who.match(/data-id=\"([^\"]*)\"/) || [])[1] + ': ' + line.t.join('')); }");
   g.run("replyWith = async best => { __said.push('player: ' + best); return true; }; encounter = async () => true; sayFully = async () => {}");
-  g.run("showPicked = async (f, note, o = {}) => { __picked.push(f.zh + ' | ' + f.en); }");
+  g.run("showPicked = async (f, note, o = {}) => { __picked.push(f.zh + ' | ' + f.en); }; infoBox = async (who, html) => { __notes.push('box: ' + html.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim()); }");
   g.run('placePlayer()');
   return g;
 }
@@ -97,7 +97,9 @@ test('five starfish, each staying out on the sand in its own colour; A at a frie
   assert.deepEqual(said(g), ['turtle: 你有五个海星朋友了！']);
   assert.equal(g.run('S.shells'), 12, 'five shells, 贝壳');
   assert.equal(p(g, 'turtle'), 3);
-  assert.ok(notes(g).some(n => /To be continued/.test(n)));
+  const told = notes(g);
+  assert.ok(told.some(n => /swims off east, into the seaweed forest/.test(n)), 'and it swims on east (step 3: tests/forest.test.js)');
+  assert.ok(told.some(n => /box: Part 2 The seaweed forest/.test(n)), 'Part 2’s card');
 });
 
 test('the seabed drawn: the starfish in their colours, the turtle swimming, and schools of little fish', () => {

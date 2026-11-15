@@ -298,7 +298,13 @@ const WORD_BANK = {
   '贝壳': {py:'bèiké', en:'shell', pic:'🐚', area:3, category:'nature', alike:['珍珠']},   // (the shells you've collected all game: your money says 贝壳 once you know it)
   '水草': {py:'shuǐcǎo', en:'seaweed', pic:'🌱', area:3, category:'nature', alike:['草']},   // (round the seabed's edges, where the starfish hide)
   '游': {py:'yóu', en:'to swim', pic:'🏊', area:3, category:'actions', alike:['海']},   // (the sea turtle: 我游，你走。)
-  '海星': {py:'hǎixīng', en:'starfish', pic:'✴️', area:3, category:'animals', alike:['星星']},   // (five, hiding in the seabed's seaweed, each its own colour)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
+  '海星': {py:'hǎixīng', en:'starfish', pic:'✴️', area:3, category:'animals', alike:['星星']},   // (five, hiding in the seabed's seaweed, each its own colour)
+  // the seaweed forest's
+  '小心': {py:'xiǎoxīn', en:'careful!', area:3, category:'phrases', phrase:true, use:'when someone might get hurt', cue:'is in danger', situation:'A shark is swimming up behind your friend, who hasn’t seen it.'},   // (the sea turtle, as your first shark comes out of the seaweed: 小心！有鲨鱼！)
+  '鲨鱼': {py:'shāyú', en:'shark', pic:'🦈', area:3, category:'animals', alike:['鱼']},   // (hiding in the seaweed forest's tall seaweed: a wild creature to fight)
+  '水母': {py:'shuǐmǔ', en:'jellyfish', pic:'🪼', area:3, category:'animals', alike:['泡泡']},   // (in the tall seaweed too, more at night, glowing)
+  '章鱼': {py:'zhāngyú', en:'octopus', pic:'🐙', area:3, category:'animals'},   // (among the seaweed forest's rocks, squirting ink)
+  '脚': {py:'jiǎo', en:'foot', pic:'🦶', area:3, category:'people', alike:['鞋']},   // (the octopus: 我有八只脚！)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
 
   // Heard in sentences
   '换': {py:'huàn', en:'to change, to swap'},
@@ -345,7 +351,7 @@ const WORD_BANK = {
   '宝贝': {py:'bǎobèi', en:'treasure'},   // (the old monkey's tip: 山上有很多宝贝！, the trade, 9 November 2026)
   '文': {py:'wén', en:'(counts coins: 两文钱, two coins)'},
   '种花': {py:'zhòng huā', en:'to plant flowers'},
-  '几': {py:'jǐ', en:'how many'},
+  '几': {py:'jǐ', en:'how many', area:3, category:'questions'},   // (heard all game, caught at last: the octopus, 我有几只脚？; a few, as 多少 is any number)
   '个': {py:'gè', en:'(counts things: 几个, how many)'},
   '们': {py:'men', en:'(more than one: 同学们, the class)'},
   '上课': {py:'shàngkè', en:'class begins'},
