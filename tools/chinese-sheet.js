@@ -300,8 +300,17 @@ const QUESTIONS = ['A sheep in the meadow teaches 羊 (yáng) as sheep, before t
   'The feast tells your sadness gently, for children: 可是美猴王不快乐。我们会老…… (But the Monkey King isn’t happy. We’ll all grow old…). Is 我们会老 natural, or would 我们都会老 be better (all of us)? We kept it to words the player knows or can hear.',
   'As you sail away: 美猴王坐木筏走了。 (The Monkey King sailed away on his raft.) Is 坐木筏走了 natural, or would 坐着木筏走了 or 乘木筏走了 be better?',
   'The shore below the meadow is called 海边 (hǎibiān), the seaside. Is that the natural name for a place on the shore where a river runs into the sea?',
-  'When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)'];
-const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?', '、':',', '……':'…'};
+  'When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)',
+  // the Eastern Sea (Area 3), after the owner's review of it (16 November 2026)
+  'The Eastern Sea (Area 3), Chapter 6, the dream: two officers of the underworld come for you with a rope. The book has 勾死人; the game wants something gentle for children, with no word for death, and calls them 差人 (chāirén). Is 差人 clear and gentle, or is there a better word?',
+  'The dream: the ten kings of the underworld are 十王 (Shí Wáng) on their name plate, and the place is 地府 (dìfǔ). Are both all right for children? (The book of names is never named in Chinese on screen: in English it is “the book of names”.)',
+  'Waking from the dream, you say 原来是梦！ (So it was a dream!), where it was 是梦！. Is 原来是梦！ natural for a child waking up?',
+  'The officers say 跟我们走！ (Come with us!) as they tie the rope round you. Is it natural, and not too frightening?',
+  'The troop, once you tell them about the book of names: 我们不会老了！ (We won’t grow old now!). Is it natural?',
+  'You ask the Dragon King for clothes to go with the staff: 我还要衣服！ (I want some clothes too!). Is 还要 fine, or would 我还想要衣服！ be more natural?',
+  'The octopus says 我有八只脚！ (I’ve got eight feet!), teaching 脚. For a child, is 八只脚 all right for an octopus’s arms, or should it be 八条腿 (and teach 腿)?',
+  'The sea folk and the troop have many new everyday lines (16 November 2026), each said again and again, such as 鲸鱼很大吗？, 你打钟了吗？, 一万斤？太重了！, 绳子？什么绳子？ and 请你吃桃子！. Are they all natural? They’re all in the lines above.'];
+const PUNCT ={'。':'.', '！':'!', '，':',', '？':'?', '、':',', '……':'…'};
 // The sheet for each area (n: its number), as the page plays it (js/data.js: the area of the save it's given).
 function sheetFor(n){
   const game = loadGame(n === 1 ? {} : {save:{version:34, area:n, w:{}, started:true}});

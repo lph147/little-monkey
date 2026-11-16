@@ -424,6 +424,7 @@ const WORD_BANK = {
   '南海龙王': {py:'Nánhǎi Lóngwáng', en:'the Dragon King of the South Sea'}, '西海龙王': {py:'Xīhǎi Lóngwáng', en:'the Dragon King of the West Sea'},
   '北海龙王': {py:'Běihǎi Lóngwáng', en:'the Dragon King of the North Sea'},   // (names: the Dragon King's three younger brothers, step 9)
   '差人': {py:'chāirén', en:'officers of the underworld'}, '十王': {py:'Shí Wáng', en:'the ten kings of the underworld'}, '地府': {py:'dìfǔ', en:'the underworld'},   // (names: the dream, Chapter 6)
+  '龙宫': {py:'Lónggōng', en:'the Dragon Palace'}, '跟': {py:'gēn', en:'with; to follow'}, '原来': {py:'yuánlái', en:'so it was…'},   // (the troop, asking about the Dragon Palace; the officers: 跟我们走！; waking up: 原来是梦！)
   '太白金星': {py:'Tàibái Jīnxīng', en:'the Great White Planet'}, '玉皇大帝': {py:'Yùhuáng Dàdì', en:'the Jade Emperor'}, '天宫': {py:'Tiāngōng', en:'Heaven'},   // (names: Heaven, Chapter 6)
   '这个': {py:'zhège', en:'this one'},   // (this one, as the Dragon King points at a weapon)
   '三十': {py:'sānshí', en:'thirty'}, '四十': {py:'sìshí', en:'forty'}, '五十': {py:'wǔshí', en:'fifty'}, '六十': {py:'liùshí', en:'sixty'},

@@ -106,7 +106,7 @@ const PAST_ANIMALS = (() => {
   const P = AREA.pastAnimals; if (!P) return [];
   const mine = new Set([...AREA.animals.map(a => a.id), ...AREA.characters.map(c => c.id)]), out = [];
   for (const A of AREAS.filter(a => a.number < AREA.number)) for (const a of A.animals || []){
-    if (a.many || a.leaves || a.sleepsAt || a.stopsYou || a.group || a.awake || a.waits || mine.has(a.id)) continue;
+    if (a.many || a.leaves || a.sleepsAt || a.stopsYou || a.group || a.awake || a.waits || mine.has(a.id) || (P.not || []).includes(a.id)) continue;   // (not: one that's with you elsewhere in this area, such as the sea turtle, under the sea in Area 3)
     const there = p => (Array.isArray(p) ? p[2] : p) || Object.keys(A.places)[0];
     const here = id => Object.keys(AREA.places).find(k => (AREA.places[k].borrowed || {}).from === A.number && AREA.places[k].borrowed.id === id);
     const at = a.at ? here(there(a.at)) : null, hides = a.hides ? here(a.hides) : null;

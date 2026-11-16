@@ -519,6 +519,10 @@ SAVES.a3dressedSea = {...SAVES.a3dressed, pos: {place: 'forest', x: 19, y: 7, di
 SAVES.a3home = {...SAVES.a3dressed, areas: {...SAVES.a3dressed.areas, 3: {...SAVES.a3dressed.areas[3], part: 8, chapter: 1, home: 3}}, pos: {place: 'ffmHomeGround', x: 6, y: 10, dir: 'right'}};
 SAVES.a3spots = {...SAVES.a3home, w: {...SAVES.a3home.w, ...knows(1, ['针', '耳朵', '在'])}, areas: {...SAVES.a3home.areas, 3: {...SAVES.a3home.areas[3], part: 9, ear: 1}}, pos: {place: 'ffmMeadow', x: 2, y: 8, dir: 'left'}};
 SAVES.a3pond = {...SAVES.a3spots, areas: {...SAVES.a3spots.areas, 3: {...SAVES.a3spots.areas[3], bridge: 1}}, pos: {place: 'ffmMeadow', x: 13, y: 10, dir: 'left'}};
+SAVES.a3planks = {...SAVES.a3pond, areas: {...SAVES.a3pond.areas, 3: {...SAVES.a3pond.areas[3], planks: 2, spotIslet: 1, spotBoulder: 1}}, pos: {place: 'ffmMeadow', x: 14, y: 10, dir: 'left'}};   // (the troop's planks to the little island)
+SAVES.a3boulder = {...SAVES.a3spots, pos: {place: 'ffmMeadow', x: 14, y: 5, dir: 'up'}};
+SAVES.a3trainee = {...SAVES.a3spots, pos: {place: 'ffmHomeGround', x: 3, y: 12, dir: 'left'}};
+SAVES.a3waking = {...SAVES.a3spots, areas: {...SAVES.a3spots.areas, 3: {...SAVES.a3spots.areas[3], part: 10, spotTree: 1, spotBoulder: 1, bridge: 1, planks: 2, spotIslet: 1, spotCrack: 1, spotTrainee: 1, feast: 1, dream: 4, kings: 1, hallSpy: 1}}, pos: {place: 'ffmCave', x: 1, y: 2, dir: 'up'}};
 SAVES.a3dream = {...SAVES.a3spots, w: {...SAVES.a3spots.w, ...knows(1, ['高'])}, areas: {...SAVES.a3spots.areas, 3: {...SAVES.a3spots.areas[3], part: 10, spotTree: 1, spotBoulder: 1, bridge: 1, spotIslet: 1, spotCrack: 1, spotTrainee: 1, feast: 1, dream: 2}}, pos: {place: 'underworld', x: 7, y: 10, dir: 'up'}};
 SAVES.a3kings = {...SAVES.a3dream, w: {...SAVES.a3dream.w, ...knows(1, ['绳子', '灯'])}, areas: {...SAVES.a3dream.areas, 3: {...SAVES.a3dream.areas[3], dream: 3}}, pos: {place: 'underworld', x: 7, y: 4, dir: 'up'}};
 SAVES.a3planet = {...SAVES.a3kings, w: {...SAVES.a3kings.w, ...knows(1, ['怕', '找', '毛笔', '醒', '梦'])}, areas: {...SAVES.a3kings.areas, 3: {...SAVES.a3kings.areas[3], part: 11, dream: 5, invite: 2}}, pos: {place: 'ffmHomeGround', x: 12, y: 10, dir: 'right'}};
@@ -2011,8 +2015,22 @@ SCREENS.push(
     play(); await wait(100); staffTo({len: 44, w: 3}, 900, true); await wait(1200); }},
   {id: 'a3-bridge', title: 'A bridge to the island', save: 'a3pond', why: 'Your staff lies across the meadow’s pond, a bridge to the little island, its jade glinting there.', run: async () => {
     play(); await wait(600); }},
+  {id: 'a3-try-lift', title: 'Too heavy!', save: 'a3home', why: 'You lay your staff down, and two little monkeys heave at it, straining and shaking, sweat flying: it hardly stirs. You pick it up with one paw.', run: async () => {
+    play(); await wait(200); STEPS.tryLift({tryLift: ['baby1', 'baby3']}); await wait(2200); }},
+  {id: 'a3-tell-four', title: 'All four', save: 'a3boulder', why: 'At each spot at home, all four things you could tell your staff, in a new order each time: 变长, 变短, 变大 or 变小.', run: async () => {
+    play(); await wait(100); staffOut = {from: STAFF_OUT.normal, to: STAFF_OUT.normal, t0: 0, ms: 1}; tellCard('boulder'); await wait(400); }},
+  {id: 'a3-roll', title: 'Rolling away', save: 'a3boulder', why: '变大！ Your staff, grown thick, levers the boulder aside, and it rolls away as you watch, bumping and tumbling, earth flying.', run: async () => {
+    play(); await wait(100); STEPS.roll(); await wait(520); }},
+  {id: 'a3-lend', title: 'Your staff, lent', save: 'a3trainee', why: 'Made short enough for him, your staff in the little monkey’s paws: he swings it round and round, just like you.', run: async () => {
+    play(); await wait(100); STEPS.lend({lend: 'traineeStick', ms: 4000}); await wait(900); }},
+  {id: 'a3-planks', title: 'The troop’s bridge', save: 'a3planks', why: 'Once you’ve got the jade, the big monkey lays planks across, and your staff comes back to your ear: a little bridge of the troop’s own to the island.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'a3-waking', title: 'Wake up!', save: 'a3waking', why: 'Waking from the dream in your stone bed in the Water Curtain Cave, the old monkey shaking you: 醒醒！', run: async () => {
+    play(); await wait(100); STEPS.asleep({}); STEPS.strain({strain: ['elder'], ms: 3000}); await wait(500); }},
   {id: 'a3-dream-in', title: 'The dream', save: 'a3home', why: 'After the feast for your staff you fall asleep in the Water Curtain Cave, and dream: mist swirls in, and you’re on a misty road, lamps glowing along it.', run: async () => {
     play(); await wait(300); storyScene('dreamIn'); await wait(200); advancedTo = 1; introClock = 4.4; await wait(700); }},
+  {id: 'a3-dream-cave', title: 'Asleep after the feast', save: 'a3home', why: 'The dream begins: the Water Curtain Cave at night, the troop asleep in the stone beds and you in yours, Zs drifting up.', run: async () => {
+    play(); await wait(300); storyScene('dreamIn'); await wait(200); introClock = 1.2; await wait(700); }},
   {id: 'a3-officers', title: 'The officers’ rope', save: 'a3dream', why: 'The underworld, in your dream: two officers have tied a rope round you (绳子) and lead you up the road, lamps (灯) along it.', run: async () => {
     play(); await wait(600); }},
   {id: 'a3-kings', title: 'The ten kings', save: 'a3kings', why: 'The ten kings behind their long table, the book of names on it, scared of you and your staff (我们怕你！).', run: async () => {
@@ -2021,6 +2039,8 @@ SCREENS.push(
     play(); await wait(100); bookCard('names'); await wait(200); const bs = document.querySelectorAll('#sheet .bname'); bs[4].click(); await wait(100); bs[1].click(); await wait(600); }},
   {id: 'a3-heaven', title: 'Trouble in Heaven', save: 'a3planet', why: 'In Heaven, the Dragon King and one of the ten kings complain to the Jade Emperor, and the Great White Planet, with his long white beard, has an idea.', run: async () => {
     play(); await wait(300); storyScene('heaven'); await wait(200); advancedTo = 2; introClock = 7.4; await wait(700); }},
+  {id: 'a3-planet-cloud', title: 'Down on his cloud', save: 'a3planet', why: 'The Great White Planet comes down on his cloud to the home ground, a golden light round him, the troop looking up at him.', run: async () => {
+    play(); await wait(300); storyScene('planetCloud'); await wait(200); advancedTo = 1; introClock = 3.7; await wait(700); }},
   {id: 'a3-planet', title: 'The invitation', save: 'a3planet', why: 'The Great White Planet, down on his cloud at the home ground: 玉皇大帝请你去天宫。 The end of Area 3.', run: async () => {
     play(); await wait(600); }},
   {id: 'a3-shells', title: 'Your shells are 贝壳', save: 'a3stars', why: 'Once you know 贝壳, your money says so: 🐚 7 贝壳, in your bag, on the Tasks page and in the shop.', run: async () => {

@@ -47,7 +47,11 @@ const RUN_STEP = .75;
 let bHeld = false;
 const canRun = () => !!AREA.running && matches(AREA.running);
 const running = () => bHeld && canRun();
-const walkMs = () => Math.round(STEP * (isFast() ? FAST_STEP : 1) * (running() ? RUN_STEP : 1));   // how long a step takes now
+// In the Dragon King of the North Sea's cloud shoes (Area 3), as light as clouds, each step takes CLOUD_STEP of the time
+// (decided 16 November 2026, after the owner's review: they promised walking on clouds, and did nothing).
+const CLOUD_STEP = .85;
+const inCloudShoes = () => typeof lookOn === 'function' && lookOn('feet') === 'cloudShoes';
+const walkMs = () => Math.round(STEP * (isFast() ? FAST_STEP : 1) * (running() ? RUN_STEP : 1) * (inCloudShoes() ? CLOUD_STEP : 1));   // how long a step takes now
 let finishedAt = null;   // {place, x, y, t}: the square you were facing when something ended
 function finished(){ const [x, y] = facing(); finishedAt = {place:PLACE, x, y, t:performance.now()}; }
 const justFinished = (x, y) => !!finishedAt && finishedAt.place === PLACE && finishedAt.x === x && finishedAt.y === y

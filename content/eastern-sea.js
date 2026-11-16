@@ -113,12 +113,14 @@ const ASK_CLOTHES = [
 const STAFF_GIVEN = [
   {writing:'staff'},
   {say:'jin13500', by:'dragonKing', teach:'万'}, {newWord:'万', note:'万 means ten thousand: 一万 is 10,000. The staff weighs 13,500 jin!'},
+  {gap:{sentence:'一 万 三 千 五 百 斤', en:'Thirteen thousand five hundred jin', word:'万', others:['千', '百']}},
   {say:'hereYouAre', by:'dragonKing', teach:'给'}, {newWord:'给', note:'给 means to give. 给你！ Here you are! The Dragon King is giving you the staff.'},
   {say:'yoursNow', by:'dragonQueen'}, {set:{staff:4}},
   {message:'The staff hits twice as hard as the {刀|broadsword}!'}, ...ASK_CLOTHES];
 const STAFF_SMALL = [{pickUp:'金箍棒'}, {set:{staff:3}}, {weapon:'金箍棒'}, ...STAFF_GIVEN];
 const PILLAR_SMALLER = [{tell:'smaller'}, {set:{staff:2}},
-  {if:{new:'金色'}, say:'goldenLight', by:'player', teach:'金色'}, {newWord:'金色', note:'金色 means golden. The staff has a golden band at each end.'}, ...STAFF_SMALL];
+  {if:{new:'金色'}, say:'goldenLight', by:'player', teach:'金色'}, {newWord:'金色', note:'金色 means golden. The staff has a golden band at each end.'},
+  {quiz:'金色', label:'What colour is the staff’s band?'}, ...STAFF_SMALL];   // (a question on it first: decided 16 November 2026, after the owner's review, so new words don't come one straight after another)
 const PILLAR_LOOK = [
   {if:{staff:0}, label:'Look', do:[
     {say:'tooLong', by:'player', teach:'长'}, {newWord:'长', note:'长 means long. The pillar runs right up through the roof: 太长了！ It’s too long!'},
@@ -179,13 +181,25 @@ const CRACK_SPOT = [
 const UNDERWORLD_LEGEND = {
   'X': {look:'dreamWall'}, '.': {look:'dreamFloor', walk:true}, ',': {look:'dreamRoad', walk:true}, 'm': {look:'dreamVoid'},
   'L': {look:'dreamLamp', word:'灯', newNote:'灯 means lamp. Stone lamps line the misty road, glowing in the dark.'},
-  'K': {look:'kingTable', landmark:true, onLook:[{if:{dream:3}, label:'Look', do:[{talkTo:'king1'}]}]}
+  'l': {look:'hallLamp', word:'灯'},   // (lamps in the hall)
+  'p': {look:'hallPillar', word:'柱子'}, 'd': {look:'hallDoor', word:'门'},   // (the hall's pillars, and its doors, standing open)
+  'K': {look:'kingTable', word:'书', landmark:true, onLook:[{if:{dream:3}, label:'Look', do:[{talkTo:'king1'}]}]}   // (the book of names, on the ten kings' table)
 };
+// The kings' I spy in the dim hall (the spy step): too scared to fetch the book of names themselves, they tell you what they
+// can see, one thing at a time, only in Chinese, and the last is the book (decided 16 November 2026, after the owner's review:
+// the underworld was just a corridor). Then the brush, the book, and you run.
+const HALL_SPY = {spy:'hallSpy', rounds:4, things:[{word:'灯', say:'spyLamp'}, {word:'柱子', say:'spyPillar'}, {word:'门', say:'spyDoor'}, {word:'书', say:'spyBook'}],
+  listen:'The kings say what they can see, only in Chinese. Find it, and press A at it.', found:'That’s it: {word}!', wrong:'Not that one. Listen again!',
+  done:[{say:'bookHere', by:'king1'}, {message:'It’s the book of names! The kings give you a brush, dipped in ink.'},
+    {newWord:'毛笔', note:'毛笔 means a writing brush: 毛 hair + 笔 pen. A pen made of hair!'}, {quiz:'毛笔', label:'What do the kings give you?'},
+    {book:'names'}, {set:{dream:4}},
+    {message:'You throw down the brush and run, out of the hall and down the road… and trip over something…'},
+    {morning:true}, {goTo:'ffmCave', at:[1, 2], facing:'up'}, {asleep:true}],
+  going:'You’re finding the things the kings can see. Keep looking?', stopped:'You stop looking. Talk to the kings to carry on.'};
 // The ten kings of the underworld, in a row behind their table (people: each a little different), the first in the middle.
-const TEN_KINGS = [[7, '#5A2A2A', '#E8E8E8'], [3, '#2A3A5A', '#3A3030'], [4, '#3A5A3A', '#B8B8B8'], [5, '#5A4A2A', '#2A2020'], [6, '#4A2A5A', '#D8D8D8'],
-  [8, '#2A4A5A', '#4A3A30'], [9, '#5A3A2A', '#C8C8C8'], [10, '#3A3A3A', '#2A2020'], [11, '#2A5A4A', '#E0E0E0'], [12, '#5A2A4A', '#3A3030']].map(([x, c, h], i) =>
-  ({id:'king' + (i + 1), place:'underworld', person:true, hair:'cap', beard:true, wear:'robe', x, y:2, facing:'down', name:{zh:'十王', py:'Shí Wáng', en:'The ten kings'},
-    palette:{o:'#1E1A28', h, s:'#E2C4A2', e:'#14101C', m:'#A87A6A', c, b:'#C8A04A', p:'#2A2638'}}));
+// (each one of the ten kings' own drawings, content/sprites.js: their crowns' bead strings, beards and robes)
+const TEN_KINGS = [7, 3, 4, 5, 6, 8, 9, 10, 11, 12].map((x, i) =>
+  ({id:'king' + (i + 1), place:'underworld', look:'十王', x, y:2, facing:'down', name:{zh:'十王', py:'Shí Wáng', en:'The ten kings'}}));
 
 const EASTERN_SEA = {
   number: 3,
@@ -258,7 +272,7 @@ const EASTERN_SEA = {
   // The day goes round down here too: no rain under the sea, and no bed, so the night passes by itself, as in the human world.
   dayNight: {if:{}, morning:'Good morning! You wake up with your health full.', sleep:[]},
   progress: {chapter:0, landed:0, turtle:0, starFriends:0, forest:0, octopus:0, dolphin:0, trench:0, palace:0, hall:0, staff:0, gifts:0, south:0, west:0, north:0, home:0,
-    ear:0, spotTree:0, spotBoulder:0, bridge:0, spotIslet:0, spotCrack:0, spotTrainee:0, feast:0, dream:0, invite:0},
+    ear:0, spotTree:0, spotBoulder:0, bridge:0, planks:0, spotIslet:0, spotCrack:0, spotTrainee:0, feast:0, dream:0, kings:0, hallSpy:0, invite:0},
   //   turtle   0 not met yet, 1 said hello (泡泡), 2 led you to the seaweed (游), 3 found all five starfish: off to the forest
   //   forest   0 not in the seaweed forest yet, 1 met your first shark there (小心, 鲨鱼)
   //   octopus  0 hasn't counted its feet with you yet, 1 has (脚, 几): off to the coral reef
@@ -278,7 +292,9 @@ const EASTERN_SEA = {
   //   ear      0 not yet, 1 you've shown the little monkeys your staff, up to the sky and down to a needle (针), into your
   //            ear (耳朵), where it lives now (在)
   //   spotTree, spotBoulder, spotIslet, spotCrack, spotTrainee   your staff has helped at that spot (1); bridge: it lies
-  //            across the meadow's pond (1), to the little island
+  //            across the meadow's pond (1), to the little island; planks: the big monkey has laid planks beside it (1),
+  //            and it's back in your ear (2)
+  //   kings    1 the ten kings have begun to show you round their hall (their I spy: hallSpy, how many times you've played it)
   //   feast    1 the troop's feast for your staff
   //   dream    0 not yet, 1 asleep: in the dream, 2 the officers' rope round you (绳子), 3 they've run from your staff, 4
   //            you've crossed out your name and the troop's (怕, 找, 毛笔), 5 woken in the cave (醒, 梦): the troop won't grow old
@@ -297,8 +313,10 @@ const EASTERN_SEA = {
   rope: {place:'underworld', if:{dream:2}, by:'official1'},
   glimmers: [{at:[10, 10, 'ffmMeadow'], if:{spotIslet:0}}],
   seasons: {if:{chapter:9}, home:{if:{}, season:'autumn'}},
-  pastAnimals: {chapter:1},
+  pastAnimals: {chapter:1, not:['seaTurtle']},   // (the sea turtle is under the sea with you: decided 16 November 2026, after the owner's review, as it was on the shore at home too)
   running: {knows:'跑'},
+  // While it rains at home, the troop talks about the rain (as on Flower Fruit Mountain), instead of what they usually say.
+  smallTalk: [{if:{raining:'heavy'}, monkeys:true, say:'rainTooHeavy'}, {if:{raining:true}, monkeys:true, say:'raining'}],
   areaMap: {has:{knows:'地图'}, notYet:'You don’t have a map yet.', word:'地图', note:'Every place you go is drawn on your map.'},
   practiseAt: [{text:'with quick practice (练习), in the menu'}],
   // No money of its own: under the sea, what you're given is shells (贝壳), as on Flower Fruit Mountain; your coins stay
@@ -467,7 +485,7 @@ const EASTERN_SEA = {
       {say:'welcome', by:'dragonKing', teach:'欢迎'}, {newWord:'欢迎', note:'欢迎 means welcome! You say it when someone comes to your home.'},
       {say:'whatDoYouWant', by:'dragonKing'}, {say:'iWantWeapon', by:'player'}, {set:{hall:1}}]},
     // all three dragon kings' gifts on: the Dragon Queen's 好看！, and home
-    {if:{gifts:3, south:1, west:1, north:1}, do:[{say:'lovely', by:'dragonQueen'}, {set:{gifts:4}},
+    {if:{gifts:3, south:1, west:1, north:1}, do:[{say:'lovely', by:'dragonQueen'}, {say:'goodbye', by:'dragonKing'}, {reply:'再见', about:'The Dragon King says goodbye. What do you say?'}, {set:{gifts:4}},
       {message:'You’re dressed like a king now, with a staff to match! The sea turtle is waiting for you on the seabed, where you landed, to take you home. (Your other clothes are in your wardrobe: Menu, 衣服.)'}]},
     // on the way home through the seaweed forest: a shark meets your staff
     {if:{place:'forest', gifts:4, home:0, around:[21, 7, 'forest', 1]}, do:[
@@ -485,18 +503,26 @@ const EASTERN_SEA = {
     {if:{place:'ffmHomeGround', home:3, ear:0, around:[9, 10, 'ffmHomeGround', 3]}, do:[{walk:'baby1', to:'you'}, {talkTo:'baby1'}]},
     // the little island's jade, once your staff's a bridge to it
     {if:{place:'ffmMeadow', bridge:1, spotIslet:0, around:[10, 10, 'ffmMeadow', 0]}, do:[
-      {if:{new:'玉'}, newWord:'玉', note:'玉 means jade.'}, {bag:'玉', note:'A piece of {玉|jade}, green and smooth, glinting in the grass of the little island!'}, {set:{spotIslet:1}}]},
+      {if:{new:'玉'}, newWord:'玉', note:'玉 means jade.'}, {bag:'玉', note:'A piece of {玉|jade}, green and smooth, glinting in the grass of the little island!'}, {set:{spotIslet:1}},
+      // (and your staff back: the big monkey lays planks across beside it, and it comes back to you, into your ear; decided
+      // 16 November 2026, after the owner's review: it was a bridge for good, and in your ear too)
+      {walk:'big', to:[13, 11], ms:220}, {say:'letMeHelp', by:'big'}, {plank:[[12, 10], [11, 10]]}, {set:{planks:1}},
+      {say:'getSmaller', by:'player'}, {staffBack:true}, {set:{planks:2}},
+      {message:'The big monkey has laid planks across, a little bridge of the troop’s own, and your staff is back in your ear.'}]},
     // all five spots: the troop's feast for your staff, back at the home ground
     {if:{place:'ffmHomeGround', staffSpots:5, feast:0}, do:[{scene:'staffFeast'}, {set:{feast:1}},
       {message:'The feast goes on late into the night. You’re tired out: go to bed, in the Water Curtain Cave.'}]},
     // the dream: two officers come for you with a rope; the ten kings, as you come up to their table
-    {if:{place:'underworld', dream:1}, do:[{walk:'official1', to:'you'}, {talkTo:'official1'}]},
-    {if:{place:'underworld', dream:3, around:[7, 4, 'underworld', 1]}, do:[{talkTo:'king1'}]},
+    {if:{place:'underworld', dream:1}, do:[{say:'lampsHere', by:'player', teach:'灯'}, {newWord:'灯', note:'灯 means lamp. Stone lamps line the misty road, glowing in the dark.'},   // (the lamps first, so the kings can ask for one in their I spy)
+      {walk:'official1', to:'you'}, {talkTo:'official1'}]},
+    {if:{place:'underworld', dream:3, kings:0, around:[7, 4, 'underworld', 1]}, do:[{talkTo:'king1'}]},   // (once: then their I spy, carried on by talking to them)
     // woken in the Water Curtain Cave by the old monkey (醒), the next morning: it was a dream (梦); but the troop won't
     // grow old
     {if:{place:'ffmCave', dream:4}, do:[
-      {say:'wakeUp', by:'elder', teach:'醒'}, {newWord:'醒', note:'醒 means to wake up. 醒醒！ Wake up! The old monkey is shaking you.'},
-      {say:'itWasADream', by:'player', teach:'梦'}, {newWord:'梦', note:'梦 means dream. It was all a dream!'},
+      {strain:['elder'], ms:900}, {say:'wakeUp', by:'elder', teach:'醒'}, {newWord:'醒', note:'醒 means to wake up. 醒醒！ Wake up! The old monkey is shaking you.'},
+      {wake:true}, {quiz:'醒', label:'What are you doing?'},
+      {say:'whereAmI', by:'player'}, {say:'youAreHome', by:'elder'},
+      {say:'itWasADream', by:'player', teach:'梦'}, {newWord:'梦', note:'梦 means dream. 原来是梦！ So it was all a dream!'},
       {message:'You tell the old monkey about the book of names, and the names you crossed out…'},
       {say:'wontGrowOld', by:'troopA'}, {set:{dream:5}}]},
     // trouble in Heaven; then someone coming down from the sky
@@ -726,9 +752,11 @@ const EASTERN_SEA = {
       'け': {look:'boulder', word:'石头', onLook:[{if:{ear:1, spotBoulder:0}, label:'Staff', do:BOULDER_SPOT}], becomes:[{if:{spotBoulder:1}, to:'げ'}]},
       'げ': {look:'grass', walk:true},
       'く': {look:'grass', walk:true},
-      'ご': {look:'water', word:'鱼', becomes:[{if:{bridge:1}, to:'ぎ'}]},
-      'き': {look:'water', word:'鱼', onLook:[{if:{ear:1, bridge:0}, label:'Staff', do:ISLET_SPOT}], becomes:[{if:{bridge:1}, to:'ぐ'}]},
-      'ぎ': {look:'staffBridgeL', walk:true}, 'ぐ': {look:'staffBridgeR', walk:true}}}),
+      'ご': {look:'water', word:'鱼', becomes:[{if:{planks:2}, to:'ぼ'}, {if:{planks:1}, to:'ぽ'}, {if:{bridge:1}, to:'ぎ'}]},
+      'き': {look:'water', word:'鱼', onLook:[{if:{ear:1, bridge:0}, label:'Staff', do:ISLET_SPOT}], becomes:[{if:{planks:2}, to:'ぼ'}, {if:{planks:1}, to:'ぱ'}, {if:{bridge:1}, to:'ぐ'}]},
+      'ぎ': {look:'staffBridgeL', walk:true}, 'ぐ': {look:'staffBridgeR', walk:true},   // (your staff across the water)
+      'ぽ': {look:'plankStaffL', walk:true}, 'ぱ': {look:'plankStaffR', walk:true},     // (the troop's planks laid beside it)
+      'ぼ': {look:'bridge', walk:true}}}),                                                // (and the planks alone, your staff back in your ear)
     ffmPath: HOME_AGAIN('path'), ffmValley: HOME_AGAIN('valley'), ffmFalls: HOME_AGAIN('falls'),
     ffmCave: HOME_AGAIN('cave', {indoors:true, put:[[0, 10, 'こ']], legend:{'D':BED_AGAIN, 'I':DIVE_AGAIN,
       'こ': {look:'caveCrack', landmark:true, onLook:[{if:{ear:1, spotCrack:0}, label:'Staff', do:CRACK_SPOT}]}}}),
@@ -748,12 +776,12 @@ const EASTERN_SEA = {
       exits: [],
       map: [
         "XXXXXXXXXXXXXXX",
-        "X.............X",
+        "Xl...........lX",
         "X.............X",
         "X..KKKKKKKKKK.X",
+        "X.p.........p.X",
         "X.............X",
-        "X.............X",
-        "XXXXXX...XXXXXX",
+        "XXXXXd...dXXXXX",
         "mmmmL,,,,,Lmmmm",
         "mmmmm,,,,,mmmmm",
         "mmmmL,,,,,Lmmmm",
@@ -771,7 +799,9 @@ const EASTERN_SEA = {
   // woman's), both 16 November 2026, for the palace (step 6 on)
   voices: {words:{provider:'google', name:'cmn-CN-Standard-A'}, everyone:{name:'zh-CN-YunxiNeural', style:'chat'}, turtle:{name:'zh-CN-XiaoruiNeural'},
     dragonKing:{name:'zh-CN-YunyangNeural'}, dragonQueen:{name:'zh-CN-XiaohanNeural'},
-    southKing:{name:'zh-CN-YunyangNeural'}, westKing:{name:'zh-CN-YunyangNeural'}, northKing:{name:'zh-CN-YunyangNeural'},   // (his brothers, for now, in the Dragon King's own voice)
+    // his brothers, each his own (16 November 2026, after the owner's review): Yunjian for the South Sea's, Yunfeng for the
+    // West Sea's, Yunhao for the North Sea's (as for the ten kings, who are never in the same chapter)
+    southKing:{name:'zh-CN-YunjianNeural'}, westKing:{name:'zh-CN-YunfengNeural'}, northKing:{name:'zh-CN-YunhaoNeural'},
     // Chapter 6: the old monkey's own (Yunze, as ever); the ten kings', Yunhao, and the Great White Planet's, Yunye (both
     // from round 6 of the voice test, each unlike the Dragon King's: chosen 16 November 2026, the owner having asked for
     // Chapter 6 in one batch with the recommended answers)
@@ -827,23 +857,23 @@ const EASTERN_SEA = {
     // then at the home ground, by the big table (beside your bed as you wake from the dream, with a monkey of the troop);
     // the others at the home ground, but for those who need your staff: a little monkey under the tallest peach tree and
     // the big monkey by the boulder, in the meadow, and a little monkey in the cave, by the crack in its wall
-    TROOP('elder', 'ffmCave', 7, 9, 'down', {moves:[{if:{dream:4}, place:'ffmCave', x:2, y:2, facing:'left'}, {if:{home:{atLeast:3}}, place:'ffmHomeGround', x:16, y:8, facing:'down'}]}),
+    TROOP('elder', 'ffmCave', 7, 9, 'down', {moves:[{if:{dream:4}, place:'ffmCave', x:2, y:2, facing:'left'}, {if:{invite:{atLeast:3}}, parked:true}, {if:{home:{atLeast:3}}, place:'ffmHomeGround', x:16, y:8, facing:'down'}]}),
     TROOP('troopA', 'ffmHomeGround', 12, 12, 'right', {moves:[{if:{dream:4}, place:'ffmCave', x:1, y:3, facing:'up'}]}),
     TROOP('troopB', 'ffmHomeGround', 9, 11, 'left'), TROOP('hungry', 'ffmHomeGround', 20, 8, 'down'), TROOP('mother', 'ffmHomeGround', 10, 11, 'right'),
-    TROOP('big', 'ffmMeadow', 13, 5, 'right'),
-    TROOP('baby1', 'ffmHomeGround', 11, 11, 'left'), TROOP('baby2', 'ffmCave', 2, 11, 'left'), TROOP('baby3', 'ffmHomeGround', 6, 12, 'left'),
+    TROOP('big', 'ffmMeadow', 13, 5, 'right', {moves:[{if:{planks:{atLeast:1}}, parked:true}]}),   // (once he's laid the planks to the little island, there)
+    TROOP('baby1', 'ffmHomeGround', 11, 11, 'left', {moves:[{parked:true}]}), TROOP('baby2', 'ffmCave', 2, 11, 'left'), TROOP('baby3', 'ffmHomeGround', 6, 12, 'left', {moves:[{parked:true}]}),   // (where they tried to lift your staff)
     TROOP('baby4', 'ffmHomeGround', 13, 12, 'left'), TROOP('baby5', 'ffmMeadow', 2, 9, 'up'),
     TROOP('traineeStick', 'ffmHomeGround', 2, 12, 'right'), TROOP('boss', 'ffmHomeGround', 7, 8, 'down'),
     // the dream: two officers of the underworld (a gentle name: the plan), with their rope, gone once they've run from your
     // staff; and the ten kings behind their table
-    {id:'official1', place:'underworld', person:true, hair:'cap', wear:'robe', x:6, y:9, facing:'down', name:{zh:'差人', py:'chāirén', en:'Officer of the underworld'},
-      moves:[{if:{dream:{atLeast:3}}, place:'gone', x:0, y:0}], palette:{o:'#1E1A28', h:'#2A2638', s:'#D8C8B8', e:'#14101C', m:'#A87A6A', c:'#3A3458', b:'#1E1A28', p:'#2A2638'}},
-    {id:'official2', place:'underworld', person:true, hair:'cap', wear:'robe', x:8, y:9, facing:'down', name:{zh:'差人', py:'chāirén', en:'Officer of the underworld'},
-      moves:[{if:{dream:{atLeast:3}}, place:'gone', x:0, y:0}], palette:{o:'#1E1A28', h:'#2A2638', s:'#D8C8B8', e:'#14101C', m:'#A87A6A', c:'#4A3E5A', b:'#1E1A28', p:'#2A2638'}},
+    {id:'official1', place:'underworld', look:'差人', x:6, y:9, facing:'down', name:{zh:'差人', py:'chāirén', en:'Officer of the underworld'},
+      moves:[{if:{dream:{atLeast:3}}, place:'gone', x:0, y:0}]},
+    {id:'official2', place:'underworld', look:'差人', x:8, y:9, facing:'down', name:{zh:'差人', py:'chāirén', en:'Officer of the underworld'},
+      moves:[{if:{dream:{atLeast:3}}, place:'gone', x:0, y:0}]},
     ...TEN_KINGS,
     // the Great White Planet, come down on his cloud to the home ground with the Jade Emperor's invitation
-    {id:'planet', place:'ffmHomeGround', person:true, hair:'bun', beard:true, wear:'robe', x:15, y:10, facing:'left', name:{zh:'太白金星', py:'Tàibái Jīnxīng', en:'The Great White Planet'},
-      moves:[{if:{invite:{below:2}}, place:'gone', x:0, y:0}], palette:{o:'#3A2A1E', h:'#F4F4F0', s:'#F2D2B0', e:'#1E140C', m:'#C4826A', c:'#E8E4D8', b:'#C8A04A', p:'#B8B0A0'}}
+    {id:'planet', place:'ffmHomeGround', look:'太白金星', x:15, y:10, facing:'left', name:{zh:'太白金星', py:'Tàibái Jīnxīng', en:'The Great White Planet'},
+      moves:[{if:{invite:{below:2}}, place:'gone', x:0, y:0}, {parked:true}]}
   ],
   yourNames: [{if:{}, zh:'孙悟空', py:'Sūn Wùkōng', en:'Sun Wukong (you)'}],
   sign: {name:{zh:'牌子', py:'páizi', en:'Sign'}, says:{zh:'海', en:'The sea'}, hint:''},
@@ -916,22 +946,8 @@ const EASTERN_SEA = {
     {sentence:'金箍棒 在 我 的 耳朵 里', sentenceEn:'The staff is in my ear.'},   // (在)
     {sentence:'玉皇大帝 请 你 去 天宫', sentenceEn:'The Jade Emperor invites you to Heaven.'}   // (请)
   ],
-  examples: {
-    '沙子': {zh:'海 里 有 很多 沙子 。', en:'There’s lots of sand in the sea.'},
-    '贝壳': {zh:'我 有 很多 贝壳 。', en:'I have lots of shells.'},
-    '水草': {zh:'海星 在 水草 里 。', en:'The starfish are in the seaweed.'},
-    '水母': {zh:'海 里 有 水母 。', en:'There are jellyfish in the sea.'},
-    '章鱼': {zh:'章鱼 有 八 只 脚 。', en:'An octopus has eight feet.'},
-    '珊瑚': {zh:'海 里 有 珊瑚 。', en:'There’s coral in the sea.'},
-    '海马': {zh:'海马 很 小 。', en:'The seahorse is small.'},
-    '鲸鱼': {zh:'鲸鱼 很 大 。', en:'The whale is very big.'},
-    '龙': {zh:'龙 很 大 。', en:'The dragon is very big.'},
-    '龙虾': {zh:'龙虾 是 红色 的 。', en:'The lobster is red.'},
-    '灯': {zh:'这里 有 很多 灯 。', en:'There are lots of lamps here.'},
-    '针': {zh:'针 很 小 。', en:'The needle is very small.'},
-    '绳子': {zh:'这 是 绳子 。', en:'This is a rope.'},
-    '毛笔': {zh:'我 有 毛笔 。', en:'I have a writing brush.'}
-  },
+  // (every word of the sea is in two of its lines or more, so none needs an example of its own: 16 November 2026)
+  examples: {},
   // What hides in the seaweed forest's tall seaweed (step 3): sharks, and jellyfish, more of them at night
   enemies: {
     shark: {word:'鲨鱼', health:30, hits:10, attacks:['泡泡', '沙子', '贝壳', '水草', '海星'], meetNote:'A shark shoots out of the tall seaweed!', meet:'A {鲨鱼} swims at you!',
@@ -1083,15 +1099,90 @@ const EASTERN_SEA = {
     myPearl: {zh:'我 的 珍珠 ！', en:'My pearl!'},
     thanks: {zh:'谢谢 你 ！', en:'Thank you!'},
     areYouWukong: {zh:'你 是 孙悟空 吗 ？', en:'Are you Sun Wukong?'},
-    letsGo: {zh:'走 吧 ！', en:'Come on!'},
+    comeWithUs: {zh:'跟 我们 走 ！', en:'Come with us!'},
     wereScared: {zh:'我们 怕 你 ！', en:'We’re scared of you!'},
     findYourName: {zh:'找 你 的 名字 ！', en:'Find your name!'},
     wakeUp: {zh:'醒 醒 ！', en:'Wake up!'},
-    itWasADream: {zh:'是 梦 ！', en:'It was a dream!'},
+    itWasADream: {zh:'原来 是 梦 ！', en:'So it was a dream!'},
     wontGrowOld: {zh:'我们 不 会 老 了 ！', en:'We won’t grow old now!'},
     invitation: {zh:'玉皇大帝 请 你 去 天宫 。', en:'The Jade Emperor invites you to Heaven.'},
     illGo: {zh:'好 ！ 我 去 ！', en:'All right! I’ll go!'},
     hungry: {zh:'我 饿 了 ！', en:'I’m hungry!'},
+    // (16 November 2026, after the owner's review: more to say, using the words you've learned, heard again and again)
+    manyShells: {zh:'这里 有 很多 贝壳 。', en:'There are lots of shells here.'},
+    starsInWeed: {zh:'海星 在 水草 里 。', en:'Starfish live in the seaweed.'},
+    carefulShark: {zh:'小心 鲨鱼 ！', en:'Watch out for sharks!'},
+    iAmFast: {zh:'我 很 快 ！', en:'I’m fast!'}, youAreSlow: {zh:'你 很 慢 ！', en:'You’re slow!'},
+    thisIsHeavy: {zh:'这个 很 重 。', en:'This one’s heavy.'},
+    staffHeavy: {zh:'金箍棒 很 重 ！', en:'The staff is so heavy!'},
+    iAmSouth: {zh:'我 是 南海龙王 。', en:'I’m the Dragon King of the South Sea.'}, iAmWest: {zh:'我 是 西海龙王 。', en:'I’m the Dragon King of the West Sea.'},
+    iAmNorth: {zh:'我 是 北海龙王 。', en:'I’m the Dragon King of the North Sea.'},
+    goodbye: {zh:'再见 ！', en:'Goodbye!'},
+    wantPeach: {zh:'我 要 吃 桃子 ！', en:'I want to eat peaches!'},
+    whatInSea: {zh:'海 里 有 什么 ？', en:'What’s in the sea?'},
+    scaredShark: {zh:'我 怕 鲨鱼 ！', en:'I’m scared of sharks!'},
+    bigPalace: {zh:'龙宫 很 大 吗 ？', en:'Is the Dragon Palace big?'},
+    staffInYourEar: {zh:'金箍棒 在 你 的 耳朵 里 ！', en:'The staff is in your ear!'},
+    stoneHeavy: {zh:'石头 很 重 ！', en:'The stone’s so heavy!'},
+    staffLong: {zh:'金箍棒 很 长 ！', en:'The staff is so long!'},
+    letMeHelp: {zh:'我 来 ！', en:'I’ll do it!'},
+    lampsHere: {zh:'这里 有 很多 灯 。', en:'There are lots of lamps here.'},
+    whereAmI: {zh:'我 在 哪里 ？', en:'Where am I?'}, youAreHome: {zh:'你 在 家 ！', en:'You’re at home!'},
+    spyLamp: {zh:'我 看见 灯 ！', en:'I can see a lamp!'}, spyPillar: {zh:'我 看见 柱子 ！', en:'I can see a pillar!'},
+    spyDoor: {zh:'我 看见 门 ！', en:'I can see a door!'}, spyBook: {zh:'我 看见 书 ！', en:'I can see a book!'},
+    bookHere: {zh:'书 在 这里 ！', en:'The book is here!'},
+    scaredOfStaff: {zh:'我们 怕 金箍棒 ！', en:'We’re scared of the staff!'},
+    takeCare: {zh:'小心 ！', en:'Take care!'}, weWillWait: {zh:'我们 等 你 ！', en:'We’ll wait for you!'},
+    iWillWait: {zh:'我 在 这里 等 你 。', en:'I’ll wait for you here.'},
+    raining: FLOWER_FRUIT_MOUNTAIN.lines.raining, rainTooHeavy: FLOWER_FRUIT_MOUNTAIN.lines.rainTooHeavy,
+    // (and more, so every word of the sea comes back in two lines or more)
+    bigBubble: {zh:'你 的 泡泡 很 大 ！', en:'Your bubble is big!'},
+    muchSand: {zh:'这里 有 很多 沙子 。', en:'There’s lots of sand here.'},
+    weedLong: {zh:'水草 很 长 ！', en:'The seaweed is long!'},
+    jelliesGlow: {zh:'水母 有 光 ！', en:'Jellyfish glow!'},
+    iAmOctopus: {zh:'我 是 章鱼 ！', en:'I’m an octopus!'},
+    iAmDolphin: {zh:'我 是 海豚 ！', en:'I’m a dolphin!'},
+    dragonsInside: {zh:'龙宫 里 有 龙 ！', en:'There are dragons in the Dragon Palace!'},
+    lobsterFriend: {zh:'龙虾 是 我 的 朋友 。', en:'The lobster is my friend.'},
+    whaleBig: {zh:'鲸鱼 很 大 ！', en:'Whales are huge!'},
+    seahorseSmall: {zh:'海马 很 小 。', en:'Seahorses are small.'},
+    coralLovely: {zh:'珊瑚 很 好看 ！', en:'Coral is lovely!'},
+    notLight: {zh:'这个 不 轻 ！', en:'This one isn’t light!'},
+    tenThousandHeavy: {zh:'一 万 斤 很 重 ！', en:'Ten thousand jin is heavy!'},
+    staffHowMany: {zh:'金箍棒 多少 斤 ？', en:'How many jin is the staff?'},
+    goldHatLovely: {zh:'金色 的 帽子 很 好看 ！', en:'The golden hat is lovely!'},
+    kingHasBell: {zh:'龙王 有 钟 。', en:'The Dragon King has a bell.'},
+    needleInEar: {zh:'针 在 你 的 耳朵 里 ！', en:'The needle is in your ear!'},
+    longDream: {zh:'你 的 梦 很 长 ！', en:'Your dream was long!'},
+    whatRope: {zh:'绳子 ？ 什么 绳子 ？', en:'A rope? What rope?'},
+    youAreAwake: {zh:'你 醒 了 ！', en:'You’re awake!'},
+    whaleBigQ: {zh:'鲸鱼 很 大 吗 ？', en:'Are whales big?'},
+    mountainHigh: {zh:'山 很 高 ！', en:'The mountain is high!'},
+    seaDeepQ: {zh:'海 很 深 吗 ？', en:'Is the sea deep?'},
+    sawDragons: {zh:'你 看见 龙 了 吗 ？', en:'Did you see dragons?'},
+    treeTall: {zh:'树 很 高 。', en:'The tree is tall.'},
+    haveAPeach: {zh:'请 你 吃 桃子 ！', en:'Please, have a peach!'},
+    howManyShells: {zh:'你 有 多少 贝壳 ？', en:'How many shells have you got?'},
+    hatGolden: {zh:'你 的 帽子 是 金色 的 ！', en:'Your hat is golden!'},
+    coralLovelyQ: {zh:'珊瑚 好看 吗 ？', en:'Is coral pretty?'},
+    showMe: {zh:'给 我 看看 ！', en:'Show me!'},
+    wantShells: {zh:'我 要 贝壳 ！', en:'I want shells!'},
+    octopusFeetQ: {zh:'章鱼 有 几 只 脚 ？', en:'How many feet has an octopus got?'},
+    peachLight: {zh:'桃子 很 轻 。', en:'Peaches are light.'},
+    seeSeahorse: {zh:'我 要 看 海马 ！', en:'I want to see a seahorse!'},
+    lobsterRedQ: {zh:'龙虾 是 红色 的 吗 ？', en:'Are lobsters red?'},
+    scaredJelly: {zh:'我 怕 水母 ！', en:'I’m scared of jellyfish!'},
+    whatLookingFor: {zh:'你 找 什么 ？', en:'What are you looking for?'},
+    tenThousand: {zh:'一 万 斤 ？ 太 重 了 ！', en:'Ten thousand jin? Too heavy!'},
+    lookingForPearls: {zh:'我 找 珍珠 ！', en:'I’m looking for pearls!'},
+    sandInSeaQ: {zh:'海 里 有 沙子 吗 ？', en:'Is there sand in the sea?'},
+    rangBellQ: {zh:'你 打 钟 了 吗 ？', en:'Did you ring the bell?'},
+    myStickShort: {zh:'我 的 棍子 很 短 。', en:'My stick is short.'},
+    wantSeeNeedle: {zh:'我 要 看 针 ！', en:'I want to see the needle!'},
+    pleaseCome: {zh:'请 跟 我 走 。', en:'Please come with me.'},
+    haveBrushQ: {zh:'你 有 毛笔 吗 ？', en:'Have you got a brush?'},
+    wantBrushToo: {zh:'我 也 要 毛笔 ！', en:'I want a brush too!'},
+    whereRope: {zh:'绳子 在 哪里 ？', en:'Where’s the rope?'},
     // (the 老板's, as in Chapter 4)
     whatBuy: ACROSS_THE_SEA.lines.whatBuy, whatSell: ACROSS_THE_SEA.lines.whatSell, noProblem: ACROSS_THE_SEA.lines.noProblem, youreWelcome: ACROSS_THE_SEA.lines.welcome
   },
@@ -1115,7 +1206,7 @@ const EASTERN_SEA = {
       {if:{turtle:2, starFriends:{below:5}}, do:[{message:'The sea turtle says five {海星|starfish} are hiding in the {水草|seaweed}. You’ve found {starCount} so far.'}]},
       {if:{turtle:2, starFriends:5}, do:[{say:'fiveFriends'}, {shells:5, note:'The sea turtle gives you 5 🐚 贝壳 it found on the seabed.'}, {set:{turtle:3}},
         {message:'The sea turtle swims off east, into the seaweed forest. Follow it!'}]},
-      {do:[{say:'swimWalk'}]}
+      {do:[{chat:['swimWalk', 'manyShells', 'starsInWeed', 'carefulShark', 'slow', 'bigBubble', 'muchSand', 'weedLong', 'jelliesGlow']}]}   // (a few things to say, in turn, with the sea's words)
     ],
     // the octopus, once it's your friend: its eight feet (脚), how many (几), then counting its feet with you
     octopus: [
@@ -1124,7 +1215,7 @@ const EASTERN_SEA = {
         {say:'howManyFeet', teach:'几'}, {newWord:'几', note:'几 means how many, when it’s a few: 几只脚？ How many feet? You answer with a number: 八只脚, eight feet.'},
         {countGame:'feet'}, {set:{octopus:1}},
         {message:'The sea turtle swims on east, to the coral reef. Follow it!'}]},
-      {do:[{countGame:'feet'}]}
+      {do:[{chat:['eightFeet', 'howManyFeet', 'iAmOctopus']}, {countGame:'feet'}]}
     ],
     // the dolphin: its name as you meet it (海豚), then a race, as PE's, which it wins by miles the first time; the turtle,
     // puffing along last, says why (快, 慢); then race it again, and win (the first win: shells)
@@ -1138,13 +1229,13 @@ const EASTERN_SEA = {
         {if:{knows:'跑'}, message:'Race the dolphin again! Hold B as you walk, to run, and set off as soon as it says {游|swim}.'},
         {if:{new:'跑'}, message:'Race the dolphin again! Set off as soon as it says {游|swim}.'}]},
       {if:{dolphin:1}, do:[{say:'letsRace'}, {race:'again', win:[{set:{dolphin:2}}, {message:'The sea turtle swims on east, towards the trench. Follow it!'}]}]},
-      {do:[{say:'letsRace'}, {race:'again'}]}
+      {do:[{chat:['letsRace', 'iAmFast', 'youAreSlow', 'iAmDolphin']}, {race:'again'}]}
     ],
     // the sea guard: who are you? (你是谁？ 我是孙悟空！), then he steps aside
     yaksha: [
       {if:{palace:0}, do:[{say:'whoAreYou'}, {say:'iAmWukong', by:'player'}, {say:'kingInside'}, {set:{palace:1}},
         {message:'The sea guard steps aside. Gold dragons are coiled round the pillars by the gate, and a crab general is drilling his shrimp soldiers…'}]},
-      {do:[{say:'kingInside'}]}
+      {do:[{chat:['kingInside', 'welcome', 'deep', 'dragonsInside']}]}
     ],
     // the Dragon King: his weapons, each weighed on the great scale and lifted, all too light: the broadsword the soldiers
     // carried in (重), 八百斤 (斤), 太轻了！ (轻); the fork, weighed by you (千); the halberd (多少)
@@ -1152,8 +1243,10 @@ const EASTERN_SEA = {
       {if:{hall:1}, do:[
         {leadTo:[12, 9], you:[13, 9, 'up']},
         {say:'tooHeavy', by:'carrier1', teach:'重'}, {newWord:'重', note:'重 means heavy: 太重了！ Too heavy! It takes two shrimp soldiers to carry the great broadsword.'},
+        {quiz:'重', label:'What is the great broadsword?'},
         {weigh:'broadsword'}, {newWord:'斤', note:'斤 means jin, a weight: half a kilo. 八百斤, eight hundred jin!'},
         {heave:'broadsword'}, {say:'tooLight', by:'player', teach:'轻'}, {newWord:'轻', note:'轻 means light, not heavy: 太轻了！ Too light! You lift it in one paw.'},
+        {gap:{sentence:'太 轻 了', en:'Too light!', word:'轻', others:['重', '长']}},
         {say:'thisOne'}, {weigh:'fork'}, {newWord:'千', note:'千 means thousand: 三千六百斤, three thousand six hundred jin!'},
         {heave:'fork'}, {say:'tooLight', by:'player'},
         {say:'howManyJin', teach:'多少'}, {newWord:'多少', note:'多少 means how many, or how much: 这个多少斤？ How many jin is this one?'},
@@ -1165,21 +1258,21 @@ const EASTERN_SEA = {
       {if:{staff:4, gifts:0}, do:ASK_CLOTHES},   // (a game from before the gifts)
       {if:{gifts:1}, do:[{say:'beatDrum'}]}, {if:{gifts:2}, do:[{say:'bellToo'}]}, {if:{gifts:3}, do:[{say:'theyCame'}]},
       {if:{hall:3, staff:{below:3}}, do:[{say:'thisOne'}]},
-      {do:[{say:'welcome'}]}
+      {do:[{chat:['welcome', 'staffHeavy', 'jin13500', 'lovely', 'tenThousandHeavy', 'staffHowMany']}]}
     ],
     // the Dragon Queen's idea: the iron pillar in the treasury, glowing (her whisper), and she leads you to its door
     dragonQueen: [
       {if:{hall:2}, do:[{say:'queenWhisper'}, {leadTo:[12, 1], you:[12, 2, 'up']}, {set:{hall:3}},
         {message:'The Dragon Queen opens the {门|door} at the back of the throne hall, and the Dragon King follows her in, to the treasury.'}]},
-      {do:[{say:'queenHello'}]}],
-    carrier1: [{do:[{say:'tooHeavy'}]}], carrier2: [{do:[{say:'tooHeavy'}]}],
+      {do:[{chat:['queenHello', 'goldenLight', 'lovely', 'goldHatLovely', 'kingHasBell']}]}],
+    carrier1: [{do:[{chat:['tooHeavy', 'thisIsHeavy', 'drillShout', 'notLight']}]}], carrier2: [{do:[{chat:['tooHeavy', 'thisIsHeavy', 'drillShout', 'notLight']}]}],
     // the Dragon King's brothers, each with his gift (给你！), put on as you watch, and what you say as you wear it
     southKing: [{if:{south:0}, do:[{say:'hereYouAre'}, {if:{new:'帽子'}, newWord:'帽子', note:'帽子 means hat.'},
-      {gift:'金色 的 帽子', label:'A gift from the Dragon King of the South Sea', note:'A golden hat, with two long red feathers! You put it on.'}, {set:{south:1}}]}, {do:[{say:'lovely'}]}],
+      {gift:'金色 的 帽子', label:'A gift from the Dragon King of the South Sea', note:'A golden hat, with two long red feathers! You put it on.'}, {set:{south:1}}]}, {do:[{chat:['lovely', 'iAmSouth', 'goodbye']}]}],
     westKing: [{if:{west:0}, do:[{say:'hereYouAre'}, {if:{new:'衣服'}, newWord:'衣服', note:'衣服 means clothes.'},
-      {gift:'金色 的 衣服', label:'A gift from the Dragon King of the West Sea', note:'Golden clothes: armour of little golden scales, to go with your staff! You put them on.'}, {set:{west:1}}]}, {do:[{say:'lovely'}]}],
+      {gift:'金色 的 衣服', label:'A gift from the Dragon King of the West Sea', note:'Golden clothes: armour of little golden scales, to go with your staff! You put them on.'}, {set:{west:1}}]}, {do:[{chat:['lovely', 'iAmWest', 'goodbye']}]}],
     northKing: [{if:{north:0}, do:[{say:'hereYouAre'}, {if:{new:'鞋'}, newWord:'鞋', note:'鞋 means shoes.'},
-      {gift:'白色 的 鞋', label:'A gift from the Dragon King of the North Sea', note:'White shoes, as light as clouds: in these, you could walk on the clouds! You put them on.'}, {set:{north:1}}]}, {do:[{say:'lovely'}]}],
+      {gift:'白色 的 鞋', label:'A gift from the Dragon King of the North Sea', note:'White shoes, as light as clouds: in these, you could walk on the clouds! You put them on.'}, {set:{north:1}}]}, {do:[{chat:['lovely', 'iAmNorth', 'goodbye']}]}],
     // the crab general: his soldiers (兵), counted with you by tens to a hundred (百)
     crab: [
       {if:{palace:1}, do:[
@@ -1187,82 +1280,70 @@ const EASTERN_SEA = {
         {countTens:["ten","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety","hundred"]},
         {newWord:'百', note:'百 means hundred: 一百, one hundred. Ten rows of ten soldiers!'},
         {say:'hundredSoldiers'}, {set:{palace:2}}, {message:'Something is guarding the palace door. Go and meet it!'}]},
-      {if:{palace:{atLeast:2}}, do:[{say:'mySoldiers'}, {countTens:["ten","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety","hundred"]}]},
+      {if:{palace:{atLeast:2}}, do:[{chat:['mySoldiers', 'hundredSoldiers', 'lobsterFriend']}, {countTens:["ten","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety","hundred"]}]},
       {do:[{say:'mySoldiers'}]}
     ],
-    soldier1: [{do:[{say:'drillShout'}]}],
-    soldier2: [{do:[{say:'drillShout'}]}],
-    soldier3: [{do:[{say:'drillShout'}]}],
-    soldier4: [{do:[{say:'drillShout'}]}],
-    soldier5: [{do:[{say:'drillShout'}]}],
-    soldier6: [{do:[{say:'drillShout'}]}],
-    soldier7: [{do:[{say:'drillShout'}]}],
-    soldier8: [{do:[{say:'drillShout'}]}],
-    soldier9: [{do:[{say:'drillShout'}]}],
-    soldier10: [{do:[{say:'drillShout'}]}],
-    soldier11: [{do:[{say:'drillShout'}]}],
-    soldier12: [{do:[{say:'drillShout'}]}],
-    soldier13: [{do:[{say:'drillShout'}]}],
-    soldier14: [{do:[{say:'drillShout'}]}],
-    soldier15: [{do:[{say:'drillShout'}]}],
-    soldier16: [{do:[{say:'drillShout'}]}],
-    soldier17: [{do:[{say:'drillShout'}]}],
-    soldier18: [{do:[{say:'drillShout'}]}],
-    soldier19: [{do:[{say:'drillShout'}]}],
-    soldier20: [{do:[{say:'drillShout'}]}],
+    // the shrimp soldiers: drilling, and a few things to say (the staff, once it's yours)
+    ...Object.fromEntries(Array.from({length: 20}, (_, i) => ['soldier' + (i + 1), [
+      {if:{staff:4}, do:[{chat:['drillShout', 'hundredSoldiers', 'kingInside', 'staffHeavy', 'whaleBig', 'seahorseSmall', 'coralLovely']}]},
+      {do:[{chat:['drillShout', 'hundredSoldiers', 'kingInside', 'whaleBig', 'seahorseSmall', 'coralLovely']}]}]])),
     // Chapter 6: the little monkeys can't lift your staff, so you show them: up to the sky (变长), then down to a needle
     // (针), tucked into your ear (耳朵); and where is it now? (在)
     baby1: [{if:{home:3, ear:0}, do:[
-      {say:'letMeSee'}, {message:'The little monkeys try to lift your staff, all of them together…'}, {say:'tooHeavy'},
+      {say:'letMeSee'}, {tryLift:['baby1', 'baby3']}, {say:'tooHeavy'}, {liftStaff:true},
       {tell:'sky'}, {stow:'left'}, {scene:'staffSky'}, {set:{ear:1}},
-      {newWord:'针', note:'针 means needle. Your staff has shrunk as small as a needle!'},
-      {newWord:'耳朵', note:'耳朵 means ear. You tuck the needle into your ear, where it’s always with you.'},
+      {newWord:'针', note:'针 means needle. Your staff has shrunk as small as a needle!'}, {quiz:'针', label:'What is your staff now?'},
+      {newWord:'耳朵', note:'耳朵 means ear. You tuck the needle into your ear, where it’s always with you.'}, {quiz:'耳朵', label:'Where is your staff now?'},
       {say:'whereStaff'}, {say:'inMyEar', by:'player', teach:'在'}, {newWord:'在', note:'在 means at, or in: 在我的耳朵里！ In my ear! It says where something is.'},
       {message:'The troop has jobs for your staff! Look for monkeys with a ! in the meadow, the Water Curtain Cave and here.'}]},
-      {do:[{say:'letMeSee'}]}],
+      {if:{dream:{atLeast:5}}, do:[{chat:['wantBrushToo', 'showMe', 'wantShells', 'staffInYourEar']}]},
+      {do:[{chat:['staffInYourEar', 'letMeSee', 'tooHeavy', 'showMe', 'wantShells']}]}],
     // the spots: who needs your staff, and why (the spots themselves are squares: put, in ffmMeadow and ffmCave)
     baby5: [{if:{ear:1, spotTree:0}, do:[{say:'treeTooTall', teach:'高'}, {newWord:'高', note:'高 means tall, or high. The best peaches are right at the top of the tree, too high for anyone to reach!'},
-      {message:'Face the tall peach tree beside the little monkey, and press A to take out your staff.'}]}, {do:[{say:'thanks'}]}],
-    big: [{if:{ear:1, spotBoulder:0}, do:[{say:'tooHeavy'}, {message:'The big monkey has been trying to move the boulder beside him: something glints under it, but it’s far too heavy. Face it, and press A.'}]}, {do:[{say:'great'}]}],
-    baby2: [{if:{ear:1, spotCrack:0}, do:[{say:'myPearl'}, {message:'Her {珍珠|pearl} has rolled into the thin crack in the wall, too thin for any paw. Face the crack, and press A.'}]}, {do:[{say:'thanks'}]}],
-    traineeStick: [{if:{ear:1, spotTrainee:0}, do:[{say:'letMeSee'}, {tell:'trainee'},
-      {message:'The little monkey swings your staff round and round, just like you! Then he gives it back.'}, {stow:true}, {say:'great'}, {set:{spotTrainee:1}}]},
-      {do:[{say:'great'}]}],
+      {message:'Face the tall peach tree beside the little monkey, and press A to take out your staff.'}]}, {do:[{chat:['thanks', 'wantPeach', 'treeTooTall', 'whatLookingFor']}]}],
+    big: [{if:{ear:1, spotBoulder:0}, do:[{say:'tooHeavy'}, {message:'The big monkey has been trying to move the boulder beside him: something glints under it, but it’s far too heavy. Face it, and press A.'}]}, {do:[{chat:['great', 'stoneHeavy', 'staffInYourEar', 'tenThousand']}]}],
+    baby2: [{if:{ear:1, spotCrack:0}, do:[{say:'myPearl'}, {message:'Her {珍珠|pearl} has rolled into the thin crack in the wall, too thin for any paw. Face the crack, and press A.'}]}, {do:[{chat:['thanks', 'whatInSea', 'scaredShark', 'lookingForPearls', 'sandInSeaQ', 'rangBellQ']}]}],
+    traineeStick: [{if:{ear:1, spotTrainee:0}, do:[{say:'letMeSee'}, {tell:'trainee'}, {lend:'traineeStick', ms:2800},
+      {say:'great'}, {set:{spotTrainee:1}}, {message:'The little monkey swings your staff round and round, just like you, and gives it back. Into your ear it goes.'}]},
+      {do:[{chat:['great', 'staffLong', 'letMeSee', 'myStickShort', 'wantSeeNeedle']}]}],
     // the troop, and the 老板
-    elder: [{if:{dream:4}, do:[{say:'wakeUp'}]}, {do:[{say:'lovely'}]}],
-    troopA: [{if:{dream:{atLeast:5}}, do:[{say:'wontGrowOld'}]}, {do:[{say:'lovely'}]}],
-    troopB: [{do:[{say:'lovely'}]}], hungry: [{do:[{say:'hungry'}]}], mother: [{do:[{say:'lovely'}]}],
-    baby3: [{do:[{say:'letMeSee'}]}], baby4: [{do:[{say:'letMeSee'}]}],
+    // (a few things each to say, in turn, using the words you've learned: the sea, your staff, the dream)
+    elder: [{if:{dream:4}, do:[{say:'wakeUp'}]}, {if:{dream:{atLeast:5}}, do:[{chat:['wontGrowOld', 'lovely', 'longDream', 'whatRope', 'needleInEar']}]}, {do:[{chat:['backAgain', 'lovely', 'whereStaff', 'needleInEar']}]}],
+    troopA: [{if:{dream:{atLeast:5}}, do:[{chat:['wontGrowOld', 'youAreAwake', 'whatInSea', 'bigPalace', 'whaleBigQ']}]}, {do:[{chat:['whatInSea', 'scaredShark', 'lovely', 'whaleBigQ']}]}],
+    troopB: [{if:{dream:{atLeast:5}}, do:[{chat:['whereRope', 'bigPalace', 'mountainHigh', 'seaDeepQ', 'sawDragons']}]}, {do:[{chat:['bigPalace', 'scaredShark', 'staffInYourEar', 'mountainHigh', 'seaDeepQ', 'sawDragons']}]}],
+    hungry: [{do:[{chat:['hungry', 'wantPeach', 'treeTooTall', 'treeTall', 'haveAPeach', 'howManyShells']}]}],
+    mother: [{if:{dream:{atLeast:5}}, do:[{chat:['wontGrowOld', 'lovely', 'haveBrushQ', 'hatGolden', 'coralLovelyQ']}]}, {do:[{chat:['lovely', 'staffInYourEar', 'whatInSea', 'hatGolden', 'coralLovelyQ']}]}],
+    baby3: [{do:[{chat:['letMeSee', 'staffInYourEar', 'tooHeavy', 'octopusFeetQ', 'peachLight']}]}], baby4: [{do:[{chat:['letMeSee', 'scaredShark', 'bigPalace', 'seeSeahorse', 'lobsterRedQ', 'scaredJelly']}]}],
     boss: [{do:[{shop:'home'}]}],
     // the dream: the officers, and their rope (绳子); up the road with them, till your staff scares them off
     official1: [{if:{dream:1}, do:[
-      {say:'areYouWukong'}, {say:'iAmWukong', by:'player'}, {say:'letsGo'}, {set:{dream:2}},
+      {say:'areYouWukong'}, {say:'iAmWukong', by:'player'}, {say:'comeWithUs'}, {set:{dream:2}},
       {newWord:'绳子', note:'绳子 means rope. The two officers have tied a rope round you, and they’re leading you off!'},
       {leadTo:[7, 5], you:[7, 6, 'up']},
       {say:'getBigger', by:'player'}, {flourish:true},
       {walk:'official1', to:[5, 12], ms:150}, {walk:'official2', to:[9, 12], ms:150}, {set:{dream:3}},
       {message:'The officers drop their rope and run! A dim hall stands at the top of the road.'}]},
-      {do:[{say:'letsGo'}]}],
-    official2: [{do:[{say:'letsGo'}]}],
+      {do:[{say:'comeWithUs'}]}],
+    official2: [{do:[{say:'comeWithUs'}]}],
     // the ten kings: scared of you (怕), and the book of names: find yours (找), and cross it out with a brush (毛笔); then
     // you run, trip, and wake up at home the next morning
-    king1: [{if:{dream:3}, do:[
-      {say:'wereScared', teach:'怕'}, {newWord:'怕', note:'怕 means to be scared. The ten kings are scared of you, and your staff!'},
+    king1: [{if:{dream:3, kings:0}, do:[{set:{kings:1}},
+      {say:'wereScared', teach:'怕'}, {newWord:'怕', note:'怕 means to be scared. The ten kings are scared of you, and your staff!'}, {quiz:'怕', label:'How are the ten kings?'},
       {say:'findYourName', teach:'找'}, {newWord:'找', note:'找 means to look for. 找你的名字！ Look for your name!'},
-      {message:'The kings open the book of names. Everyone’s name is written in it.'},
-      {newWord:'毛笔', note:'毛笔 means a writing brush: 毛 hair + 笔 pen. The kings give you one, dipped in ink.'},
-      {book:'names'}, {set:{dream:4}},
-      {message:'You throw down the brush and run, out of the hall and down the road… and trip over something…'},
-      {morning:true}, {goTo:'ffmCave', at:[1, 2], facing:'right'}]},
-      {do:[{say:'wereScared'}]}],
-    king2: [{do:[{say:'wereScared'}]}], king3: [{do:[{say:'wereScared'}]}], king4: [{do:[{say:'wereScared'}]}], king5: [{do:[{say:'wereScared'}]}],
-    king6: [{do:[{say:'wereScared'}]}], king7: [{do:[{say:'wereScared'}]}], king8: [{do:[{say:'wereScared'}]}], king9: [{do:[{say:'wereScared'}]}], king10: [{do:[{say:'wereScared'}]}],
+      {message:'Your name is in the book of names, somewhere in this dim hall. But the kings are too scared to fetch it: they tell you what they can see instead. Find each one!'},
+      HALL_SPY]},
+      {if:{dream:3}, do:[HALL_SPY]},   // (carrying on with their I spy)
+      {do:[{chat:['wereScared', 'scaredOfStaff']}]}],
+    ...Object.fromEntries([2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => ['king' + i, [{do:[{chat:['wereScared', 'scaredOfStaff']}]}]])),
     // the Great White Planet: you welcome him (欢迎, the phrase you learned in the Dragon King's hall), and his invitation (请)
     planet: [{if:{invite:2}, do:[
       {reply:'欢迎', about:'The Great White Planet has come down from the sky, to your home. What do you say?'},
       {say:'invitation', teach:'请'}, {newWord:'请', note:'请 means to invite, or please: 玉皇大帝请你去天宫。 The Jade Emperor invites you to Heaven!'},
-      {say:'illGo', by:'player'}, {set:{invite:3}}, {areaEnd:true}]},
-      {do:[{say:'invitation'}]}]
+      {say:'illGo', by:'player'},
+      // (the troop's goodbye: decided 16 November 2026, after the owner's review: it ended the moment he asked you)
+      {walk:'elder', to:'you', ms:300}, {say:'takeCare', by:'elder'}, {say:'weWillWait', by:'troopA'},
+      {say:'iWillWait'}, {set:{invite:3}}, {areaEnd:true}]},
+      {do:[{chat:['iWillWait', 'invitation', 'pleaseCome']}]}]
   },
   // The Dragon King's weapons on the palace's great scale (the weigh step, js/sea.js): the broadsword weighed already, its
   // weights on (show); the fork and the halberd, weighed by you, big weights first, each total said as it grows (its lines,
@@ -1283,24 +1364,14 @@ const EASTERN_SEA = {
       says:{'变大':'getBigger', '变小':'getSmaller'}, morph:{'变大':'wide', '变小':'small'},
       wrong:{'变大':'It grows even thicker! That won’t help.'}},
     // Chapter 6: your staff at home (staff: its length and thickness in pixels as you see it, for each thing you tell it)
-    sky: {ask:'The little {猴子|monkeys} want to see what your staff can do! What do you tell it?', choices:['变长', '变短'], right:'变长',
-      says:{'变长':'getLonger', '变短':'getShorter'}, staff:{'变长':{len:46, w:3}, '变短':{len:7, w:3}},
-      wrong:{'变短':'It shrinks to a little stub. The little monkeys giggle!'}},
-    tree: {ask:'The best {桃子|peaches} are at the very top of the tree. What do you tell your staff?', choices:['变长', '变短'], right:'变长', up:true,
-      says:{'变长':'getLonger', '变短':'getShorter'}, staff:{'变长':{len:44, w:3}, '变短':{len:7, w:3}},
-      wrong:{'变短':'It shrinks to a little stub, nowhere near the {桃子|peaches}!'}},
-    islet: {ask:'Something glints on the little island, but the {水|water} is in the way. What do you tell your staff?', choices:['变长', '变短'], right:'变长',
-      says:{'变长':'getLonger', '变短':'getShorter'}, staff:{'变长':{len:42, w:4}, '变短':{len:7, w:3}},
-      wrong:{'变短':'It shrinks to a little stub. You’d never get across on that!'}},
-    boulder: {ask:'The boulder is far too {重|heavy} for the troop. What do you tell your staff?', choices:['变大', '变小'], right:'变大',
-      says:{'变大':'getBigger', '变小':'getSmaller'}, staff:{'变大':{len:26, w:7}, '变小':{len:12, w:1}},
-      wrong:{'变小':'It shrinks as thin as a twig. That won’t move a boulder!'}},
-    crack: {ask:'The {珍珠|pearl} has rolled deep into the thin crack. What do you tell your staff?', choices:['变大', '变小'], right:'变小',
-      says:{'变大':'getBigger', '变小':'getSmaller'}, staff:{'变小':{len:18, w:1}, '变大':{len:18, w:7}},
-      wrong:{'变大':'It grows far too thick to go into the crack!'}},
-    trainee: {ask:'The little {猴子|monkey} would like to try your staff, but it’s far too {长|long} for him. What do you tell it?', choices:['变长', '变短'], right:'变短',
-      says:{'变长':'getLonger', '变短':'getShorter'}, staff:{'变短':{len:11, w:2}, '变长':{len:40, w:3}},
-      wrong:{'变长':'It grows even longer, and the little monkey jumps back!'}}
+    // (all four things you could tell it, those you know, in a new order each time: decided 16 November 2026, after the
+    // owner's review, as two were a coin toss)
+    sky: {ask:'The little {猴子|monkeys} want to see what your staff can do! What do you tell it?', ...{choices:['变长','变短','变大','变小'],right:'变长',says:{'变长':'getLonger','变短':'getShorter','变大':'getBigger','变小':'getSmaller'},staff:{'变长':{len:46,w:3},'变短':{len:7,w:3},'变大':{len:24,w:7},'变小':{len:12,w:1}},wrong:{'变短':'It shrinks to a little stub. The little monkeys giggle!','变大':'It grows fat, but no taller. The little monkeys want to see it reach the sky!','变小':'It shrinks as thin as a twig. The little monkeys giggle!'}}},
+    tree: {ask:'The best {桃子|peaches} are at the very top of the tree. What do you tell your staff?', up:true, ...{choices:['变长','变短','变大','变小'],right:'变长',says:{'变长':'getLonger','变短':'getShorter','变大':'getBigger','变小':'getSmaller'},staff:{'变长':{len:44,w:3},'变短':{len:7,w:3},'变大':{len:26,w:7},'变小':{len:12,w:1}},wrong:{'变短':'It shrinks to a little stub, nowhere near the peaches!','变大':'It grows thick, but no taller: the peaches are still out of reach!','变小':'It shrinks as thin as a twig, nowhere near the peaches!'}}},
+    islet: {ask:'Something glints on the little island, but the {水|water} is in the way. What do you tell your staff?', ...{choices:['变长','变短','变大','变小'],right:'变长',says:{'变长':'getLonger','变短':'getShorter','变大':'getBigger','变小':'getSmaller'},staff:{'变长':{len:42,w:4},'变短':{len:7,w:3},'变大':{len:24,w:7},'变小':{len:12,w:1}},wrong:{'变短':'It shrinks to a little stub. You’d never get across on that!','变大':'It grows fat, but no longer: it doesn’t reach the island!','变小':'It shrinks as thin as a twig. You’d never get across on that!'}}},
+    boulder: {ask:'The boulder is far too {重|heavy} for the troop. What do you tell your staff?', ...{choices:['变长','变短','变大','变小'],right:'变大',says:{'变长':'getLonger','变短':'getShorter','变大':'getBigger','变小':'getSmaller'},staff:{'变大':{len:26,w:7},'变小':{len:12,w:1},'变长':{len:40,w:3},'变短':{len:7,w:3}},wrong:{'变小':'It shrinks as thin as a twig. That won’t move a boulder!','变长':'It grows long, but it’s still too thin to move the boulder!','变短':'It shrinks to a little stub. That won’t move a boulder!'}}},
+    crack: {ask:'The {珍珠|pearl} has rolled deep into the thin crack. What do you tell your staff?', ...{choices:['变长','变短','变大','变小'],right:'变小',says:{'变长':'getLonger','变短':'getShorter','变大':'getBigger','变小':'getSmaller'},staff:{'变小':{len:18,w:1},'变大':{len:18,w:7},'变长':{len:36,w:3},'变短':{len:7,w:3}},wrong:{'变大':'It grows far too thick to go into the crack!','变长':'It grows long, but it’s still too thick to go into the crack!','变短':'It shrinks to a little stub, too thick to go into the crack!'}}},
+    trainee: {ask:'The little {猴子|monkey} would like to try your staff, but it’s far too {长|long} for him. What do you tell it?', ...{choices:['变长','变短','变大','变小'],right:'变短',says:{'变长':'getLonger','变短':'getShorter','变大':'getBigger','变小':'getSmaller'},staff:{'变短':{len:11,w:2},'变长':{len:40,w:3},'变大':{len:24,w:7},'变小':{len:4,w:1}},wrong:{'变长':'It grows even longer, and the little monkey jumps back!','变大':'It grows even thicker and heavier! He can’t even lift one end.','变小':'It shrinks to a needle, far too small for him to hold!'}}}
   },
   // The book of names, in the dream (the book step, js/sea.js): everyone's name in it (yours, you; the troop's, every name
   // with 猴 in it, monkey), each with its pinyin and, once crossed out, its English; what the card says as you go.
@@ -1338,7 +1409,7 @@ const EASTERN_SEA = {
   storyQuestions: [],
   // The end of Area 3 (the end of Chapter 6, as the book's chapter 3 ends), then what's to come.
   areaEnd: {title:'The end of Area 3', text:['Your name is gone from the book of names, and no monkey of Flower Fruit Mountain will ever grow old.',
-    'The Jade Emperor has invited you to Heaven! To be continued: up to Heaven (Area 4). Till then, explore Flower Fruit Mountain, and dive from the iron bridge to the sea.']},
+    'The Jade Emperor has invited you to Heaven, and the Great White Planet waits at the home ground with his cloud, to take you up there. To be continued: Heaven, Area 4. Till then, explore Flower Fruit Mountain, and dive from the iron bridge to the sea.']},
   storyEnd: {title:'', reward:0, rumble:false, text:[]},
   exit: {notReady:'Not yet.', ready:'Ready.', tryAgain:'Try again.', passButton:'OK', failButton:'OK', done:'Done.', notBuilt:'Not built yet.', returnTo:{x:11, y:6, facing:'down'}},
   intro: [],

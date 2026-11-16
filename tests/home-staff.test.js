@@ -25,6 +25,7 @@ function game(area = {}, {pos = {place: 'seabed', x: 11, y: 6, dir: 'right'}, kn
   g.run("showDialog = async (who, line, o = {}) => { __said.push((who.match(/data-id=\"([^\"]*)\"/) || [])[1] + ': ' + line.t.join('')); }");
   g.run("infoBox = async (who, html) => { __notes.push('box: ' + html.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim()); }; storyScene = async id => { __scenes.push(id); }");
   g.run("STEPS.chapter = async s => { here().chapter = s.chapter; __notes.push('chapter: ' + s.chapter); }; tellCard = async id => __tell.shift() || null");
+  g.run("catchQ = async w => { __notes.push('quiz: ' + w); return true; }; gapQ = async q => { __notes.push('gap: ' + q.gap); return true; }");   // (a question on a new word, or a sentence with a gap: answered)
   g.run('placePlayer()');
   return g;
 }

@@ -1433,7 +1433,7 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 我有八只脚！ | wǒ yǒu bā zhī jiǎo! | I’ve got eight feet! | 章鱼 (octopus) |  |
 | 我有几只脚？ | wǒ yǒu jǐ zhī jiǎo? | How many feet have I got? | 章鱼 (octopus) |  |
 | 这里有几只脚？ | zhèlǐ yǒu jǐ zhī jiǎo? | How many feet are here? | 章鱼 (octopus) |  |
-| 太好了！ | tài hǎo le! | Great! | 大猴子 (Big monkey), 猴子 (Monkey), 章鱼 (octopus) |  |
+| 太好了！ | tài hǎo le! | Great! | 猴子 (Monkey), 章鱼 (octopus) |  |
 | 我们游吧！ | wǒmen yóu ba! | Let’s swim! | 海豚 (dolphin) |  |
 | 一，二，三，游！ | yī, èr, sān, yóu! | One, two, three, swim! |  |  |
 | 海豚很快！ | hǎitún hěn kuài! | The dolphin is fast! | 海龟 (sea turtle) |  |
@@ -1455,8 +1455,8 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 九十！ | jiǔshí! | Ninety! |  |  |
 | 一百！ | yī bǎi! | A hundred! |  |  |
 | 一百个兵！ | yī bǎi gè bīng! | A hundred soldiers! | 蟹将 (Crab general) |  |
-| 一，二！一，二！ | yī, èr! yī, èr! | One, two! One, two! | 虾兵 (Shrimp soldier) |  |
-| 欢迎！欢迎！ | huānyíng! huānyíng! | Welcome! Welcome! | 东海龙王 (Dragon King of the Eastern Sea) |  |
+| 一，二！一，二！ | yī, èr! yī, èr! | One, two! One, two! |  |  |
+| 欢迎！欢迎！ | huānyíng! huānyíng! | Welcome! Welcome! |  |  |
 | 你要什么？ | nǐ yào shénme? | What would you like? |  |  |
 | 我要刀！ | wǒ yào dāo! | I want a broadsword! |  |  |
 | 太重了！ | tài zhòng le! | Too heavy! | 虾兵 (Shrimp soldier), 小猴子 (Little monkey), 大猴子 (Big monkey) |  |
@@ -1464,7 +1464,7 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 你看这个！ | nǐ kàn zhège! | Look at this one! | 东海龙王 (Dragon King of the Eastern Sea) |  |
 | 这个多少斤？ | zhège duōshao jīn? | How many jin is this one? | 东海龙王 (Dragon King of the Eastern Sea) |  |
 | 没有了。 | méiyǒu le. | That’s all there is. | 东海龙王 (Dragon King of the Eastern Sea) |  |
-| 你好！ | nǐ hǎo! | Hello! | 龙婆 (Dragon Queen) |  |
+| 你好！ | nǐ hǎo! | Hello! |  |  |
 | 宝库里有一根铁柱子，它有光！ | bǎokù lǐ yǒu yī gēn tiě zhùzi, tā yǒu guāng! | In the treasury there’s an iron pillar, and it’s glowing! | 龙婆 (Dragon Queen) |  |
 | 太长了！ | tài cháng le! | It’s too long! |  |  |
 | 变短！ | biàn duǎn! | Get shorter! |  |  |
@@ -1480,7 +1480,7 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 打鼓吧！ | dǎ gǔ ba! | Beat the drum! | 东海龙王 (Dragon King of the Eastern Sea) |  |
 | 还有钟！ | hái yǒu zhōng! | And the bell! | 东海龙王 (Dragon King of the Eastern Sea) |  |
 | 他们来了！ | tāmen lái le! | They’re here! | 东海龙王 (Dragon King of the Eastern Sea) |  |
-| 好看！ | hǎokàn! | Lovely! | 南海龙王 (Dragon King of the South Sea), 西海龙王 (Dragon King of the West Sea), 北海龙王 (Dragon King of the North Sea), 老猴子 (Old monkey), 猴子 (Monkey), 小猴子 (Little monkey) |  |
+| 好看！ | hǎokàn! | Lovely! |  |  |
 | 我们回家吧！ | wǒmen huíjiā ba! | Let’s go home! | 海龟 (sea turtle) |  |
 | 八百斤！ | bā bǎi jīn! | 800 jin! |  |  |
 | 一千！ | yī qiān! | 1,000! |  |  |
@@ -1510,17 +1510,97 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 在我的耳朵里！ | zài wǒ de ěrduo lǐ! | In my ear! | 小猴子 (You) |  |
 | 树太高了！ | shù tài gāo le! | The tree’s too tall! | 小猴子 (Little monkey) |  |
 | 我的珍珠！ | wǒ de zhēnzhū! | My pearl! | 小猴子 (Little monkey) |  |
-| 谢谢你！ | xièxie nǐ! | Thank you! | 小猴子 (Little monkey) |  |
+| 谢谢你！ | xièxie nǐ! | Thank you! |  |  |
 | 你是孙悟空吗？ | nǐ shì Sūn Wùkōng ma? | Are you Sun Wukong? | 差人 (Officer of the underworld) |  |
-| 走吧！ | zǒu ba! | Come on! | 差人 (Officer of the underworld) |  |
+| 跟我们走！ | gēn wǒmen zǒu! | Come with us! | 差人 (Officer of the underworld) |  |
 | 我们怕你！ | wǒmen pà nǐ! | We’re scared of you! | 十王 (The ten kings) |  |
 | 找你的名字！ | zhǎo nǐ de míngzi! | Find your name! | 十王 (The ten kings) |  |
 | 醒醒！ | xǐng xǐng! | Wake up! | 老猴子 (Old monkey) |  |
-| 是梦！ | shì mèng! | It was a dream! |  |  |
-| 我们不会老了！ | wǒmen bù huì lǎo le! | We won’t grow old now! | 猴子 (Monkey) |  |
+| 原来是梦！ | yuánlái shì mèng! | So it was a dream! |  |  |
+| 我们不会老了！ | wǒmen bù huì lǎo le! | We won’t grow old now! |  |  |
 | 玉皇大帝请你去天宫。 | Yùhuáng Dàdì qǐng nǐ qù Tiāngōng. | The Jade Emperor invites you to Heaven. | 太白金星 (The Great White Planet) |  |
 | 好！我去！ | hǎo! wǒ qù! | All right! I’ll go! | 小猴子 (You) |  |
-| 我饿了！ | wǒ è le! | I’m hungry! | 饿猴子 (Hungry monkey) |  |
+| 我饿了！ | wǒ è le! | I’m hungry! |  |  |
+| 这里有很多贝壳。 | zhèlǐ yǒu hěn duō bèiké. | There are lots of shells here. |  |  |
+| 海星在水草里。 | hǎixīng zài shuǐcǎo lǐ. | Starfish live in the seaweed. |  |  |
+| 小心鲨鱼！ | xiǎoxīn shāyú! | Watch out for sharks! |  |  |
+| 我很快！ | wǒ hěn kuài! | I’m fast! |  |  |
+| 你很慢！ | nǐ hěn màn! | You’re slow! |  |  |
+| 这个很重。 | zhège hěn zhòng. | This one’s heavy. |  |  |
+| 金箍棒很重！ | Jīngū Bàng hěn zhòng! | The staff is so heavy! |  |  |
+| 我是南海龙王。 | wǒ shì Nánhǎi Lóngwáng. | I’m the Dragon King of the South Sea. |  |  |
+| 我是西海龙王。 | wǒ shì Xīhǎi Lóngwáng. | I’m the Dragon King of the West Sea. |  |  |
+| 我是北海龙王。 | wǒ shì Běihǎi Lóngwáng. | I’m the Dragon King of the North Sea. |  |  |
+| 再见！ | zàijiàn! | Goodbye! |  |  |
+| 我要吃桃子！ | wǒ yào chī táozi! | I want to eat peaches! |  |  |
+| 海里有什么？ | hǎi lǐ yǒu shénme? | What’s in the sea? |  |  |
+| 我怕鲨鱼！ | wǒ pà shāyú! | I’m scared of sharks! |  |  |
+| 龙宫很大吗？ | Lónggōng hěn dà ma? | Is the Dragon Palace big? |  |  |
+| 金箍棒在你的耳朵里！ | Jīngū Bàng zài nǐ de ěrduo lǐ! | The staff is in your ear! |  |  |
+| 石头很重！ | shítou hěn zhòng! | The stone’s so heavy! |  |  |
+| 金箍棒很长！ | Jīngū Bàng hěn cháng! | The staff is so long! |  |  |
+| 我来！ | wǒ lái! | I’ll do it! |  |  |
+| 这里有很多灯。 | zhèlǐ yǒu hěn duō dēng. | There are lots of lamps here. |  |  |
+| 我在哪里？ | wǒ zài nǎlǐ? | Where am I? |  |  |
+| 你在家！ | nǐ zài jiā! | You’re at home! |  |  |
+| 我看见灯！ | wǒ kànjiàn dēng! | I can see a lamp! |  |  |
+| 我看见柱子！ | wǒ kànjiàn zhùzi! | I can see a pillar! |  |  |
+| 我看见门！ | wǒ kànjiàn mén! | I can see a door! |  |  |
+| 我看见书！ | wǒ kànjiàn shū! | I can see a book! |  |  |
+| 书在这里！ | shū zài zhèlǐ! | The book is here! |  |  |
+| 我们怕金箍棒！ | wǒmen pà Jīngū Bàng! | We’re scared of the staff! |  |  |
+| 小心！ | xiǎoxīn! | Take care! | 老猴子 (Old monkey) |  |
+| 我们等你！ | wǒmen děng nǐ! | We’ll wait for you! | 猴子 (Monkey) |  |
+| 我在这里等你。 | wǒ zài zhèlǐ děng nǐ. | I’ll wait for you here. | 太白金星 (The Great White Planet) |  |
+| 下雨了！ | xià yǔ le! | It’s raining! |  |  |
+| 雨太大了！ | yǔ tài dà le! | The rain’s too heavy! |  |  |
+| 你的泡泡很大！ | nǐ de pàopao hěn dà! | Your bubble is big! |  |  |
+| 这里有很多沙子。 | zhèlǐ yǒu hěn duō shāzi. | There’s lots of sand here. |  |  |
+| 水草很长！ | shuǐcǎo hěn cháng! | The seaweed is long! |  |  |
+| 水母有光！ | shuǐmǔ yǒu guāng! | Jellyfish glow! |  |  |
+| 我是章鱼！ | wǒ shì zhāngyú! | I’m an octopus! |  |  |
+| 我是海豚！ | wǒ shì hǎitún! | I’m a dolphin! |  |  |
+| 龙宫里有龙！ | Lónggōng lǐ yǒu lóng! | There are dragons in the Dragon Palace! |  |  |
+| 龙虾是我的朋友。 | lóngxiā shì wǒ de péngyou. | The lobster is my friend. |  |  |
+| 鲸鱼很大！ | jīngyú hěn dà! | Whales are huge! |  |  |
+| 海马很小。 | hǎimǎ hěn xiǎo. | Seahorses are small. |  |  |
+| 珊瑚很好看！ | shānhú hěn hǎokàn! | Coral is lovely! |  |  |
+| 这个不轻！ | zhège bù qīng! | This one isn’t light! |  |  |
+| 一万斤很重！ | yī wàn jīn hěn zhòng! | Ten thousand jin is heavy! |  |  |
+| 金箍棒多少斤？ | Jīngū Bàng duōshao jīn? | How many jin is the staff? |  |  |
+| 金色的帽子很好看！ | jīnsè de màozi hěn hǎokàn! | The golden hat is lovely! |  |  |
+| 龙王有钟。 | Lóngwáng yǒu zhōng. | The Dragon King has a bell. |  |  |
+| 针在你的耳朵里！ | zhēn zài nǐ de ěrduo lǐ! | The needle is in your ear! |  |  |
+| 你的梦很长！ | nǐ de mèng hěn cháng! | Your dream was long! |  |  |
+| 绳子？什么绳子？ | shéngzi? shénme shéngzi? | A rope? What rope? |  |  |
+| 你醒了！ | nǐ xǐng le! | You’re awake! |  |  |
+| 鲸鱼很大吗？ | jīngyú hěn dà ma? | Are whales big? |  |  |
+| 山很高！ | shān hěn gāo! | The mountain is high! |  |  |
+| 海很深吗？ | hǎi hěn shēn ma? | Is the sea deep? |  |  |
+| 你看见龙了吗？ | nǐ kànjiàn lóng le ma? | Did you see dragons? |  |  |
+| 树很高。 | shù hěn gāo. | The tree is tall. |  |  |
+| 请你吃桃子！ | qǐng nǐ chī táozi! | Please, have a peach! |  |  |
+| 你有多少贝壳？ | nǐ yǒu duōshao bèiké? | How many shells have you got? |  |  |
+| 你的帽子是金色的！ | nǐ de màozi shì jīnsè de! | Your hat is golden! |  |  |
+| 珊瑚好看吗？ | shānhú hǎokàn ma? | Is coral pretty? |  |  |
+| 给我看看！ | gěi wǒ kànkan! | Show me! |  |  |
+| 我要贝壳！ | wǒ yào bèiké! | I want shells! |  |  |
+| 章鱼有几只脚？ | zhāngyú yǒu jǐ zhī jiǎo? | How many feet has an octopus got? |  |  |
+| 桃子很轻。 | táozi hěn qīng. | Peaches are light. |  |  |
+| 我要看海马！ | wǒ yào kàn hǎimǎ! | I want to see a seahorse! |  |  |
+| 龙虾是红色的吗？ | lóngxiā shì hóngsè de ma? | Are lobsters red? |  |  |
+| 我怕水母！ | wǒ pà shuǐmǔ! | I’m scared of jellyfish! |  |  |
+| 你找什么？ | nǐ zhǎo shénme? | What are you looking for? |  |  |
+| 一万斤？太重了！ | yī wàn jīn? tài zhòng le! | Ten thousand jin? Too heavy! |  |  |
+| 我找珍珠！ | wǒ zhǎo zhēnzhū! | I’m looking for pearls! |  |  |
+| 海里有沙子吗？ | hǎi lǐ yǒu shāzi ma? | Is there sand in the sea? |  |  |
+| 你打钟了吗？ | nǐ dǎ zhōng le ma? | Did you ring the bell? |  |  |
+| 我的棍子很短。 | wǒ de gùnzi hěn duǎn. | My stick is short. |  |  |
+| 我要看针！ | wǒ yào kàn zhēn! | I want to see the needle! |  |  |
+| 请跟我走。 | qǐng gēn wǒ zǒu. | Please come with me. |  |  |
+| 你有毛笔吗？ | nǐ yǒu máobǐ ma? | Have you got a brush? |  |  |
+| 我也要毛笔！ | wǒ yě yào máobǐ! | I want a brush too! |  |  |
+| 绳子在哪里？ | shéngzi zài nǎlǐ? | Where’s the rope? |  |  |
 | 你要买什么？ | nǐ yào mǎi shénme? | What do you want to buy? | 老板 (Shop owner) |  |
 | 你要卖什么？ | nǐ yào mài shénme? | What do you want to sell? |  |  |
 | 没关系！ | méi guānxi! | It doesn’t matter! | 老板 (Shop owner) |  |
@@ -1588,27 +1668,6 @@ What a card shows when you pick a flower for the big monkey (a red flower, and s
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
 | 海 | hǎi | The sea |  |
-
-### Example sentences on word pages
-
-For words that no line or story sentence uses, shown on the word's page in the Word Scroll.
-
-| Chinese | Pinyin | English | For the word | Notes |
-| --- | --- | --- | --- | --- |
-| 海里有很多沙子。 | hǎi lǐ yǒu hěn duō shāzi. | There’s lots of sand in the sea. | 沙子 |  |
-| 我有很多贝壳。 | wǒ yǒu hěn duō bèiké. | I have lots of shells. | 贝壳 |  |
-| 海星在水草里。 | hǎixīng zài shuǐcǎo lǐ. | The starfish are in the seaweed. | 水草 |  |
-| 海里有水母。 | hǎi lǐ yǒu shuǐmǔ. | There are jellyfish in the sea. | 水母 |  |
-| 章鱼有八只脚。 | zhāngyú yǒu bā zhī jiǎo. | An octopus has eight feet. | 章鱼 |  |
-| 海里有珊瑚。 | hǎi lǐ yǒu shānhú. | There’s coral in the sea. | 珊瑚 |  |
-| 海马很小。 | hǎimǎ hěn xiǎo. | The seahorse is small. | 海马 |  |
-| 鲸鱼很大。 | jīngyú hěn dà. | The whale is very big. | 鲸鱼 |  |
-| 龙很大。 | lóng hěn dà. | The dragon is very big. | 龙 |  |
-| 龙虾是红色的。 | lóngxiā shì hóngsè de. | The lobster is red. | 龙虾 |  |
-| 这里有很多灯。 | zhèlǐ yǒu hěn duō dēng. | There are lots of lamps here. | 灯 |  |
-| 针很小。 | zhēn hěn xiǎo. | The needle is very small. | 针 |  |
-| 这是绳子。 | zhè shì shéngzi. | This is a rope. | 绳子 |  |
-| 我有毛笔。 | wǒ yǒu máobǐ. | I have a writing brush. | 毛笔 |  |
 
 ### Scene: the dive
 
@@ -1934,6 +1993,9 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 差人 | chāirén | officers of the underworld |  |
 | 十王 | Shí Wáng | the ten kings of the underworld |  |
 | 地府 | dìfǔ | the underworld |  |
+| 龙宫 | Lónggōng | the Dragon Palace |  |
+| 跟 | gēn | with; to follow |  |
+| 原来 | yuánlái | so it was… |  |
 | 太白金星 | Tàibái Jīnxīng | the Great White Planet |  |
 | 玉皇大帝 | Yùhuáng Dàdì | the Jade Emperor |  |
 | 天宫 | Tiāngōng | Heaven |  |
@@ -2258,3 +2320,11 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 - As you sail away: 美猴王坐木筏走了。 (The Monkey King sailed away on his raft.) Is 坐木筏走了 natural, or would 坐着木筏走了 or 乘木筏走了 be better?
 - The shore below the meadow is called 海边 (hǎibiān), the seaside. Is that the natural name for a place on the shore where a river runs into the sea?
 - When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)
+- The Eastern Sea (Area 3), Chapter 6, the dream: two officers of the underworld come for you with a rope. The book has 勾死人; the game wants something gentle for children, with no word for death, and calls them 差人 (chāirén). Is 差人 clear and gentle, or is there a better word?
+- The dream: the ten kings of the underworld are 十王 (Shí Wáng) on their name plate, and the place is 地府 (dìfǔ). Are both all right for children? (The book of names is never named in Chinese on screen: in English it is “the book of names”.)
+- Waking from the dream, you say 原来是梦！ (So it was a dream!), where it was 是梦！. Is 原来是梦！ natural for a child waking up?
+- The officers say 跟我们走！ (Come with us!) as they tie the rope round you. Is it natural, and not too frightening?
+- The troop, once you tell them about the book of names: 我们不会老了！ (We won’t grow old now!). Is it natural?
+- You ask the Dragon King for clothes to go with the staff: 我还要衣服！ (I want some clothes too!). Is 还要 fine, or would 我还想要衣服！ be more natural?
+- The octopus says 我有八只脚！ (I’ve got eight feet!), teaching 脚. For a child, is 八只脚 all right for an octopus’s arms, or should it be 八条腿 (and teach 腿)?
+- The sea folk and the troop have many new everyday lines (16 November 2026), each said again and again, such as 鲸鱼很大吗？, 你打钟了吗？, 一万斤？太重了！, 绳子？什么绳子？ and 请你吃桃子！. Are they all natural? They’re all in the lines above.

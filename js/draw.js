@@ -1041,6 +1041,7 @@ function drawWorld(now){
     R(b, Math.round(fx), Math.round(fy), 3, 2, '#F28C38'); R(b, Math.round(fx) + (way > 0 ? -1 : 3), Math.round(fy), 1, 2, '#D96A1E');
   });
   drawThings(cx, cy, now);   // treasures, such as pine cones, and the things for the cave from the shop (js/trade.js)
+  drawStaffLying(cx, cy, now);   // your staff, lying on the ground for the little monkeys to try to lift (js/sea.js)
   if (!GLOOM) drawSparkles(cx, cy, now);   // (in a gloomy place, over its shade instead, so they shine)
   // animals at their own spots, once animals appear: standing on open ground (the deer), or a little up a cliff, bobbing;
   // those up a tree come after the leaves. While you're meeting one, it stays where it is (meetHop).
@@ -1106,6 +1107,7 @@ function drawWorld(now){
       }
       for (const [x, y, w, h] of feetInGrass()) coverFeet(x, y, w, h, cx, cy);   // the grass over your feet (parted round you, as the square you're in is)
       if (isFast(now)) drawEnergy(PX, PY, now, moving, pl.dir);
+      if (moving && inCloudShoes()) drawCloudSteps(PX, PY, now, pl.dir);   // (in the cloud shoes: wisps of cloud at your feet, js/sea.js)
       if (isStinky()) drawStink(PX, PY, now);   // (smelling of durian: a green cloud round you)
       if (now < alertUntil) bubbles.push([PX + 5, PY - 10, '!']);
       if (now - wakeT < 1000) [[-3, 2], [17, 4], [-1, -4], [15, -3], [7, -7]].forEach(([dx, dy], i) => {   // waking up with all your hearts: sparkles
@@ -1113,7 +1115,7 @@ function drawWorld(now){
       continue;
     }
     const n = e.n, scared = !!(foe && foe.big) && FOLLOWERS.includes(n);   // (whoever's following you, trembling, as a big one rears up: wildBattle, js/battle.js)
-    const X = Math.round(e.c.x) - cx + (scared && Math.floor(now / 70) % 2 ? 1 : 0), Y = Math.round(e.c.y) - cy;
+    const X = Math.round(e.c.x) - cx + (scared && Math.floor(now / 70) % 2 ? 1 : 0) + strainShake(n, now), Y = Math.round(e.c.y) - cy;   // (straining, trying to lift your staff: js/sea.js)
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
     if (n.asleep){ b.globalAlpha = fadeOf(n, now); drawSleeper(n, X, Y, now, n.bed); b.globalAlpha = 1; continue; }   // asleep for the night (js/daynight.js)
     const fade = fadeOf(n, now); if (fade < 1) b.globalAlpha = fade;   // (fading in, up for the day)
@@ -1137,6 +1139,9 @@ function drawWorld(now){
       if (n.word && lvl(n.word) === 0) sparkle(X+13, Y+3, now, 3);
     } else if (PLAYS[n.id]){   // a monkey of the troop at play, such as building a tower of stones (or stopped to talk to you)
       drawPlaying(n, X, Y, now);
+    } else if (lentNow(n, now)){   // swinging something you've lent them, such as your staff, round and round (the lend step, js/sea.js)
+      const lent = lentNow(n, now), per = SWING_MS * 1.4;
+      drawSwing(n.kind, n.dir, X, Y, now - (now - lent.t0) % per, now, lent.what);
     } else if (inDrill(n)){   // training with you, in the master's cave: striking with a staff, in time with you (js/year.js)
       drawDrill(n, X, Y, now);
     } else if (practising(n)){   // a little monkey in training, facing its own way, swinging its stick now and then
@@ -1148,6 +1153,7 @@ function drawWorld(now){
       drawEntityMonkey(n.kind, X, Y, n.dir, now, e.c.mid ? 1 : idle, e.c.mid ? 1 + (n.parity || 0) : 0, n.x + n.y);
     }
     if (FOLLOWERS.includes(n) && !n.flies) for (const [x, y, w, h] of feetInGrass(e.c.x, e.c.y)) coverFeet(x, y, w, h, cx, cy);   // the grass over their feet
+    drawStrain(n, X, Y, now);   // (sweat flying, straining at your staff: js/sea.js)
     b.globalAlpha = 1;
     // a ! while they're stopping you (the stopsYou step), a ? while they're puzzled (the shop's, when you've asked for something
     // you didn't point at: buy, in js/world.js), or a ! or ? from the area's bubbles

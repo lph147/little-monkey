@@ -24,6 +24,7 @@ function game(area = {}, {pos = {place: 'ffmCave', x: 1, y: 2, dir: 'up'}, known
   g.run("showDialog = async (who, line, o = {}) => { __said.push((who.match(/data-id=\"([^\"]*)\"/) || [])[1] + ': ' + line.t.join('')); }");
   g.run("infoBox = async (who, html) => { __notes.push('box: ' + html.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim()); }; storyScene = async id => { __scenes.push(id); }");
   g.run("globalThis.__bookCard = bookCard; bookCard = async id => { __notes.push('book: ' + id); }; replyWith = async (w, o = {}) => { __said.push('reply: ' + w); }");
+  g.run("catchQ = async w => { __notes.push('quiz: ' + w); return true; }; gapQ = async q => { __notes.push('gap: ' + q.gap); return true; }");   // (a question on a new word, or a sentence with a gap: answered)
   g.run('placePlayer()');
   return g;
 }
@@ -50,9 +51,10 @@ test('after the feast, a stone bed in the Water Curtain Cave: you fall asleep, a
 test('the dream: two officers and their rope (绳子), up the misty road, till your staff scares them off; the lamps (灯)', async () => {
   const g = game({dream: 1}, {pos: {place: 'underworld', x: 7, y: 12, dir: 'up'}});
   assert.equal(get(g, 'tileAt(4, 9).word'), '灯');
+  assert.equal(get(g, 'ALL_NPCS.find(n => n.id === "official1").look'), '差人', 'drawn as officers of the underworld (content/sprites.js)');
   await play(g, 'runEvents()');
-  assert.deepEqual(said(g), ['official1: 你是孙悟空吗？', 'player: 我是孙悟空！', 'official1: 走吧！', 'player: 变大！']);
-  assert.deepEqual(notes(g).filter(n => /^card:/.test(n)), ['card: 绳子']);
+  assert.deepEqual(said(g), ['player: 这里有很多灯。', 'official1: 你是孙悟空吗？', 'player: 我是孙悟空！', 'official1: 跟我们走！', 'player: 变大！']);
+  assert.deepEqual(notes(g).filter(n => /^card:/.test(n)), ['card: 灯', 'card: 绳子'], 'the lamps as you arrive, then the rope');
   assert.equal(p(g, 'dream'), 3);
   assert.deepEqual(get(g, '[pl.x, pl.y]'), [7, 6], 'led up the road to the hall’s door');
   assert.deepEqual([at(g, 'official1')[0], at(g, 'official2')[0]], ['gone', 'gone'], 'they’ve run');
@@ -64,32 +66,56 @@ test('the dream: two officers and their rope (绳子), up the misty road, till y
   assert.ok(notes(g).includes('card: 灯') || get(g, 'lvl("灯")') >= 1, 'press A at a lamp: 灯');
 });
 
-test('the ten kings, scared of you (怕): the book of names (找, 毛笔); then you wake up at home (醒, 梦), and the troop won’t grow old', async () => {
-  const g = game({dream: 3}, {pos: {place: 'underworld', x: 7, y: 5, dir: 'up'}});
-  assert.equal(get(g, 'ALL_NPCS.filter(n => /^king/.test(n.id) && n.place === "underworld").length'), 10, 'ten kings');
+test('the ten kings, scared of you (怕); their I spy in the dim hall, the book last (找); the brush (毛笔) and the book of names', async () => {
+  const g = game({dream: 3}, {pos: {place: 'underworld', x: 7, y: 5, dir: 'up'}, known: [...KNOWN, '灯', '绳子']});
+  assert.equal(get(g, 'ALL_NPCS.filter(n => /^king/.test(n.id) && n.place === "underworld" && n.look === "十王").length'), 10, 'ten kings, each drawn as one of the ten kings');
   await play(g, 'runEvents()');
-  assert.deepEqual(said(g), ['king1: 我们怕你！', 'king1: 找你的名字！', 'elder: 醒醒！', 'player: 是梦！', 'troopA: 我们不会老了！']);
+  assert.deepEqual(said(g).slice(0, 2), ['king1: 我们怕你！', 'king1: 找你的名字！']);
+  assert.deepEqual(notes(g).filter(x => /^(card|quiz):/.test(x)), ['card: 怕', 'quiz: 怕', 'card: 找'], 'a question on 怕 before 找');
+  assert.equal(p(g, 'kings'), 1);
+  const spying = get(g, 'here().spying');
+  assert.deepEqual([...spying.list].sort(), ['书', '柱子', '灯', '门'].sort(), 'the lamps, pillars, the door and the book: things in the hall');
+  // find each, standing beside it and pressing A (one wrong first: it says so, and waits)
+  const SPOT = {'灯': [1, 2, 'up'], '柱子': [2, 5, 'up'], '门': [5, 5, 'down'], '书': [7, 4, 'up']};
+  const first = get(g, 'here().spying.list[here().spying.i]'), wrongOne = Object.keys(SPOT).find(w => w !== first);
+  await press(g, ...SPOT[wrongOne]);
+  assert.equal(get(g, 'here().spying.i'), 0, 'not that one');
+  for (let i = 0; i < 4 && get(g, '!!here().spying'); i++) await press(g, ...SPOT[get(g, 'here().spying.list[here().spying.i]')]);
+  assert.ok(!get(g, '!!here().spying'), 'everything found');
+  assert.ok(said(g).includes('king1: 书在这里！'), 'the book is here!');
   const n = notes(g);
-  assert.deepEqual(n.filter(x => /^card:/.test(x)), ['card: 怕', 'card: 找', 'card: 毛笔', 'card: 醒', 'card: 梦']);
-  assert.ok(n.includes('book: names'));
-  assert.equal(get(g, 'PLACE'), 'ffmCave', 'woken at home');
-  assert.deepEqual(at(g, 'elder'), ['ffmHomeGround', 16, 8], 'and the old monkey back by the big table');
+  assert.ok(n.includes('card: 毛笔') && n.includes('quiz: 毛笔'), 'the brush, and a question on it');
+  assert.deepEqual([get(g, 'PLACE'), p(g, 'dream')], ['ffmCave', 5], 'you run, trip, and wake at home (the next test)');
+  assert.ok(n.includes('book: names'), 'the book of names');
+});
+
+test('waking up at home, in bed, the old monkey shaking you (醒), a question, where am I? (梦); the troop won’t grow old; trouble in Heaven', async () => {
+  const g = game({dream: 4, kings: 1, hallSpy: 1}, {pos: {place: 'ffmCave', x: 1, y: 2, dir: 'up'}});
+  await play(g, 'STEPS.asleep({})');
+  assert.ok(get(g, '!!sleepAt'), 'in bed, asleep');
+  await play(g, 'runEvents()');
+  assert.ok(!get(g, '!!sleepAt'), 'woken, and down beside it');
+  assert.deepEqual(said(g), ['elder: 醒醒！', 'player: 我在哪里？', 'elder: 你在家！', 'player: 原来是梦！', 'troopA: 我们不会老了！']);
+  assert.deepEqual(notes(g).filter(x => /^(card|quiz):/.test(x)), ['card: 醒', 'quiz: 醒', 'card: 梦'], 'a question on 醒 before 梦');
   assert.equal(p(g, 'dream'), 5);
+  assert.deepEqual(at(g, 'elder'), ['ffmHomeGround', 16, 8], 'and the old monkey back by the big table');
   assert.deepEqual(get(g, '__scenes'), ['heaven'], 'trouble in Heaven');
   assert.equal(p(g, 'invite'), 1);
   assert.deepEqual(tasks(g), ['planet']);
 });
 
-test('the Great White Planet comes down to the home ground: 欢迎！, and his invitation (请); the end of Area 3', async () => {
+test('the Great White Planet comes down to the home ground: 欢迎！, his invitation (请), and the troop’s goodbye; the end of Area 3', async () => {
   const g = game({dream: 5, invite: 1}, {pos: {place: 'ffmHomeGround', x: 2, y: 9, dir: 'right'}});
+  assert.equal(get(g, 'ALL_NPCS.find(n => n.id === "planet").look'), '太白金星', 'drawn as the Great White Planet (content/sprites.js)');
   await play(g, 'runEvents()');
   assert.deepEqual(get(g, '__scenes'), ['planetCloud']);
-  assert.deepEqual(said(g), ['reply: 欢迎', 'planet: 玉皇大帝请你去天宫。', 'player: 好！我去！']);
+  assert.deepEqual(said(g), ['reply: 欢迎', 'planet: 玉皇大帝请你去天宫。', 'player: 好！我去！', 'elder: 小心！', 'troopA: 我们等你！', 'planet: 我在这里等你。'], 'and the troop’s goodbye; he’ll wait for you');
   const n = notes(g);
   assert.deepEqual(n.filter(x => /^card:/.test(x)), ['card: 请']);
-  assert.ok(n.some(x => /^box: .*The end of Area 3/.test(x)));
+  assert.ok(n.some(x => /^box: .*The end of Area 3.*waits at the home ground/.test(x)));
   assert.equal(p(g, 'invite'), 3);
   assert.deepEqual(tasks(g), ['continued']);
+  assert.deepEqual(at(g, 'planet').slice(0, 1), ['ffmHomeGround'], 'he waits at the home ground');
 });
 
 test('the book of names: find yours and cross it out, then every name with 猴 in it', async () => {

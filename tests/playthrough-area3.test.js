@@ -240,12 +240,21 @@ test('the Eastern Sea can be played from the dive to the end of Area 3', async (
 
   // The dream: the officers and their rope (绳子), the lamps (灯), the ten kings (怕, 找, 毛笔), the book of names; waking (醒, 梦)
   goTo('ffmCave', 1, 2, 'up');
-  await pressAt(1, 2, 'up', 'going to bed after the feast: the dream');
+  await pressAt(1, 2, 'up', 'going to bed after the feast: the dream; the lamps (灯), then two officers come for you with a rope (绳子)', 2);
   assert.equal(get('PLACE'), 'underworld');
-  await act('runEvents()', 'two officers come for you with a rope');
   assert.equal(area().dream, 3);
-  await pressAt(5, 7, 'left', 'a lamp beside the road: 灯');
-  stand(7, 5, 'up'); await act('arrive(7, 5).then(runEvents)', 'up into the hall: the ten kings (怕, 找), the book of names (毛笔); waking at home (醒, 梦)', 5);
+  await pressAt(5, 7, 'left', 'a lamp beside the road');
+  stand(7, 5, 'up'); await act('arrive(7, 5).then(runEvents)', 'up into the hall: the ten kings (怕, 找), and their I spy', 2);
+  // the kings' I spy: each thing they can see, found by standing beside it and pressing A; the last, the book of names
+  for (let i = 0; i < 6 && get('!!here().spying'); i++){
+    const w = get('here().spying.list[here().spying.i]');
+    const spot = get(`(() => { for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++){
+      if (tileAt(x, y).word !== ${JSON.stringify(w)}) continue;
+      for (const [dx, dy, dir] of [[0, 1, 'up'], [0, -1, 'down'], [1, 0, 'left'], [-1, 0, 'right']]) if (walkable(x + dx, y + dy) && !npcAt(x + dx, y + dy)) return [x + dx, y + dy, dir];
+    } return null; })()`);
+    assert.ok(spot, `somewhere to find ${w} in the hall`);
+    await pressAt(spot[0], spot[1], spot[2], `finding ${w} in the hall: then the brush (毛笔), the book of names, and waking at home (醒, 梦)`, 3);
+  }
   assert.deepEqual([get('PLACE'), area().dream], ['ffmCave', 5], 'woken at home: the troop won’t grow old');
 
   // Trouble in Heaven, and the Great White Planet's invitation (请): the end of Area 3

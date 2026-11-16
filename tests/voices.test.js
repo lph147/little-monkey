@@ -39,7 +39,7 @@ test('every voice clip is made and listed (run npm run voices after changing any
 test('words on their own have their own voice, the old monkey his for his lines, and everyone else the main one', () => {
   const {plan} = require('../tools/make-voices');
   const p = plan();
-  assert.deepEqual(p.who, {words:'google-standard-a', everyone:'yunxi', elder:'yunze', turtle:'xiaorui', dragonKing:'yunyang', dragonQueen:'xiaohan', southKing:'yunyang', westKing:'yunyang', northKing:'yunyang', king1:'yunhao', planet:'yunye'});   // (and the Eastern Sea's: the sea turtle's, the Dragon King's and the Dragon Queen's; his brothers in his voice, for now)
+  assert.deepEqual(p.who, {words:'google-standard-a', everyone:'yunxi', elder:'yunze', turtle:'xiaorui', dragonKing:'yunyang', dragonQueen:'xiaohan', southKing:'yunjian', westKing:'yunfeng', northKing:'yunhao', king1:'yunhao', planet:'yunye'});   // (the dragon kings each in his own voice: the owner's review, 16 November 2026)   // (and the Eastern Sea's: the sea turtle's, the Dragon King's and the Dragon Queen's; his brothers in his voice, for now)
   assert.ok(p.clips.yunze['我是老猴子。这是花果山。'], 'the old monkey says who he is in his own voice');
   assert.ok(!p.clips.yunze['我怕！'], 'the little monkey’s line isn’t in the old monkey’s voice');
   assert.ok(p.clips['google-standard-a']['猴子'] && p.clips['google-standard-a']['你好'], 'words (and phrases) on their own are in the words voice');

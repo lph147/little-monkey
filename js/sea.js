@@ -421,14 +421,21 @@ function drawTellPic(c){
   R(g, L, Y - h, w, h, '#5A606A'); R(g, L + 1, Y - h, Math.max(1, Math.round(w * .25)), h, '#8A929C'); if (w >= 4) R(g, L + w - 1, Y - h, 1, h, '#30343A');
   const bh = Math.max(2, Math.round(w * .4)); R(g, L - 1, Y - bh, w + 2, bh, '#E2B23A'); if (h < 36) R(g, L - 1, Y - h, w + 2, bh, '#E2B23A');
 }
+// With more than two choices (the staff around the mountain: all four, 变长 变短 变大 变小, decided 16 November 2026 after the
+// owner's review: two were a coin toss), only those whose word you know, the right one always, in a new order each time.
+const tellChoices = t => {
+  if (t.choices.length <= 2) return t.choices;   // (the iron pillar's two, as they are)
+  const known = t.choices.filter(c => c === t.right || [...c].slice(1).every(ch => lvl(ch) >= 1));
+  return known.length > 2 ? shuffle(known) : known;
+};
 function tellCard(id){
-  const t = AREA.telling[id];
+  const t = AREA.telling[id], choices = tellChoices(t);
   return new Promise(res => {
     openCard(`<div class="tell"><canvas class="tellpic" width="48" height="40"></canvas><p class="label">${esc(fill(t.ask))}</p></div>
-      <div class="opts tells" data-nav>${t.choices.map((c, i) => `<button class="opt" data-i="${i}" aria-label="${esc(TELL_EN[c] || c)}"><span class="hz">${c}</span>${S.pinyin ? `<span class="cap">${[...c].map(pyOfWord).join(' ')}</span>` : ''}${S.replyEn ? `<span class="ren">${esc(TELL_EN[c] || '')}</span>` : ''}</button>`).join('')}</div>
+      <div class="opts tells${choices.length > 2 ? ' four' : ''}" data-nav>${choices.map((c, i) => `<button class="opt" data-i="${i}" aria-label="${esc(TELL_EN[c] || c)}"><span class="hz">${c}</span>${S.pinyin ? `<span class="cap">${[...c].map(pyOfWord).join(' ')}</span>` : ''}${S.replyEn ? `<span class="ren">${esc(TELL_EN[c] || '')}</span>` : ''}</button>`).join('')}</div>
       <div class="actions"><button class="btn" data-a="no" data-b>Not now</button></div>`);
     drawTellPic($('#sheet .tellpic'));
-    sheet.querySelectorAll('.tells .opt').forEach(b => b.onclick = () => { closeCard(); res(t.choices[+b.dataset.i]); });
+    sheet.querySelectorAll('.tells .opt').forEach(b => b.onclick = () => { closeCard(); res(choices[+b.dataset.i]); });
     on('[data-a=no]', () => { closeCard(); res(null); });
   });
 }
@@ -549,6 +556,16 @@ STEPS.strike = async s => {
 // golden hat): on your monkey as you watch, then its card, its picture and what it's called, with what you're told (note);
 // then what your monkey says as it wears it, the wardrobe's sentence (我戴金色的帽子), as when you put something on there,
 // and as its voice clip says it (tests/playthrough-area3.test.js found it said with a full stop, which has no clip).
+// Walking in the cloud shoes (the Dragon King of the North Sea's gift): little wisps of cloud puffing up at your heels, drifting
+// back the way you came and fading (and each step a little quicker: CLOUD_STEP, js/input.js).
+function drawCloudSteps(PX, PY, now, dir){
+  const [dx, dy] = DV[dir];
+  for (let i = 0; i < 3; i++){
+    const k = ((now / 420) + i / 3) % 1, X = Math.round(PX + 8 - dx * (3 + k * 7) + (i - 1) * 3), Y = Math.round(PY + 14 - dy * (2 + k * 5) - k * 2);
+    b.globalAlpha = (1 - k) * .8; R(b, X - 2, Y, 4, 2, '#FFFFFF'); R(b, X - 1, Y - 1, 2, 1, '#FFFFFF'); R(b, X - 2, Y + 1, 4, 1, '#C8DCEE');
+  }
+  b.globalAlpha = 1;
+}
 STEPS.gift = async (s, who, last) => {
   const c = CLOTHES.find(x => x.item === s.gift), a = asSaid(c);
   if (!S.wardrobe.owned.includes(c.item)) S.wardrobe.owned.push(c.item);
@@ -663,7 +680,7 @@ function staffNow(now = performance.now()){
   const k = Math.min(1, (now - staffOut.t0) / staffOut.ms), e = k < .5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2, f = staffOut.from, t = staffOut.to;
   return {len:f.len + (t.len - f.len) * e, w:f.w + (t.w - f.w) * e, moving:k < 1};
 }
-function staffInEar(){ return !!staffOut || !!(AREA.inEar && S && S.areas && here() && matches(AREA.inEar)); }
+function staffInEar(){ return !!staffOut || !!staffLying || !!(AREA.inEar && S && S.areas && here() && matches(AREA.inEar)); }   // (out, lying on the ground, or in your ear)
 async function staffTo(size, ms = 900, up = staffOut && staffOut.up){   // (up: held upright whichever way you face, such as up into the tallest peach tree)
   const now = performance.now(), from = staffNow(now) || STAFF_OUT.needle, grows = size.len > from.len + 4 || size.w > from.w + 1;
   staffOut = {from:{len:from.len, w:from.w}, to:size, t0:now, ms, up:!!up}; redress();
@@ -705,9 +722,117 @@ function drawDrops(cx, cy, now){
     b.globalAlpha = k > 1.3 ? (1.5 - k) / .2 : 1; b.drawImage(itemPic(d.w), Math.round(X - cx), Math.round(Y - cy), 9, 9); b.globalAlpha = 1;
   }
 }
-// A boulder you're facing, levered aside with your staff (roll): a rumble, the ground shaking, stones and earth flying.
-STEPS.roll = async () => { const [x, y] = facing(); SFX.rumble(); shakeT = performance.now(); burst(x, y, 'stone'); burst(x, y, 'earth'); await sleep(700); SFX.bump(); };
-Object.assign(STEP_OPTIONS, {drop:['n']});
+// A boulder you're facing, levered aside with your staff (roll), and rolling away as you watch, two squares to one side
+// (whichever side it can roll), bumping and tumbling, earth flying where it was, then out of sight into the long grass
+// (decided 16 November 2026, after the owner's review: it just vanished in a puff of dust). It's drawn as the map draws a
+// boulder, its crack turning over as it rolls. The square it was on changes as it starts to roll (the content's set).
+const rolling = [];   // {x, y, dx, dy, t0}: boulders rolling away
+const ROLL_MS = 1300;
+STEPS.roll = async () => {
+  const [x, y] = facing(), [fx, fy] = DV[pl.dir], sides = [[fy, fx], [-fy, -fx], [fx, fy]];   // (to either side, or else away from you)
+  const [dx, dy] = sides.find(([a, c]) => walkable(x + a, y + c) && walkable(x + 2 * a, y + 2 * c)) || sides[0];
+  SFX.rumble(); shakeT = performance.now(); burst(x, y, 'earth');
+  rolling.push({x, y, dx, dy, t0:performance.now()});
+  for (let i = 0; i < 3; i++){ await sleep(ROLL_MS / 3); SFX.bump(); }
+};
+function drawRolling(cx, cy, now){
+  for (let i = rolling.length - 1; i >= 0; i--){
+    const r = rolling[i], k = (now - r.t0) / ROLL_MS;
+    if (k >= 1){ rolling.splice(i, 1); continue; }
+    const e = 1 - (1 - k) ** 2, X = Math.round((r.x + r.dx * 2 * e) * T - cx), Y = Math.round((r.y + r.dy * 2 * e) * T - cy - Math.abs(Math.sin(k * Math.PI * 3)) * 3);
+    b.globalAlpha = k > .7 ? (1 - k) / .3 : 1;
+    boulder(b, X + 8, Y + 15, 6, 6, Math.floor(k * 8) % 2 === 0);   // (its crack turning over as it rolls)
+    if (Math.floor(now / 90) % 2) R(b, X + 2 - r.dx * 6, Y + 14, 3, 1, '#C8B898');   // dust kicked up behind it
+    b.globalAlpha = 1;
+  }
+}
+// The little monkeys trying to lift your staff, at home (tryLift: who), as you show it them (decided 16 November 2026, after
+// the owner's review: it was only a message): you lay it down on the ground beside you, they come up to it, one either
+// side, and heave at it, straining, shaking, sweat flying, the staff hardly stirring; then you pick it up with one paw
+// (liftStaff), and it's back in your paws.
+let staffLying = null;   // {x, y, place, t0}: your staff lying on the ground
+STEPS.tryLift = async s => {
+  const free = (x, y) => walkable(x, y) && !npcAt(x, y) && !animalAt(x, y) && !(x === pl.x && y === pl.y);
+  const spot = Object.entries(DV).map(([d, [dx, dy]]) => [pl.x + dx, pl.y + dy, d]).find(([x, y]) => free(x, y)) || [...facing(), pl.dir];
+  pl.dir = spot[2]; pl.turnT = performance.now(); S.pos = {...S.pos, dir:pl.dir};
+  staffLying = {x:spot[0], y:spot[1], place:PLACE, t0:performance.now()}; redress(); SFX.bump();
+  await sleep(350);
+  const taken = [[pl.x, pl.y]];
+  for (const id of s.tryLift){
+    const n = NPCS.find(c => c.id === id); if (!n) continue;
+    const by = Object.values(DV).map(([dx, dy]) => [spot[0] + dx, spot[1] + dy]).filter(([x, y]) => free(x, y) && !taken.some(([a, c]) => a === x && c === y))
+      .sort((a, c) => Math.hypot(a[0] - n.x, a[1] - n.y) - Math.hypot(c[0] - n.x, c[1] - n.y))[0];
+    if (!by) continue;
+    taken.push(by);
+    await STEPS.walk({walk:id, to:by, ms:200});
+    n.dir = dirOf(spot[0] - n.x, spot[1] - n.y) || n.dir;
+  }
+  const now = performance.now(), strain = 1700;
+  for (const id of s.tryLift){ const n = NPCS.find(c => c.id === id); if (n) n.strainUntil = now + strain; }
+  staffLying.wobble = now;
+  for (let i = 0; i < 4; i++){ SFX.scuffle(); await sleep(strain / 4); }
+};
+STEPS.liftStaff = async () => {
+  if (!staffLying) return;
+  pl.dir = dirOf(staffLying.x - pl.x, staffLying.y - pl.y) || pl.dir;
+  staffLying = null;
+  await pickUpAct('金箍棒');   // (with one paw, up over your head)
+  redress();
+};
+function drawStaffLying(cx, cy, now){
+  const s = staffLying; if (!s || s.place !== PLACE) return;
+  const X = s.x * T - cx, Y = s.y * T - cy, lift = s.wobble && now - s.wobble < 1700 && Math.floor((now - s.wobble) / 110) % 3 === 0 ? 1 : 0;
+  R(b, X + 1, Y + 12, 14, 1, 'rgba(0,0,0,.25)');                                                   // its shadow
+  R(b, X + 1, Y + 9 - lift, 14, 3, '#5A606A'); R(b, X + 1, Y + 9 - lift, 14, 1, '#8A929C'); R(b, X + 1, Y + 11 - lift, 14, 1, '#30343A');
+  for (const ex of [X, X + 13]) R(b, ex, Y + 8 - lift, 3, 5, '#E2B23A');                           // a gold band at each end
+}
+// Straining (a character's strainUntil): shaking on the spot, a drop of sweat flying now and then (drawn in js/draw.js's
+// characters, through strainShake and drawStrain).
+// Someone straining or shaking (strain: who; ms: how long), such as the old monkey, shaking you awake.
+STEPS.strain = async s => { const now = performance.now(); for (const id of s.strain){ const n = NPCS.find(c => c.id === id); if (n) n.strainUntil = now + (s.ms || 900); } SFX.scuffle(); await sleep(s.ms || 900); };
+const strainShake = (n, now) => now < (n.strainUntil || 0) ? (Math.floor(now / 60) % 2 ? 1 : -1) : 0;
+function drawStrain(n, X, Y, now){
+  if (now >= (n.strainUntil || 0)) return;
+  const k = (now % 500) / 500;
+  R(b, Math.round(X + 13 + k * 3), Math.round(Y - 1 + k * k * 6), 1, 2, '#9CD3F5');   // sweat flying off
+  if (Math.floor(now / 120) % 2) for (const [dx, dy] of [[-2, 3], [17, 3]]) R(b, X + dx, Y + dy, 1, 3, '#FFFFFF');   // effort lines
+}
+// Lending your staff to someone (lend: who; ms: for how long), such as the little monkey in training: in their paws, made
+// small enough (the tell step first), swung round and round, as they swing their own stick; then back to you (drawn in
+// js/draw.js's characters, through lentNow).
+STEPS.lend = async s => {
+  const n = NPCS.find(c => c.id === s.lend); if (!n) return;
+  n.lend = {what:'金箍棒', t0:performance.now(), until:performance.now() + (s.ms || 2600)};
+  staffOut = null; redress();
+  for (let i = 0; i < 3; i++){ await sleep((s.ms || 2600) / 3); SFX.swish(); }
+  n.lend = null;
+};
+const lentNow = (n, now) => n.lend && now < n.lend.until ? n.lend : null;
+// Asleep in the bed you face (asleep), as you wake from the dream: lying in it, under its blanket, till you wake (wake),
+// sit up and hop down beside it again, as after sleeping there.
+STEPS.asleep = async () => { const [bx, by] = facing(); sleepAt = {x:bx, y:by, room:false}; pl.py = by * T; sleepT = -9999; };
+STEPS.wake = async () => {
+  if (!sleepAt) return;
+  const {x, y} = sleepAt; sleepAt = null; pl.py = y * T - 3;
+  pl.dir = 'down'; await hop(pl.x * T, pl.y * T);
+  S.pos.dir = pl.dir; save(); wakeT = performance.now(); SFX.chime();
+};
+// The staff back from where it lay across the pond (staffBack): out from your paws to the far bank, shrinking back to a
+// needle, into your ear, as the troop's planks stay under it.
+STEPS.staffBack = async () => { staffOut = {from:{len:34, w:4}, to:{len:34, w:4}, t0:0, ms:1, up:false}; redress(); await sleep(250); await staffAway(); };
+// Planks laid across the water, one after another (plank: [x, y] each), as the big monkey lays them, with a knock each:
+// the square becomes what its legend's becomes says once the content sets it (the planks under your staff).
+STEPS.plank = async s => { for (const [x, y] of s.plank){ burst(x, y, 'wood'); SFX.clack(); await sleep(420); } };
+// Lines that come round in turn (chat: the lines, said one each time you talk to them, from where they left off), so
+// everyone has a few things to say, using the words you've learned (decided 16 November 2026, after the owner's review:
+// the sea's words were hardly ever heard again). Who's said what is kept for the session, not in the save.
+const chatTurn = {};
+STEPS.chat = async (s, who, last) => {
+  const id = typeof who === 'string' ? who : who && who.id, i = chatTurn[id] = ((chatTurn[id] ?? (id ? id.length : 0) % s.chat.length - 1) + 1) % s.chat.length;
+  await STEPS.say({say:s.chat[i]}, who, last);
+};
+CHAT_STEPS.push('chat');
+Object.assign(STEP_OPTIONS, {drop:['n'], lend:['ms'], strain:['ms']});
 // The rope round you in the dream (the area's rope: while its if matches, in its place), tied by the officers of the
 // underworld, its end in the hand of the one leading you (by).
 function drawRope(cx, cy, now){
@@ -732,6 +857,7 @@ function drawHomeThings(cx, cy, sh, now){
   drawDream(cx, cy, sh, now);
   drawGlimmers(cx, cy, now);
   drawRope(cx, cy, now);
+  drawRolling(cx, cy, now);
   drawDrops(cx, cy, now);
   drawStaffOut(cx, cy, now);
 }
@@ -745,6 +871,15 @@ function staffBridge(g, X, Y, x, y, end){
 }
 Object.assign(LOOKS, {staffBridgeL:(g, X, Y, x, y) => staffBridge(g, X, Y, x, y, 'L'), staffBridgeR:(g, X, Y, x, y) => staffBridge(g, X, Y, x, y, 'R')});
 WATERY.push('staffBridgeL', 'staffBridgeR');
+// The troop's planks laid across beside it (Chapter 6, after the owner's review: your staff was a bridge for good, and in your
+// ear too): planks across the water, your staff still lying on them (L and R, its ends) till you call it back.
+function plankStaff(g, X, Y, x, y, end){
+  LOOKS.bridge(g, X, Y, x, y);
+  R(g, X, Y + 6, T, 3, '#5A606A'); R(g, X, Y + 6, T, 1, '#8A929C'); R(g, X, Y + 8, T, 1, '#30343A');
+  if (end === 'L') R(g, X, Y + 5, 3, 5, '#E2B23A'); else R(g, X + 13, Y + 5, 3, 5, '#E2B23A');
+}
+Object.assign(LOOKS, {plankStaffL:(g, X, Y, x, y) => plankStaff(g, X, Y, x, y, 'L'), plankStaffR:(g, X, Y, x, y) => plankStaff(g, X, Y, x, y, 'R')});
+WATERY.push('plankStaffL', 'plankStaffR');
 // A thin crack in the Water Curtain Cave's wall, low down, where a little monkey's pearl has rolled
 LOOKS.caveCrack = (g, X, Y, x, y) => {
   caveWall(g, X, Y, x, y);
@@ -794,6 +929,25 @@ OBJECT_ART.kingTable = (g, o) => {
   R(g, bx + 20, Y + 2, 6, 1, '#6A4A2A'); R(g, bx + 26, Y + 1, 2, 3, '#1A1210');                                                // a brush
 };
 BLOCK_OBJECTS.push('kingTable');
+// The hall's own things (Chapter 6, after the owner's review: for the ten kings' I spy): its lamps, as the road's (灯); its
+// pillars, dark stone, a red band near the top and a gold capital, standing taller than their square (柱子); and its
+// doors, red, studded with gold, standing open against the wall either side of the way in (门).
+Object.assign(LOOKS, {hallLamp:dreamFloor, hallPillar:dreamFloor, hallDoor:(g, X, Y, x, y) => {
+  dreamWall(g, X, Y, x, y);
+  R(g, X + 3, Y + 1, 10, 15, '#2A1210'); R(g, X + 4, Y + 2, 8, 14, '#8E2A22'); R(g, X + 4, Y + 2, 2, 14, '#B04034'); R(g, X + 11, Y + 2, 1, 14, '#5A1814');   // a door, open, its red planks
+  for (const dy of [4, 8, 12]) for (const dx of [6, 9]) R(g, X + dx, Y + dy, 1, 1, '#E2B23A');                                                  // its gold studs
+  R(g, X + 2, Y + 15, 12, 1, '#1E1B2A');
+}});
+OBJECT_ART.hallLamp = OBJECT_ART.dreamLamp;
+OBJECT_ART.hallPillar = (g, o) => {
+  const X = o.x * T, Y = o.y * T;
+  groundShadow(g, X + 8, Y + 14, 6, 2);
+  R(g, X + 3, Y + 13, 10, 3, '#4A4660'); R(g, X + 3, Y + 13, 10, 1, '#6A667E');                 // its foot
+  R(g, X + 4, Y - 18, 8, 31, '#3E3A52'); R(g, X + 4, Y - 18, 2, 31, '#56526C'); R(g, X + 11, Y - 18, 1, 31, '#2A2638');   // the stone
+  R(g, X + 4, Y - 12, 8, 2, '#8E2A22'); R(g, X + 4, Y - 12, 8, 1, '#B04034');                   // a red band
+  R(g, X + 2, Y - 21, 12, 3, '#C8A04A'); R(g, X + 2, Y - 21, 12, 1, '#F2D27A');                 // its gold capital
+};
+
 function drawDream(cx, cy, sh, now){
   if (!PLACES[PLACE].dream) return;
   const W = VW * T;
@@ -801,7 +955,7 @@ function drawDream(cx, cy, sh, now){
   b.save(); b.globalCompositeOperation = 'screen';
   const x0 = Math.max(0, Math.floor(cx / T) - 2), x1 = Math.min(COLS - 1, Math.ceil((cx + W) / T) + 2), y0 = Math.max(0, Math.floor(cy / T) - 2), y1 = Math.min(ROWS - 1, Math.ceil((cy + sh) / T) + 2);
   for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++){
-    if (tileAt(x, y).look !== 'dreamLamp') continue;
+    if (tileAt(x, y).look !== 'dreamLamp' && tileAt(x, y).look !== 'hallLamp') continue;
     const X = x * T + 8 - cx, Y = y * T - 2 - cy, k = .82 + Math.sin(now / 300 + x * 1.7 + y) * .12, r = 26;
     const gl = b.createRadialGradient(X, Y, 1, X, Y, r); gl.addColorStop(0, `rgba(255,214,130,${.5 * k})`); gl.addColorStop(1, 'rgba(255,214,130,0)');
     b.fillStyle = gl; b.fillRect(X - r, Y - r, r * 2, r * 2);
@@ -842,106 +996,156 @@ function bookCard(id){
 STEPS.book = async s => { await bookCard(s.book); };
 
 /* ---- Chapter 6's scenes ---- */
-// The staff up to the sky at the home ground: you hold it up and it grows, up and up through the clouds, the troop round you
-// staring up at it; then it shrinks, smaller and smaller, to a needle, and you tuck it into your ear.
+// Drawn the way the game's other scenes are (the feast, the party, becoming king): on a canvas half the screen's size, with
+// the map's own pictures (the golden grass of home in autumn, the cave's floor and stone beds, the dream's road and lamps)
+// and everyone as they look on the map, then doubled, so they're all twice the size they are on the map (decided 16
+// November 2026, after the owner's review: they'd been drawn at the map's size, in shapes of their own). The captions cover
+// the bottom, so it all happens above them. Each scene waits just before its next caption until you press Next, so each
+// moment looks right there.
+const ch6Cv = document.createElement('canvas'), ch6Cv2 = document.createElement('canvas');
+function halfCanvas(cv = ch6Cv){ cv.width = 120; cv.height = 80; const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; return g; }
+const showHalf = () => b.drawImage(ch6Cv, 0, 0, 120, 80, 0, 0, VW * T, VH * T);
+// Home in autumn, as Chapter 4 left it: a pale autumn sky, Flower Fruit Mountain's peaks far off, the golden grass (the
+// party's, js/havoc.js); its horizon, how far down the grass begins
+function homeInAutumn(g, horizon){
+  for (let y = 0; y < horizon; y++) R(g, 0, y, 120, 1, mix('#8FC4EA', '#F2E2B8', y / horizon));
+  for (let x = 0; x < 120; x++){ const h = Math.round(horizon - 5 - Math.abs(Math.sin(x / 14 + 1)) * 8 - Math.sin(x / 5) * 1.2); R(g, x, h, 1, horizon - h, x % 11 ? '#A9BDC9' : '#9AB0BC'); }
+  for (let y = horizon; y < 80; y += T) for (let x = 0; x < 120; x += T) LOOKS.grass(g, x, y, x / T, y / T + 50);
+  g.fillStyle = 'rgba(214,158,64,.38)'; g.fillRect(0, horizon, 120, 80 - horizon);   // (the grass gold, in autumn)
+}
+// A cloud on the half-size canvas: white puffs on a flat bottom, a little blue-grey under it (as the opening's, cloudPuff)
+function cloudOn(g, cx, cy, s){
+  const r = k => Math.max(1, Math.round(k * s));
+  disc(g, cx - r(7), cy, r(4), '#FFFFFF'); disc(g, cx, cy - r(2), r(6), '#FFFFFF'); disc(g, cx + r(7), cy, r(4), '#FFFFFF');
+  R(g, cx - r(11), cy, r(22), r(4), '#FFFFFF'); R(g, cx - r(10), cy + r(4), r(20), 1, '#C9DFEC');
+}
+// Your staff, upright, from its foot (bottom) up (top), so wide (w), glowing as it changes (glow); a gold band at each end
+function staffUpright(g, x, top, bottom, w, glow){
+  if (glow){ g.save(); g.globalCompositeOperation = 'screen'; g.globalAlpha = .5; R(g, x - 2, top - 2, w + 4, bottom - top + 4, '#FFD878'); g.restore(); }
+  R(g, x, top, w, bottom - top, '#5A606A'); R(g, x, top, 1, bottom - top, '#8A929C'); if (w > 2) R(g, x + w - 1, top, 1, bottom - top, '#30343A');
+  const rim = w > 1 ? 1 : 0, bh = w > 1 ? 2 : 1;
+  R(g, x - rim, bottom - bh, w + 2 * rim, bh, '#E2B23A'); if (top > -bh) R(g, x - rim, top, w + 2 * rim, bh, '#E2B23A');
+}
+const bang = (g, x, y) => { R(g, x, y, 1, 3, '#E2343A'); R(g, x, y + 4, 1, 1, '#E2343A'); };   // a little red !
+// The staff up to the sky, at the home ground (staffSky; its captions at 0, 4.4 and 7.6): you in the middle of the troop,
+// holding it up, and it grows, up and up out of sight, the troop jumping and gasping (!); then you look up after it: blue
+// sky, clouds rushing down past it, birds scattering, the sun glinting off its top. Back on the ground it comes down,
+// shorter and shorter, then thinner, a needle, and you tuck it into your ear, where it twinkles.
 function drawStaffSky(t, now){
-  const W = VW * T, H = VH * T, blink = now % 3200 < 130;
-  for (let y = 0; y < 104; y += 4) R(b, 0, y, W, 4, mix('#7FC4F0', '#D8F0FF', y / 104));
-  for (const [x0, y0, s] of [[30, 22, 1], [170, 14, 1.3], [110, 40, .9], [210, 58, .8]]){
-    const x = Math.round((x0 + now / 90 * s) % (W + 60)) - 30;
-    for (let k = 0; k < 4; k++) R(b, x + k * 7, y0 + (k % 2) * 2, 14 - k, 5, '#FFFFFF');
+  const g = halfCanvas(), blink = now % 3200 < 130;
+  if (t >= 2.8 && t < 4.6){   // looking up after it
+    const k = (t - 2.8) / 1.8;
+    for (let y = 0; y < 80; y++) R(g, 0, y, 120, 1, mix('#2E62B8', '#A8D4F2', y / 80));
+    for (let i = 0; i < 9; i++){ const x = Math.round(rnd(i, 1, 940) * 130) - 6, y = Math.round((rnd(i, 2, 941) * 110 + k * 170) % 110) - 15; cloudOn(g, x, y, .7 + rnd(i, 3, 942) * .5); }   // clouds rushing down past it
+    staffUpright(g, 58, -4, 84, 4, true);
+    for (let i = 0; i < 4; i++){ const y = Math.round((now / 6 + i * 22) % 88) - 4; g.globalAlpha = .7; R(g, 57, 84 - y, 6, 1, '#FFF2B0'); g.globalAlpha = 1; }   // light running up it
+    for (let i = 0; i < 5; i++){ const side = i % 2 ? 1 : -1, d = (k * 1.4 + i * .2) % 1, x = Math.round(60 + side * (8 + d * 50)), y = Math.round(20 + i * 9 - d * 14), f = Math.floor(now / 120 + i) % 2;   // birds scattering
+      R(g, x - 2, y + f, 2, 1, '#2A2A34'); R(g, x, y + 1 - f, 1, 1, '#2A2A34'); R(g, x + 1, y + f, 2, 1, '#2A2A34'); }
+    if (k > .6){ g.globalAlpha = (k - .6) / .4; disc(g, 60, 2, 6, '#FFF6C8'); disc(g, 60, 2, 3, '#FFFFFF'); g.globalAlpha = 1; }   // the sun glinting off its top
+    showHalf(); return;
   }
-  for (let x = 0; x < W; x += 2) R(b, x, 90 + Math.round(Math.sin(x / 23) * 3 + Math.sin(x / 9) * 1.5), 2, 20, '#7FA06A');   // the hills behind
-  for (let y = 104; y < H; y += T) for (let x = 0; x < W; x += T) LOOKS.grass(b, x, y, x / T, y / T + 50);
-  const grow = clamp((t - .6) / 2.6, 0, 1), shrink = clamp((t - 4.5) / 1.8, 0, 1), tuck = clamp((t - 6.5) / .7, 0, 1);
-  const len = Math.max(1, Math.round((20 + grow * 140) * (1 - shrink) + 3 * shrink)), w = Math.max(1, Math.round((3 + grow * 3) * (1 - shrink) + shrink));
-  [['elder', 34, 112, 'right'], ['troopA', 58, 106, 'right'], ['hungry', 76, 118, 'right'], ['big', 150, 108, 'left'], ['mother', 170, 118, 'left'], ['troopB', 194, 110, 'left'],
-    ['baby1', 92, 128, 'up'], ['baby3', 136, 130, 'up']].forEach(([id, x, y, d], i) => {
-    const k = id.startsWith('baby') ? SMALL_PX : T;
-    b.drawImage(monkeySprite(id, d, blink && i % 2 === 0), x + (T - k) / 2, y + (T - k) - (grow > .4 && shrink < 1 ? Math.round(Math.abs(Math.sin(now / 200 + i)) * 2) : 0), k, k);
+  homeInAutumn(g, 28);
+  const grow = clamp((t - .5) / 2, 0, 1), down = clamp((t - 4.6) / 1.1, 0, 1), thin = clamp((t - 5.8) / .6, 0, 1), tuck = clamp((t - 6.6) / .7, 0, 1);
+  const wow = grow > .3 && down < .6;   // (the troop amazed)
+  [['troopA', 30, 18, 'right'], ['troopB', 74, 18, 'left'], ['elder', 14, 28, 'right'], ['hungry', 90, 28, 'left'], ['big', 22, 40, 'right'], ['mother', 82, 40, 'left']].forEach(([id, x, y, d], i) => {
+    const hop = wow ? Math.round(Math.abs(Math.sin(now / 160 + i * 1.3)) * 2) : 0;
+    g.drawImage(monkeySprite(id, d, blink && i % 2 === 0), x, y - hop);
+    if (wow && i % 2 === 0) bang(g, x + 7, y - 6 - hop);
   });
-  if (grow > .3 && shrink < .6) for (const [x, y] of [[64, 96], [156, 98], [97, 117], [141, 119]]){ R(b, x, y, 1, 4, '#E2343A'); R(b, x, y + 5, 1, 1, '#E2343A'); }   // !s: the troop amazed
-  const mx = 112, my = 104;
-  b.drawImage(monkeySprite('player', 'down', false, 0, true), mx, my); drawPlumes(b, mx, my, 'down');
+  const X = 52, Y = 32;   // you
+  g.drawImage(monkeySprite('player', 'down', blink, 0, true), X, Y); drawPlumes(g, X, Y, 'down');
+  for (const [id, x] of [['baby1', 36], ['baby3', 70]]) g.drawImage(monkeySprite(id, 'up', false), x, 42, SMALL_PX, SMALL_PX);   // the little ones in front, staring up
   if (tuck < 1){
-    const sx = Math.round(mx + 8 + tuck * 5), base = Math.round(my + 10 - tuck * 6), L = sx - Math.floor(w / 2);
-    if (grow > 0 && grow < 1 || shrink > 0 && shrink < 1){ b.save(); b.globalCompositeOperation = 'screen'; b.globalAlpha = .4; R(b, L - 2, base - len - 2, w + 4, len + 4, '#FFD878'); b.restore(); }
-    R(b, L, base - len, w, len, '#5A606A'); R(b, L, base - len, 1, len, '#8A929C');
-    const bh = Math.max(1, Math.min(3, Math.round(len / 7)));
-    R(b, L - (w > 2 ? 1 : 0), base - bh, w + (w > 2 ? 2 : 0), bh, '#E2B23A'); R(b, L - (w > 2 ? 1 : 0), base - len, w + (w > 2 ? 2 : 0), bh, '#E2B23A');
-  } else { const k = clamp((t - 7.2) / .6, 0, 1); b.globalAlpha = 1 - k; glint(mx + 13, my + 4, 1 - k); b.globalAlpha = 1; }   // (in your ear: a twinkle)
+    const len = thin > 0 ? Math.round(12 - thin * 9) : Math.round(12 + grow * 50 - down * 50), w = thin > 0 ? (thin < .5 ? 2 : 1) : grow > .5 && down < .5 ? 3 : 2;
+    const sx = Math.round(X + 7 + tuck * 4), foot = Math.round(Y + 11 - tuck * 7);
+    staffUpright(g, sx, foot - len, foot, w, (grow > 0 && grow < 1) || (down > 0 && down < 1) || (thin > 0 && thin < 1) || (tuck > 0));
+  }
+  showHalf();
+  fallOver(FALLING.autumn, 5, 0, 0, VH * T, now);
+  if (tuck >= 1){ const k = (now % 1400) / 1400; glint((X + 13) * 2, (Y + 4) * 2, Math.sin(k * Math.PI)); }   // (in your ear: a twinkle now and then)
 }
-// Falling asleep after the feast for the staff: you in a stone bed in the Water Curtain Cave, Zs floating up; then mist
-// swirls in, and you're somewhere else, on a misty road of pale stone, lamps glowing along it, up to a dark hall.
+// The troop's feast for your staff is the party's picture (staffFeast's art: js/havoc.js).
+// Falling asleep after the feast (dreamIn; its captions at 0 and 3.4): the Water Curtain Cave at night, the troop asleep in
+// the stone beds and you in yours, Zs drifting up; mist swirls in, and you're somewhere else, on a misty road of pale stone,
+// lamps glowing along it in the dusk, up to a dark hall, and two officers coming down it towards you with a rope.
+function caveAtNight(g, now){
+  for (let y = 16; y < 80; y += T) for (let x = 0; x < 120; x += T) caveFloor(g, x, y, x / T, y / T + 20);
+  for (let x = 0; x < 120; x += T) caveWall(g, x, 0, x / T, 0);
+  const beds = [[4, 'elder'], [28, 'troopA'], [52, null], [76, 'hungry'], [100, 'big']];
+  for (const [x, kind] of beds){
+    stoneBed(g, x, 16, x / T, 1);
+    if (kind){ g.drawImage(asleepSpriteOf(kind), x + 2, 15); R(g, x + 1, 22, 14, 7, '#2E2A26'); R(g, x + 2, 22, 12, 6, '#8A6A9E'); R(g, x + 2, 22, 12, 1, '#B49AC4'); R(g, x + 2, 27, 12, 1, '#5E4A70'); }
+    else { g.drawImage(asleepSprite(), x + 2, 15); R(g, x + 1, 22, 14, 7, '#2E2A26'); R(g, x + 2, 22, 12, 6, '#5E9A3E'); R(g, x + 2, 22, 12, 1, '#8CC45A'); R(g, x + 2, 27, 12, 1, '#3F6E2A'); }   // you, under your leaf blanket
+  }
+  g.globalAlpha = .5; R(g, 0, 0, 120, 80, '#0B1024'); g.globalAlpha = 1;   // night
+  for (let i = 0; i < 3; i++){ const z = (now / 1300 + i / 3) % 1, zx = Math.round(62 + z * 8), zy = Math.round(12 - z * 12), s = 2 + Math.round(z * 2);   // Zs, from you
+    g.globalAlpha = 1 - z; R(g, zx, zy, s, 1, '#CFE8F7'); R(g, zx, zy + s - 1, s, 1, '#CFE8F7'); for (let j = 1; j < s - 1; j++) R(g, zx + s - 1 - j, zy + j, 1, 1, '#CFE8F7'); }
+  g.globalAlpha = 1;
+}
+function dreamRoadView(g, t, now){
+  for (let y = 0; y < 80; y += T) for (let x = 0; x < 120; x += T) dreamVoid(g, x, y, x / T + 3, y / T);
+  for (let x = 0; x < 120; x += T) dreamWall(g, x, 0, x / T, 0);
+  R(g, 48, 4, 24, 12, '#120E1C'); R(g, 50, 6, 20, 10, '#3A2A4A');   // the hall's doorway, at the top of the road
+  for (let y = 16; y < 80; y += T) for (const x of [44, 60]) dreamRoad(g, x, y, x / T, y / T);
+  for (const [x, y] of [[28, 26], [76, 26], [28, 50], [76, 50]]){ g.save(); g.translate(x - 2 * T, y - 2 * T); OBJECT_ART.dreamLamp(g, {x:2, y:2}); g.restore(); }   // lamps along it
+  const k = clamp((t - 3) / 1.6, 0, 1), oy = Math.round(4 + k * 18), f = Math.floor(now / 200) % 2;   // the two officers, coming down the road
+  for (const x of [46, 58]) g.drawImage(mapSprite('差人'), x, oy + (k < 1 ? f : 0));
+  g.drawImage(monkeySprite('player', 'up', false, 0, true), 52, 50); drawPlumes(g, 52, 50, 'up');   // you, looking up the road
+  g.globalAlpha = .22; R(g, 0, 0, 120, 80, '#3A2A6A'); g.globalAlpha = 1;   // the dream's violet dusk
+  g.save(); g.globalCompositeOperation = 'screen';
+  for (const [x, y] of [[28, 26], [76, 26], [28, 50], [76, 50]]){ const gl = g.createRadialGradient(x + 8, y - 2, 1, x + 8, y - 2, 18); gl.addColorStop(0, 'rgba(255,214,130,.55)'); gl.addColorStop(1, 'rgba(255,214,130,0)'); g.fillStyle = gl; g.fillRect(x - 10, y - 20, 36, 36); }
+  g.restore();
+}
 function drawDreamIn(t, now){
-  const W = VW * T, H = VH * T, k = clamp((t - 2.6) / 1.6, 0, 1);
-  if (k < 1){
-    for (let y = 0; y < H; y += 4) R(b, 0, y, W, 4, mix('#1A1612', '#2E2620', y / H));
-    R(b, 84, 92, 72, 24, '#6E665C'); R(b, 84, 92, 72, 3, '#8E867A'); R(b, 84, 114, 72, 2, '#4A443C');   // the stone bed
-    R(b, 88, 94, 18, 8, '#C8B898');                                                                     // its pillow
-    b.drawImage(monkeySprite('player', 'down', true, 0, true), 0, 0, 16, 10, 90, 88, 16, 10);           // you, asleep
-    R(b, 104, 96, 48, 16, '#A8402B'); R(b, 104, 96, 48, 2, '#C8604A');                                  // a blanket
-    for (let i = 0; i < 3; i++){ const z = (now / 1100 + i / 3) % 1, zx = Math.round(108 + z * 16), zy = Math.round(84 - z * 34); b.globalAlpha = 1 - z;
-      R(b, zx, zy, 4, 1, '#E8E0FF'); R(b, zx + 2, zy + 1, 1, 1, '#E8E0FF'); R(b, zx + 1, zy + 2, 1, 1, '#E8E0FF'); R(b, zx, zy + 3, 4, 1, '#E8E0FF'); }
-    b.globalAlpha = 1;
-  }
-  if (k > 0){
-    b.globalAlpha = k;
-    for (let y = 0; y < H; y += 4) R(b, 0, y, W, 4, mix('#120E24', '#3A2E5A', y / H));
-    for (let y = 40; y < H; y++){ const f = (y - 40) / (H - 40), half = Math.round(8 + f * 44); R(b, 120 - half, y, half * 2, 1, (y % 6 < 1) ? '#615D78' : '#8A86A0'); }   // the road, up into the dark
-    for (const [f, side] of [[.15, -1], [.15, 1], [.45, -1], [.45, 1], [.85, -1], [.85, 1]]){   // lamps along it
-      const y = Math.round(40 + f * (H - 40)), half = 8 + f * 44, x = Math.round(120 + side * (half + 6 + f * 6)), s = .5 + f;
-      const gl = b.createRadialGradient(x, y - 10 * s, 1, x, y - 10 * s, 16 * s); gl.addColorStop(0, 'rgba(255,214,130,.6)'); gl.addColorStop(1, 'rgba(255,214,130,0)'); b.fillStyle = gl; b.fillRect(x - 16 * s, y - 26 * s, 32 * s, 32 * s);
-      R(b, Math.round(x - 2 * s), Math.round(y - 12 * s), Math.round(4 * s), Math.round(12 * s), '#4A4660'); R(b, Math.round(x - 1.5 * s), Math.round(y - 12 * s), Math.max(1, Math.round(3 * s)), Math.max(1, Math.round(3 * s)), '#FFD27A');
-    }
-    R(b, 96, 20, 48, 20, '#2A2638'); R(b, 90, 16, 60, 5, '#1E1B2A'); R(b, 114, 28, 12, 12, '#0E0C18');   // the hall at the top of the road
-    b.globalAlpha = 1;
-  }
-  const m = Math.sin(clamp((t - 2) / 2.6, 0, 1) * Math.PI);   // mist swirling in, then thinning
-  if (m > 0) for (let i = 0; i < 12; i++){ const x = Math.round((rnd(i, 1, 990) * W + now / (30 + i * 6)) % (W + 40)) - 20, y = Math.round(rnd(i, 2, 991) * H); b.globalAlpha = .55 * m; oval(b, x, y, 18 + (i % 3) * 6, 5, '#E8E4F4'); }
-  b.globalAlpha = 1;
+  const g = halfCanvas(), k = clamp((t - 2.4) / 1.2, 0, 1);   // (the dream coming in)
+  caveAtNight(g, now);
+  if (k > 0){ const g2 = halfCanvas(ch6Cv2); dreamRoadView(g2, t, now); g.globalAlpha = k; g.drawImage(ch6Cv2, 0, 0); g.globalAlpha = 1; }
+  showHalf();
+  const m = Math.sin(clamp((t - 1.8) / 2.4, 0, 1) * Math.PI);   // mist swirling in, then thinning away
+  if (m > 0){ const W = VW * T, H = VH * T;
+    for (let i = 0; i < 14; i++){ const x = Math.round((rnd(i, 1, 990) * (W + 60) + now / (24 + i * 5)) % (W + 60)) - 30, y = Math.round(rnd(i, 2, 991) * H);
+      b.globalAlpha = .6 * m; oval(b, x, y, 22 + (i % 3) * 8, 6, i % 2 ? '#E8E4F4' : '#D8D0EC'); }
+    b.globalAlpha = 1; }
 }
-// Trouble in Heaven: high above the clouds, the Jade Emperor on his throne in his golden hall; the Dragon King comes up on
-// a cloud to complain about you, then one of the ten kings; the Jade Emperor frowns, and the Great White Planet, with his
-// long white beard, steps forward: he'll go and find you.
-function drawJadeEmperor(X, Y, frown){
-  R(b, X - 24, Y - 6, 48, 50, '#B8302A'); R(b, X - 24, Y - 6, 48, 2, '#E2B23A'); R(b, X - 26, Y + 30, 52, 4, '#E2B23A');   // his throne
-  for (let y = 0; y < 26; y++){ const half = 8 + Math.round(y * .45); R(b, X - half, Y + 14 + y, half * 2, 1, y % 7 ? '#F2C230' : '#D8A41E'); }   // his yellow robe
-  R(b, X - 5, Y + 1, 10, 12, '#F2D2A8');                                                    // his face
-  R(b, X - 3, Y + 5, 2, 1, '#1A1210'); R(b, X + 1, Y + 5, 2, 1, '#1A1210');
-  if (frown){ R(b, X - 4, Y + 3, 2, 1, '#1A1210'); R(b, X - 2, Y + 4, 1, 1, '#1A1210'); R(b, X + 2, Y + 3, 2, 1, '#1A1210'); R(b, X + 1, Y + 4, 1, 1, '#1A1210'); }
-  R(b, X - 3, Y + 10, 6, 7, '#2A1E16'); R(b, X - 1, Y + 17, 2, 3, '#2A1E16');                 // his beard
-  R(b, X - 11, Y - 4, 22, 3, '#1A1A2A');                                                    // his crown's flat board
-  for (let i = 0; i < 7; i++) R(b, X - 10 + i * 3, Y - 1, 1, 5, '#E8C860');                // and its strings of beads
-}
-function seaCloudPuff(x, y, w){ for (let k = 0; k < 5; k++) oval(b, Math.round(x + (k - 2) * w / 5), Math.round(y + (k % 2) * 2), Math.round(w / 4), 4, k % 2 ? '#FFFFFF' : '#F2F4FA'); }
+// Trouble in Heaven (heaven; its captions at 0, 3.2 and 6.4): the Jade Emperor on his throne in his golden hall, high above
+// the clouds; the Dragon King comes up out of the clouds to complain about you, then one of the ten kings; the Jade Emperor
+// is cross (!); and the Great White Planet, with his long white beard, comes forward with an idea.
 function drawTroubleInHeaven(t, now){
-  const W = VW * T, H = VH * T, blink = now % 3200 < 130;
-  for (let y = 0; y < H; y += 4) R(b, 0, y, W, 4, mix('#F8D8A8', '#F4B8C8', y / H));
-  for (const x of [56, 176]){ R(b, x, 12, 8, 92, '#C8302A'); R(b, x, 12, 2, 92, '#E86050'); }   // the hall's red pillars
-  R(b, 40, 4, 160, 10, '#E2B23A'); R(b, 34, 2, 172, 3, '#B8862A');                             // its golden roof
-  R(b, 64, 96, 112, 8, '#E8D8B8');                                                             // the step of his throne
-  drawJadeEmperor(120, 44, t > 2.2);
-  for (let i = 0; i < 9; i++) seaCloudPuff(i * 30, 132 + (i % 2) * 6, 40);                        // clouds under it all
-  const up = (t0, t1) => clamp((t - t0) / (t1 - t0), 0, 1);
-  const dk = up(0, 2.4), dx = Math.round(18 + dk * 20), dy = Math.round(150 - dk * 62 + Math.sin(now / 400) * 2);   // the Dragon King, on a cloud
-  seaCloudPuff(dx + 10, dy + 18, 34); b.drawImage(mapSprite('龙王'), dx, dy - 4, 22, 22);
-  if (t > 3){ const kk = up(3, 5.4), kx = Math.round(200 - kk * 18), ky = Math.round(150 - kk * 62 + Math.sin(now / 450) * 2);   // then one of the ten kings
-    seaCloudPuff(kx + 8, ky + 16, 30); b.drawImage(monkeySprite('king1', 'left', blink), kx, ky); }
-  if (t > 6){ const pk = up(6, 7.2), px = Math.round(150 + (1 - pk) * 30);   // the Great White Planet steps forward
-    b.globalAlpha = pk; b.drawImage(monkeySprite('planet', 'left', blink), px, 80); b.globalAlpha = 1; }
+  const g = halfCanvas(), gold = '#E2B23A', goldL = '#F8DC80', red = '#B8322A', redD = '#7E1F18';
+  for (let y = 0; y < 80; y++) R(g, 0, y, 120, 1, mix('#FBEBC0', '#F2CCB8', y / 80));   // the light of Heaven
+  R(g, 20, 4, 80, 40, '#8E2A22'); for (let x = 22; x < 100; x += 6) R(g, x, 4, 1, 40, '#B07A2A'); for (let y = 8; y < 44; y += 6) R(g, 20, y, 80, 1, '#B07A2A');   // the hall's back wall, its red lattice
+  for (let y = 0; y < 4; y++){ const w = 104 - (3 - y) * 4; R(g, 60 - w / 2, y, w, 1, y % 2 ? gold : goldL); }   // its golden eaves
+  for (const px of [10, 104]){ R(g, px, 4, 6, 50, red); R(g, px, 4, 2, 50, '#E05A48'); R(g, px + 5, 4, 1, 50, redD); R(g, px - 1, 10, 8, 2, gold); R(g, px - 1, 44, 8, 2, gold); }   // red pillars, gold bands
+  R(g, 42, 6, 36, 30, gold); R(g, 44, 8, 32, 26, goldL); disc(g, 60, 18, 8, '#FFF4C8'); disc(g, 60, 18, 5, '#FFFBE8');   // the golden screen behind the throne
+  R(g, 46, 30, 28, 6, red); R(g, 46, 30, 28, 1, '#E05A48'); R(g, 38, 36, 44, 3, gold); R(g, 34, 39, 52, 3, '#C8962A');   // the throne's seat and its steps
+  g.drawImage(mapSprite('玉皇大帝'), 49, 14);
+  if (t > 2.2 && t < 3.4) bang(g, 73, 10);   // (cross!)
+  for (let i = 0; i < 8; i++) cloudOn(g, i * 17 - 4, 54 + (i % 2) * 3, 1.2);   // the clouds, all round below
+  const rise = (t0, t1) => 1 - (1 - clamp((t - t0) / (t1 - t0), 0, 1)) ** 3;
+  const dy = Math.round(78 - rise(0, 2.2) * 46 + Math.sin(now / 400));   // the Dragon King, up out of the clouds on the left
+  g.drawImage(mapSprite('龙王'), 14, dy); cloudOn(g, 25, dy + 22, .85);
+  if (t > 3){ const ky = Math.round(78 - rise(3, 5.2) * 46 + Math.sin(now / 450)); g.drawImage(mapSprite('十王'), 86, ky); cloudOn(g, 97, ky + 22, .85); }   // then one of the ten kings, on the right
+  if (t > 6){ const k = rise(6, 7), px = Math.round(76 - k * 12);   // the Great White Planet, coming forward
+    g.globalAlpha = clamp((t - 6) / .5, 0, 1); g.drawImage(mapSprite('太白金星'), px, 30); cloudOn(g, px + 11, 52, .7); g.globalAlpha = 1;
+    if (t > 6.9){ const tw = Math.floor(now / 200) % 2; R(g, px + 11, 24 - tw, 1, 3, '#FFF6B0'); R(g, px + 10, 25 - tw, 3, 1, '#FFF6B0'); }   // (an idea!)
+  }
+  showHalf();
 }
-// The Great White Planet coming down on his cloud to the home ground, the troop staring up at him.
+// The Great White Planet coming down on his cloud to the home ground (planetCloud; its captions at 0 and 3.8), a golden light
+// round him, the troop and you looking up at him, the leaves falling.
 function drawPlanetCloud(t, now){
-  const W = VW * T, H = VH * T, blink = now % 3200 < 130;
-  for (let y = 0; y < 104; y += 4) R(b, 0, y, W, 4, mix('#8FCCF2', '#E2F4FF', y / 104));
-  for (let x = 0; x < W; x += 2) R(b, x, 90 + Math.round(Math.sin(x / 23) * 3 + Math.sin(x / 9) * 1.5), 2, 20, '#7FA06A');
-  for (let y = 104; y < H; y += T) for (let x = 0; x < W; x += T) LOOKS.grass(b, x, y, x / T, y / T + 50);
-  const k = clamp(t / 3.4, 0, 1), e = 1 - (1 - k) ** 2, py = Math.round(-30 + e * 104 + (k < 1 ? Math.sin(now / 300) * 2 : 0)), px = 112;
-  const glow = b.createRadialGradient(px + 8, py + 10, 2, px + 8, py + 10, 30); glow.addColorStop(0, 'rgba(255,240,190,.55)'); glow.addColorStop(1, 'rgba(255,240,190,0)'); b.fillStyle = glow; b.fillRect(px - 22, py - 20, 60, 60);
-  b.drawImage(monkeySprite('planet', 'down', blink), px, py); seaCloudPuff(px + 8, py + 16, 40);
-  [['elder', 40, 120, 'up'], ['troopA', 64, 126, 'up'], ['hungry', 160, 124, 'up'], ['big', 184, 120, 'up'], ['baby1', 88, 136, 'up']].forEach(([id, x, y, d], i) => {
-    const s = id.startsWith('baby') ? SMALL_PX : T; b.drawImage(monkeySprite(id, d, blink && i % 2 === 0), x + (T - s) / 2, y + (T - s), s, s); });
-  b.drawImage(monkeySprite('player', 'up', false, 0, true), 128, 134); drawPlumes(b, 128, 134, 'up');
+  const g = halfCanvas();
+  homeInAutumn(g, 30);
+  const k = clamp(t / 3.4, 0, 1), e = 1 - (1 - k) ** 3, px = 49, py = Math.round(-26 + e * 36 + (k < 1 ? Math.sin(now / 300) : Math.sin(now / 700) * .6));
+  g.save(); g.globalCompositeOperation = 'screen';
+  const gl = g.createRadialGradient(px + 11, py + 11, 2, px + 11, py + 11, 28); gl.addColorStop(0, 'rgba(255,240,190,.6)'); gl.addColorStop(1, 'rgba(255,240,190,0)');
+  g.fillStyle = gl; g.fillRect(px - 20, py - 18, 62, 58); g.restore();
+  g.drawImage(mapSprite('太白金星'), px, py); cloudOn(g, px + 11, py + 22, 1);   // him, on his cloud
+  const look = k > .5;
+  [['elder', 22, 40], ['troopA', 34, 46], ['hungry', 72, 46], ['big', 84, 40]].forEach(([id, x, y], i) => { g.drawImage(monkeySprite(id, 'up', false), x, y); if (look && i % 2) bang(g, x + 7, y - 6); });
+  for (const [id, x] of [['baby1', 14], ['baby3', 96]]) g.drawImage(monkeySprite(id, 'up', false), x, 50, SMALL_PX, SMALL_PX);
+  g.drawImage(monkeySprite('player', 'up', false, 0, true), 52, 44); drawPlumes(g, 52, 44, 'up');
+  showHalf();
+  fallOver(FALLING.autumn, 5, 0, 0, VH * T, now);
 }
 Object.assign(SCENE_ART, {staffSky: drawStaffSky, dreamIn: drawDreamIn, heaven: drawTroubleInHeaven, planetCloud: drawPlanetCloud});

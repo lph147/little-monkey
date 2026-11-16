@@ -23,6 +23,7 @@ const placeholders = text => [...String(text).matchAll(/\{([^}|]+)(?:\|[^}]*)?\}
 // A step, and the steps inside it for if you win (a battle's, or a word game's)
 const withWins = (where, s, who) => [[where, s, who], ...[...(s.win || []), ...((s.wordGame || {}).win || [])].flatMap(w => withWins(`${where}, if you win`, w, who)),
   ...(s.carry && Array.isArray(s.each) ? s.each : []).flatMap(w => withWins(`${where}, for each`, w, who)), ...(s.fetch ? s.done || [] : []).flatMap(w => withWins(`${where}, once it's all brought`, w, who)),
+  ...(s.spy ? s.done || [] : []).flatMap(w => withWins(`${where}, once everything's found`, w, who)),   // (and an I spy's, once you've found everything: the ten kings', Area 3)
   ...(s.class ? s.do || [] : []).flatMap(w => withWins(`${where}, in the class`, w, who)),   // (and a class's steps: js/year.js)
   ...(s.snowball ? s.lose || [] : []).flatMap(w => withWins(`${where}, if you lose`, w, who))];   // (and a snowball fight's, if you lose: js/snowball.js)   // (and what you do for each one you pick up, carry's each; and a fetch's done)
 const allSteps = () => [
@@ -481,6 +482,7 @@ test('every line is said somewhere', () => {
     ...allSteps().filter(([, s]) => s.fetch).flatMap(([, s]) => [s.right, s.wrong, ...s.asks.map(a => a.ask)]),   // (fetching things by their word: the fetch step)
     ...(AREA.unloading ? [AREA.unloading.right, AREA.unloading.wrong, ...AREA.unloading.asks.map(a => a.ask)] : []),   // (unloading a cart, by word: the unload step)
     ...allSteps().filter(([, s]) => s.spy).flatMap(([, s]) => s.things.map(t => t.say)),   // (I spy: the spy step)
+    ...allSteps().filter(([, s]) => s.chat).flatMap(([, s]) => s.chat),   // (lines that come round in turn: the chat step, js/sea.js)
     ...allSteps().filter(([, s]) => s.tour).map(([, s]) => s.ask),   // (showing someone round: the tour step)
     ...Object.values(AREA.requests).flatMap(asked).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer].filter(Boolean)),
     ...Object.values(SHOPS).flatMap(sh => [sh.ask, sh.welcome, sh.noProblem, sh.sellAsk]),   // (and what a shop that buys treasures asks: js/trade.js)

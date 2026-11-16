@@ -1021,6 +1021,9 @@ rt.hid{visibility:hidden}
 .tell .label{margin:0}
 .opts.tells .opt .hz{display:block;font-size:1.6rem;font-family:var(--text);font-weight:500}
 .opts.tells .opt .ren{display:block;margin-top:.1rem}
+.opts.tells.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.35rem}   /* all four things you could tell your staff, at home (Chapter 6), side by side */
+.opts.tells.four .opt{min-width:0;padding-left:.2rem;padding-right:.2rem}
+.opts.tells.four .opt .hz{font-size:1.4rem}
 .writpic{display:block;width:min(100%,24rem);height:auto;margin:.2rem auto .4rem;image-rendering:pixelated;image-rendering:crisp-edges}   /* the staff close up, its writing in pixel characters (js/sea.js) */
 .writ{text-align:center}
 .writ p{margin:.15rem 0}
