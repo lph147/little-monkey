@@ -78,13 +78,13 @@ test('the whale, gliding in the deep, met from the edge (鲸鱼)', async () => {
   assert.ok(get(g, 'S.friends').includes('whale'));
 });
 
-test('down the slope to the very bottom: 下面有光！ (光), then To be continued', async () => {
+test('down the slope to the very bottom: 下面有光！ (光), and the way down into it', async () => {
   const g = game({trench: 1}, {pos: {place: 'trench', x: 17, y: 10, dir: 'down'}});
   await stand(g, 19, 13, 'down');
   assert.deepEqual(said(g), ['player: 下面有光！']);
   const told = notes(g);
   assert.ok(told.includes('card: 光'));
-  assert.ok(told.some(n => /To be continued/.test(n)));
+  assert.ok(told.some(n => /Walk down into it/.test(n)), 'the palace below (step 6: tests/palace.test.js)');
   assert.equal(p(g, 'trench'), 2);
   assert.equal(get(g, 'tileAt(20, 14).look'), 'trenchGlow');
   g.run('drawWorld(3000); S.clock.t = DAY_MS * .9; drawWorld(4000)');

@@ -313,7 +313,12 @@ const WORD_BANK = {
   '慢': {py:'màn', en:'slow', pic:'🐌', area:3, category:'describing', alike:['乌龟']},   // (and the sea turtle, last: 我很慢。)
   // the trench's
   '深': {py:'shēn', en:'deep', pic:'🕳️', area:3, category:'describing', alike:['海']},   // (the sea turtle, at the trench's edge: 这里很深！)
-  '鲸鱼': {py:'jīngyú', en:'whale', pic:'🐋', area:3, category:'animals', alike:['海豚', '鲨鱼', '鱼']},   // (gliding in the trench's deep water: a friend, met from the edge)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
+  '鲸鱼': {py:'jīngyú', en:'whale', pic:'🐋', area:3, category:'animals', alike:['海豚', '鲨鱼', '鱼']},   // (gliding in the trench's deep water: a friend, met from the edge)
+  // the palace gate's
+  '龙': {py:'lóng', en:'dragon', pic:'🐉', area:3, category:'animals', alike:['蛇']},   // (the gold dragons coiled round the palace gate's pillars: press A at one; 龙王, the Dragon King, is dragon + king)
+  '兵': {py:'bīng', en:'soldier', pic:'💂', area:3, category:'people', alike:['人']},   // (the crab general's shrimp soldiers: 他们是我的兵！)
+  '百': {py:'bǎi', en:'hundred', pic:'💯', area:3, category:'numbers', alike:['十', '二十']},   // (counting the shrimp soldiers by tens with the crab general: 一百)
+  '龙虾': {py:'lóngxiā', en:'lobster', pic:'🦞', area:3, category:'animals', alike:['虾', '螃蟹']},   // (by the palace's door: a friend)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
 
   // Heard in sentences
   '换': {py:'huàn', en:'to change, to swap'},
@@ -391,6 +396,9 @@ const WORD_BANK = {
   '混世魔王': {py:'Hùnshì Mówáng', en:'the Demon of Havoc'},   // (a name: Area 2's boss, never a word to catch)
   '水脏洞': {py:'Shuǐzàng Dòng', en:'Water-Belly Cave (a name)'},   // (the Demon of Havoc's cave, over its mouth)
   '龙王': {py:'Lóngwáng', en:'the Dragon King'},   // (a name: Area 3's, under the sea)
+  '虾兵': {py:'xiābīng', en:'shrimp soldiers'}, '蟹将': {py:'xièjiàng', en:'crab general'}, '夜叉': {py:'yèchā', en:'sea guard (a yaksha)'},   // (names: the Dragon Palace's folk)
+  '三十': {py:'sānshí', en:'thirty'}, '四十': {py:'sìshí', en:'forty'}, '五十': {py:'wǔshí', en:'fifty'}, '六十': {py:'liùshí', en:'sixty'},
+  '七十': {py:'qīshí', en:'seventy'}, '八十': {py:'bāshí', en:'eighty'}, '九十': {py:'jiǔshí', en:'ninety'},   // (the tens, heard as the crab general counts his soldiers: made of words you know, not words to catch)
   '找': {py:'zhǎo', en:'to look for'},
   '考试': {py:'kǎoshì', en:'exam, test'},   // (the teacher's exam, at the end of chapter 1)
   '等': {py:'děng', en:'to wait'},
@@ -526,6 +534,7 @@ const MADE = {
   '水草': {parts:[['水', 'shuǐ', 'water'], ['草', 'cǎo', 'grass']]},   // (grass that grows in the water)
   '海星': {parts:[['海', 'hǎi', 'sea'], ['星', 'xīng', 'star', '星星']]},   // (a star of the sea)
   '海马': {parts:[['海', 'hǎi', 'sea'], ['马', 'mǎ', 'horse']]},   // (its head looks like a horse's)
+  '龙虾': {parts:[['龙', 'lóng', 'dragon'], ['虾', 'xiā', 'shrimp']]},   // (a shrimp as big and fierce as a dragon)
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},
   '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not', '不客气'], ['要', 'yào', 'to want']]},

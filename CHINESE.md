@@ -1440,6 +1440,22 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 我很慢。 | wǒ hěn màn. | I’m slow. | 海龟 (sea turtle) |  |
 | 这里很深！ | zhèlǐ hěn shēn! | It’s deep here! |  |  |
 | 下面有光！ | xiàmiàn yǒu guāng! | There’s light down there! |  |  |
+| 你是谁？ | nǐ shì shéi? | Who are you? | 夜叉 (Sea guard) |  |
+| 我是孙悟空！ | wǒ shì Sūn Wùkōng! | I’m Sun Wukong! | 小猴子 (You) |  |
+| 龙王在里面。 | Lóngwáng zài lǐmiàn. | The Dragon King is inside. | 夜叉 (Sea guard) |  |
+| 他们是我的兵！ | tāmen shì wǒ de bīng! | They’re my soldiers! | 蟹将 (Crab general) |  |
+| 十！ | shí! | Ten! |  |  |
+| 二十！ | èrshí! | Twenty! |  |  |
+| 三十！ | sānshí! | Thirty! |  |  |
+| 四十！ | sìshí! | Forty! |  |  |
+| 五十！ | wǔshí! | Fifty! |  |  |
+| 六十！ | liùshí! | Sixty! |  |  |
+| 七十！ | qīshí! | Seventy! |  |  |
+| 八十！ | bāshí! | Eighty! |  |  |
+| 九十！ | jiǔshí! | Ninety! |  |  |
+| 一百！ | yī bǎi! | A hundred! |  |  |
+| 一百个兵！ | yī bǎi gè bīng! | A hundred soldiers! | 蟹将 (Crab general) |  |
+| 一，二！一，二！ | yī, èr! yī, èr! | One, two! One, two! | 虾兵 (Shrimp soldier) |  |
 | 我们玩吧！ | wǒmen wán ba! | Let’s play! |  |  |
 | 一！ | yī! | One! |  |  |
 | 二！ | èr! | Two! |  |  |
@@ -1500,6 +1516,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 海里有珊瑚。 | hǎi lǐ yǒu shānhú. | There’s coral in the sea. | 珊瑚 |  |
 | 海马很小。 | hǎimǎ hěn xiǎo. | The seahorse is small. | 海马 |  |
 | 鲸鱼很大。 | jīngyú hěn dà. | The whale is very big. | 鲸鱼 |  |
+| 龙很大。 | lóng hěn dà. | The dragon is very big. | 龙 |  |
+| 龙虾是红色的。 | lóngxiā shì hóngsè de. | The lobster is red. | 龙虾 |  |
 
 ### Scene: the dive
 
@@ -1513,12 +1531,35 @@ For words that no line or story sentence uses, shown on the word's page in the W
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
+| 夜叉 | yèchā | Sea guard |  |
+| 蟹将 | xièjiàng | Crab general |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
 | 牌子 | páizi | Sign |  |
 | 东海 | Dōng Hǎi | The Eastern Sea |  |
 | 海底 | hǎidǐ | The seabed |  |
 | 水草林 | shuǐcǎo lín | The seaweed forest |  |
 | 珊瑚礁 | shānhú jiāo | The coral reef |  |
 | 海沟 | hǎigōu | The trench |  |
+| 龙宫 | Lónggōng | The Dragon Palace |  |
 
 ### Words to collect
 
@@ -1542,6 +1583,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 慢 | màn | slow |  |
 | 深 | shēn | deep |  |
 | 鲸鱼 | jīngyú | whale |  |
+| 龙 | lóng | dragon |  |
+| 兵 | bīng | soldier |  |
+| 百 | bǎi | hundred |  |
+| 龙虾 | lóngxiā | lobster |  |
 | 几 | jǐ | how many |  |
 | 光 | guāng | light |  |
 
@@ -1556,6 +1601,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 水草 | shuǐcǎo | 水 shuǐ (water) + 草 cǎo (grass) = 水草 (seaweed) |  |
 | 海星 | hǎixīng | 海 hǎi (sea) + 星 xīng (star) = 海星 (starfish) |  |
 | 海马 | hǎimǎ | 海 hǎi (sea) + 马 mǎ (horse) = 海马 (seahorse) |  |
+| 龙虾 | lóngxiā | 龙 lóng (dragon) + 虾 xiā (shrimp) = 龙虾 (lobster) |  |
 
 ### Big and little wild creatures
 
@@ -1645,6 +1691,16 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 混世魔王 | Hùnshì Mówáng | the Demon of Havoc |  |
 | 水脏洞 | Shuǐzàng Dòng | Water-Belly Cave (a name) |  |
 | 龙王 | Lóngwáng | the Dragon King |  |
+| 虾兵 | xiābīng | shrimp soldiers |  |
+| 蟹将 | xièjiàng | crab general |  |
+| 夜叉 | yèchā | sea guard (a yaksha) |  |
+| 三十 | sānshí | thirty |  |
+| 四十 | sìshí | forty |  |
+| 五十 | wǔshí | fifty |  |
+| 六十 | liùshí | sixty |  |
+| 七十 | qīshí | seventy |  |
+| 八十 | bāshí | eighty |  |
+| 九十 | jiǔshí | ninety |  |
 | 找 | zhǎo | to look for |  |
 | 考试 | kǎoshì | exam, test |  |
 | 等 | děng | to wait |  |
@@ -1924,8 +1980,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 美猴王坐木筏走了。 | Měi Hóuwáng zuò mùfá zǒu le. | The Monkey King sailed away on his raft. | New on 29 October 2026 (in the game), the end of chapter 1: The scene of you sailing away, the troop waving from the shore, after 再见！ and 我们等你！ |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 | 这是我的地图。 | zhè shì wǒ de dìtú. | This is my map. | New on 31 October 2026 (in the game): the example on 地图 (dìtú, map)’s page. The big monkey gives you a map in chapter 1, as he sends you up to the pine wood, and you catch 地图 the first time you open it. Its How it’s made card says 地 (dì, ground) + 图 (tú, picture) = 地图, a picture of the ground: is that a fair way to explain it? |  |
-| 十，二十，三十……一百！ | Shí, èrshí, sānshí… yìbǎi! | Ten, twenty, thirty… a hundred! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the crab general, counting the shrimp soldiers in rows of ten, teaching 百. Is it natural? |  |
-| 一百个虾兵！ | Yìbǎi ge xiābīng! | A hundred shrimp soldiers! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the crab general. Is 个 right for soldiers here, or 名?. Is it natural? |  |
 | 欢迎！欢迎！ | Huānyíng! Huānyíng! | Welcome! Welcome! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon King, meeting you, teaching the phrase 欢迎. Is it natural? |  |
 | 太重了！ | Tài zhòng le! | Too heavy! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the shrimp soldiers, carrying a great broadsword in, teaching 重. Is it natural? |  |
 | 这把大刀，八百斤！ | Zhè bǎ dàdāo, bābǎi jīn! | This broadsword: eight hundred jin! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon King, as it’s weighed, teaching 斤 (the broadsword’s weight is the game’s own). Is it natural? |  |

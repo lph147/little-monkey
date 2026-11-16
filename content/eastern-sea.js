@@ -19,7 +19,10 @@
 // miles (快), the turtle puffing along last (慢); win one and it gives you shells.
 // Step 5 (15 November 2026): the trench, past the reef once you've beaten the dolphin: currents sweeping across the way down,
 // as the gusts of wind on the cliff road (cross while they're calm), the edge of the deep (深), a whale gliding in it, met
-// from the edge (鲸鱼), and at the very bottom a light (光): the Dragon King's palace. It comes in the steps that follow.
+// from the edge (鲸鱼), and at the very bottom a light (光): the Dragon King's palace.
+// Step 6 (16 November 2026): the palace gate, down at the bottom of the trench: the sea guard who stops you (你是谁？ 我是孙悟空！),
+// gold dragons coiled round the pillars by the gate (龙), the crab general and his shrimp soldiers drilling (兵), counted
+// with him by tens to a hundred (百), and the lobster at the palace door (龙虾). The Dragon King comes in the step after.
 
 // The seabed's letters: sand, seaweed swaying up out of it, shells on the sand, and the sea's things (js/sea.js).
 // Each teaches its word as you press A at it (the sand, a shell, the seaweed). The seaweed is where the five starfish hide,
@@ -42,7 +45,16 @@ const REEF_LEGEND = {
 const TRENCH_LEGEND = {
   '~': {look:'currentSand', walk:true, word:'沙子', vent:{current:true, every:3600, puff:1700, at:0,
     hot:'The current is too strong! Wait for it to drop, then cross quickly.', pushed:'Whoosh! The current sweeps you back.'}},
-  'v': {look:'trenchGlow', landmark:true}
+  'v': {look:'trenchGlow', landmark:true},
+  'V': {look:'trenchGlow', walk:true}   // (the way down into the light, to the palace)
+};
+// The palace's: jade flagstones, its red wall, the gate (a big object, 龙宫 on its plaque), and the red pillars either
+// side with gold dragons coiled round them, which teach 龙.
+const PALACE_LEGEND = {
+  '#': {look:'jadeFloor', walk:true},
+  'X': {look:'palaceWall'},
+  'G': {look:'palaceGate', landmark:true},
+  'P': {look:'dragonPillar', word:'龙', newNote:'龙 means dragon. Gold dragons coil round the palace’s pillars. And 龙王, the Dragon King, is dragon + king (王)!'}
 };
 const SEA_LEGEND = {
   '.': SEA_FLOOR,
@@ -93,17 +105,21 @@ const EASTERN_SEA = {
       now:'Race the dolphin on the coral reef.'},
     {id:'trench', chapter:0, name:'Part 4', title:'The trench', when:{dolphin:2},
       text:'Past the reef, the seabed drops away into the dark. Currents sweep across the way down, something huge is singing far below, and at the very bottom, something glows…',
-      now:'Cross the currents, and find the way down to the bottom of the trench. The rest of the {海|sea} is on its way.'}
+      now:'Cross the currents, and find the way down to the bottom of the trench.'},
+    {id:'palace', chapter:0, name:'Part 5', title:'The Dragon King’s palace', when:{palace:1},
+      text:'At the very bottom of the trench stands the Dragon King’s palace, its gate green and gold, gold dragons coiled round its pillars. Shrimp soldiers drill on the jade flagstones in front of it, and a crab general barks out orders…',
+      now:'Explore the palace gate. The Dragon King himself is on his way.'}
   ],
 
   // The day goes round down here too: no rain under the sea, and no bed, so the night passes by itself, as in the human world.
   dayNight: {if:{}, morning:'Good morning! You wake up with your health full.', sleep:[]},
-  progress: {chapter:0, landed:0, turtle:0, starFriends:0, forest:0, octopus:0, dolphin:0, trench:0},
+  progress: {chapter:0, landed:0, turtle:0, starFriends:0, forest:0, octopus:0, dolphin:0, trench:0, palace:0},
   //   turtle   0 not met yet, 1 said hello (泡泡), 2 led you to the seaweed (游), 3 found all five starfish: off to the forest
   //   forest   0 not in the seaweed forest yet, 1 met your first shark there (小心, 鲨鱼)
   //   octopus  0 hasn't counted its feet with you yet, 1 has (脚, 几): off to the coral reef
   //   dolphin  0 hasn't raced you yet, 1 has, and won (快, 慢), 2 you've won a race: off to the trench
   //   trench   0 not across its currents yet, 1 across them, at the edge of the deep (深), 2 seen the light at the bottom (光)
+  //   palace   0 not past the sea guard yet, 1 past him, 2 counted the soldiers with the crab general (兵, 百), 3 the lobster's friend too
   counters: {
     seabedWords: {count:'known', words:['沙子', '贝壳', '水草'], called:{'沙子':'the sand', '贝壳':'a shell', '水草':'the seaweed'}},
     starCount: {count:'progress', key:'starFriends'}   // the starfish in the seaweed you've made friends with (of five)
@@ -131,7 +147,12 @@ const EASTERN_SEA = {
     {id:'currents', main:true, if:{dolphin:2, trench:0, place:'trench'}, text:'Cross the currents to the {海龟|sea turtle}: wait till they drop, then go', arrow:'turtle'},
     {id:'whale', if:{trench:{atLeast:1}, friends:{whale:false}}, text:'Something huge is gliding in the deep {水|water}: meet it from the edge', arrow:[8, 9, 'trench']},
     {id:'glow', main:true, if:{trench:1}, text:'Follow the slope down to the bottom of the trench', arrow:[19, 13, 'trench']},
-    {id:'trench', main:true, if:{trench:2}, text:'The rest of the {海|sea}, and the Dragon King’s palace, are on their way. Until then, practise your words', where:'trench'}
+    {id:'toPalace', main:true, if:{trench:2, palace:0, away:'palace'}, text:'Go down into the {光|light} at the very bottom of the trench', arrow:[19, 15, 'trench']},
+    {id:'guard', main:true, if:{palace:0, place:'palace'}, text:'Talk to the {夜叉|sea guard}', arrow:'yaksha'},
+    {id:'dragons', if:{palace:{atLeast:1}, new:'龙'}, text:'Something gold is coiled round the pillars by the palace {门|gate}: press A at one', arrow:{sparkle:true}},
+    {id:'crab', main:true, if:{palace:1}, text:'The crab general wants to show you his {兵|soldiers}', arrow:'crab'},
+    {id:'lobster', main:true, if:{palace:2, friends:{lobster:false}}, text:'Something is guarding the palace {门|door}: go and meet it', arrow:[12, 6, 'palace']},
+    {id:'palace', main:true, if:{palace:3}, text:'The rest of the {海|sea}, and the Dragon King himself, are on their way. Until then, practise your words', where:'palace'}
   ],
   hints: [
     {if:{turtle:0}, text:'You’re on the seabed, deep under the {海|sea}. A {海龟|sea turtle} is swimming towards you: walk up to it and press A.'},
@@ -141,7 +162,11 @@ const EASTERN_SEA = {
     {if:{octopus:1, dolphin:{below:2}}, text:'The {海豚|dolphin} on the coral reef wants a race: talk to it. To win, hold B as you walk, to {跑|run}, and set off as soon as it says {游|swim}.'},
     {if:{dolphin:2, trench:0}, text:'Currents flow across the trench, all at once: wait till they drop, then cross quickly. If one catches you, it pushes you back.'},
     {if:{trench:1}, text:'A slope of {沙子|sand} runs down at the east side of the trench, to the very bottom. And something huge glides in the deep {水|water} below the edge.'},
-    {if:{trench:2}, text:'The rest of the {海|sea}, and the Dragon King’s palace, are on their way. Until then, practise your words.'},
+    {if:{trench:2, palace:0}, text:'The way down to the palace is at the very bottom of the trench, in the {光|light}: walk into it.'},
+    {if:{palace:{atLeast:1}, new:'龙'}, text:'Something gold is coiled round the pillars by the palace {门|gate}: press A at one.'},
+    {if:{palace:1}, text:'The crab general, beside his {虾|shrimp} soldiers, wants to show you how many there are: talk to him.'},
+    {if:{palace:2}, text:'Something is guarding the palace {门|door}: walk up to it and press A.'},
+    {if:{palace:3}, text:'The Dragon King himself is on his way. Until then, practise your words.'},
     {if:{forest:1, octopus:0}, text:'{鲨鱼|Sharks} and jellyfish hide in the tall seaweed, and come out as you walk through it. The {章鱼|octopus} lives among the rocks in the north. The rest of the {海|sea} is on its way.'}
   ],
   checklist: [
@@ -159,12 +184,18 @@ const EASTERN_SEA = {
     {part:'reef', text:'Make friends with whoever is among the {珊瑚|coral} to the north', done:{friends:{seahorse:true}}},
     {part:'trench', text:'Cross the currents', done:{trench:{atLeast:1}}},
     {part:'trench', text:'Make friends with what’s gliding in the deep {水|water}', show:{trench:{atLeast:1}}, done:{friends:{whale:true}}},
-    {part:'trench', text:'Get down to the bottom of the trench', show:{trench:{atLeast:1}}, done:{trench:2}}
+    {part:'trench', text:'Get down to the bottom of the trench', show:{trench:{atLeast:1}}, done:{trench:2}},
+    {part:'palace', text:'Get past the {夜叉|sea guard}', done:{palace:{atLeast:1}}},
+    {part:'palace', text:'Press A at a pillar by the palace {门|gate}', done:{knows:'龙'}},
+    {part:'palace', text:'Count the {兵|soldiers} with the crab general', show:{palace:{atLeast:1}}, done:{palace:{atLeast:2}}},
+    {part:'palace', text:'Make friends with the guard at the palace {门|door}', show:{palace:{atLeast:2}}, done:{friends:{lobster:true}}}
   ],
   bubbles: {
     turtle: [{if:{landed:1, turtle:0}, show:'!'}, {if:{turtle:1, seabedWords:3}, show:'!'}, {if:{turtle:2, starFriends:5}, show:'!'}, {if:{dolphin:2, trench:0}, show:'!'}],
     octopus: [{if:{friends:{octopus:true}, octopus:0}, show:'!'}],
-    dolphin: [{if:{octopus:1, dolphin:0}, show:'!'}, {if:{dolphin:1}, show:'!'}]
+    dolphin: [{if:{octopus:1, dolphin:0}, show:'!'}, {if:{dolphin:1}, show:'!'}],
+    yaksha: [{if:{palace:0}, show:'!'}],
+    crab: [{if:{palace:1}, show:'!'}]
   },
   requests: {},
   events: [
@@ -180,7 +211,10 @@ const EASTERN_SEA = {
       {set:{trench:1}}, {message:'Something huge is gliding in the deep water below the edge. And a slope of sand runs down at the east side, to the very bottom…'}]},
     {if:{place:'trench', trench:1, around:[19, 13, 'trench', 1]}, do:[
       {say:'lightBelow', by:'player', teach:'光'}, {newWord:'光', note:'光 means light. Far below, at the very bottom of the trench, something is shining.'},
-      {set:{trench:2}}, {message:'To be continued: the light far below is the Dragon King’s palace, and the way down is on its way!'}]}
+      {set:{trench:2}}, {message:'The light far below is the Dragon King’s palace! Walk down into it.'}]},
+    // down at the palace: the sea guard stops you; and once the lobster at the door is your friend, the step ends
+    {if:{place:'palace', palace:0, around:[12, 12, 'palace', 2]}, do:[{stopsYou:'yaksha'}]},
+    {if:{palace:2, friends:{lobster:true}}, do:[{set:{palace:3}}, {message:'To be continued: the Dragon King waits inside his palace, and you’ll meet him soon!'}]}
   ],
 
   places: {
@@ -287,7 +321,8 @@ const EASTERN_SEA = {
       music: 'sea',
       backdrop: 'sea',
       legend: TRENCH_LEGEND,
-      exits: [{at:[0, 3], to:'reef', arrive:[24, 7], facing:'left'}],
+      exits: [{at:[0, 3], to:'reef', arrive:[24, 7], facing:'left'},
+        {at:[19, 15], to:'palace', arrive:[12, 14], facing:'up', if:{trench:2}, closed:'It’s too dark to go down there yet.'}],
       schools: [[2, 4, 'fishBlue', .7, 1]],
       map: [
         "wwwwwwwwwwwwwwwwwwwwwwwwww",
@@ -305,7 +340,37 @@ const EASTERN_SEA = {
         "wddddddddddddddd.....ddddw",
         "wdddddddddddddddd....ddddw",
         "wddddddddddddddddd..vddddw",
-        "wdddddddddddddddddvvvvdddw"
+        "wddddddddddddddddddVvvdddw"
+      ]
+    },
+    // The palace gate, at the very bottom of the trench: jade flagstones in front of the palace's red wall, its gate in the
+    // middle, red pillars with gold dragons either side; the shrimp soldiers drilling in two rows of ten, their crab general
+    // beside them; the sea guard by the way down; the lobster at the door. The way in comes in the next step.
+    palace: {
+      name: {zh:'龙宫', py:'Lónggōng', en:'The Dragon Palace'},
+      onMap: [210, 72, 26, 16],
+      underwater: true,
+      music: 'sea',
+      backdrop: 'sea',
+      legend: PALACE_LEGEND,
+      exits: [{at:[12, 15], to:'trench', arrive:[19, 14], facing:'up'}],
+      map: [
+        "dddddddddddddddddddddddddd",
+        "ddddddddddGGGGGddddddddddd",
+        "ddddddddddGGGGGddddddddddd",
+        "XXXXXXXXPXGGGGGXPXXXXXXXXX",
+        "XXXXXXXXPXGGGGGXPXXXXXXXXX",
+        "##########################",
+        "##########################",
+        "##########################",
+        "##########################",
+        "##########################",
+        "##########################",
+        "##########################",
+        "##########################",
+        "##########################",
+        "##########################",
+        "##########################"
       ]
     }
   },
@@ -320,11 +385,36 @@ const EASTERN_SEA = {
     // the sea turtle from your shore (Area 1's friend), swimming over the sand: it greets you as you land, shows you round,
     // and swims ahead to the seaweed where the starfish hide
     {id:'turtle', place:'seabed', x:14, y:6, facing:'left', look:'海龟', flies:true, swims:true,
-      moves:[{if:{dolphin:2}, place:'trench', x:4, y:9, facing:'up'}, {if:{octopus:{atLeast:1}}, place:'reef', x:2, y:6, facing:'right'}, {if:{turtle:{atLeast:3}}, place:'forest', x:3, y:6, facing:'right'}, {if:{turtle:{atLeast:2}}, place:'seabed', x:5, y:12, facing:'right'}]},
+      moves:[{if:{palace:{atLeast:1}}, place:'palace', x:9, y:14, facing:'right'}, {if:{dolphin:2}, place:'trench', x:4, y:9, facing:'up'}, {if:{octopus:{atLeast:1}}, place:'reef', x:2, y:6, facing:'right'}, {if:{turtle:{atLeast:3}}, place:'forest', x:3, y:6, facing:'right'}, {if:{turtle:{atLeast:2}}, place:'seabed', x:5, y:12, facing:'right'}]},
     // the octopus among the seaweed forest's rocks, once it's your friend (till then, the animal there: see animals)
     {id:'octopus', place:'forest', x:13, y:2, facing:'down', look:'章鱼', moves:[{if:{friends:{octopus:false}}, place:'gone', x:0, y:0}]},
     // the dolphin on the coral reef, leaping about by the race track, wanting a race
-    {id:'dolphin', place:'reef', x:4, y:8, facing:'down', look:'海豚', flies:true, swims:true}
+    {id:'dolphin', place:'reef', x:4, y:8, facing:'down', look:'海豚', flies:true, swims:true},
+    // the palace gate's: the sea guard (a yaksha), who stops you as you come down, then steps aside; the crab general and
+    // his shrimp soldiers, drilling in time (drills: their spears thrust up and back)
+    {id:'yaksha', place:'palace', x:12, y:12, facing:'down', look:'夜叉', name:{zh:'夜叉', py:'yèchā', en:'Sea guard'},
+      moves:[{if:{palace:{atLeast:1}}, place:'palace', x:14, y:13, facing:'left'}]},
+    {id:'crab', place:'palace', x:6, y:8, facing:'right', look:'蟹将', name:{zh:'蟹将', py:'xièjiàng', en:'Crab general'}},
+    {id:'soldier1', place:'palace', x:8, y:8, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier2', place:'palace', x:9, y:8, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier3', place:'palace', x:10, y:8, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier4', place:'palace', x:11, y:8, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier5', place:'palace', x:12, y:8, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier6', place:'palace', x:13, y:8, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier7', place:'palace', x:14, y:8, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier8', place:'palace', x:15, y:8, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier9', place:'palace', x:16, y:8, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier10', place:'palace', x:17, y:8, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier11', place:'palace', x:8, y:9, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier12', place:'palace', x:9, y:9, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier13', place:'palace', x:10, y:9, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier14', place:'palace', x:11, y:9, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier15', place:'palace', x:12, y:9, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier16', place:'palace', x:13, y:9, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier17', place:'palace', x:14, y:9, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier18', place:'palace', x:15, y:9, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier19', place:'palace', x:16, y:9, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
+    {id:'soldier20', place:'palace', x:17, y:9, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}}
   ],
   yourNames: [{if:{}, zh:'孙悟空', py:'Sūn Wùkōng', en:'Sun Wukong (you)'}],
   sign: {name:{zh:'牌子', py:'páizi', en:'Sign'}, says:{zh:'海', en:'The sea'}, hint:''},
@@ -334,7 +424,8 @@ const EASTERN_SEA = {
   sparkles: [
     {word:'沙子', at:[9, 8, 'seabed'], if:{turtle:{atLeast:1}}}, {word:'贝壳', at:[10, 5, 'seabed'], if:{turtle:{atLeast:1}}},
     {word:'水草', at:[1, 4, 'seabed'], if:{turtle:{atLeast:1}}},
-    {word:'珊瑚', at:[1, 8, 'reef']}
+    {word:'珊瑚', at:[1, 8, 'reef']},
+    {word:'龙', at:[8, 4, 'palace'], if:{palace:{atLeast:1}}}
   ],
   found: {
     '泡泡': 'The sea turtle, as you landed on the seabed in your bubble of air.',
@@ -356,7 +447,11 @@ const EASTERN_SEA = {
     '慢': 'The sea turtle, puffing along last in the dolphin’s race: 我很慢。',
     '深': 'The sea turtle, at the edge of the deep in the trench: 这里很深！',
     '鲸鱼': 'Gliding in the trench’s deep water, below the edge.',
-    '光': 'The light shining up from the very bottom of the trench: 下面有光！'
+    '光': 'The light shining up from the very bottom of the trench: 下面有光！',
+    '龙': 'The gold dragons coiled round the pillars by the Dragon Palace’s gate.',
+    '兵': 'The crab general’s shrimp soldiers, drilling at the Dragon Palace: 他们是我的兵！',
+    '百': 'Counting the shrimp soldiers by tens with the crab general: 一百！',
+    '龙虾': 'Guarding the Dragon Palace’s door.'
   },
   practiceSentences: [
     {sentence:'我 有 几 只 脚', sentenceEn:'How many feet have I got?'}   // (几, which has no picture)
@@ -369,7 +464,9 @@ const EASTERN_SEA = {
     '章鱼': {zh:'章鱼 有 八 只 脚 。', en:'An octopus has eight feet.'},
     '珊瑚': {zh:'海 里 有 珊瑚 。', en:'There’s coral in the sea.'},
     '海马': {zh:'海马 很 小 。', en:'The seahorse is small.'},
-    '鲸鱼': {zh:'鲸鱼 很 大 。', en:'The whale is very big.'}
+    '鲸鱼': {zh:'鲸鱼 很 大 。', en:'The whale is very big.'},
+    '龙': {zh:'龙 很 大 。', en:'The dragon is very big.'},
+    '龙虾': {zh:'龙虾 是 红色 的 。', en:'The lobster is red.'}
   },
   // What hides in the seaweed forest's tall seaweed (step 3): sharks, and jellyfish, more of them at night
   enemies: {
@@ -408,7 +505,10 @@ const EASTERN_SEA = {
       meetNote:'A seahorse bobs among the coral, its tail curled round a branch! Answer its questions to make friends.'},
     // a whale gliding in the trench's deep water, met from the edge above it
     {id:'whale', word:'鲸鱼', at:[8, 10, 'trench'], glides:true, home:'海', chapter:0, clue:'The trench, gliding in the deep water below the edge',
-      meetNote:'A huge whale glides up out of the deep, singing! Answer its questions to make friends.'}
+      meetNote:'A huge whale glides up out of the deep, singing! Answer its questions to make friends.'},
+    // a lobster guarding the palace door, its big claws up
+    {id:'lobster', word:'龙虾', at:[12, 5, 'palace'], home:'海', chapter:0, clue:'The Dragon Palace, guarding its door',
+      meetNote:'A lobster guarding the palace door snaps its big claws at you! Answer its questions to make friends.'}
   ],
   birds: {word:'鸟', note:'', colours:[]},
   hidden: [],
@@ -442,6 +542,22 @@ const EASTERN_SEA = {
     slow: {zh:'我 很 慢 。', en:'I’m slow.'},
     deep: {zh:'这里 很 深 ！', en:'It’s deep here!'},
     lightBelow: {zh:'下面 有 光 ！', en:'There’s light down there!'},
+    whoAreYou: {zh:'你 是 谁 ？', en:'Who are you?'},
+    iAmWukong: {zh:'我 是 孙悟空 ！', en:'I’m Sun Wukong!'},
+    kingInside: {zh:'龙王 在 里面 。', en:'The Dragon King is inside.'},
+    mySoldiers: {zh:'他们 是 我 的 兵 ！', en:'They’re my soldiers!'},
+    ten: {zh:'十 ！', en:'Ten!'},
+    twenty: {zh:'二十 ！', en:'Twenty!'},
+    thirty: {zh:'三十 ！', en:'Thirty!'},
+    forty: {zh:'四十 ！', en:'Forty!'},
+    fifty: {zh:'五十 ！', en:'Fifty!'},
+    sixty: {zh:'六十 ！', en:'Sixty!'},
+    seventy: {zh:'七十 ！', en:'Seventy!'},
+    eighty: {zh:'八十 ！', en:'Eighty!'},
+    ninety: {zh:'九十 ！', en:'Ninety!'},
+    hundred: {zh:'一 百 ！', en:'A hundred!'},
+    hundredSoldiers: {zh:'一 百 个 兵 ！', en:'A hundred soldiers!'},
+    drillShout: {zh:'一 ， 二 ！ 一 ， 二 ！', en:'One, two! One, two!'},
     play: {zh:'我们 玩 吧 ！', en:'Let’s play!'},
     count1: {zh:'一 ！', en:'One!'}, count2: {zh:'二 ！', en:'Two!'}, count3: {zh:'三 ！', en:'Three!'}, count4: {zh:'四 ！', en:'Four!'}, count5: {zh:'五 ！', en:'Five!'}
   },
@@ -486,7 +602,43 @@ const EASTERN_SEA = {
         {if:{new:'跑'}, message:'Race the dolphin again! Set off as soon as it says {游|swim}.'}]},
       {if:{dolphin:1}, do:[{say:'letsRace'}, {race:'again', win:[{set:{dolphin:2}}, {message:'The sea turtle swims on east, towards the trench. Follow it!'}]}]},
       {do:[{say:'letsRace'}, {race:'again'}]}
-    ]
+    ],
+    // the sea guard: who are you? (你是谁？ 我是孙悟空！), then he steps aside
+    yaksha: [
+      {if:{palace:0}, do:[{say:'whoAreYou'}, {say:'iAmWukong', by:'player'}, {say:'kingInside'}, {set:{palace:1}},
+        {message:'The sea guard steps aside. Gold dragons are coiled round the pillars by the gate, and a crab general is drilling his shrimp soldiers…'}]},
+      {do:[{say:'kingInside'}]}
+    ],
+    // the crab general: his soldiers (兵), counted with you by tens to a hundred (百)
+    crab: [
+      {if:{palace:1}, do:[
+        {say:'mySoldiers', teach:'兵'}, {newWord:'兵', note:'兵 means soldier. 虾兵, the shrimp soldiers, are shrimp + soldier!'},
+        {countTens:["ten","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety","hundred"]},
+        {newWord:'百', note:'百 means hundred: 一百, one hundred. Ten rows of ten soldiers!'},
+        {say:'hundredSoldiers'}, {set:{palace:2}}, {message:'Something is guarding the palace door. Go and meet it!'}]},
+      {if:{palace:{atLeast:2}}, do:[{say:'mySoldiers'}, {countTens:["ten","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety","hundred"]}]},
+      {do:[{say:'mySoldiers'}]}
+    ],
+    soldier1: [{do:[{say:'drillShout'}]}],
+    soldier2: [{do:[{say:'drillShout'}]}],
+    soldier3: [{do:[{say:'drillShout'}]}],
+    soldier4: [{do:[{say:'drillShout'}]}],
+    soldier5: [{do:[{say:'drillShout'}]}],
+    soldier6: [{do:[{say:'drillShout'}]}],
+    soldier7: [{do:[{say:'drillShout'}]}],
+    soldier8: [{do:[{say:'drillShout'}]}],
+    soldier9: [{do:[{say:'drillShout'}]}],
+    soldier10: [{do:[{say:'drillShout'}]}],
+    soldier11: [{do:[{say:'drillShout'}]}],
+    soldier12: [{do:[{say:'drillShout'}]}],
+    soldier13: [{do:[{say:'drillShout'}]}],
+    soldier14: [{do:[{say:'drillShout'}]}],
+    soldier15: [{do:[{say:'drillShout'}]}],
+    soldier16: [{do:[{say:'drillShout'}]}],
+    soldier17: [{do:[{say:'drillShout'}]}],
+    soldier18: [{do:[{say:'drillShout'}]}],
+    soldier19: [{do:[{say:'drillShout'}]}],
+    soldier20: [{do:[{say:'drillShout'}]}]
   },
   // The dolphin's races on the coral reef (the race step, js/pe.js): you in the middle lane, the dolphin above, the turtle
   // below (slow), from the pebbles to the line of shells. The first time the dolphin is far too fast; after that, it's

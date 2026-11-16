@@ -78,6 +78,27 @@ function trenchGlow(g, X, Y, x, y){
   R(g, X, Y + T - 5, T, 5, '#E8B848'); R(g, X + 3, Y + T - 3, T - 6, 3, '#FFF2B0');
 }
 Object.assign(LOOKS, {currentSand, trenchGlow});
+// The Dragon King's palace (step 6): jade flagstones, pale green-white with fine joints and a fleck of gold here and there;
+// its red wall, under green tiles with a gold edge; its gate, the plaque over the door saying 龙宫 in pixel characters;
+// and red pillars with gold dragons coiled round them.
+function jadeFloor(g, X, Y, x, y){
+  R(g, X, Y, T, T, (x + y) % 2 ? '#D6E8E2' : '#DCEEE8');
+  R(g, X, Y, T, 1, '#B8D2CA'); R(g, X, Y, 1, T, '#B8D2CA');
+  if (rnd(x, y, 950) < .35) R(g, X + 3 + Math.floor(rnd(x, y, 951) * 9), Y + 3 + Math.floor(rnd(x, y, 952) * 9), 1, 1, '#D8B048');
+}
+function palaceWall(g, X, Y, x, y){
+  const top = seaLookAt(x, y - 1) !== 'palaceWall';
+  R(g, X, Y, T, T, '#B8322A'); R(g, X, Y + T - 2, T, 2, '#8E2620');
+  R(g, X + 3, Y + (top ? 7 : 3), 10, 6, '#A42A24'); R(g, X + 3, Y + (top ? 7 : 3), 10, 1, '#C8483C');   // a panel
+  if (top){ R(g, X, Y, T, 4, '#2E8A72'); for (let i = 0; i < T; i += 3) R(g, X + i, Y, 1, 4, '#1F6A56'); R(g, X, Y + 4, T, 1, '#E2B23A'); }   // green tiles, a gold edge
+}
+Object.assign(LOOKS, {jadeFloor, palaceWall, palaceGate: jadeFloor, dragonPillar: jadeFloor});
+OBJECT_ART.palaceGate = (g, o) => {
+  const p = mapArtPic('palaceGate'), X = o.x * T + Math.round((o.w * T - p.width) / 2), Y = o.y * T + o.h * T - p.height;
+  g.drawImage(p, X, Y);
+  write(g, '龙宫', X + 30, Y + 9, '#F2C14E');   // (its plaque: real Chinese, 龙宫, the Dragon Palace)
+};
+OBJECT_ART.dragonPillar = (g, o) => seaThing('dragonPillar')(g, o);   // (seaThing comes further down)
 STIR_LOOKS.tallSeaweed = ['#D8C79A', '#2E6A2E', '#8FCB6A']; STIR_DRAWS.tallSeaweed = tallSeaweed; TALL_LOOKS.push('tallSeaweed');   // (parting round you, and what flies up: js/draw.js)
 const UNLIT = new Set(['deepSea', 'trenchGlow']);   // where the light doesn't ripple: down in the deep
 
@@ -213,6 +234,35 @@ function drawDive(t, now){
   for (let i = 0; i < 6; i++){ const by = Math.round(my - ((now * .03 + i * 13) % 60)); R(b, mx + 6 + (i % 3) * 3, by, 1, 1, 'rgba(255,255,255,.85)'); }
 }
 Object.assign(SCENE_ART, {dive: drawDive});
+
+/* ================= COUNTING BY TENS ================= */
+// Counting the shrimp soldiers with the crab general (the countTens step: its lines, one for each ten, the last 一 百),
+// as the master's class counted on from ten (decided 15 November 2026, the Eastern Sea's plan): a row of ten soldiers
+// marches in at a time, and he says how many now, 十, 二十, 三十… till ten rows, a hundred. The tens are heard and counted,
+// made of words you know; the last line teaches 百.
+function countTens(who, keys){
+  return new Promise(res => {
+    const soldier = mapSprite('虾兵').toDataURL(), face = speaker(who);
+    let n = 1;
+    const show = () => {
+      const line = L[keys[n - 1]], last = n === keys.length;
+      const rows = Array.from({length: n}, () => `<div class="tenrow">${`<img alt="" src="${soldier}">`.repeat(10)}</div>`).join('');
+      openCard(`${face}<p class="label">Counting the soldiers, ten at a time</p>
+        <div class="tens">${rows}</div>
+        <div class="talkline">${lineHTML(line.t, last ? '百' : null)}</div><p class="sentence-en">${esc(line.en)}</p>
+        <p class="note">${last ? 'Ten rows of ten: a hundred soldiers!' : `${n === 1 ? 'One row' : `${n} rows`} of ten.`}</p>
+        <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button><button class="btn primary" data-a="next">${last ? 'Got it' : 'Another row ▸'}</button></div>`);
+      on('[data-a=say]', () => say(line.t.join(''), null, who));
+      on('[data-a=next]', next);
+    };
+    const next = () => {
+      if (n === keys.length){ closeCard(); res(); return; }
+      n++; SFX.tock(); show(); say(L[keys[n - 1]].t.join(''), null, who);
+    };
+    show(); say(L[keys[0]].t.join(''), null, who);
+  });
+}
+STEPS.countTens = async (s, who) => { await countTens(who, s.countTens); };
 
 /* ================= FIGHTS UNDER THE SEA ================= */
 // The backdrop for battles and animals' questions under the sea (a place's backdrop, 'sea'): blue water, lighter above,

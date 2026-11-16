@@ -1962,6 +1962,52 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     for (let i = 0; i < 9; i++){ const a = Math.PI + (i + .5) * Math.PI / 9; p.flat(path([[16, 27], [16 + Math.cos(a) * 17, 27 + Math.sin(a) * 26]], .7 + (i % 2) * .4), i % 2 ? '#FFF2B0' : '#FFE27A'); }   // its rays
     p.fill(O(16, 27, 9, 5.5), '#FFF6D0', {light: '#FFFFFF', dark: '#F2C14E'});              // the glow
     p.flat(O(16, 27, 5, 3), '#FFFFFF');
+  },
+  // the palace gate's (step 6)
+  '龙': p => {   // a dragon: a long green body curling through the clouds, a golden belly, antlers, whiskers and clawed feet (unlike 蛇: antlers, whiskers, legs)
+    p.fill(or(O(6, 27, 5, 2.4), O(26, 28, 5, 2.2), O(17, 30, 4, 1.6)), '#E8F0F6', {dark: '#C8D4DE'});   // clouds
+    const body = [[29, 26], [26, 20], [20, 18], [15, 22], [10, 24], [6, 20], [7, 14], [12, 11]];
+    p.fill(path(body, 2.6), '#3E9A5A', {light: '#6CC27E', edge: true});
+    p.flat(path(body.map(([x, y]) => [x, y + 1.6]), .7), '#F2C14E');                         // its golden belly
+    [[25, 20], [19, 19.5], [11, 23.5], [7, 18]].forEach(([x, y]) => p.flat(path([[x, y], [x - 1, y + 4], [x + 1, y + 5]], .6), '#2E7A48'));   // clawed feet
+    p.fill(O(14, 9, 4.6, 3.6), '#3E9A5A', {light: '#6CC27E', edge: true});                   // its head
+    p.fill(Pg([[17, 8], [22, 9], [17, 11]]), '#3E9A5A', {edge: true});                       // its snout
+    p.fill(path([[12, 6], [10, 2], [8, 1]], .6), '#C8A050'); p.fill(path([[11, 4], [13, 1]], .5), '#C8A050');   // antlers
+    p.flat(path([[21, 10], [25, 12], [27, 11]], .4), '#F2C14E'); p.flat(path([[20, 11], [23, 15]], .4), '#F2C14E');   // whiskers
+    p.eye(15, 8);
+    [[22, 19], [16, 21], [9, 21]].forEach(([x, y]) => p.dot(x, y, '#2E7A48'));                // scales
+  },
+  '兵': p => {   // a soldier: in a helmet with a red tassel and armour, standing to attention with a spear (unlike 人: armour, a spear)
+    p.fill(path([[26, 30], [26, 3]], .8), '#7A5230');                                        // the spear's shaft
+    p.fill(Pg([[24.5, 4], [26, 0], [27.5, 4]]), '#E2E6EA', {edge: true}); p.flat(Rc(25, 5, 3, 2), RED);   // its head and tassel
+    p.fill(or(Rc(11, 22, 4, 8), Rc(17, 22, 4, 8)), '#3A4656');                               // legs
+    p.fill(Rc(9, 13, 14, 10, 2), '#6A8AAE', {light: '#9AB8D6', dark: '#4A6A8E', edge: true}); // armour
+    p.flat(Rc(9, 18, 14, 2), RED);                                                           // a red sash
+    p.fill(path([[22, 15], [25, 18]], 1.4), '#6A8AAE');                                      // an arm, holding the spear
+    p.fill(path([[10, 15], [8, 20]], 1.4), '#6A8AAE');
+    p.fill(O(16, 9, 4, 4), SKIN, {edge: true});                                              // the face
+    p.fill(and(O(16, 8, 4.6, 4.2), (x, y) => y <= 8), '#8A9AAE', {light: '#B8C6D6', edge: true});   // the helmet
+    p.fill(path([[16, 4], [16, 1]], .7), RED);                                               // its tassel
+    p.eye(14, 10); p.eye(17, 10);
+  },
+  '百': p => {   // a hundred: ten bundles of ten sticks, two rows of five, each tied with red string (as 十's bundle; unlike 十: ten of them)
+    for (let r = 0; r < 2; r++) for (let c = 0; c < 5; c++){
+      const x0 = 1 + c * 6, y0 = 2 + r * 15;
+      for (let i = 0; i < 5; i++) p.flat(Rc(x0 + i, y0, 1, 12), i === 0 ? STICK_LIT : i === 4 ? '#94643A' : i % 2 ? STICK_SHADE : STICK);
+      p.flat(or(Rc(x0, y0, 5, 1), Rc(x0, y0 + 11, 5, 1)), STICK_END);
+      p.fill(Rc(x0 - .5, y0 + 5, 6, 2), RED, {light: '#F06A5A', dark: '#A82828'});
+    }
+  },
+  '龙虾': p => {   // a lobster: deep red, side on, head to the left, its big claws out in front, long feelers (unlike 虾: big claws; unlike 螃蟹: a long tail)
+    p.fill(path([[12, 19], [18, 19], [23, 20], [27, 23], [29, 27]], 3), '#C8452E', {light: '#E87A5E', edge: true});   // its body and tail
+    p.fill(Pg([[27, 24], [31, 29], [25, 29]]), '#B53A26', {edge: true});                    // its tail fan
+    [[16, 19], [20, 19.5], [24, 21]].forEach(([x, y]) => p.flat(path([[x, y - 2.6], [x, y + 2.6]], .4), '#A83A24'));   // its shell's sections
+    p.fill(O(9.5, 18, 5, 4), '#C8452E', {light: '#E87A5E', edge: true});                     // its head
+    p.fill(O(4.5, 10.5, 4, 3), '#D2502E', {light: '#F08A6A', edge: true}); p.fill(path([[8, 16], [6, 13]], 1.2), '#C8452E');   // a big claw
+    p.fill(O(6.5, 24.5, 3.6, 2.6), '#D2502E', {light: '#F08A6A', edge: true}); p.fill(path([[9, 21], [7, 23]], 1.1), '#C8452E');   // the other
+    p.flat(path([[6, 16], [2, 7], [5, 0]], .45), '#A83A24'); p.flat(path([[8, 16], [10, 6], [15, 1]], .45), '#A83A24');   // long feelers
+    [[13, 22], [16, 22.5], [19, 23]].forEach(([x, y]) => p.flat(path([[x, y], [x - 1, y + 5]], .45), '#A83A24'));   // legs
+    p.eye(9, 16);
   }
 };
 // A coral on the sand, branching up (body: its colour), its tips lighter (unlike seaweed: stiff branches)
@@ -2256,6 +2302,40 @@ function fishJar(p, fish){
 // game): each {size, draw}, drawn on a square of that size with the same shapes, then cropped to what's drawn (MAP_ART in
 // content/pictures.js, drawn by js/sea.js).
 const MAP_ART_DRAWINGS = {
+  // the Dragon King's palace gate (Area 3, step 6): green tiles and a gold ridge, red pillars and walls, the open door, and a
+  // blue plaque whose writing, 龙宫, the game draws on it in pixel characters (js/sea.js)
+  palaceGate: {size: 84, draw: p => {
+    p.fill(Rc(2, 60, 80, 8), '#DDE8E4', {light: '#F6FCFA'});
+    p.fill(Rc(8, 56, 68, 5), '#E8F0EC', {light: '#FFFFFF'});
+    p.fill(Rc(4, 30, 13, 27), '#B8322A', {light: '#D8584A'}); p.fill(Rc(67, 30, 13, 27), '#B8322A', {light: '#D8584A'});
+    p.flat(Rc(4, 30, 13, 2), '#E2B23A'); p.flat(Rc(67, 30, 13, 2), '#E2B23A');
+    p.fill(Rc(24, 32, 36, 25), '#1C4A54');
+    p.flat(and(Rc(24, 32, 36, 25), (x, y) => y > 44), '#2A6672');
+    p.fill(Rc(17, 26, 7, 31), '#C0392B', {light: '#E25B4B'}); p.fill(Rc(60, 26, 7, 31), '#C0392B', {light: '#E25B4B'});
+    p.fill(Rc(13, 22, 58, 6), '#B8322A', {light: '#D8584A'});
+    p.flat(Rc(13, 26, 58, 1), '#E2B23A');
+    [20, 30, 50, 60].forEach(x => p.flat(Rc(x, 23, 4, 2), '#2E8A72'));
+    const roof = Pg([[0, 23], [8, 12], [76, 12], [84, 23], [74, 20], [10, 20]]);
+    p.fill(roof, '#2E8A72', {light: '#5CB89A'});
+    for (let x = 9; x < 76; x += 3) p.flat(and(roof, Rc(x, 13, 1, 8)), '#1F6A56');
+    p.fill(Rc(10, 9, 64, 3), '#E2B23A', {light: '#F8DC80'});
+    p.fill(Pg([[6, 11], [10, 5], [12, 11]]), '#E2B23A'); p.fill(Pg([[72, 11], [74, 5], [78, 11]]), '#E2B23A');
+    p.fill(O(42, 8, 3, 2.4), '#F2EEE4', {light: '#FFFFFF'});   // a pearl on the ridge
+    p.fill(Rc(28, 12, 28, 15, 1), '#22437A', {light: '#3A62A4'});   // the plaque
+    p.flat(Rc(28, 12, 28, 1), '#E2B23A'); p.flat(Rc(28, 26, 28, 1), '#E2B23A');
+  }},
+  dragonPillar: {size: 52, draw: p => {   // a red pillar with a gold dragon coiled round it (step 6: by the palace gate, where you catch 龙)
+    p.fill(Rc(18, 2, 10, 48), '#B8322A', {light: '#D8584A'});
+    p.fill(Rc(16, 46, 14, 6), '#DDE8E4', {light: '#F6FCFA'});
+    p.fill(Rc(16, 0, 14, 4), '#E2B23A', {light: '#F8DC80'});
+    const coil = []; for (let y = 44; y >= 8; y -= 1.5) coil.push([23 + Math.sin(y / 5.2) * 6.5, y]);
+    p.fill(path(coil, 1.8), '#E2B23A', {light: '#F8DC80', edge: true});
+    for (let i = 2; i < coil.length; i += 4) p.dot(Math.round(coil[i][0]), Math.round(coil[i][1]), '#B8861E');
+    const [hx] = coil[coil.length - 1];
+    p.fill(O(hx + 1, 6.5, 3, 2.3), '#E2B23A', {light: '#F8DC80'});
+    p.flat(path([[hx, 5], [hx - 2, 2]], .4), '#F8DC80');
+    p.dot(Math.round(hx + 2), 6, '#7A2A1A');
+  }},
   rock: {size: 18, draw: p => {   // a sea rock, blue-grey, a little weed on top
     p.fill(or(O(7, 11, 6, 5), O(12, 12, 5, 4)), '#6F8590', {light: '#98ACB6'});
     [[4, 7], [5, 7], [6, 6], [11, 8], [12, 8]].forEach(([x, y]) => p.dot(x, y, '#5C8A5A'));

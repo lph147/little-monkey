@@ -366,7 +366,8 @@ function portraitCanvas(id){
   if (PALS[id]) return monkeySprite(id, 'down', false, 0);
   if (id === 'sign') return SPR.sign;
   const a = animalOf(id), w = creatureWord(id);
-  return a ? a.pic : w ? sprite(PICTURES[w].rows, PICTURES[w].palette) : SPR.rock;
+  const lk = lookOf(id);   // (one who looks like nothing with a word, such as the palace's sea guard: its map picture)
+  return a ? a.pic : w ? sprite(PICTURES[w].rows, PICTURES[w].palette) : lk && MAP_SPRITES[lk] ? sprite(MAP_SPRITES[lk].rows, MAP_SPRITES[lk].palette) : SPR.rock;
 }
 // The face on the speech box's name plate (decided 6 November 2026, after mock-ups: who was speaking wasn't clear
 // enough): their picture's head and shoulders, its top two thirds, three quarters of its width, in a circle (css: .face).
@@ -806,6 +807,9 @@ function slabs(g, X, Y, x, y){
 // pine wood (松林) and the gate of heaven in the lookout's view (南天门). Each character is drawn by hand in pixels ('#' is
 // ink); writing something new needs its characters drawn here (a test checks).
 const HANZI = {
+  // the palace gate's plaque, 龙宫 (Area 3, step 6)
+  '龙': [".....#..#..", ".....#...#.", "###########", "....#.#....", "....#.#..#.", "...#..#.#..", "...#..##...", "..#...#....", ".#....#....", "#.....#...#", "......#####"],
+  '宫': [".....#.....", "###########", "#.........#", "...#####...", "...#...#...", "...#####...", "....#......", "..#######..", "..#.....#..", "..#.....#..", "..#######.."],
   '学': [".#..#...#.", "..#..#.#..", "##########", "#........#", "..######..", "......#...", ".....#....", "##########", ".....#....", ".....#....", "...###...."],
   '校': ["..#....#...", "..#.....#..", "####.######", "..#...#..#.", ".###.#....#", ".##.#.#..#.", "#.#....##..", "..#....##..", "..#...#..#.", "..#..#....#", "..#.#......"],
   '水': ["....#....", "....#....", "....#..#.", "###.#.#..", "..#.##...", "..#.##...", ".#..#.#..", "#...#..#.", "...##...#"],

@@ -1121,6 +1121,8 @@ function drawWorld(now){
       drawFlying(n, X, Y, now, n.id.charCodeAt(0));
     } else if (n.cart){   // a cart, such as the one with the troop's things on it, its wheels turning as you pull it (js/havoc.js)
       drawCart(n, X, Y, e.c);
+    } else if (n.drills && MAP_SPRITES[n.look]){   // drilling, all in time, such as the shrimp soldiers at the palace: stepping on the spot together
+      figureShadow(n.look, X, Y); drawFigure(mapSprite(n.look), X, Y - Math.floor(now / 700) % 2);
     } else if (n.look && MAP_SPRITES[n.look]){   // a character that looks like an animal, such as the wild boar on the path
       drawAnimal(n, X, Y, now, e.c);
     } else if (n.look === 'bird' && n.pecks){   // a bird pecking at what's on its square, such as a wild melon: its head down now and then

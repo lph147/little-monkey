@@ -501,6 +501,8 @@ SAVES.a3reef = {...SAVES.a3octopus, areas: {...SAVES.a3octopus.areas, 3: {...SAV
 SAVES.a3raced = {...SAVES.a3reef, w: {...SAVES.a3reef.w, ...knows(1, ['海豚'])}, areas: {...SAVES.a3reef.areas, 3: {...SAVES.a3reef.areas[3], dolphin: 1}}, pos: {place: 'reef', x: 14, y: 10, dir: 'left'}};   // (the first race over)
 SAVES.a3trench = {...SAVES.a3raced, w: {...SAVES.a3raced.w, ...knows(1, ['快', '慢'])}, areas: {...SAVES.a3raced.areas, 3: {...SAVES.a3raced.areas[3], part: 3, dolphin: 2}}, pos: {place: 'trench', x: 8, y: 4, dir: 'down'}};   // (at the trench's currents, the turtle across them)
 SAVES.a3deep = {...SAVES.a3trench, w: {...SAVES.a3trench.w, ...knows(1, ['深'])}, areas: {...SAVES.a3trench.areas, 3: {...SAVES.a3trench.areas[3], trench: 1}}, pos: {place: 'trench', x: 18, y: 12, dir: 'down'}};   // (down the slope, near the bottom)
+SAVES.a3palaceIn = {...SAVES.a3deep, w: {...SAVES.a3deep.w, ...knows(1, ['鲸鱼', '光'])}, areas: {...SAVES.a3deep.areas, 3: {...SAVES.a3deep.areas[3], part: 3, trench: 2}}, pos: {place: 'palace', x: 12, y: 14, dir: 'up'}};   // (just down at the palace, the sea guard in your way)
+SAVES.a3palace = {...SAVES.a3palaceIn, areas: {...SAVES.a3palaceIn.areas, 3: {...SAVES.a3palaceIn.areas[3], part: 4, palace: 1}}, pos: {place: 'palace', x: 11, y: 6, dir: 'up'}};   // (past him: the gate, the soldiers, the crab general)
 SAVES.a3seabed = {...SAVES.c2dive, area: 3, areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀'}}, pos: {place: 'seabed', x: 11, y: 6, dir: 'down'}};   // (home in autumn: on the hillside's lookout)
 SAVES.c2south = {...SAVES.c2end, pos: {place: 'ffmSouthSlope', x: 9, y: 15, dir: 'up'}};   // (and the south slope's)
 
@@ -1934,6 +1936,13 @@ SCREENS.push(
     S.pos = {place: 'trench', x: 5, y: 9, dir: 'left'}; placePlayer(); play(); await wait(100); showDialog(speaker('turtle'), L.deep, {teach: '深'}); await wait(500); }},
   {id: 'a3-glow', title: 'The light far below', save: 'a3deep', why: 'At the very bottom of the trench, light shining up out of the dark from the Dragon King’s palace below: 下面有光！ (光, light).', run: async () => {
     play(); await wait(500); }},
+  {id: 'a3-palace', title: 'The Dragon Palace’s gate', save: 'a3palace', why: 'The gate, 龙宫 on its plaque in pixel characters, red pillars either side with gold dragons coiled round them (a sparkle: 龙), the red wall, jade flagstones, the shrimp soldiers drilling in two rows of ten, their crab general beside them, and the lobster at the door.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'a3-guard', title: '你是谁？', save: 'a3palaceIn', why: 'Down at the palace, the sea guard (a yaksha) stops you: 你是谁？ You answer 我是孙悟空！, and he steps aside.', run: async () => {
+    play(); await wait(100); showDialog(speaker('yaksha'), L.whoAreYou); await wait(500); }},
+  {id: 'a3-tens', title: 'Counting by tens', save: 'a3palace', why: 'Counting the shrimp soldiers with the crab general, as the master counted on from ten: a row of ten at a time, 十, 二十, 三十… till ten rows, 一百 (百, hundred).', run: async () => {
+    play(); await wait(100); countTens('crab', ['ten', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety', 'hundred']);
+    for (let i = 0; i < 5; i++){ await wait(60); $('#sheet [data-a=next]').click(); } await wait(400); }},
   {id: 'a3-shells', title: 'Your shells are 贝壳', save: 'a3stars', why: 'Once you know 贝壳, your money says so: 🐚 7 贝壳, in your bag, on the Tasks page and in the shop.', run: async () => {
     play(); await wait(100); pressBag(); await wait(400); }}
 );

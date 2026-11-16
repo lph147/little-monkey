@@ -413,6 +413,25 @@ const MAP_SPRITES = {
     faces: 'left',
     palette: {a:'#1C252E', b:'#323D48', c:'#202A34', d:'#30567B', e:'#76A2CC', f:'#3E658C', g:'#4F82B4', h:'#333B43', i:'#789ABB', j:'#2E4B68', k:'#3E6E9E', l:'#1E1A16', m:'#4C5052', n:'#C8DCEA', o:'#3E4449', p:'#9AB8CE'},
     rows: ["......................","......................","......................","......................","......................","......................","......................",".....................a","....bbbbbbbbbbc.....ad","...beeeeeeeeeefc...ada","..begggggggggggfchhida",".begggggggggggggjiikda","begglggggggggggggjkda.","cfgggggggggggggggjdkda",".mnnnnnnnnnnnnngfcadda","..oppppiiidpnnnfc..ada","...mnnnikdnnnnnm....ad","....mmhidammmmm......a","......ada.............",".......a..............","......................","......................"]
+  },
+  // the palace gate's (step 6): its folk, drawn with the shape kit from the mock-ups' drawings (characters' looks, not words, but 龙虾)
+  '虾兵': {   // a shrimp soldier, facing you, its spear upright: medium, the whole square (drilling in time with the others, stepping on the spot: drills, js/draw.js)
+    palette: {a:'#512B1D', b:'#D86A44', c:'#482C1D', d:'#BB6C46', e:'#454341', f:'#B0B3B7', g:'#FBB894', h:'#5D4436', i:'#F08A5A', j:'#2B1E13', k:'#5F4025', l:'#511A19', m:'#111418', n:'#12100E', o:'#D8343A', p:'#272C32', q:'#536C88', r:'#3E444B', s:'#3D4146', t:'#97ADC6', u:'#9AB8D6', v:'#6A8AAE', w:'#323233', x:'#757E89', y:'#2D3743', z:'#1B1B1C'},
+    rows: ["..aba.cdc..efe..",".abbbacdcc.efe..","abbaabbggdcefe..","bba.hgiiidcjkjl.","aa..hgmiimnloool","....cdiiidcjkjl.","....pcdddcpjkj..","...pqprrrpqjkj..","..stquuuuuqtqp..","..stquvvvvqqqp..",".pqqloooooojkj..","..pppqqqqqqjkj..",".....wxyxyzjkj..",".....wxyxyzjkj..",".....wxyxyzjkj..",".....zyyyyzjkj.."]
+  },
+
+  '蟹将': {   // the crab general, facing you: a red plume, his claws up, a gold band: medium
+    palette: {a:'#592D2B', b:'#F07070', c:'#A8292D', d:'#421715', e:'#593629', f:'#411D12', g:'#F08A6A', h:'#A43E24', i:'#D2502E', j:'#CB7567', k:'#8D2D1E', l:'#391810', m:'#12100E', n:'#4D2F28', o:'#111418', p:'#B53A26', q:'#563125', r:'#E87A5E', s:'#9C3624', t:'#3E1B12', u:'#423415', v:'#F6D27A', w:'#A9842D', x:'#C8452E', y:'#401A12', z:'#A33522'},
+    rows: [".......abcd.....","eeef...abcd.eeef","ggghf.abcd.egggh","giihf.abcd.egiih","hhhhf.abcd.fhhhh","jklf..abcdm.fnjk","jkl..mobcmom.njk","kpklqqrccstunjpk","lkpkrvvvvvvwjpkl",".lkrxwwwwwwxskl.","..qrxxxxxxxxst..",".yzsxxxxxxxxszy.",".yztsxxxxxxsyzy.","yzyztssssssyzyzy",".yyzyttttttyzyy.",".yzy........yzy."]
+  },
+  '夜叉': {   // the sea guard, a yaksha, facing you: blue, wild red hair, a golden trident: big, on a 22 × 22 canvas
+    palette: {a:'#421B12', b:'#593120', c:'#453615', d:'#B08B2D', e:'#A83624', f:'#F07A4E', g:'#7AA2D8', h:'#3D5E90', i:'#D8452E', j:'#4E79B8', k:'#2F2413', l:'#6C5325', m:'#333D4C', n:'#FFF4A0', o:'#202835', p:'#2A1A3A', q:'#363D48', r:'#83A1CD', s:'#B84A3E', t:'#6F2222', u:'#47211B', v:'#8E2B2B', w:'#301412', x:'#343A45', y:'#7B96C1', z:'#335281', A:'#1D2430', B:'#4269A6'},
+    rows: [".....a..ba..acdcdcdc..","....aeabfeaaecdcdcdc..","....aeabfebfecdcdcdc..","....bfffggghifeddddc..","....bfigjjjjhieklkc...","...aeeegjjjjheeklk....","....aamgjnjnhoaklk....",".....oohjppphooklk....","....ohoohhhhoohklk....","...qrhggggggghrhlk....","..qrjhgjjjjjjhhjho....","..qrhohjjjjjjhqrho....",".qrjhsshhhhhhsthho....",".qrhusvvvvvvvvtklk....",".ohousvvvvvvvvtklk....","..o.usvvvvvvvvtklk....","....wttttttttttklk....",".....wxyzAxyBzAklk....","......xyzAxyBzAklk....","......xyzAxyBzAklk....","......xyzAxyBzAklk....","......AzzAAzzzAklk...."]
+  },
+  '龙虾': {   // lobster, side on, head to the left, its big claws forward (by the palace door): medium
+    faces: 'left',
+    palette: {a:'#421C12', b:'#A83A24', c:'#593629', d:'#411D12', e:'#F08A6A', f:'#A43E24', g:'#9C3624', h:'#3E1B12', i:'#563125', j:'#E87A5E', k:'#C8452E', l:'#111418', m:'#391810', n:'#8D2D1E'},
+    rows: [".aba..aba.......",".aa..aba........","aba.aba.........","bacdaa..........","abefba..........","ebgfba..........","ffgghhiih.......","dabbjgjjghih....",".ijklkgkkjjgh...",".hgkkkgggkkkgh..","..hggghahggkkgh.","...hhhabbahgkkgh",".....abababmnkgh",".....abababmnnkg",".....abaa.a.hggh","......a......hh."]
   }
 };
 // A water buffalo (Area 2, in the fields: not a word of its own): the cow's drawing, dark slate grey all over, with no
