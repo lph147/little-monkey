@@ -152,6 +152,7 @@ function drawSchools(cx, cy, now){
 }
 const COLOUR_ART = {coral:'coral', coralOrange:'coralOrange'};   // the sea's things that can be a colour you're told, drawn again over the water's blue (drawSea)
 function drawSea(cx, cy, sh, now){
+  const plumes = plumesAt; plumesAt = null;   // (where the golden hat's feathers were drawn over you: drawn again, clear, over the water)
   if (!underwater()) return;
   const W = VW * T, H = VH * T, PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
   if (!bubbleKeep){ bubbleKeep = document.createElement('canvas'); bubbleKeep.width = 32; bubbleKeep.height = 32; }
@@ -200,6 +201,7 @@ function drawSea(cx, cy, sh, now){
     b.restore();
   }   // (jellyfish drifting, glowing at night; the octopus's ink)
   drawPillar(cx, cy, now);   // (the treasury's iron pillar, glowing)
+  drawSeaRings(cx, cy, now);   // (the throne hall's drum and bell, struck: rings of sound)
   // bubbles rising
   for (let i = 0; i < 7; i++){
     const bx = Math.round((i * 61 + 23 - cx * .5) % W + W) % W, by = Math.round(H - ((now * .018 + i * 47) % (H + 24)));
@@ -214,6 +216,7 @@ function drawSea(cx, cy, sh, now){
   b.globalAlpha = 1;
   for (const [dx, dy] of [[-8, -6], [-7, -8], [-5, -9], [-3, -10]]) R(b, bx + dx, by + dy, 1, 1, '#FFFFFF');
   const rise = (now / 900) % 1; R(b, bx + 6, by - 14 - Math.round(rise * 18), 1, 1, 'rgba(255,255,255,.85)');
+  if (plumes) drawPlumes(b, ...plumes);   // (the golden hat's feathers, poking up out of your bubble)
 }
 
 /* ================= SCENES ================= */
@@ -502,3 +505,140 @@ function drawInk(cx, cy, now){
   for (let i = 0; i < 7; i++){ const a = i * .9, r = 3 + k * 14; R(b, Math.round(X + Math.cos(a) * r * (.6 + (i % 3) * .2) - 3), Math.round(Y + Math.sin(a) * r * .7 - 3), 6 + (i % 2) * 2, 5, i % 2 ? '#2A1E34' : '#3E3050'); }
   b.globalAlpha = 1;
 }
+
+/* ================= THE DRUM AND THE BELL, AND THE DRAGON KINGS' GIFTS ================= */
+// The throne hall's (step 9): the Dragon King's drum and bell, either side of his throne (each one big object, two squares
+// by two), struck with your staff to call his brothers: rings of sound spreading out through the water from each blow
+// (seaRings), a BOOM or a DONG, and the thing shaking.
+Object.assign(LOOKS, {palaceDrum: jadeFloor, palaceBell: jadeFloor});
+OBJECT_ART.palaceDrum = (g, o) => seaThing('palaceDrum')(g, o);
+OBJECT_ART.palaceBell = (g, o) => seaThing('palaceBell')(g, o);
+BLOCK_OBJECTS.push('palaceDrum', 'palaceBell');
+const seaRings = [], RING_MS = 1500;
+const ringPixels = (g, X, Y, rx, ry, c) => { const n = Math.max(12, Math.round((rx + ry) * 2)); for (let i = 0; i < n; i++){ const a = i / n * Math.PI * 2; R(g, Math.round(X + rx * Math.cos(a)), Math.round(Y + ry * Math.sin(a)), 1, 1, c); } };
+function drawSeaRings(cx, cy, now){
+  for (let i = seaRings.length - 1; i >= 0; i--){
+    const r = seaRings[i], k = (now - r.t0) / (RING_MS * (r.bell ? 1.6 : 1));
+    if (k >= 1){ seaRings.splice(i, 1); continue; }
+    for (const d of [0, .16, .32]){ const kk = k - d; if (kk <= 0) continue;
+      b.globalAlpha = Math.max(0, (1 - kk) * .75); ringPixels(b, r.x - cx, r.y - cy, 6 + kk * 64, 4 + kk * 42, r.bell ? '#FFF0B0' : '#FFFFFF'); }
+    b.globalAlpha = 1;
+  }
+}
+// Striking something with your staff (strike: 'drum' or 'bell'), so many times (times): your staff swung as in the hit step,
+// then a BOOM, or a DONG that rings on, the thing shaking, and rings of sound spreading out through the water from it.
+STEPS.strike = async s => {
+  const [x, y] = facing(), bell = s.strike === 'bell';
+  const o = mapObjects().find(o => x >= o.x && x < o.x + o.w && y >= o.y && y < o.y + o.h), piece = o && OBJECT_PIECES.find(p => p.key === objectKey(o));
+  const mid = o ? [(o.x + o.w / 2) * T, (o.y + o.h / 2) * T] : [(x + .5) * T, (y + .5) * T];
+  for (let i = 0; i < (s.times || 1); i++){
+    swing = {t0:performance.now(), x, y, with:weaponNow()}; SFX.swish();
+    await sleep(SWING_MS * SWING_CONTACT);
+    (bell ? SFX.bigBell : SFX.drum)(); seaRings.push({x:mid[0], y:mid[1], t0:performance.now(), bell});
+    if (piece) piece.rustle = performance.now(); shakeT = performance.now() - 400;
+    await sleep(SWING_MS * (1 - SWING_CONTACT) + (bell ? 700 : 200));
+  }
+};
+// A gift to wear, given you and put on at once (gift: its item in the wardrobe, such as the dragon kings' 金色 的 帽子, a
+// golden hat): on your monkey as you watch, then its card, its picture and what it's called, with what you're told (note);
+// then what your monkey says as it wears it, the wardrobe's sentence (我戴金色的帽子。), as when you put something on there.
+STEPS.gift = async (s, who, last) => {
+  const c = CLOTHES.find(x => x.item === s.gift), a = asSaid(c);
+  if (!S.wardrobe.owned.includes(c.item)) S.wardrobe.owned.push(c.item);
+  putOn(c.item); save(); redress(); SFX.right();
+  await showPicked({zh:c.item, en:a.en}, fill(s.note), {label:s.label || 'A gift for you', pic:a.pic});
+  toks(a.sentence).forEach(t => { if (WORDS[t]) useWord(t); });
+  await showDialog(speaker('player'), {t:[...toks(a.sentence), '。'], en:a.sentenceEn}, last ? {last:true} : {});
+};
+Object.assign(STEP_OPTIONS, {strike:['times'], gift:['note', 'label']});
+
+// The Dragon King's brothers coming, as you ring his bell (the brothers scene): rings of sound spreading out from the palace
+// through the deep blue, and three dragons swimming in to it, the South Sea's up from the south, red, the West Sea's in from
+// the west, white, and the North Sea's down from the north, black.
+const DRAGONS = [
+  {from:[-30, 210], to:[66, 92], body:'#D8483A', belly:'#F6C08A', mane:'#F2C84A', dark:'#6A1A14', delay:.3},
+  {from:[-80, 40], to:[60, 50], body:'#E6EEF2', belly:'#B4C4D0', mane:'#7AA4D0', dark:'#4A5A68', delay:.8},
+  {from:[260, -70], to:[176, 54], body:'#3A3E46', belly:'#7A808A', mane:'#7070C0', dark:'#101216', delay:1.3}
+];
+const seaDisc = (X, Y, r, c) => { for (let dy = -Math.floor(r); dy <= Math.floor(r); dy++){ const w = Math.floor(Math.sqrt(r * r - dy * dy)); R(b, Math.round(X) - w, Math.round(Y) + dy, 2 * w + 1, 1, c); } };
+function drawDragon(d, t, now){
+  const u = (t - d.delay) / 3.6; if (u <= 0) return;
+  const [fx, fy] = d.from, [tx, ty] = d.to, dx = tx - fx, dy = ty - fy, len = Math.hypot(dx, dy), nx = -dy / len, ny = dx / len;
+  const at = k => { const e = k >= 1 ? 1 : k <= 0 ? k : 1 - (1 - k) * (1 - k); return [fx + dx * e, fy + dy * e]; };   // (along its way in, slowing as it comes)
+  const N = 24, pts = [];
+  for (let i = 0; i < N; i++){
+    const [px, py] = at(Math.min(u, 1) - i * .045), wig = Math.sin(i * .6 - now / 170) * (2 + i * .1) * (i ? 1 : 0);
+    pts.push([px + nx * wig, py + ny * wig, i]);
+  }
+  for (let j = pts.length - 1; j >= 0; j--){   // (from its tail to its head)
+    const [x, y, i] = pts[j], r = 1.8 + 3.2 * (1 - i / N);
+    seaDisc(x, y, r + 1, d.dark); seaDisc(x, y, r, d.body); R(b, Math.round(x + nx * -r * .5), Math.round(y + ny * -r * .5), 1, 1, d.belly);
+    if (i % 3 === 1) R(b, Math.round(x + nx * (r + 1)), Math.round(y + ny * (r + 1)), 1, 1, d.mane);   // its mane, along its back
+  }
+  const [hx, hy] = pts[0], ux = dx / len, uy = dy / len;   // its head, looking the way it's going
+  seaDisc(hx, hy, 6, d.dark); seaDisc(hx, hy, 5, d.body); seaDisc(hx + ux * 5, hy + uy * 5, 3.2, d.dark); seaDisc(hx + ux * 5, hy + uy * 5, 2.4, d.body);   // (and its snout)
+  for (const s of [1, -1]){   // its horns, and its whiskers trailing behind
+    for (let k = 1; k <= 5; k++) R(b, Math.round(hx - ux * k + nx * s * (2 + k * .6)), Math.round(hy - uy * k + ny * s * (2 + k * .6)), 1, 1, '#E8D8A0');
+    for (let k = 1; k <= 9; k++) R(b, Math.round(hx + ux * 5 - ux * k * 1.4 + nx * s * (3 + Math.sin(now / 200 + k * .7 + s) * 1.5)), Math.round(hy + uy * 5 - uy * k * 1.4 + ny * s * (3 + Math.sin(now / 200 + k * .7 + s) * 1.5)), 1, 1, d.mane);
+  }
+  R(b, Math.round(hx + ux * 1.5 + nx * 2), Math.round(hy + uy * 1.5 + ny * 2), 1, 1, '#FFFFFF'); R(b, Math.round(hx + ux * 1.5 - nx * 2), Math.round(hy + uy * 1.5 - ny * 2), 1, 1, '#FFFFFF');   // its eyes
+}
+function drawBrothers(t, now){
+  const W = VW * T, H = VH * T;
+  for (let y = 0; y < H; y += 2) R(b, 0, y, W, 2, mix('#123A5E', '#071A2E', y / H));   // the deep
+  for (const s of [0, 1]) for (let y = 0; y < H; y += 2){ const w = 26 + Math.round(Math.sin(y / 13 + s * 2) * 6) + Math.round(y / 6); R(b, s ? W - w : 0, y, w, 2, s ? '#0A1E30' : '#0C2234'); }   // the trench's sides
+  const gate = mapArtPic('palaceGate'), gx = Math.round(W / 2 - gate.width / 2), gy = 104 - gate.height;
+  const glow = b.createRadialGradient(W / 2, gy + gate.height / 2, 4, W / 2, gy + gate.height / 2, 90);
+  glow.addColorStop(0, 'rgba(255,220,140,.4)'); glow.addColorStop(1, 'rgba(255,220,140,0)'); b.fillStyle = glow; b.fillRect(0, 0, W, H);
+  b.drawImage(gate, gx, gy);
+  for (const [at, bell] of [[.3, false], [.9, false], [1.7, true]]){   // the drum's BOOMs and the bell's DONG, spreading out through the sea
+    const k = (t - at) / (bell ? 2.6 : 1.6); if (k <= 0 || k >= 1) continue;
+    for (const d of [0, .14]){ const kk = k - d; if (kk <= 0) continue; b.globalAlpha = (1 - kk) * .8; ringPixels(b, W / 2, gy + 22, 10 + kk * 150, 6 + kk * 90, bell ? '#FFF0B0' : '#FFFFFF'); }
+    b.globalAlpha = 1;
+  }
+  for (const d of DRAGONS) drawDragon(d, t, now);
+  for (let i = 0; i < 8; i++){ const bx = (i * 37 + 11) % W, by = Math.round(H - ((now * .02 + i * 29) % (H + 10))); R(b, bx, by, 1, 1, 'rgba(232,250,255,.7)'); }   // bubbles rising
+}
+// Home with the staff (the swimHome scene, from the seabed with the sea turtle): up through the water in your bubble,
+// in the dragon kings' gifts, the turtle swimming beside you, the blue growing lighter and lighter; then out of the water
+// under the iron bridge in the Water Curtain Cave, the waterfall's curtain of light behind it.
+function drawSwimHome(t, now){
+  const W = VW * T, H = VH * T, turtle = sprite(PICTURES['海龟'].rows, PICTURES['海龟'].palette);
+  if (t < 5){
+    const up = clamp(t / 5, 0, 1);
+    for (let y = 0; y < H; y += 2) R(b, 0, y, W, 2, mix(mix('#1E5A86', '#8FD4EE', up), mix('#123A5E', '#3A8CBC', up), y / H));
+    b.save(); b.globalCompositeOperation = 'screen'; b.globalAlpha = .06 + up * .1; b.fillStyle = '#E6FBFF';
+    for (const [sx, w] of SEA_BEAMS){ b.beginPath(); b.moveTo(sx, -2); b.lineTo(sx + w, -2); b.lineTo(sx + w + 46, H + 2); b.lineTo(sx + 46, H + 2); b.closePath(); b.fill(); }
+    b.restore();
+    for (let i = 0; i < 7; i++){   // fish going by, down past you as you rise
+      const fish = mapArtPic(i % 3 ? 'fishYellow' : 'fishBlue'), fx = 20 + (i * 53) % (W - 40), fy = Math.round(((now / 22 + i * 41) % (H + 30)) - 15);
+      b.drawImage(fish, fx, fy);
+    }
+    if (t > 3.6){ const k = clamp((t - 3.6) / 1.4, 0, 1), sy = Math.round(-20 + k * 46); for (let x = 0; x < W; x += 3) R(b, x, sy + Math.round(Math.sin(x / 9 + now / 200) * 2), 3, 2, 'rgba(240,252,255,.9)'); }   // the surface, coming down to meet you
+    const my = Math.round(78 + Math.sin(now / 420) * 2), mx = 112;
+    b.drawImage(turtle, 70, Math.round(84 + Math.sin(now / 380) * 3), 24, 24);
+    b.drawImage(monkeySprite('player', 'up', false), mx, my); drawPlumes(b, mx, my, 'up');
+    b.globalAlpha = .75; for (const [dx, dy] of RING) R(b, mx + 8 + dx, my + 7 + dy, 1, 1, '#E9FBFF'); b.globalAlpha = 1;
+    for (let i = 0; i < 6; i++){ const by = Math.round(my - ((now * .03 + i * 13) % 60)); R(b, mx + 6 + (i % 3) * 3, by, 1, 1, 'rgba(255,255,255,.85)'); }
+    if (t > 4.6){ b.globalAlpha = clamp((t - 4.6) / .4, 0, 1); R(b, 0, 0, W, H, '#F4FCFF'); b.globalAlpha = 1; }   // bursting out into the light
+    return;
+  }
+  // the Water Curtain Cave: its rock, the waterfall's curtain of light at the back, the iron bridge, and the pool under it
+  for (let y = 0; y < H; y += 4) R(b, 0, y, W, 4, mix('#2A231E', '#4A3E33', y / H));
+  for (let i = 0; i < 60; i++) R(b, Math.floor(rnd(i, 41) * W), Math.floor(rnd(i, 42) * 60), 2 + Math.floor(rnd(i, 43) * 5), 2, i % 2 ? '#3A312A' : '#55483C');
+  R(b, 30, 0, W - 60, 26, '#BFE8F4');
+  for (let i = 0; i < 40; i++){ const x = 30 + (i * 23) % (W - 60), y = Math.round((now / 6 + i * 17) % 30) - 4; R(b, x, y, 1, 4, '#FFFFFF'); }   // the waterfall, seen from behind
+  R(b, 30, 24, W - 60, 2, '#7AAFC4');
+  R(b, 0, 86, W, H - 86, '#2E6E96'); for (let x = 0; x < W; x += 4) R(b, x, 86 + (x % 8 ? 0 : 1), 3, 1, '#7EC0E0');   // the pool
+  for (const x of [20, 214]){ R(b, x, 34, 6, 38, '#3A3E46'); R(b, x, 34, 2, 38, '#5A606A'); }   // the iron bridge's posts
+  R(b, 0, 40, W, 6, '#4A4E58'); R(b, 0, 40, W, 1, '#7A808A'); R(b, 0, 46, W, 2, '#26282E');   // its deck
+  R(b, 0, 30, W, 1, '#5A606A'); for (let x = 4; x < W; x += 12) R(b, x, 30, 1, 10, '#5A606A');   // its railing
+  const k = clamp((t - 5) / .7, 0, 1), my = Math.round(84 - k * 10), mx = 112;   // you, coming up out of the water
+  const you = monkeySprite('player', 'down', now % 3200 < 130);
+  b.drawImage(you, 0, 0, 16, 12, mx, my, 16, 12); drawPlumes(b, mx, my, 'down');
+  b.drawImage(turtle, 0, 0, 32, 20, 78, 72, 24, 15);
+  for (const [x, w] of [[mx - 2, 20], [76, 28]]) R(b, x, 86 - 2, w, 1, '#D6F2FF');
+  const ring = ((now - 0) / 900) % 1; b.globalAlpha = 1 - ring; ringPixels(b, mx + 8, 85, 10 + ring * 18, 2 + ring * 3, '#BFE8F4'); b.globalAlpha = 1;
+  if (t < 5.4){ b.globalAlpha = 1 - clamp((t - 5) / .4, 0, 1); R(b, 0, 0, W, H, '#F4FCFF'); b.globalAlpha = 1; }
+}
+Object.assign(SCENE_ART, {brothers: drawBrothers, swimHome: drawSwimHome});

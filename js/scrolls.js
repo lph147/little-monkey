@@ -422,7 +422,7 @@ function sealNote(p){   // under a full page's heading, till it's sealed: who to
 function scrollGift(p){
   const n = p.words.length;
   if (n >= 12){
-    const band = CLOTHES.find(c => c.colours && lvl(c.colour) >= 1 && !S.wardrobe.owned.includes(c.item));
+    const band = CLOTHES.find(c => c.word === '头带' && c.colours && lvl(c.colour) >= 1 && !S.wardrobe.owned.includes(c.item));   // (a headband: never the dragon kings' gifts, Area 3's, which come in a colour too)
     if (band) return [{give:band.item}, {message:`And a ${WORDS[band.colour].en.split(',')[0]} {头带|headband} for you! Put it on from the menu: 衣服 (clothes).`}];
   }
   if (n >= 7){

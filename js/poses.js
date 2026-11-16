@@ -55,7 +55,7 @@ const POSES = (() => {
     for (const [x, y] of cells) for (const [dx, dy] of N4){ const nx = x + dx, ny = y + dy; if (own.has(nx + ',' + ny)) continue; const n = get(g, nx, ny); if (n === '.' || over.includes(n)) put(g, nx, ny, e); }
   }
   // what you're wearing (your clothes and headband, as monkeySprite draws them)
-  const wear = () => ({coat:wornOn('body'), hat:wornOn('head'), shoes:wornOn('feet'), band:!!headband()});
+  const wear = () => ({coat:wornOn('body'), hat:wornOn('head'), shoes:wornOn('feet'), band:!!headband(), armour:lookOn('body') === 'goldArmour', cap:lookOn('head') === 'goldCap', cloud:lookOn('feet') === 'cloudShoes'});
   // you: a body (BODIES' name), moved by (dx, dy): your clothes on it, and from behind, your tail curled up beside you
   function you(g, name, w, dx = 0, dy = 0){
     const bd = BODIES[name];
@@ -68,10 +68,17 @@ const POSES = (() => {
         if (w.band && y === bd.band && x >= 3 && x <= 12 && c === 'f') c = 'b';
         if (w.coat && y >= bd.coat[0] && y <= bd.coat[1] && 'fsb'.includes(c)) c = y === bd.belt ? 'D' : 'C';
         if (w.shoes && y >= 14 && c === 'f') c = 'S';
+        if (w.armour && y >= bd.coat[0] && y <= bd.coat[1] && 'fsb'.includes(c)) c = armourAt(x, y, bd.belt);   // (the dragon kings' gifts: js/art.js)
+        if (w.cloud && y >= 14 && c === 'f') c = cloudAt(x);
         put(g, O + x + dx, O + y + dy, c);
       });
     });
     if (w.hat) HAT.forEach((r, j) => [...r].forEach((c, x) => { if (c !== '.') put(g, O + x + dx, O + bd.top - 1 + j + dy, c); }));
+    if (w.cap){   // the golden hat, and its feathers up over your square
+      const view = name.startsWith('side') ? 'side' : name.startsWith('back') ? 'back' : 'front';
+      CAP[view].forEach((r, j) => [...r].forEach((c, x) => { if (c !== '.') put(g, O + x + dx, O + bd.top - 1 + j + dy, c); }));
+      for (const [x, y, c] of plumePixels(view === 'side' ? 'right' : 'down')) put(g, O + x + dx, O + bd.top - 1 + y + dy, c);
+    }
   }
   // an arm, through these points (your own pixels), its paw at the end: a sleeve (in your coat) or fur, with a darker fur
   // edge where it crosses you, outlined where it meets nothing; it gives back where its paw is, in the frame's pixels
@@ -79,9 +86,9 @@ const POSES = (() => {
     const cells = [];
     for (let i = 1; i < pts.length; i++) for (const p of line(...pts[i - 1], ...pts[i])) if (!cells.some(c => c[0] === p[0] && c[1] === p[1])) cells.push(p);
     const fr = cells.map(([x, y]) => [x + O + dx, y + O + dy]), own = new Set(fr.map(([x, y]) => x + ',' + y));
-    fr.forEach(([x, y], i) => put(g, x, y, i === fr.length - 1 ? 'h' : w.coat ? 'K' : 'f'));
+    fr.forEach(([x, y], i) => put(g, x, y, i === fr.length - 1 ? 'h' : w.coat ? 'K' : w.armour ? 'A' : 'f'));
     for (const [x, y] of fr) for (const [ex, ey] of N4){ const nx = x + ex, ny = y + ey; if (own.has(nx + ',' + ny)) continue; const n = get(g, nx, ny);
-      if (n === '.' || 'aJk'.includes(n)) put(g, nx, ny, 'o'); else if (!w.coat && 'fs'.includes(n)) put(g, nx, ny, 'F'); }   // (never over a handle: your paw holds it)
+      if (n === '.' || 'aJk'.includes(n)) put(g, nx, ny, 'o'); else if (!w.coat && !w.armour && 'fs'.includes(n)) put(g, nx, ny, 'F'); }   // (never over a handle: your paw holds it)
     return fr[fr.length - 1];
   }
   const at = (x, y, dx = 0, dy = 0) => [x + O + dx, y + O + dy];
@@ -326,16 +333,16 @@ const POSES = (() => {
     }
     return {rows, ...info};
   }
-  const BARE = {coat:false, hat:false, shoes:false, band:false};
+  const BARE = {coat:false, hat:false, shoes:false, band:false, armour:false, cap:false, cloud:false};
   const cache = new Map();
   // its picture, drawn once for each moment and what you're wearing (and its paw, in your own square's pixels); or another
   // monkey's (kind: a character's id), in its own colours, such as a little monkey in training swinging its stick
   function picture(name, dir, m, {kind = 'player', held = '棍子'} = {}){
     const me = kind === 'player', w = me ? wear() : BARE, h = HELD[held] || HELD['棍子'];
-    const key = [name, dir, m, kind, held, w.coat, w.hat, w.shoes, me && headband()].join('|');
+    const key = [name, dir, m, kind, held, w.coat, w.hat, w.shoes, me && headband(), w.armour, w.cap, w.cloud].join('|');
     if (!cache.has(key)){
       const g = grid(name, dir, m, w, h), mine = p => p && [p[0] - O, p[1] - O], pal = PALS[kind] || PALS.player;
-      const colours = me ? {...PALS.player, ...CLOTHES_PAL, ...(headband() ? {b:headband()} : {}), ...PAL} : {...PAL, ...pal, F:shade(pal.f, -.2), h:mix(pal.s, pal.f, .35)};
+      const colours = me ? {...PALS.player, ...CLOTHES_PAL, ...GIFT_PAL, ...PLUME_PAL, ...(headband() ? {b:headband()} : {}), ...PAL} : {...PAL, ...pal, F:shade(pal.f, -.2), h:mix(pal.s, pal.f, .35)};
       cache.set(key, {canvas:sprite(g.rows, {...colours, g:h.pal.l, G:h.pal.k, y:h.pal.u || h.pal.k}), ...Object.fromEntries(POINTS.map(k => [k, mine(g[k])])), step:g.step});
     }
     return cache.get(key);

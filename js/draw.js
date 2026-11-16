@@ -322,6 +322,7 @@ function drawPuff(X, Y, p){
 // A little one (small, in the area's characters: a baby monkey, born while you were away) is drawn smaller, at the bottom
 // of its square (SMALL_PX of a square's 16).
 const SMALL_PX = 11, SMALL = new Set(ALL_NPCS.filter(n => n.small).map(n => n.id));
+let plumesAt = null;   // (where your monkey was drawn this frame, for its feathers: drawn again over the sea's water, js/sea.js)
 function drawEntityMonkey(kind, X, Y, dir, now, bob, step = 0, seed = 0){
   const blink = (now + seed*977) % 3600 < 130;
   if (SMALL.has(kind)){
@@ -330,6 +331,7 @@ function drawEntityMonkey(kind, X, Y, dir, now, bob, step = 0, seed = 0){
   }
   R(b, X+4, Y+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, X+3, Y+14, 10, 1, 'rgba(0,0,0,.12)');
   b.drawImage(monkeySprite(kind, dir, blink, step), X, Y - bob);
+  if (kind === 'player'){ drawPlumes(b, X, Y - bob, dir); plumesAt = [X, Y - bob, dir]; }   // (the golden hat's feathers, up over your square: js/art.js)
 }
 // A big object's picture (js/art.js), where it stands, with a little shake that settles while it's rustling.
 const RUSTLE = 320;   // how long a rustle lasts (ms)
@@ -817,7 +819,7 @@ const drawChop = (dir, PX, PY, t0, now) => drawPose('chop', dir, (now - t0) / SW
 // (PX, PY), the time, and what you're doing (a: its kind, when it began, t0, the square it's done to, x and y, and the
 // rest); it draws you, empty-handed but for what you're using. What flies off somewhere else, over everything, such as a
 // sack you toss or a fruit falling from a tree: drawActFx.
-const actMonkey = (PX, PY, dir, lift = 0) => { R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)'); b.drawImage(monkeySprite('player', dir, false, 0, true), PX, PY - lift); };
+const actMonkey = (PX, PY, dir, lift = 0) => { R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)'); b.drawImage(monkeySprite('player', dir, false, 0, true), PX, PY - lift); drawPlumes(b, PX, PY - lift, dir); };
 const lerp = (a, z, k) => a + (z - a) * k, ease = k => 1 - (1 - k) * (1 - k);
 const itemPic = w => { const pic = PICTURES[w]; return pic && (FORMS['eat ' + w] || (FORMS['eat ' + w] = sprite(pic.rows, pic.palette))); };
 let SACK_HELD = null;   // (drawn once, the first time you lift one)

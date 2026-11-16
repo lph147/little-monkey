@@ -452,3 +452,14 @@ MAP_SPRITES['水 牛'] = {...MAP_SPRITES['牛'],
     m:'#5E6065', n:'#4E4A46', o:'#6E6863', p:'#5E5853', q:'#4E4A46', r:'#7A746E', s:'#3E3A36', t:'#6A645F', u:'#2E2A26', v:'#4A4C50', w:'#2E2E30', x:'#2E2E30',
     y:'#6E6863', z:'#4A4C50', A:'#1E1E20', B:'#1E1E20', C:'#1E1E20', D:'#2A2A2C'}
 };
+// The Dragon King's three younger brothers (Area 3, Chapter 5), the Dragon Kings of the South, West and North Seas: his
+// drawing, each in colours of his own, his dragon's head red, white or black (the colours of the dragons of the south, the
+// west and the north) and a robe to go with it, so the four of them are easily told apart.
+for (const [name, head, robe] of [
+  ['南海龙王', ['#E87A6A', '#8A2A22', '#C24A3A', '#F6B0A0', '#A83A2E', '#D86454', '#4A1E18', '#2A1210', '#3A1A14', '#F0C8BC'], ['#F08A64', '#F8B08A', '#B83A24', '#D8543A', '#8A2A18', '#7A2414', '#3A140C']],
+  ['西海龙王', ['#E6EEF2', '#8A98A4', '#C2CED6', '#FFFFFF', '#A4B2BC', '#D4DEE4', '#4A545C', '#2A3036', '#3A4248', '#F4F7F8'], ['#B8D4EC', '#D4E6F4', '#6A94BC', '#8AB4D8', '#4A6A8C', '#3A5470', '#1C2A38']],
+  ['北海龙王', ['#6A7078', '#22262C', '#3E444C', '#8A9098', '#2E3238', '#545A62', '#16181C', '#0C0D10', '#1A1C20', '#A4AAB2'], ['#8A8AD0', '#A8A8E0', '#34347A', '#4A4A9A', '#24245A', '#1E1E4A', '#101028']]
+]){
+  const [e, f, g, j, k, m, c, d, p, z] = head, [r, t, x, y, s, A, B] = robe;
+  MAP_SPRITES[name] = {...MAP_SPRITES['龙王'], palette:{...MAP_SPRITES['龙王'].palette, e, f, g, j, k, m, c, d, p, z, r, t, x, y, s, A, B}};
+}

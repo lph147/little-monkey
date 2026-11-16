@@ -330,6 +330,7 @@ const WORD_BANK = {
   '短': {py:'duǎn', en:'short', pic:'📐', area:3, category:'describing', alike:['棍子']},   // (you, telling the pillar: 变短！)
   '金色': {py:'jīnsè', en:'golden', pic:'🏅', area:3, category:'colours', alike:['黄色', '金子']},   // (the staff, shrinking in a flash of golden light: 金色的光！)
   '万': {py:'wàn', en:'ten thousand', pic:'🧮', area:3, category:'numbers', alike:['千', '百']},   // (the staff's writing, read out by the Dragon King: 一万三千五百斤！)
+  '钟': {py:'zhōng', en:'bell', pic:'🔔', area:3, category:'items'},   // (the Dragon King's bell, beside his throne: you ring it with your staff, to call his brothers)
   '多少': {py:'duōshao', en:'how many, how much', area:3, category:'questions'},   // (the Dragon King: 这个多少斤？; 几 for a few, 多少 for any number: SIDE_BY_SIDE)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
 
   // Heard in sentences
@@ -409,7 +410,10 @@ const WORD_BANK = {
   '水脏洞': {py:'Shuǐzàng Dòng', en:'Water-Belly Cave (a name)'},   // (the Demon of Havoc's cave, over its mouth)
   '龙王': {py:'Lóngwáng', en:'the Dragon King'},   // (a name: Area 3's, under the sea)
   '虾兵': {py:'xiābīng', en:'shrimp soldiers'}, '蟹将': {py:'xièjiàng', en:'crab general'}, '夜叉': {py:'yèchā', en:'sea guard (a yaksha)'},   // (names: the Dragon Palace's folk)
-  '龙婆': {py:'Lóngpó', en:'the Dragon Queen'}, '这个': {py:'zhège', en:'this one'},   // (the Dragon Queen's name; and this one, as the Dragon King points at a weapon)
+  '龙婆': {py:'Lóngpó', en:'the Dragon Queen'},   // (the Dragon Queen's name)
+  '南海龙王': {py:'Nánhǎi Lóngwáng', en:'the Dragon King of the South Sea'}, '西海龙王': {py:'Xīhǎi Lóngwáng', en:'the Dragon King of the West Sea'},
+  '北海龙王': {py:'Běihǎi Lóngwáng', en:'the Dragon King of the North Sea'},   // (names: the Dragon King's three younger brothers, step 9)
+  '这个': {py:'zhège', en:'this one'},   // (this one, as the Dragon King points at a weapon)
   '三十': {py:'sānshí', en:'thirty'}, '四十': {py:'sìshí', en:'forty'}, '五十': {py:'wǔshí', en:'fifty'}, '六十': {py:'liùshí', en:'sixty'},
   '七十': {py:'qīshí', en:'seventy'}, '八十': {py:'bāshí', en:'eighty'}, '九十': {py:'jiǔshí', en:'ninety'},   // (the tens, heard as the crab general counts his soldiers: made of words you know, not words to catch)
   '找': {py:'zhǎo', en:'to look for'},
@@ -443,6 +447,7 @@ const WORD_BANK = {
   '它': {py:'tā', en:'it'},
   '眼睛': {py:'yǎnjing', en:'eyes'},
   '给': {py:'gěi', en:'to give', pic:'🤲', area:3, category:'actions'},   // (heard all game, caught at last: the Dragon King, handing you the staff, 给你！)
+  '还': {py:'hái', en:'as well, too'}, '打': {py:'dǎ', en:'to hit, to beat (a drum)'}, '弟弟': {py:'dìdi', en:'younger brother'},   // (you, asking for clothes as well as the staff; the Dragon King's three younger brothers, and his drum)
   '宝库': {py:'bǎokù', en:'treasury'}, '根': {py:'gēn', en:'(counts long things: 一根柱子, a pillar)'}, '铁': {py:'tiě', en:'iron'},   // (the Dragon Queen's whisper)
   '金箍棒': {py:'Jīngū Bàng', en:'staff'}, '如意金箍棒': {py:'Rúyì Jīngū Bàng', en:'the As-You-Will Gold-Banded Staff'},   // (names: your staff, and the name written on it)
   '光': {py:'guāng', en:'light', pic:'✨', area:3, category:'nature', alike:['星星', '火']}   // (heard all game, caught at last: the palace's glow at the bottom of the trench, 下面有光！)

@@ -104,7 +104,7 @@ test('the seabed: sand, seaweed, shells, rocks and coral drawn from the shape ki
 test('the dive scene draws, start to end', () => {
   const g = loadGame({dom: true, save: save(3, {place: 'seabed', x: 11, y: 6, dir: 'down'})});
   for (const t of [0, 1, 2, 4, 6, 8, 9]) g.run(`drawDive(${t}, ${t * 1000})`);
-  assert.deepEqual(get(g, 'Object.keys(AREA.scenes)'), ['dive']);
+  assert.deepEqual(get(g, 'Object.keys(AREA.scenes)'), ['dive', 'brothers', 'swimHome']);
   assert.equal(get(g, 'AREA.scenes.dive.part'), 'seabed', 'watch it again from Story so far');
   assert.equal(g.run("typeof SCENE_ART.dive"), 'function');
 });

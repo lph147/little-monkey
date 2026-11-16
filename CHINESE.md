@@ -1473,8 +1473,15 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 变大！ | biàn dà! | Get bigger! |  |  |
 | 金色的光！ | jīnsè de guāng! | A golden light! |  |  |
 | 一万三千五百斤！ | yī wàn sān qiān wǔ bǎi jīn! | Thirteen thousand five hundred jin! | 东海龙王 (Dragon King of the Eastern Sea) |  |
-| 给你！ | gěi nǐ! | Here you are! | 东海龙王 (Dragon King of the Eastern Sea) |  |
+| 给你！ | gěi nǐ! | Here you are! | 东海龙王 (Dragon King of the Eastern Sea), 南海龙王 (Dragon King of the South Sea), 西海龙王 (Dragon King of the West Sea), 北海龙王 (Dragon King of the North Sea) |  |
 | 金箍棒是你的了！ | Jīngū Bàng shì nǐ de le! | The staff is yours now! | 龙婆 (Dragon Queen) |  |
+| 我还要衣服！ | wǒ hái yào yīfu! | I want some clothes too! | 小猴子 (You) |  |
+| 我没有。我有三个弟弟！ | wǒ méiyǒu. wǒ yǒu sān gè dìdi! | I haven’t got any. But I’ve got three younger brothers! | 东海龙王 (Dragon King of the Eastern Sea) |  |
+| 打鼓吧！ | dǎ gǔ ba! | Beat the drum! | 东海龙王 (Dragon King of the Eastern Sea) |  |
+| 还有钟！ | hái yǒu zhōng! | And the bell! | 东海龙王 (Dragon King of the Eastern Sea) |  |
+| 他们来了！ | tāmen lái le! | They’re here! | 东海龙王 (Dragon King of the Eastern Sea) |  |
+| 好看！ | hǎokàn! | Lovely! | 南海龙王 (Dragon King of the South Sea), 西海龙王 (Dragon King of the West Sea), 北海龙王 (Dragon King of the North Sea) |  |
+| 我们回家吧！ | wǒmen huíjiā ba! | Let’s go home! | 海龟 (sea turtle) |  |
 | 八百斤！ | bā bǎi jīn! | 800 jin! |  |  |
 | 一千！ | yī qiān! | 1,000! |  |  |
 | 两千！ | liǎng qiān! | 2,000! |  |  |
@@ -1517,6 +1524,9 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 我戴棕色的头带 | wǒ dài zōngsè de tóudài | I wear my brown headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴橙色的头带 | wǒ dài chéngsè de tóudài | I wear my orange headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴粉色的头带 | wǒ dài fěnsè de tóudài | I wear my pink headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴金色的帽子 | wǒ dài jīnsè de màozi | I wear my golden hat. | You, putting on a dragon king’s gift (Area 3), and in the wardrobe |  |
+| 这是金色的衣服 | zhè shì jīnsè de yīfu | These are golden clothes. | You, putting on a dragon king’s gift (Area 3), and in the wardrobe |  |
+| 这是白色的鞋 | zhè shì báisè de xié | These are white shoes. | You, putting on a dragon king’s gift (Area 3), and in the wardrobe |  |
 
 ### What you pick and see
 
@@ -1563,6 +1573,20 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 水里有很多鱼。 | shuǐ lǐ yǒu hěn duō yú. | There are lots of fish in the water. |  |
 | 孙悟空在海下面！ | Sūn Wùkōng zài hǎi xiàmiàn! | Sun Wukong is under the sea! |  |
 
+### Scene: the dragon kings coming
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 南边，西边，北边…… | nánbian, xībian, běibian… | South, west, north… |  |
+| 三个龙王来了！ | sān gè Lóngwáng lái le! | Three dragon kings are coming! |  |
+
+### Scene: the swim home
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 孙悟空回家了。 | Sūn Wùkōng huíjiā le. | Sun Wukong is going home. |  |
+| 我回来了！ | wǒ huílai le! | I’m back! |  |
+
 ### Names
 
 | Chinese | Pinyin | English | Notes |
@@ -1571,6 +1595,9 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 蟹将 | xièjiàng | Crab general |  |
 | 东海龙王 | Dōnghǎi Lóngwáng | Dragon King of the Eastern Sea |  |
 | 龙婆 | Lóngpó | Dragon Queen |  |
+| 南海龙王 | Nánhǎi Lóngwáng | Dragon King of the South Sea |  |
+| 西海龙王 | Xīhǎi Lóngwáng | Dragon King of the West Sea |  |
+| 北海龙王 | Běihǎi Lóngwáng | Dragon King of the North Sea |  |
 | 虾兵 | xiābīng | Shrimp soldier |  |
 | 虾兵 | xiābīng | Shrimp soldier |  |
 | 虾兵 | xiābīng | Shrimp soldier |  |
@@ -1639,6 +1666,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 短 | duǎn | short |  |
 | 金色 | jīnsè | golden |  |
 | 万 | wàn | ten thousand |  |
+| 钟 | zhōng | bell |  |
 | 多少 | duōshao | how many, how much |  |
 | 几 | jǐ | how many |  |
 | 给 | gěi | to give |  |
@@ -1757,6 +1785,9 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 蟹将 | xièjiàng | crab general |  |
 | 夜叉 | yèchā | sea guard (a yaksha) |  |
 | 龙婆 | Lóngpó | the Dragon Queen |  |
+| 南海龙王 | Nánhǎi Lóngwáng | the Dragon King of the South Sea |  |
+| 西海龙王 | Xīhǎi Lóngwáng | the Dragon King of the West Sea |  |
+| 北海龙王 | Běihǎi Lóngwáng | the Dragon King of the North Sea |  |
 | 这个 | zhège | this one |  |
 | 三十 | sānshí | thirty |  |
 | 四十 | sìshí | forty |  |
@@ -1792,6 +1823,9 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 动 | dòng | to move |  |
 | 它 | tā | it |  |
 | 眼睛 | yǎnjing | eyes |  |
+| 还 | hái | as well, too |  |
+| 打 | dǎ | to hit, to beat (a drum) |  |
+| 弟弟 | dìdi | younger brother |  |
 | 宝库 | bǎokù | treasury |  |
 | 根 | gēn | (counts long things: 一根柱子, a pillar) |  |
 | 铁 | tiě | iron |  |

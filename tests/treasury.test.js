@@ -69,7 +69,7 @@ test('A at the pillar: 太长了！ (长); tell it what to do, wrong and right: 
   choose(g, ['变长', '变短', '变大', '变小']);
   await press(g, 7, 6, 'up');
   assert.deepEqual(said(g), ['player: 太长了！', 'player: 变长！', 'player: 变短！', 'player: 变大！', 'player: 变小！', 'player: 金色的光！',
-    'dragonKing: 一万三千五百斤！', 'dragonKing: 给你！', 'dragonQueen: 金箍棒是你的了！']);
+    'dragonKing: 一万三千五百斤！', 'dragonKing: 给你！', 'dragonQueen: 金箍棒是你的了！', 'player: 我还要衣服！', 'dragonKing: 我没有。我有三个弟弟！']);
   const told = notes(g);
   assert.deepEqual(told.filter(n => /^card:/.test(n)), ['card: 长', 'card: 短', 'card: 金色', 'card: 万', 'card: 给'], 'one new word at a time');
   assert.ok(told.some(n => /grow even 长 \(longer\)/.test(n)) && told.some(n => /even thicker/.test(n)), 'what you told it wrongly, you see it do');
@@ -78,7 +78,7 @@ test('A at the pillar: 太长了！ (长); tell it what to do, wrong and right: 
   assert.equal(p(g, 'staff'), 4);
   assert.equal(get(g, 'weaponNow()'), '金箍棒');
   for (const y of [1, 3, 5]) assert.equal(get(g, `tileAt(7, ${y}).walk`), true, 'the pillar’s gone from where it stood');
-  assert.deepEqual(get(g, 'getTasks().map(t => t.id)'), ['staff']);
+  assert.deepEqual(get(g, 'getTasks().map(t => t.id)'), ['drum'], 'and on to the drum and the bell (step 9: tests/gifts.test.js)');
 });
 
 test('Not now, and coming back: the pillar keeps what you’ve told it, and A carries on from there', async () => {
@@ -104,7 +104,7 @@ test('picked up but not given yet (staff 3): the Dragon King has more for you, a
   choose(g, []);
   assert.deepEqual(get(g, 'getTasks().map(t => t.id)'), ['given']);
   await press(g, 6, 7, 'left');
-  assert.deepEqual(said(g), ['dragonKing: 一万三千五百斤！', 'dragonKing: 给你！', 'dragonQueen: 金箍棒是你的了！']);
+  assert.deepEqual(said(g), ['dragonKing: 一万三千五百斤！', 'dragonKing: 给你！', 'dragonQueen: 金箍棒是你的了！', 'player: 我还要衣服！', 'dragonKing: 我没有。我有三个弟弟！']);
   assert.equal(p(g, 'staff'), 4);
 });
 

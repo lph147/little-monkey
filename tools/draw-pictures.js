@@ -2074,6 +2074,39 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(Rc(2, 19.5, 22, 3), RED, {light: '#F06A5A', dark: '#A82828'});
     p.fill(Pg([[24, 19.5], [30, 13.5], [30, 16.5], [24, 22.5]]), '#B83228');
   },
+  '钟': p => {   // bell: a great bronze bell, green with age, hanging by its loop, wider at its mouth, rows of knobs on it and a gold disc where it's struck (unlike 鼓: a red drum, its sticks crossed)
+    p.fill(and(O(16, 4.5, 3.6, 3.4), not(O(16, 4.5, 1.8, 1.6))), '#8A6A32', {light: '#B8924A', edge: true});   // its loop
+    p.fill(Pg([[9, 8], [23, 8], [25.5, 22], [27, 29], [16, 26.5], [5, 29], [6.5, 22]]), '#5E8A6E', {light: '#8CB89A', dark: '#36584A', edge: true});   // its body, its mouth arched
+    p.flat(or(Rc(8, 13, 16, 1.2), Rc(7, 21, 18, 1.2)), '#C8A050');                                // its bands
+    for (const y of [10, 16.5]) for (const x of [10.5, 13.5, 16.5, 19.5, 22]) p.dot(Math.round(x - (y > 12 ? .5 : 0)), Math.round(y), '#D8BC6A');   // its knobs
+    p.fill(O(16, 24, 2.4, 1.6), '#E2B23A', {light: '#F8DC80', edge: true});                       // where it's struck
+  },
+  // a few words together: the dragon kings' gifts (Area 3), each in the colour it's called by (金色 的 帽子, a golden hat)
+  '金色 的 帽子': p => {   // a golden hat: purple on top, a gold band with a red jewel at its front, gold wings at its sides, and two long red feathers curving up and out (unlike 帽子: a straw hat; 头带: a cloth band)
+    for (const s of [1, -1]){ const X = x => 16 + s * (x - 16);
+      p.fill(path([[X(13.5), 13], [X(10.5), 8.5], [X(7), 5], [X(3.5), 3], [X(1.5), 3.5]], .95), '#C8502E', {light: '#E8784E', dark: '#8A3A1E', edge: true}); }   // its feathers
+    p.fill(and(O(16, 19, 7.5, 7), (x, y) => y <= 19), '#7A3FA8', {light: '#A874D8', dark: '#542A78', edge: true});   // its top
+    p.fill(O(16, 11.6, 1.7, 1.6), '#E2B23A', {light: '#FFE38A', edge: true});                     // the knob on top
+    for (const s of [1, -1]) p.fill(Pg([[16 + s * 8, 20], [16 + s * 14.5, 15.5], [16 + s * 13, 22], [16 + s * 8.5, 24]]), '#E2B23A', {light: '#FFE38A', dark: '#9A6A14', edge: true});   // its wings
+    p.fill(Rc(7.5, 19, 17, 6, 1), '#E2B23A', {light: '#FFE38A', dark: '#9A6A14', edge: true});    // its band
+    p.fill(O(16, 22, 2.1, 2), '#D8343A', {light: '#F87070', edge: true});                        // the jewel
+  },
+  '金色 的 衣服': p => {   // golden clothes: the dragon kings' armour, a gold tunic of little scales, its shoulders plated, a red belt (unlike 衣服: a brown padded coat)
+    p.fill(Pg([[9, 4], [23, 4], [30, 12], [26, 17], [24, 13], [24, 30], [8, 30], [8, 13], [6, 17], [2, 12]]), '#E2B23A', {light: '#FFE38A', dark: '#9A6A14', edge: true});
+    for (let r = 0; r < 7; r++) for (let c = 0; c < 4; c++){ const x = 10 + c * 4 + (r % 2 ? 2 : 0), y = 9 + r * 3;   // its scales
+      if (x < 23 && !(y >= 19 && y <= 22)) p.flat(and(O(x, y, 1.8, 1.4), (xx, yy) => yy >= y), '#B8861E'); }
+    p.fill(Pg([[12.5, 4], [19.5, 4], [16, 8.4]]), '#C8452E');                                     // its collar
+    for (const x of [6, 26]) p.fill(O(x, 11.5, 4, 2.6), '#F2C84E', {light: '#FFF0A8', dark: '#9A6A14', edge: true});   // its shoulder plates
+    p.fill(Rc(8, 19.5, 16, 3, 1), '#D8343A', {light: '#F06A5A', dark: '#9A2222'});               // its belt
+    p.fill(O(16, 21, 2, 1.6), '#FFE38A', {edge: true});                                          // its buckle
+  },
+  '白色 的 鞋': p => {   // white shoes: the dragon kings' cloud shoes, white, pale blue cloud curls on them, their toes turned up (unlike 鞋: black cloth shoes)
+    for (const [x, y] of [[2, 13], [13, 20]]){
+      p.fill(Pg([[x, y + 6], [x + 4, y], [x + 12, y], [x + 15, y + 1.5], [x + 18, y - 1.5], [x + 17.5, y + 4], [x + 17, y + 8], [x, y + 8]]), '#F2F7FC', {light: '#FFFFFF', dark: '#B4C8E2', edge: true});
+      p.fill(Rc(x, y + 7, 17, 2.2), '#8AA6C8');                                                  // the sole
+      for (const [cx, cy] of [[x + 6.5, y + 4], [x + 11, y + 3.6]]) p.flat(and(O(cx, cy, 2.2, 1.8), not(O(cx + .6, cy + .5, 1.1, .9))), '#7A9CC8');   // cloud curls
+    }
+  },
   '给': p => {   // to give: a paw holding out a present to another paw, open to take it
     p.fill(path([[0, 29], [9, 22]], 2.6), FUR, {dark: '#8A5428', edge: true});               // the giving arm
     p.fill(O(11.5, 20.5, 3.4, 2.8), SKIN, {dark: '#D8A878', edge: true});                    // its paw
@@ -2433,6 +2466,24 @@ const MAP_ART_DRAWINGS = {
     p.fill(O(30, 12, 2, 1.6), '#E2B23A');
     p.fill(Rc(10, 20, 24, 11, 2), '#E2B23A', {light: '#F8DC80'});
     p.fill(Rc(8, 18, 4, 12, 1), '#D49E2A'); p.fill(Rc(32, 18, 4, 12, 1), '#D49E2A');
+  }},
+  // the throne hall's (step 9): the Dragon King's drum and bell, either side of his throne, to call his brothers with
+  palaceDrum: {size: 34, draw: p => {   // a big red drum on its stand, its pale skin facing you, a ring of gold studs round it
+    p.fill(or(path([[6, 33], [26, 19]], 1.3), path([[28, 33], [8, 19]], 1.3)), '#6A3A1E', {light: '#8A5A32', edge: true});   // its stand
+    p.fill(O(17, 15, 13, 12.5), '#B8322A', {light: '#D8584A', dark: '#7A1E1A', edge: true});     // its body
+    p.fill(O(17, 15, 10, 9.5), '#F2E2B8', {light: '#FFF6DE', dark: '#C9B07A', edge: true});     // its skin
+    for (let i = 0; i < 12; i++){ const a = i * Math.PI / 6; p.dot(Math.round(17 + 11.5 * Math.cos(a)), Math.round(15 + 11 * Math.sin(a)), '#F2C14E'); }   // its studs
+    p.flat(and(O(17, 15, 4, 3.8), not(O(17, 15, 2.6, 2.4))), '#D8343A');                        // a red ring in its middle
+  }},
+  palaceBell: {size: 36, draw: p => {   // a great bronze bell hanging in a red frame, its beam's ends turned up
+    p.fill(or(Rc(3, 6, 3, 30), Rc(30, 6, 3, 30)), '#B8322A', {light: '#D8584A', dark: '#7A1E1A', edge: true});   // its posts
+    p.fill(Pg([[0, 3], [3, 5], [33, 5], [36, 3], [35, 8], [1, 8]]), '#B8322A', {light: '#D8584A', dark: '#7A1E1A', edge: true});   // its beam
+    p.flat(Rc(2, 6, 32, 1), '#E2B23A');
+    p.flat(path([[18, 8], [18, 11]], .6), '#5A3A1A');                                            // what it hangs by
+    p.fill(Pg([[11, 11], [25, 11], [27, 27], [28.5, 33], [18, 30.5], [7.5, 33], [9, 27]]), '#5E8A6E', {light: '#8CB89A', dark: '#36584A', edge: true});   // the bell
+    p.flat(or(Rc(10, 16, 16, 1), Rc(9, 24, 18, 1)), '#C8A050');
+    for (const x of [12, 15, 18, 21, 24]) p.dot(x, 13, '#D8BC6A');
+    p.fill(O(18, 27.5, 2.2, 1.5), '#E2B23A', {light: '#F8DC80', edge: true});
   }},
   greatScale: {size: 52, draw: p => {   // a beam on a post, two pans hanging from it, empty
     p.fill(Rc(16, 46, 20, 5, 1), '#8A5A2A', {light: '#B07A3A'});

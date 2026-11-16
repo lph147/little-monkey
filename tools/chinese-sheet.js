@@ -341,9 +341,9 @@ function sheetFor(n){
 
   const collect = Object.keys(BANK).filter(w => BANK[w].area === AREA.number), heard = Object.keys(BANK).filter(w => !BANK[w].area);
   const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name, ...Object.values(AREA.places).map(p => p.name), ...(AREA.lessons || []).map(s => s.subject)];   // characters, the sign, the area, its places and the school's subjects
-  const builds = [...Object.values(AREA.requests).flatMap(r => (r.choices ? Object.values(r.choices) : [r]).map(c => [c.sentence, c.sentenceEn, name(r.from)])), ...Object.values(SHOPS).flatMap(sh => sh.items.map(i => [i.sentence, i.sentenceEn, name(sh.who)])), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe']),
+  const builds = [...Object.values(AREA.requests).flatMap(r => (r.choices ? Object.values(r.choices) : [r]).map(c => [c.sentence, c.sentenceEn, name(r.from)])), ...Object.values(SHOPS).flatMap(sh => sh.items.map(i => [i.sentence, i.sentenceEn, name(sh.who)])), ...(AREA.wardrobe || []).filter(c => !(c.colourSentence && (c.colours || []).some(k => c.colourSentence.replace('{colour}', k) === c.sentence))).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe']),
     ...(AREA.practiceSentences || []).map(c => [c.sentence, c.sentenceEn, 'You, in a lesson at school']),
-    ...get('COLOUR_SENTENCES()').map(c => [c.zh, c.en, /要/.test(c.zh) ? `${name(AREA.shop.who)} (a headband in each colour you know)` : 'You, in the wardrobe (a headband in each colour)'])];   // (js/world.js)
+    ...get('COLOUR_SENTENCES()').map(c => [c.zh, c.en, /要/.test(c.zh) ? `${name(AREA.shop.who)} (a headband in each colour you know)` : /头带/.test(c.zh) ? 'You, in the wardrobe (a headband in each colour)' : 'You, putting on a dragon king’s gift (Area 3), and in the wardrobe'])];   // (js/world.js)
   const notes = '';
   // how a word is made, in one line: its parts (each Chinese, pinyin, English) and the word they make, with its English, as
   // its card shows it (or, for your home's name, what they add up to); or the clue inside it; or the character it shares
@@ -404,14 +404,14 @@ ${table(['Chinese', 'Pinyin', 'English', 'Answer', 'Notes'], AREA.storyQuestions
 ### The opening scene
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], AREA.intro.map(c => [chars(c.zh), py(c.zh), c.en, notes]))}
-${Object.entries(AREA.scenes || {}).filter(([, sc]) => sc.watch).map(([id, sc]) => `
-### Scene: ${sc.watch.replace(/^Watch /, '')}
+${Object.entries(AREA.scenes || {}).filter(([, sc]) => sc.watch || sc.name).map(([id, sc]) => `
+### Scene: ${sc.watch ? sc.watch.replace(/^Watch /, '') : sc.name}
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], sc.captions.map(c => [chars(c.zh), py(c.zh), c.en, notes]))}
-`).join('')}${Object.values(AREA.scenes || {}).some(sc => !sc.watch) ? `
+`).join('')}${Object.values(AREA.scenes || {}).some(sc => !sc.watch && !sc.name) ? `
 ### Scenes after lessons (the class painting the school)
 
-${table(['Chinese', 'Pinyin', 'English', 'Notes'], Object.values(AREA.scenes).filter(sc => !sc.watch).flatMap(sc => sc.captions).map(c => [chars(c.zh), py(c.zh), c.en, notes]))}
+${table(['Chinese', 'Pinyin', 'English', 'Notes'], Object.values(AREA.scenes).filter(sc => !sc.watch && !sc.name).flatMap(sc => sc.captions).map(c => [chars(c.zh), py(c.zh), c.en, notes]))}
 ` : ''}
 ### Names
 

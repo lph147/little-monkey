@@ -541,7 +541,7 @@ test('a sentence in your tasks, the checklist or hints that mentions words from 
   // and want and have, which are what 要 and 有 mean but aren't them in these sentences: the old monkey, the home ground, the
   // pine wood, Flower Fruit Mountain, three pieces of wood, things that sparkle have words.)
   const places = Object.values(AREA.places).map(p => p.name.en.replace(/^the /i, '')).filter(n => n.includes(' ')).join('|');   // (a place's name, such as the seaweed forest)
-  const names = new RegExp(String.raw`\b(big monkey|little monkeys?|a little|monkeys?|home ground|pine wood|Flower Fruit Mountain|Dragon King|Dragon Queen|${places ? places + '|' : ''}wants?|have|one|two|three|four|five|six|seven|eight|nine|ten)\b`, 'gi');
+  const names = new RegExp(String.raw`\b(big monkey|little monkeys?|a little|monkeys?|home ground|pine wood|Flower Fruit Mountain|Dragon Kings?|Dragon Queen|${places ? places + '|' : ''}wants?|have|one|two|three|four|five|six|seven|eight|nine|ten)\b`, 'gi');
   const meanings = Object.entries(BANK).filter(([, b]) => b.area <= AREA.number).flatMap(([w, b]) => b.en.split(/,\s*/)
     .map(e => e.replace(/^(a|an|the|to) /, '')).filter(e => e.length > 2).map(e => [w, e]));
   const texts = [...AREA.tasks.map(t => t.text), ...AREA.hints.map(h => h.text), ...AREA.checklist.map(c => c.text)];

@@ -67,7 +67,7 @@ const wearing = item => S.wardrobe.wearing.includes(item);   // is your monkey w
 const BAND = {'红色':'#C0392B', '黄色':'#F8E04A', '白色':'#F7F5EE', '黑色':'#26201C', '蓝色':'#3A6DD0', '绿色':'#2FA350', '棕色':'#6A3A1C', '橙色':'#F06A1A', '粉色':'#F59AC6'};
 const headband = () => { const c = CLOTHES.find(c => c.word === '头带' && wearing(c.item)); return c ? BAND[c.colour] || BAND['红色'] : null; };
 const bandPal = pal => { const b = headband(); return b ? {...pal, b} : pal; };
-function redress(){ for (const k in spriteCache) delete spriteCache[k]; for (const k in portraitCache) delete portraitCache[k]; }   // draw your monkey again in what it wears
+function redress(){ for (const k in spriteCache) delete spriteCache[k]; for (const k in portraitCache) delete portraitCache[k]; for (const k in bustCache) delete bustCache[k]; }   // draw your monkey again in what it wears
 // What your monkey holds in its hand once it can fight (the area's battles: their weapon, once their when matches): a
 // small stick (棍子), short, so that the staff (金箍棒, Area 3) can be longer without the stick ever having looked too big.
 // Each: how many pixels long it is, and its colours (l the wood, k its dark edge and ends), reddish so it stands out
@@ -95,7 +95,7 @@ function monkeySprite(kind, dir, blink, step = 0, empty = false){
   const stick = heldBy(kind, empty);
   const band = kind === 'player' ? headband() : null, worn = kind === 'player' ? CLOTHES_ON.filter(c => wearing(c)).join('') : '';
   const k = kind + dir + (blink ? 'b' : '') + step + (stick || '') + (band || '') + worn; if (spriteCache[k]) return spriteCache[k];
-  const pal = {...(band ? {...PALS[kind], b:band} : PALS[kind]), ...(worn ? CLOTHES_PAL : {})};
+  const pal = {...(band ? {...PALS[kind], b:band} : PALS[kind]), ...(worn ? {...CLOTHES_PAL, ...GIFT_PAL} : {})};
   return spriteCache[k] = sprite(monkeyRows(kind, dir, blink, step, empty), stick ? {...pal, ...HELD[stick].pal} : pal);
 }
 // People (Area 2, the human world: decided 4 November 2026), drawn like the monkeys, a character with person in the area's
@@ -164,6 +164,46 @@ function personSprite(kind, dir, blink, step = 0){
 const CLOTHES_PAL = {C:'#7A6A55', D:'#3A2A1E', a:'#D9B866', d:'#A88A3E', S:'#2A2A2A'};
 const CLOTHES_ON = CLOTHES.filter(c => c.on).map(c => c.item);
 const wornOn = where => CLOTHES.some(c => c.on === where && c.item === c.word && wearing(c.item) && c.word !== '头带');   // (a headband is drawn as one: headband())
+// Something to wear with a look of its own (the wardrobe's look), such as the dragon kings' gifts (Area 3, Chapter 5): a
+// golden hat, purple on top, a red jewel at its front and two long red feathers curving up and out of it (goldCap); golden
+// armour of little scales, a red belt (goldArmour); and white cloud shoes, pale blue curls on them (cloudShoes). lookOn:
+// the look of what you wear there (head, body, feet), if it has one. Drawn on your monkey from every side, walking and
+// doing things (js/poses.js), as the coat, hat and shoes are, the feathers over the top of your square (drawPlumes).
+const GIFT_PAL = {A:'#E2B23A', Y:'#FFE38A', Z:'#9A6A14', Q:'#7A3FA8', q:'#A874D8', R:'#D8343A', W:'#F2F7FC', X:'#A8C0E0'};
+const lookOn = where => { const c = CLOTHES.find(c => c.on === where && c.look && wearing(c.item)); return c ? c.look : null; };
+const armourAt = (x, y, belt) => y === belt ? 'R' : y === belt - 3 ? 'Y' : (x + y) % 3 === 0 ? 'Z' : 'A';   // (its collar light, its belt red, little scales)
+const cloudAt = x => x % 3 ? 'W' : 'X';
+// the golden hat over the top of your head (rows 0 to 3, its top a row above your head's), from the front, behind and the
+// side (facing right; facing left is the same the other way round)
+const CAP = {
+  front:[".....oqqqqo.....", "....oQQQQQQo....", "...oYYYYYYYYo...", "...oAAARRAAAo..."],
+  back:[".....oqqqqo.....", "....oQQQQQQo....", "...oYYYYYYYYo...", "...oAAAAAAAAo..."],
+  side:[".....oqqqo......", "....oQQQQQo.....", "...oYYYYYYYo....", "...oAAAAAARo...."]
+};
+const capView = dir => dir === 'left' || dir === 'right' ? 'side' : dir === 'up' ? 'back' : 'front';
+// its two feathers, from the top of the hat (y 0) up over your square: through these points, each 2 pixels wide, dark on
+// one side, red and dark red by turns (on the map; js/poses.js puts the same pixels in its poses)
+const PLUMES = {
+  front:[[[6, 0], [5, -3], [4, -6], [3, -9], [3, -12], [4, -14]], [[9, 0], [10, -3], [11, -6], [12, -9], [12, -12], [11, -14]]],
+  side:[[[7, 0], [8, -3], [9, -6], [10, -9], [10, -12], [9, -14]], [[5, 0], [5, -2], [6, -5], [7, -8], [7, -11], [6, -13]]]
+};
+const PLUME_INK = '#3A1608', PLUME_RED = '#C8502E', PLUME_DARK = '#8A3A1E';
+// each pixel of the feathers, as [x, y, colour] (x for facing right or the front; mirrored for facing left)
+function plumePixels(dir){
+  const side = dir === 'left' || dir === 'right', mx = x => dir === 'left' ? 15 - x : x, out = [];
+  const seg = (a, z, c, wide) => { const n = Math.max(Math.abs(z[0] - a[0]), Math.abs(z[1] - a[1])) || 1;
+    for (let i = 0; i <= n; i++){ const x = Math.round(a[0] + (z[0] - a[0]) * i / n), y = Math.round(a[1] + (z[1] - a[1]) * i / n);
+      out.push([mx(x), y, c]); if (wide) out.push([mx(x + 1), y, c]); } };
+  for (const p of PLUMES[side ? 'side' : 'front']) for (let i = 1; i < p.length; i++) seg(p[i - 1], p[i], 'T', true);
+  for (const p of PLUMES[side ? 'side' : 'front']) for (let i = 1; i < p.length; i++) seg(p[i - 1], p[i], i % 2 ? 'H' : 'L', false);
+  return out;
+}
+const PLUME_PAL = {T:PLUME_INK, H:PLUME_RED, L:PLUME_DARK};
+// the feathers on the map, over your monkey drawn at (X, Y), facing dir: if you're wearing the golden hat
+function drawPlumes(g, X, Y, dir){
+  if (lookOn('head') !== 'goldCap') return;
+  for (const [x, y, c] of plumePixels(dir)) R(g, X + x, Y + y, 1, 1, PLUME_PAL[c]);
+}
 // A monkey's pixel rows, as letters (PALS says each letter's colour). The app's icons use them too (tools/make-icons.js).
 // A monkey you spar with (an enemy with monkey: their id), as they look on the map, from the front: the battle's picture
 // (foePic, js/battle.js), such as the big monkey's practice fight as he gives you your stick.
@@ -185,6 +225,9 @@ function monkeyRows(kind, dir, blink, step = 0, empty = false){
   if (kind === 'player' && wornOn('body')) for (let y = 8; y <= 13; y++) for (let x = 0; x < 16; x++) if ('fsb'.includes(rows[y][x])) rows[y][x] = y === 11 ? 'D' : 'C';   // a coat
   if (kind === 'player' && wornOn('feet')) for (let y = 14; y <= 15; y++) for (let x = 0; x < 16; x++) if (rows[y][x] === 'f') rows[y][x] = 'S';   // shoes
   if (kind === 'player' && wornOn('head')) HAT.forEach((r, y) => [...r].forEach((c, x) => { if (c !== '.') rows[y][x] = c; }));   // a hat
+  if (kind === 'player' && lookOn('body') === 'goldArmour') for (let y = 8; y <= 13; y++) for (let x = 0; x < 16; x++) if ('fsb'.includes(rows[y][x])) rows[y][x] = armourAt(x, y, 11);   // the dragon kings' gifts: golden armour,
+  if (kind === 'player' && lookOn('feet') === 'cloudShoes') for (let y = 14; y <= 15; y++) for (let x = 0; x < 16; x++) if (rows[y][x] === 'f') rows[y][x] = cloudAt(x);   // white cloud shoes,
+  if (kind === 'player' && lookOn('head') === 'goldCap') CAP[capView(dir)].forEach((r, y) => [...r].forEach((c, x) => { if (c !== '.') rows[y][x] = c; }));   // and the golden hat (its feathers: drawPlumes)
   const stick = heldBy(kind, empty);
   if (stick){   // the stick in its hand
     const h = HAND[side ? 'side' : dir], top = h.y - HELD[stick].len + 1;

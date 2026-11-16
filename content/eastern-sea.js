@@ -31,7 +31,13 @@
 // hall, dim, the iron pillar glowing in it, up through the roof: 太长了！ (长). You tell it what to do, a card: 变短！ (短),
 // and it shrinks as you watch; 变小！, a staff in a flash of golden light (金色的光！ 金色); its writing, 如意金箍棒
 // 一万三千五百斤, read out by the Dragon King (万); and his 给你！ (给). The staff is your weapon from then on, twice as strong
-// as the broadsword. The drum, the bell and the dragon kings' gifts come in the step after.
+// as the broadsword.
+// Step 9 (16 November 2026): the end of Chapter 5. You'd like clothes to go with the staff (我还要衣服！), but the Dragon King
+// has none, only three younger brothers (我有三个弟弟！); back in the throne hall you beat his drum with your staff (鼓, for
+// a game that never bought the cave's) and ring his bell (钟), and the Dragon Kings of the South, West and North Seas swim
+// in, each with a gift, 给你！: a golden hat with two long red feathers, golden armour and white cloud shoes, worn on your
+// monkey from then on (the wardrobe's look, js/art.js). On the way back through the seaweed forest a shark meets your
+// staff, and on the seabed the sea turtle takes you home (我们回家吧！), up through the water to the iron bridge.
 
 // The seabed's letters: sand, seaweed swaying up out of it, shells on the sand, and the sea's things (js/sea.js).
 // Each teaches its word as you press A at it (the sand, a shell, the seaweed). The seaweed is where the five starfish hide,
@@ -72,17 +78,33 @@ const HALL_LEGEND = {
   'X': {look:'palaceWall'},
   'P': {look:'dragonPillar', word:'柱子', newNote:'柱子 means pillar. The throne hall’s pillars are red, with gold dragons coiled round them.'},
   'Y': {look:'throne', landmark:true}, 'S': {look:'greatScale', landmark:true},
-  'E': {look:'treasuryDoor', becomes:[{if:{hall:{atLeast:3}}, to:'e'}]}, 'e': {look:'treasuryDoorOpen', walk:true}   // (the treasury's door, at the back: open once the Dragon Queen opens it)
+  'E': {look:'treasuryDoor', becomes:[{if:{hall:{atLeast:3}}, to:'e'}]}, 'e': {look:'treasuryDoorOpen', walk:true},   // (the treasury's door, at the back: open once the Dragon Queen opens it)
+  // (step 9) the Dragon King's drum and bell, either side of his throne: beaten and rung with your staff, to call his brothers
+  'G': {look:'palaceDrum', landmark:true, word:'鼓', newNote:'鼓 means drum. The Dragon King’s great drum stands beside his throne.', onLook:[
+    {if:{gifts:1}, label:'Beat it', do:[{strike:'drum', times:3}, {if:{new:'鼓'}, newWord:'鼓', note:'鼓 means drum. BOOM! BOOM! BOOM! The sound rolls out across the sea.'},
+      {set:{gifts:2}}, {say:'bellToo', by:'dragonKing'}, {message:'Now ring the bell, on the other side of the throne!'}]}]},
+  'B': {look:'palaceBell', landmark:true, word:'钟', onLook:[
+    {if:{gifts:0}, do:[{message:'A great bronze bell hangs beside the Dragon King’s throne.'}]},
+    {if:{gifts:1}, do:[{message:'A great bronze bell hangs beside the throne. Beat the {鼓|drum} first, on the other side!'}]},
+    {if:{gifts:2}, label:'Ring it', do:[{strike:'bell', times:2}, {newWord:'钟', note:'钟 means bell. DONG… DONG… The sound carries far across the sea, to the South, West and North Seas.'},
+      {scene:'brothers'}, {set:{gifts:3}}, {say:'theyCame', by:'dragonKing'},
+      {message:'The Dragon Kings of the South, West and North Seas have come, each with a gift for you!'}]}]}
 };
 // The treasury's (step 8): its dark stone floor, the back wall, chests, gold and clams with pearls, and the iron pillar,
 // drawn glowing up through the roof (the place's pillar, its foot: js/sea.js), its squares walkable once it's shrunk away
 // from them. A at it: you tell it what to do, and the staff, picked up and read and given you.
+// (and you'd like clothes to go with it: the Dragon King has none, but three younger brothers, and he hurries back to the
+// throne hall to call them, the Dragon Queen with him)
+const ASK_CLOTHES = [
+  {say:'wantClothes', by:'player'}, {say:'threeBrothers', by:'dragonKing'},
+  {walk:'dragonKing', to:[7, 10], ms:240}, {walk:'dragonQueen', to:[8, 10], ms:240}, {set:{gifts:1}},
+  {message:'The Dragon King has no clothes for you, but his three younger brothers, the Dragon Kings of the South, West and North Seas, might! He hurries back to the throne hall, to call them with his drum and his bell.'}];
 const STAFF_GIVEN = [
   {writing:'staff'},
   {say:'jin13500', by:'dragonKing', teach:'万'}, {newWord:'万', note:'万 means ten thousand: 一万 is 10,000. The staff weighs 13,500 jin!'},
   {say:'hereYouAre', by:'dragonKing', teach:'给'}, {newWord:'给', note:'给 means to give. 给你！ Here you are! The Dragon King is giving you the staff.'},
   {say:'yoursNow', by:'dragonQueen'}, {set:{staff:4}},
-  {message:'The staff hits twice as hard as the {刀|broadsword}! To be continued: the Dragon King’s brothers are on their way…'}];
+  {message:'The staff hits twice as hard as the {刀|broadsword}!'}, ...ASK_CLOTHES];
 const STAFF_SMALL = [{pickUp:'金箍棒'}, {set:{staff:3}}, {weapon:'金箍棒'}, ...STAFF_GIVEN];
 const PILLAR_SMALLER = [{tell:'smaller'}, {set:{staff:2}},
   {if:{new:'金色'}, say:'goldenLight', by:'player', teach:'金色'}, {newWord:'金色', note:'金色 means golden. The staff has a golden band at each end.'}, ...STAFF_SMALL];
@@ -158,12 +180,15 @@ const EASTERN_SEA = {
       now:'Try the Dragon King’s weapons.'},
     {id:'pillar', chapter:0, name:'Part 7', title:'The iron pillar', when:{hall:3},
       text:'The Dragon Queen whispers: the iron pillar in the treasury has been glowing for days, as if it’s waiting for someone…',
-      now:'See the glowing pillar in the treasury. The rest of the {海|sea} is on its way.'}
+      now:'See the glowing pillar in the treasury.'},
+    {id:'gifts', chapter:0, name:'Part 8', title:'The drum and the bell', when:{gifts:1},
+      text:'The staff is yours, but a king needs clothes to go with it! The Dragon King has none for you. But he has three younger brothers, the Dragon Kings of the South, West and North Seas, and a drum and a bell to call them with…',
+      now:'Call the Dragon King’s brothers, then go home in their gifts, with your staff.'}
   ],
 
   // The day goes round down here too: no rain under the sea, and no bed, so the night passes by itself, as in the human world.
   dayNight: {if:{}, morning:'Good morning! You wake up with your health full.', sleep:[]},
-  progress: {chapter:0, landed:0, turtle:0, starFriends:0, forest:0, octopus:0, dolphin:0, trench:0, palace:0, hall:0, staff:0},
+  progress: {chapter:0, landed:0, turtle:0, starFriends:0, forest:0, octopus:0, dolphin:0, trench:0, palace:0, hall:0, staff:0, gifts:0, south:0, west:0, north:0, home:0},
   //   turtle   0 not met yet, 1 said hello (泡泡), 2 led you to the seaweed (游), 3 found all five starfish: off to the forest
   //   forest   0 not in the seaweed forest yet, 1 met your first shark there (小心, 鲨鱼)
   //   octopus  0 hasn't counted its feet with you yet, 1 has (脚, 几): off to the coral reef
@@ -174,6 +199,11 @@ const EASTERN_SEA = {
   //            3 the Dragon Queen has whispered about the iron pillar: the treasury's open
   //   staff    0 the iron pillar as tall as ever, 1 you've told it 变短 (长, 短), 2 变小: a staff, standing at its foot (金色),
   //            3 you've picked it up, your weapon now, 4 the Dragon King has read its writing (万) and given it to you (给)
+  //   gifts    0 not yet, 1 you've asked for clothes: he's gone to call his brothers, 2 you've beaten his drum (鼓), 3 rung
+  //            his bell (钟): his three brothers have come, 4 they've all given you their gifts
+  //   south, west, north   the Dragon King of the South, West or North Sea has given you his gift (1)
+  //   home     0 not on your way home yet, 1 a shark has met your staff in the seaweed forest, 2 you've swum home with the
+  //            sea turtle: the end of Chapter 5
   counters: {
     seabedWords: {count:'known', words:['沙子', '贝壳', '水草'], called:{'沙子':'the sand', '贝壳':'a shell', '水草':'the seaweed'}},
     starCount: {count:'progress', key:'starFriends'}   // the starfish in the seaweed you've made friends with (of five)
@@ -213,7 +243,13 @@ const EASTERN_SEA = {
     {id:'toTreasury', main:true, if:{hall:3, staff:{below:3}, away:'treasury'}, text:'Go into the treasury, at the back of the throne hall', arrow:[12, 0, 'hall']},
     {id:'pillar', main:true, if:{hall:3, staff:{below:3}, place:'treasury'}, text:'Press A at the glowing iron {柱子|pillar}', arrow:[7, 5, 'treasury']},
     {id:'given', main:true, if:{staff:3}, text:'The Dragon King has more for you', arrow:'dragonKing'},
-    {id:'staff', main:true, if:{staff:4}, text:'The rest of the {海|sea} is on its way. Until then, try your new staff in the seaweed forest', where:'forest'}
+    {id:'clothes', main:true, if:{staff:4, gifts:0}, text:'The Dragon King has something more for you', arrow:'dragonKing'},
+    {id:'drum', main:true, if:{gifts:1}, text:'Beat the Dragon King’s {鼓|drum}, beside his throne, with your staff', arrow:[5, 2, 'hall']},
+    {id:'bell', main:true, if:{gifts:2}, text:'Ring the {钟|bell} on the other side of the throne', arrow:[10, 2, 'hall']},
+    {id:'brothers', main:true, if:{gifts:3}, text:'Three dragon kings have come, each with a gift for you: press A beside each of them',
+      arrow:{nearest:[{who:'southKing', if:{south:0}}, {who:'westKing', if:{west:0}}, {who:'northKing', if:{north:0}}]}},
+    {id:'home', main:true, if:{gifts:4, home:{below:2}}, text:'Go back to the seabed, where the {海龟|sea turtle} is waiting for you', arrow:'turtle'},
+    {id:'chapter6', main:true, if:{home:2}, text:'Chapter 6 is on its way. Till then, explore the {海|sea}'}
   ],
   hints: [
     {if:{turtle:0}, text:'You’re on the seabed, deep under the {海|sea}. A {海龟|sea turtle} is swimming towards you: walk up to it and press A.'},
@@ -232,7 +268,12 @@ const EASTERN_SEA = {
     {if:{hall:2}, text:'None of the Dragon King’s weapons is {重|heavy} enough for you. But the Dragon Queen, by the throne, has an idea: go up to her and press A.'},
     {if:{hall:3, staff:{below:3}}, text:'Go through the doorway at the back of the throne hall, into the treasury. Press A at the glowing {柱子|pillar}, and choose what to tell it.'},
     {if:{staff:3}, text:'The Dragon King, in the treasury, has more for you: go up to him and press A.'},
-    {if:{staff:4}, text:'The staff is yours! Try it out on the {鲨鱼|sharks} in the seaweed forest. The rest of the {海|sea} is on its way.'},
+    {if:{staff:4, gifts:0}, text:'The Dragon King, in the treasury, has something more for you: go up to him and press A.'},
+    {if:{gifts:1}, text:'Go back to the throne hall, and beat the Dragon King’s {鼓|drum} with your staff: it’s beside his throne. Walk up to it and press A.'},
+    {if:{gifts:2}, text:'Now ring the {钟|bell} on the other side of the throne: walk up to it and press A.'},
+    {if:{gifts:3}, text:'Three dragon kings have come to the throne hall, each with a gift for you: go up to each of them and press A.'},
+    {if:{gifts:4, home:{below:2}}, text:'Walk back the way you came, through the trench, the reef and the seaweed forest, to the seabed: the {海龟|sea turtle} is waiting for you there.'},
+    {if:{home:2}, text:'That’s the end of Chapter 5! Chapter 6 is on its way. Till then, explore the {海|sea}, and find any friends you’ve missed.'},
     {if:{forest:1, octopus:0}, text:'{鲨鱼|Sharks} and jellyfish hide in the tall seaweed, and come out as you walk through it. The {章鱼|octopus} lives among the rocks in the north. The rest of the {海|sea} is on its way.'}
   ],
   checklist: [
@@ -260,16 +301,22 @@ const EASTERN_SEA = {
     {part:'hall', text:'Try the Dragon King’s weapons', show:{hall:{atLeast:1}}, done:{hall:{atLeast:2}}},
     {part:'pillar', text:'Find the glowing {柱子|pillar} in the treasury', done:{staff:{atLeast:1}}},
     {part:'pillar', text:'Make the {柱子|pillar} small enough to hold', show:{staff:{atLeast:1}}, done:{staff:{atLeast:2}}},
-    {part:'pillar', text:'Read the writing on your staff', show:{staff:{atLeast:2}}, done:{staff:4}}
+    {part:'pillar', text:'Read the writing on your staff', show:{staff:{atLeast:2}}, done:{staff:4}},
+    {part:'gifts', text:'Beat the Dragon King’s {鼓|drum}', done:{gifts:{atLeast:2}}},
+    {part:'gifts', text:'Ring the {钟|bell}', show:{gifts:{atLeast:2}}, done:{gifts:{atLeast:3}}},
+    {part:'gifts', text:'Get a gift from each of the three dragon kings', show:{gifts:{atLeast:3}}, done:{gifts:4}},
+    {part:'gifts', text:'Meet a {鲨鱼|shark} with your staff, on the way back', show:{gifts:4}, done:{home:{atLeast:1}}},
+    {part:'gifts', text:'Swim home with the {海龟|sea turtle}', show:{gifts:4}, done:{home:2}}
   ],
   bubbles: {
-    turtle: [{if:{landed:1, turtle:0}, show:'!'}, {if:{turtle:1, seabedWords:3}, show:'!'}, {if:{turtle:2, starFriends:5}, show:'!'}, {if:{dolphin:2, trench:0}, show:'!'}],
+    turtle: [{if:{landed:1, turtle:0}, show:'!'}, {if:{turtle:1, seabedWords:3}, show:'!'}, {if:{turtle:2, starFriends:5}, show:'!'}, {if:{dolphin:2, trench:0}, show:'!'}, {if:{gifts:4, home:{below:2}}, show:'!'}],
     octopus: [{if:{friends:{octopus:true}, octopus:0}, show:'!'}],
     dolphin: [{if:{octopus:1, dolphin:0}, show:'!'}, {if:{dolphin:1}, show:'!'}],
     yaksha: [{if:{palace:0}, show:'!'}],
     crab: [{if:{palace:1}, show:'!'}],
-    dragonKing: [{if:{hall:1}, show:'!'}, {if:{staff:3}, show:'!'}],
-    dragonQueen: [{if:{hall:2}, show:'!'}]
+    dragonKing: [{if:{hall:1}, show:'!'}, {if:{staff:3}, show:'!'}, {if:{staff:4, gifts:0}, show:'!'}],
+    dragonQueen: [{if:{hall:2}, show:'!'}],
+    southKing: [{if:{gifts:3, south:0}, show:'!'}], westKing: [{if:{gifts:3, west:0}, show:'!'}], northKing: [{if:{gifts:3, north:0}, show:'!'}]
   },
   requests: {},
   events: [
@@ -293,7 +340,15 @@ const EASTERN_SEA = {
     {if:{place:'hall', hall:0}, do:[
       {walk:'dragonKing', to:'you', ms:320},
       {say:'welcome', by:'dragonKing', teach:'欢迎'}, {newWord:'欢迎', note:'欢迎 means welcome! You say it when someone comes to your home.'},
-      {say:'whatDoYouWant', by:'dragonKing'}, {say:'iWantWeapon', by:'player'}, {set:{hall:1}}]}
+      {say:'whatDoYouWant', by:'dragonKing'}, {say:'iWantWeapon', by:'player'}, {set:{hall:1}}]},
+    // all three dragon kings' gifts on: the Dragon Queen's 好看！, and home
+    {if:{gifts:3, south:1, west:1, north:1}, do:[{say:'lovely', by:'dragonQueen'}, {set:{gifts:4}},
+      {message:'You’re dressed like a king now, with a staff to match! The sea turtle is waiting for you on the seabed, where you landed, to take you home. (Your other clothes are in your wardrobe: Menu, 衣服.)'}]},
+    // on the way home through the seaweed forest: a shark meets your staff
+    {if:{place:'forest', gifts:4, home:0, around:[21, 7, 'forest', 1]}, do:[
+      {battle:'shark', out:true, retry:true, meet:'A {鲨鱼|shark} shoots out of the seaweed at you! It hasn’t met your staff yet…', back:{at:[24, 7, 'forest'], facing:'left'},
+        lost:'You catch your breath at the edge of the forest.',
+        win:[{set:{home:1}}, {message:'One blow of your staff, and the {鲨鱼|shark} swims off as fast as it can! The sea turtle is waiting for you on the seabed.'}]}]}
   ],
 
   places: {
@@ -467,8 +522,8 @@ const EASTERN_SEA = {
         {at:[12, 0], to:'treasury', arrive:[7, 10], facing:'up', if:{hall:{atLeast:3}}, closed:'The {门|door} at the back of the throne hall is shut.'}],
       map: [
         "XXXXXXXXXXXXEXXXXX",
-        "X......YYY.......X",
-        "X..P...YYY....P..X",
+        "X....GGYYYBB.....X",
+        "X..P.GGYYYBB..P..X",
         "X..P..........P..X",
         "X................X",
         "X..P.............X",
@@ -515,12 +570,13 @@ const EASTERN_SEA = {
   // woman's, 15 November 2026); the Dragon King's, Yunyang (a deep, steady man's), and the Dragon Queen's, Xiaohan (a warm
   // woman's), both 16 November 2026, for the palace (step 6 on)
   voices: {words:{provider:'google', name:'cmn-CN-Standard-A'}, everyone:{name:'zh-CN-YunxiNeural', style:'chat'}, turtle:{name:'zh-CN-XiaoruiNeural'},
-    dragonKing:{name:'zh-CN-YunyangNeural'}, dragonQueen:{name:'zh-CN-XiaohanNeural'}},
+    dragonKing:{name:'zh-CN-YunyangNeural'}, dragonQueen:{name:'zh-CN-XiaohanNeural'},
+    southKing:{name:'zh-CN-YunyangNeural'}, westKing:{name:'zh-CN-YunyangNeural'}, northKing:{name:'zh-CN-YunyangNeural'}},   // (his brothers, for now, in the Dragon King's own voice)
   characters: [
     // the sea turtle from your shore (Area 1's friend), swimming over the sand: it greets you as you land, shows you round,
     // and swims ahead to the seaweed where the starfish hide
     {id:'turtle', place:'seabed', x:14, y:6, facing:'left', look:'海龟', flies:true, swims:true,
-      moves:[{if:{palace:{atLeast:1}}, place:'palace', x:9, y:14, facing:'right'}, {if:{dolphin:2}, place:'trench', x:4, y:9, facing:'up'}, {if:{octopus:{atLeast:1}}, place:'reef', x:2, y:6, facing:'right'}, {if:{turtle:{atLeast:3}}, place:'forest', x:3, y:6, facing:'right'}, {if:{turtle:{atLeast:2}}, place:'seabed', x:5, y:12, facing:'right'}]},
+      moves:[{if:{gifts:{atLeast:4}}, place:'seabed', x:12, y:6, facing:'left'}, {if:{palace:{atLeast:1}}, place:'palace', x:9, y:14, facing:'right'}, {if:{dolphin:2}, place:'trench', x:4, y:9, facing:'up'}, {if:{octopus:{atLeast:1}}, place:'reef', x:2, y:6, facing:'right'}, {if:{turtle:{atLeast:3}}, place:'forest', x:3, y:6, facing:'right'}, {if:{turtle:{atLeast:2}}, place:'seabed', x:5, y:12, facing:'right'}]},
     // the octopus among the seaweed forest's rocks, once it's your friend (till then, the animal there: see animals)
     {id:'octopus', place:'forest', x:13, y:2, facing:'down', look:'章鱼', moves:[{if:{friends:{octopus:false}}, place:'gone', x:0, y:0}]},
     // the dolphin on the coral reef, leaping about by the race track, wanting a race
@@ -533,9 +589,14 @@ const EASTERN_SEA = {
     // the throne hall's: the Dragon King (Yunyang's voice), who comes to meet you and stays where he met you; the Dragon
     // Queen (Xiaohan's); and two shrimp soldiers by the great scale, who carried the broadsword in
     {id:'dragonKing', place:'hall', x:8, y:3, facing:'down', look:'龙王', name:{zh:'东海龙王', py:'Dōnghǎi Lóngwáng', en:'Dragon King of the Eastern Sea'},
-      moves:[{if:{hall:{atLeast:3}}, place:'treasury', x:5, y:7, facing:'right'}, {if:{hall:{atLeast:1}}, parked:true}]},
+      moves:[{if:{gifts:{atLeast:1}}, place:'hall', x:8, y:3, facing:'down'}, {if:{hall:{atLeast:3}}, place:'treasury', x:5, y:7, facing:'right'}, {if:{hall:{atLeast:1}}, parked:true}]},
     {id:'dragonQueen', place:'hall', x:11, y:3, facing:'down', look:'龙婆', name:{zh:'龙婆', py:'Lóngpó', en:'Dragon Queen'},
-      moves:[{if:{hall:{atLeast:3}}, place:'treasury', x:9, y:7, facing:'left'}]},
+      moves:[{if:{gifts:{atLeast:1}}, place:'hall', x:13, y:3, facing:'down'}, {if:{hall:{atLeast:3}}, place:'treasury', x:9, y:7, facing:'left'}]},
+    // (step 9) the Dragon King's three younger brothers, come at the sound of his drum and bell, each with a gift for you:
+    // the Dragon Kings of the South, West and North Seas, each in his own colours (content/sprites.js)
+    {id:'southKing', place:'hall', x:6, y:5, facing:'down', look:'南海龙王', name:{zh:'南海龙王', py:'Nánhǎi Lóngwáng', en:'Dragon King of the South Sea'}, moves:[{if:{gifts:{below:3}}, place:'gone', x:0, y:0}]},
+    {id:'westKing', place:'hall', x:8, y:5, facing:'down', look:'西海龙王', name:{zh:'西海龙王', py:'Xīhǎi Lóngwáng', en:'Dragon King of the West Sea'}, moves:[{if:{gifts:{below:3}}, place:'gone', x:0, y:0}]},
+    {id:'northKing', place:'hall', x:10, y:5, facing:'down', look:'北海龙王', name:{zh:'北海龙王', py:'Běihǎi Lóngwáng', en:'Dragon King of the North Sea'}, moves:[{if:{gifts:{below:3}}, place:'gone', x:0, y:0}]},
     {id:'carrier1', place:'hall', x:12, y:8, facing:'right', look:'虾兵', name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
     {id:'carrier2', place:'hall', x:15, y:8, facing:'left', look:'虾兵', name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
     {id:'soldier1', place:'palace', x:8, y:8, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
@@ -569,7 +630,8 @@ const EASTERN_SEA = {
     {word:'水草', at:[1, 4, 'seabed'], if:{turtle:{atLeast:1}}},
     {word:'珊瑚', at:[1, 8, 'reef']},
     {word:'龙', at:[8, 4, 'palace'], if:{palace:{atLeast:1}}},
-    {word:'柱子', at:[3, 3, 'hall'], if:{hall:{atLeast:1}}}
+    {word:'柱子', at:[3, 3, 'hall'], if:{hall:{atLeast:1}}},
+    {word:'钟', at:[10, 2, 'hall'], if:{gifts:2}}
   ],
   found: {
     '泡泡': 'The sea turtle, as you landed on the seabed in your bubble of air.',
@@ -607,7 +669,8 @@ const EASTERN_SEA = {
     '短': 'Telling the iron pillar what to do: 变短！',
     '金色': 'The pillar, shrinking into a staff in a flash of golden light: 金色的光！',
     '万': 'The staff’s writing, read out by the Dragon King: 一万三千五百斤！',
-    '给': 'The Dragon King, handing you the staff: 给你！'
+    '给': 'The Dragon King, handing you the staff: 给你！',
+    '钟': 'The Dragon King’s bell, beside his throne: you rang it with your staff, to call his brothers.'
   },
   practiceSentences: [
     {sentence:'我 有 几 只 脚', sentenceEn:'How many feet have I got?'},   // (几, which has no picture)
@@ -675,8 +738,14 @@ const EASTERN_SEA = {
   questions: ['listen', 'read', 'gap'],
   // Whoever seals full pages of your scroll: in the steps to come, the Dragon King under the sea, and the old monkey at home.
   scroll: {by:[], snacks:['包子', '蜂蜜', '桃子']},
-  // What you can wear and eat here: everything from the areas before (the dragon kings' gifts join the wardrobe in Chapter 5).
-  wardrobe: ACROSS_THE_SEA.wardrobe,
+  // What you can wear and eat here: everything from the areas before, and the dragon kings' gifts (Chapter 5), each in the
+  // colour it's called by and with a look of its own on your monkey (js/art.js): a golden hat with two long red feathers,
+  // golden armour, and white cloud shoes. The sentence your monkey says putting each on is the wardrobe's, as for a headband.
+  wardrobe: [...ACROSS_THE_SEA.wardrobe,
+    {item:'帽子', on:'head', colours:['金色'], look:'goldCap', sentence:'我 戴 金色 的 帽子', sentenceEn:'I wear my golden hat.', colourSentence:'我 戴 {colour} 的 帽子', colourSentenceEn:'I wear my {colour} hat.'},
+    {item:'衣服', on:'body', colours:['金色'], look:'goldArmour', sentence:'这 是 金色 的 衣服', sentenceEn:'These are golden clothes.', colourSentence:'这 是 {colour} 的 衣服', colourSentenceEn:'These are {colour} clothes.'},
+    {item:'鞋', on:'feet', colours:['白色'], look:'cloudShoes', sentence:'这 是 白色 的 鞋', sentenceEn:'These are white shoes.', colourSentence:'这 是 {colour} 的 鞋', colourSentenceEn:'These are {colour} shoes.'}
+  ],
   food: ACROSS_THE_SEA.food,
 
   // What's said here (drafts for the native speaker: CHINESE.md), and your monkey's line as you eat a durian you've
@@ -732,6 +801,13 @@ const EASTERN_SEA = {
     jin13500: {zh:'一 万 三 千 五 百 斤 ！', en:'Thirteen thousand five hundred jin!'},
     hereYouAre: {zh:'给 你 ！', en:'Here you are!'},
     yoursNow: {zh:'金箍棒 是 你 的 了 ！', en:'The staff is yours now!'},
+    wantClothes: {zh:'我 还 要 衣服 ！', en:'I want some clothes too!'},
+    threeBrothers: {zh:'我 没有 。 我 有 三 个 弟弟 ！', en:'I haven’t got any. But I’ve got three younger brothers!'},
+    beatDrum: {zh:'打 鼓 吧 ！', en:'Beat the drum!'},
+    bellToo: {zh:'还 有 钟 ！', en:'And the bell!'},
+    theyCame: {zh:'他们 来 了 ！', en:'They’re here!'},
+    lovely: {zh:'好看 ！', en:'Lovely!'},
+    goHome: {zh:'我们 回家 吧 ！', en:'Let’s go home!'},
     jin800: {zh:'八 百 斤 ！', en:'800 jin!'},
     jin1000: {zh:'一 千 ！', en:'1,000!'},
     jin2000: {zh:'两 千 ！', en:'2,000!'},
@@ -755,6 +831,9 @@ const EASTERN_SEA = {
     // the sea turtle: hello (好久不见 if it's your friend from the shore), your bubble (泡泡); a look round (the sand, a shell,
     // the seaweed); then it swims ahead to the seaweed (游), where five starfish hide; and once you've found them all, shells
     turtle: [
+      // (step 9) home: up through the water to the iron bridge, the end of Chapter 5
+      {if:{gifts:4, home:{below:2}}, do:[{say:'goHome'}, {scene:'swimHome'}, {set:{home:2}},
+        {message:'The end of Chapter 5! To be continued: Chapter 6, home with the staff, is on its way. Till then, you can explore the sea, and find any friends you’ve missed.'}]},
       {if:{turtle:0}, do:[
         {if:{friends:{seaTurtle:true}}, say:'longTime'}, {if:{friends:{seaTurtle:true}}, reply:'好久不见'},
         {if:{friends:{seaTurtle:false}}, say:'hello'}, {if:{friends:{seaTurtle:false}}, reply:'你好'},
@@ -815,6 +894,8 @@ const EASTERN_SEA = {
         {message:'None of the Dragon King’s weapons is heavy enough. To be continued: the Dragon Queen has an idea…'}]},
       {if:{hall:2}, do:[{say:'noMore'}]},
       {if:{staff:3}, do:STAFF_GIVEN},
+      {if:{staff:4, gifts:0}, do:ASK_CLOTHES},   // (a game from before the gifts)
+      {if:{gifts:1}, do:[{say:'beatDrum'}]}, {if:{gifts:2}, do:[{say:'bellToo'}]}, {if:{gifts:3}, do:[{say:'theyCame'}]},
       {if:{hall:3, staff:{below:3}}, do:[{say:'thisOne'}]},
       {do:[{say:'welcome'}]}
     ],
@@ -824,6 +905,13 @@ const EASTERN_SEA = {
         {message:'The Dragon Queen opens the {门|door} at the back of the throne hall, and the Dragon King follows her in, to the treasury.'}]},
       {do:[{say:'queenHello'}]}],
     carrier1: [{do:[{say:'tooHeavy'}]}], carrier2: [{do:[{say:'tooHeavy'}]}],
+    // the Dragon King's brothers, each with his gift (给你！), put on as you watch, and what you say as you wear it
+    southKing: [{if:{south:0}, do:[{say:'hereYouAre'}, {if:{new:'帽子'}, newWord:'帽子', note:'帽子 means hat.'},
+      {gift:'金色 的 帽子', label:'A gift from the Dragon King of the South Sea', note:'A golden hat, with two long red feathers! You put it on.'}, {set:{south:1}}]}, {do:[{say:'lovely'}]}],
+    westKing: [{if:{west:0}, do:[{say:'hereYouAre'}, {if:{new:'衣服'}, newWord:'衣服', note:'衣服 means clothes.'},
+      {gift:'金色 的 衣服', label:'A gift from the Dragon King of the West Sea', note:'Golden clothes: armour of little golden scales, to go with your staff! You put them on.'}, {set:{west:1}}]}, {do:[{say:'lovely'}]}],
+    northKing: [{if:{north:0}, do:[{say:'hereYouAre'}, {if:{new:'鞋'}, newWord:'鞋', note:'鞋 means shoes.'},
+      {gift:'白色 的 鞋', label:'A gift from the Dragon King of the North Sea', note:'White shoes, as light as clouds: in these, you could walk on the clouds! You put them on.'}, {set:{north:1}}]}, {do:[{say:'lovely'}]}],
     // the crab general: his soldiers (兵), counted with you by tens to a hundred (百)
     crab: [
       {if:{palace:1}, do:[
@@ -905,6 +993,17 @@ const EASTERN_SEA = {
       {at:0, zh:'一 ， 二 ， 三 ， 跳 ！', en:'One, two, three, jump!'},
       {at:3.5, zh:'水 里 有 很多 鱼 。', en:'There are lots of fish in the water.'},
       {at:7, zh:'孙悟空 在 海 下面 ！', en:'Sun Wukong is under the sea!'}
+    ]},
+    // the Dragon King's brothers, coming at the sound of his drum and bell, from the south, the west and the north (played as
+    // you ring the bell, A at it: like the supply basket's, it has no button to watch it again)
+    brothers: {name:'the dragon kings coming', captions: [
+      {at:0, zh:'南边 ， 西边 ， 北边 ……', en:'South, west, north…'},
+      {at:3.5, zh:'三 个 龙王 来 了 ！', en:'Three dragon kings are coming!'}
+    ]},
+    // home with the sea turtle, up through the water to the iron bridge in the Water Curtain Cave
+    swimHome: {watch:'Watch the swim home', part:'gifts', when:{home:2}, captions: [
+      {at:0, zh:'孙悟空 回家 了 。', en:'Sun Wukong is going home.'},
+      {at:4.4, zh:'我 回来 了 ！', en:'I’m back!'}
     ]}
   }
 };

@@ -45,6 +45,7 @@ const SFX = {
   rumble: () => noise(.9, .16),
   scuffle: () => noise(.09, .03),   // crawling along inside a hollow log
   chime: () => [1047,1319,1568,2093].forEach((f,i) => tone(f, .35, 'triangle', .05, i*.08)),
+  bigBell: () => { tone(196, 2.6, 'sine', .11); tone(98, 2.2, 'sine', .06); tone(394, 1.6, 'sine', .045); tone(588, 1, 'triangle', .02); },   // a great bronze bell, struck: DONG, ringing on (the Dragon King's)
   shimmer: () => tone(520, 1.1, 'triangle', .04, 0, 900),
   splash: (v = .22) => {   // a splash of water: a burst of noise, bright and quick (v: how loud)
     const a = ac(); if (!a) return;

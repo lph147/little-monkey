@@ -509,6 +509,11 @@ SAVES.a3queen = {...SAVES.a3hall, w: {...SAVES.a3hall.w, ...knows(1, ['柱子', 
 SAVES.a3treasury = {...SAVES.a3queen, areas: {...SAVES.a3queen.areas, 3: {...SAVES.a3queen.areas[3], part: 6, hall: 3, staff: 0}}, pos: {place: 'treasury', x: 7, y: 9, dir: 'up'}};   // (in the treasury, the iron pillar glowing)
 SAVES.a3short = {...SAVES.a3treasury, w: {...SAVES.a3treasury.w, ...knows(1, ['长', '短'])}, areas: {...SAVES.a3treasury.areas, 3: {...SAVES.a3treasury.areas[3], staff: 1}}, pos: {place: 'treasury', x: 7, y: 6, dir: 'up'}};   // (told 变短: short, but still too thick)
 SAVES.a3staff = {...SAVES.a3short, w: {...SAVES.a3short.w, ...knows(1, ['金色', '万', '给'])}, areas: {...SAVES.a3short.areas, 3: {...SAVES.a3short.areas[3], staff: 4, weapon: '金箍棒'}}, pos: {place: 'treasury', x: 7, y: 7, dir: 'down'}};   // (the staff in your paws)
+SAVES.a3drum = {...SAVES.a3staff, areas: {...SAVES.a3staff.areas, 3: {...SAVES.a3staff.areas[3], part: 7, gifts: 1}}, pos: {place: 'hall', x: 5, y: 3, dir: 'up'}};   // (step 9: the Dragon King's drum and bell, either side of his throne)
+SAVES.a3brothers = {...SAVES.a3drum, w: {...SAVES.a3drum.w, ...knows(1, ['钟'])}, areas: {...SAVES.a3drum.areas, 3: {...SAVES.a3drum.areas[3], gifts: 3}}, pos: {place: 'hall', x: 8, y: 7, dir: 'up'}};   // (his three brothers, come with their gifts)
+SAVES.a3dressed = {...SAVES.a3brothers, wardrobe: {owned: ['金色 的 帽子', '金色 的 衣服', '白色 的 鞋'], wearing: ['金色 的 帽子', '金色 的 衣服', '白色 的 鞋']},
+  areas: {...SAVES.a3brothers.areas, 3: {...SAVES.a3brothers.areas[3], gifts: 4, south: 1, west: 1, north: 1}}, pos: {place: 'hall', x: 8, y: 7, dir: 'down'}};   // (in the dragon kings' gifts)
+SAVES.a3dressedSea = {...SAVES.a3dressed, pos: {place: 'forest', x: 19, y: 7, dir: 'left'}};   // (and out in the water, on the way home)
 SAVES.a3seabed = {...SAVES.c2dive, area: 3, areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀'}}, pos: {place: 'seabed', x: 11, y: 6, dir: 'down'}};   // (home in autumn: on the hillside's lookout)
 SAVES.c2south = {...SAVES.c2end, pos: {place: 'ffmSouthSlope', x: 9, y: 15, dir: 'up'}};   // (and the south slope's)
 
@@ -1970,6 +1975,22 @@ SCREENS.push(
     play(); await wait(600); }},
   {id: 'a3-staff-fight', title: 'A shark meets the staff', save: 'a3staff', why: 'In a fight, the staff held up as your stick was, hitting for 30.', run: async () => {
     play(); await wait(100); battle('shark'); await wait(1200); }},
+  {id: 'a3-drum', title: 'The drum and the bell', save: 'a3drum', why: 'Step 9: the Dragon King has no clothes for you, only three younger brothers. His drum and his bell stand either side of his throne: beat the drum with your staff.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'a3-strike', title: 'BOOM!', save: 'a3drum', why: 'Your staff swung at the drum: BOOM, the drum shaking, and rings of sound spreading out through the water.', run: async () => {
+    play(); await wait(100); STEPS.strike({strike: 'drum', times: 1}); await wait(330); }},
+  {id: 'a3-brothers-scene', title: 'Three dragon kings', save: 'a3drum', why: 'The bell rung, a scene: rings of sound spreading out from the palace, and the dragons of the South, West and North Seas swimming in, red, white and black.', run: async () => {
+    play(); await wait(300); storyScene('brothers'); await wait(200); introClock = 3.45; await wait(700); }},   // (the gallery's frames are few: on to the dragons coming in)
+  {id: 'a3-brothers', title: 'The brothers', save: 'a3brothers', why: 'The Dragon Kings of the South, West and North Seas in the throne hall, each in his own colours, each with a gift for you (!).', run: async () => {
+    play(); await wait(600); }},
+  {id: 'a3-gift', title: 'A gift', save: 'a3brothers', why: 'Each brother says 给你！ and you put his gift on at once: its card, as for something you pick, then what you say wearing it.', run: async () => {
+    play(); await wait(100); showPicked({zh: '金色 的 帽子', en: 'golden hat'}, 'A golden hat, with two long red feathers! You put it on.', {label: 'A gift from the Dragon King of the South Sea', pic: '金色 的 帽子'}); await wait(500); }},
+  {id: 'a3-dressed', title: 'In the dragon kings’ gifts', save: 'a3dressed', why: 'Your monkey in the golden hat with its two long red feathers, golden armour and white cloud shoes, with the staff.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'a3-dressed-sea', title: 'Home in gold', save: 'a3dressedSea', why: 'On the way home through the seaweed forest, in your bubble: the feathers poking up out of it.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'a3-swim-home', title: 'The swim home', save: 'a3dressed', why: 'With the sea turtle, up through the water, lighter and lighter, to the iron bridge in the Water Curtain Cave: the end of Chapter 5.', run: async () => {
+    play(); await wait(300); storyScene('swimHome'); await wait(200); advancedTo = 1; introClock = 5.9; await wait(700); }},   // (on to the end: out under the iron bridge)
   {id: 'a3-shells', title: 'Your shells are 贝壳', save: 'a3stars', why: 'Once you know 贝壳, your money says so: 🐚 7 贝壳, in your bag, on the Tasks page and in the shop.', run: async () => {
     play(); await wait(100); pressBag(); await wait(400); }}
 );
