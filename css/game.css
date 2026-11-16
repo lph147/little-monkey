@@ -1030,6 +1030,19 @@ rt.hid{visibility:hidden}
 .wch{display:flex;flex-direction:column;align-items:center;min-width:1.8rem}
 .wch b{font-size:1.4rem;font-weight:500}
 .wch small{font-size:.75rem;color:var(--ink)}
+/* the book of names, in the dream (Chapter 6: js/sea.js): its names in the brush font, four to a row, a stroke of the brush
+   through each you cross out, its English then; one that isn't the one to cross out shakes */
+.opts.bookpage{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.3rem;margin:.2rem 0 .3rem}
+.opts.bookpage .opt{position:relative;display:flex;flex-direction:column;align-items:center;padding:.2rem .15rem;min-height:2.9rem}
+.opts.bookpage .bz{font-family:"Little Monkey Kai",var(--text);font-size:1.5rem;line-height:1.1}
+.opts.bookpage .cap{font-size:.75rem}
+.opts.bookpage .ben{font-size:.72rem;visibility:hidden}
+.opts.bookpage .crossed .ben{visibility:visible}
+.opts.bookpage .opt::after{content:"";position:absolute;left:8%;top:38%;height:.32rem;width:0;border-radius:.2rem;background:#2A1A12;transform:rotate(-6deg);transition:width .45s ease-out;pointer-events:none}
+.opts.bookpage .crossed::after{width:84%}
+.opts.bookpage .crossed .bz,.opts.bookpage .crossed .cap{opacity:.55}
+.opts.bookpage .nope{animation:nope .35s}
+@keyframes nope{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .count.tower{flex-wrap:wrap-reverse;max-width:calc(4 * var(--pic-small) + 2rem);background:#D9BB8A;box-shadow:inset 0 -4px 0 #C6A473}   /* stones piled into a tower, on sand: from the bottom up, four to a row at most */
 .count .pix{width:var(--pic-small);height:var(--pic-small)}
 /* a counting question, listening: each answer is that many things, in rows of five, on a table (or grass) as big as each

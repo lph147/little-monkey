@@ -331,6 +331,16 @@ const WORD_BANK = {
   '金色': {py:'jīnsè', en:'golden', pic:'🏅', area:3, category:'colours', alike:['黄色', '金子']},   // (the staff, shrinking in a flash of golden light: 金色的光！)
   '万': {py:'wàn', en:'ten thousand', pic:'🧮', area:3, category:'numbers', alike:['千', '百']},   // (the staff's writing, read out by the Dragon King: 一万三千五百斤！)
   '钟': {py:'zhōng', en:'bell', pic:'🔔', area:3, category:'items'},   // (the Dragon King's bell, beside his throne: you ring it with your staff, to call his brothers)
+  // Chapter 6: home with the staff, and the dream
+  '针': {py:'zhēn', en:'needle', pic:'🪡', area:3, category:'items', alike:['长']},   // (your staff, shrunk as small as a needle)
+  '耳朵': {py:'ěrduo', en:'ear', pic:'👂', area:3, category:'people', alike:['头']},   // (where your staff lives now, a needle: 在我的耳朵里！)
+  '高': {py:'gāo', en:'tall, high', pic:'🗼', area:3, category:'describing', alike:['长', '大', '房子']},   // (the tallest peach tree in the meadow: 树太高了！)
+  '绳子': {py:'shéngzi', en:'rope', pic:'🪢', area:3, category:'items', alike:['蛇']},   // (the officers' rope, in the dream)
+  '灯': {py:'dēng', en:'lamp', pic:'🪔', area:3, category:'items', alike:['灯笼', '火', '光']},   // (the stone lamps along the misty road, in the dream)
+  '毛笔': {py:'máobǐ', en:'writing brush', pic:'🖌️', area:3, category:'items', alike:['写', '毛']},   // (the ten kings give you one, to cross out your name)
+  '醒': {py:'xǐng', en:'to wake up', pic:'🌅', area:3, category:'actions', alike:['睡觉', '梦', '床']},   // (the old monkey, waking you up: 醒醒！)
+  '梦': {py:'mèng', en:'dream', pic:'💭', area:3, category:'items', alike:['睡觉', '床']},   // (it was all a dream: 是梦！)
+  '请': {py:'qǐng', en:'to invite; please', area:3, category:'actions'},   // (the Great White Planet: 玉皇大帝请你去天宫。)
   '多少': {py:'duōshao', en:'how many, how much', area:3, category:'questions'},   // (the Dragon King: 这个多少斤？; 几 for a few, 多少 for any number: SIDE_BY_SIDE)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
 
   // Heard in sentences
@@ -355,7 +365,7 @@ const WORD_BANK = {
   '进去': {py:'jìnqù', en:'to go in'},
   '就': {py:'jiù', en:'then'},
   '能': {py:'néng', en:'can'},
-  '怕': {py:'pà', en:'to be scared'},
+  '怕': {py:'pà', en:'to be scared', pic:'😨', area:3, category:'actions', alike:['哭']},   // (heard all game, caught at last: the ten kings, in your dream, 我们怕你！)
   '里面': {py:'lǐmiàn', en:'inside'},
   '太': {py:'tài', en:'too, very'},
   '好': {py:'hǎo', en:'good'},
@@ -400,7 +410,7 @@ const WORD_BANK = {
   '上': {py:'shàng', en:'on top of'},
   '一个': {py:'yí gè', en:'a, one'},
   '一只': {py:'yì zhī', en:'a, one (animal)'},
-  '在': {py:'zài', en:'at, in, on; doing now (在玩, playing)'},
+  '在': {py:'zài', en:'at, in, on; doing now (在玩, playing)', area:3, category:'places'},   // (heard all game, caught at last: 在我的耳朵里！ In my ear!)
   '玩': {py:'wán', en:'to play'},
   '吗': {py:'ma', en:'(yes/no question)'},
   '花果山': {py:'Huāguǒ Shān', en:'Flower Fruit Mountain'},
@@ -413,10 +423,12 @@ const WORD_BANK = {
   '龙婆': {py:'Lóngpó', en:'the Dragon Queen'},   // (the Dragon Queen's name)
   '南海龙王': {py:'Nánhǎi Lóngwáng', en:'the Dragon King of the South Sea'}, '西海龙王': {py:'Xīhǎi Lóngwáng', en:'the Dragon King of the West Sea'},
   '北海龙王': {py:'Běihǎi Lóngwáng', en:'the Dragon King of the North Sea'},   // (names: the Dragon King's three younger brothers, step 9)
+  '差人': {py:'chāirén', en:'officers of the underworld'}, '十王': {py:'Shí Wáng', en:'the ten kings of the underworld'}, '地府': {py:'dìfǔ', en:'the underworld'},   // (names: the dream, Chapter 6)
+  '太白金星': {py:'Tàibái Jīnxīng', en:'the Great White Planet'}, '玉皇大帝': {py:'Yùhuáng Dàdì', en:'the Jade Emperor'}, '天宫': {py:'Tiāngōng', en:'Heaven'},   // (names: Heaven, Chapter 6)
   '这个': {py:'zhège', en:'this one'},   // (this one, as the Dragon King points at a weapon)
   '三十': {py:'sānshí', en:'thirty'}, '四十': {py:'sìshí', en:'forty'}, '五十': {py:'wǔshí', en:'fifty'}, '六十': {py:'liùshí', en:'sixty'},
   '七十': {py:'qīshí', en:'seventy'}, '八十': {py:'bāshí', en:'eighty'}, '九十': {py:'jiǔshí', en:'ninety'},   // (the tens, heard as the crab general counts his soldiers: made of words you know, not words to catch)
-  '找': {py:'zhǎo', en:'to look for'},
+  '找': {py:'zhǎo', en:'to look for', pic:'🔍', area:3, category:'actions', alike:['看']},   // (heard all game, caught at last: the ten kings, in your dream, 找你的名字！)
   '考试': {py:'kǎoshì', en:'exam, test'},   // (the teacher's exam, at the end of chapter 1)
   '等': {py:'děng', en:'to wait'},
   '对': {py:'duì', en:'right, correct'},
@@ -556,6 +568,7 @@ const MADE = {
   '海星': {parts:[['海', 'hǎi', 'sea'], ['星', 'xīng', 'star', '星星']]},   // (a star of the sea)
   '海马': {parts:[['海', 'hǎi', 'sea'], ['马', 'mǎ', 'horse']]},   // (its head looks like a horse's)
   '龙虾': {parts:[['龙', 'lóng', 'dragon'], ['虾', 'xiā', 'shrimp']]},
+  '毛笔': {parts:[['毛', 'máo', 'hair'], ['笔', 'bǐ', 'pen']]},   // (a pen made of hair: the brush's tip)
   '金色': {parts:[['金', 'jīn', 'gold', '金子'], ['色', 'sè', 'colour', '红色']]},   // (the colour of gold)   // (a shrimp as big and fierce as a dragon)
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},

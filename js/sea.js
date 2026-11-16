@@ -153,6 +153,7 @@ function drawSchools(cx, cy, now){
 const COLOUR_ART = {coral:'coral', coralOrange:'coralOrange'};   // the sea's things that can be a colour you're told, drawn again over the water's blue (drawSea)
 function drawSea(cx, cy, sh, now){
   const plumes = plumesAt; plumesAt = null;   // (where the golden hat's feathers were drawn over you: drawn again, clear, over the water)
+  drawHomeThings(cx, cy, sh, now);   // (Chapter 6: the dream's dusk and lamps; your staff out of your ear, peaches falling, the rope, a glint)
   if (!underwater()) return;
   const W = VW * T, H = VH * T, PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
   if (!bubbleKeep){ bubbleKeep = document.createElement('canvas'); bubbleKeep.width = 32; bubbleKeep.height = 32; }
@@ -406,12 +407,15 @@ LIFTED['金箍棒'] = (x, y) => { x = Math.round(x); y = Math.round(y); R(b, x -
 // 变 and a word (choices), each with its pinyin, and its English unless that's switched off in Settings, as your replies
 // are. You say the one you chose (its line, says), and see it do just that (morph: what the pillar turns into): the right
 // one (right, its line teaching teach), and on you go; any other, what happens (wrong, waiting for A), and you choose
-// again. Not now ends the conversation, to come back to. (The staff around the mountain, Chapter 6, will be told the same way.)
+// again. Not now ends the conversation, to come back to. The staff around the mountain (Chapter 6) is told the same way, out
+// of your ear in your paws, where no iron pillar stands (each telling's staff: the size it turns into for each choice; up:
+// held upright whichever way you face, such as up into the tallest peach tree).
 const TELL_EN = {'变长':'Get longer', '变短':'Get shorter', '变大':'Get bigger', '变小':'Get smaller'};
 const pyOfWord = w => (WORDS[w] || {}).py || (GLOSS[w] || [])[0] || '';
 function drawTellPic(c){
   if (!c) return;
-  const g = c.getContext('2d'), sz = pillarSize(performance.now()), w = Math.max(2, Math.round(Math.min(sz.w, 30) * .7)), h = Math.min(36, Math.round(sz.h * .7)), X = 24, Y = 38, L = Math.round(X - w / 2);
+  const out = !PLACES[PLACE].pillar && staffNow();   // (at home, Chapter 6: your staff, out of your ear, as it is now)
+  const g = c.getContext('2d'), sz = out ? {w:out.w * 3, h:out.len * 1.3} : pillarSize(performance.now()), w =Math.max(2, Math.round(Math.min(sz.w, 30) * .7)), h = Math.min(36, Math.round(sz.h * .7)), X = 24, Y = 38, L = Math.round(X - w / 2);
   g.clearRect(0, 0, c.width, c.height);
   const glow = g.createRadialGradient(X, Y - h / 2, 1, X, Y - h / 2, 22); glow.addColorStop(0, 'rgba(255,214,120,.7)'); glow.addColorStop(1, 'rgba(255,214,120,0)'); g.fillStyle = glow; g.fillRect(0, 0, c.width, c.height);
   R(g, L, Y - h, w, h, '#5A606A'); R(g, L + 1, Y - h, Math.max(1, Math.round(w * .25)), h, '#8A929C'); if (w >= 4) R(g, L + w - 1, Y - h, 1, h, '#30343A');
@@ -429,14 +433,16 @@ function tellCard(id){
   });
 }
 STEPS.tell = async (s, who) => {
-  const t = AREA.telling[s.tell];
+  const t = AREA.telling[s.tell], atHome = !PLACES[PLACE].pillar;
+  if (atHome && !staffOut) await staffTo(STAFF_OUT.normal, 600, t.up);   // (out of your ear, or your paw, the size it usually is)
   for (;;){
     const c = await tellCard(s.tell);
-    if (!c) return STOP;
+    if (!c){ if (atHome) await staffAway(); return STOP; }
     await STEPS.say({say:t.says[c], by:'player', ...(c === t.right && t.teach ? {teach:t.teach} : {})}, who);
-    await pillarTo(t.morph[c]);
+    if (atHome) await staffTo(t.staff[c]); else await pillarTo(t.morph[c]);
     if (c === t.right) return;
     await showNarration(fill(t.wrong[c]));
+    if (atHome) await staffTo(STAFF_OUT.normal, 600);   // (back as it was, to tell it again)
   }
 };
 
@@ -642,3 +648,299 @@ function drawSwimHome(t, now){
   if (t < 5.4){ b.globalAlpha = 1 - clamp((t - 5) / .4, 0, 1); R(b, 0, 0, W, H, '#F4FCFF'); b.globalAlpha = 1; }
 }
 Object.assign(SCENE_ART, {brothers: drawBrothers, swimHome: drawSwimHome});
+
+/* ================= CHAPTER 6: HOME WITH THE STAFF ================= */
+// Home with the staff (Chapter 6, built 16 November 2026 from the Area 3 plan). At a spot at home you tell your staff what
+// to do (the tell step, where no iron pillar stands): it comes out of your ear into your paws, out the way you face, and
+// grows or shrinks as you watch (each telling's staff: its length and thickness in pixels, for each thing you could tell
+// it), till you put it back in your ear, a needle again (the stow step). While it's out, or once it's in your ear (the
+// area's inEar), the staff in your paw isn't drawn (staffInEar, for inHand in js/art.js).
+const STAFF_OUT = {needle:{len:2, w:1}, normal:{len:20, w:3}};
+let staffOut = null;   // {from, to, t0, ms}: your staff out of your ear, changing from one size to the other (staffNow)
+function staffNow(now = performance.now()){
+  if (!staffOut) return null;
+  const k = Math.min(1, (now - staffOut.t0) / staffOut.ms), e = k < .5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2, f = staffOut.from, t = staffOut.to;
+  return {len:f.len + (t.len - f.len) * e, w:f.w + (t.w - f.w) * e, moving:k < 1};
+}
+function staffInEar(){ return !!staffOut || !!(AREA.inEar && S && S.areas && here() && matches(AREA.inEar)); }
+async function staffTo(size, ms = 900, up = staffOut && staffOut.up){   // (up: held upright whichever way you face, such as up into the tallest peach tree)
+  const now = performance.now(), from = staffNow(now) || STAFF_OUT.needle, grows = size.len > from.len + 4 || size.w > from.w + 1;
+  staffOut = {from:{len:from.len, w:from.w}, to:size, t0:now, ms, up:!!up}; redress();
+  if (grows){ SFX.rumble(); shakeT = now - 250; } else SFX.shimmer();
+  await sleep(ms + 120);
+}
+async function staffAway(){ if (!staffOut) return; await staffTo(STAFF_OUT.needle, 450); staffOut = null; redress(); }
+// In your paws, from your paws out the way you face: iron, a gold band at each end, glowing as it changes.
+function drawStaffOut(cx, cy, now){
+  const sz = staffNow(now); if (!sz) return;
+  const len = Math.max(1, Math.round(sz.len)), w = Math.max(1, Math.round(sz.w)), PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy), d = staffOut.up ? 'up' : pl.dir, up = d === 'up' || d === 'down';
+  const side = staffOut.up ? {left:-3, right:4}[pl.dir] || 0 : 0;   // (held upright, on the side you face)
+  const x = up ? PX + 8 + side - Math.floor(w / 2) : d === 'left' ? PX + 4 - len : PX + 12, y = up ? (d === 'up' ? PY + 9 - len : PY + 9) : PY + 10 - Math.floor(w / 2);
+  const W = up ? w : len, H = up ? len : w, rim = w > 2 ? 1 : 0, bh = Math.max(1, Math.min(3, Math.round(len / 7)));
+  if (sz.moving){ b.save(); b.globalCompositeOperation = 'screen'; b.globalAlpha = .45; R(b, x - 2, y - 2, W + 4, H + 4, '#FFD878'); b.restore(); }
+  R(b, x, y, W, H, '#5A606A');
+  if (up) R(b, x, y, Math.max(1, Math.round(W * .34)), H, '#8A929C'); else R(b, x, y, W, Math.max(1, Math.round(H * .34)), '#8A929C');
+  if (up){ R(b, x - rim, y, W + 2 * rim, bh, '#E2B23A'); R(b, x - rim, y + H - bh, W + 2 * rim, bh, '#E2B23A'); }
+  else { R(b, x, y - rim, bh, H + 2 * rim, '#E2B23A'); R(b, x + W - bh, y - rim, bh, H + 2 * rim, '#E2B23A'); }
+}
+// Back in your ear, a needle again (stow); or just gone from your paws, where it's become something (stow: 'left'), such as
+// a bridge across the meadow's pond.
+STEPS.stow = async s => { if (s.stow === 'left'){ staffOut = null; redress(); return; } await staffAway(); };
+// Out of your ear, big, and back (flourish), such as to scare off the officers of the underworld in the dream.
+STEPS.flourish = async () => { await staffTo({len:30, w:6}, 700); await sleep(400); await staffAway(); };
+// Fruit falling from the top of the tree you face (drop: its word; n: how many), into your paws as you catch them.
+const drops = [];
+STEPS.drop = async s => {
+  const [x, y] = facing(), now = performance.now(), n = s.n || 3;
+  for (let i = 0; i < n; i++) drops.push({w:s.drop, x0:x * T + 2 + i * 4, y0:y * T - 22 + (i % 2) * 4, x1:pl.px + 1 + i * 4, y1:pl.py + 4, t0:now + i * 260});
+  await sleep(650 + n * 260); SFX.bump();
+};
+function drawDrops(cx, cy, now){
+  for (let i = drops.length - 1; i >= 0; i--){
+    const d = drops[i], k = (now - d.t0) / 650;
+    if (k < 0) continue;
+    if (k > 1.5){ drops.splice(i, 1); continue; }
+    const kk = Math.min(1, k), X = d.x0 + (d.x1 - d.x0) * kk, Y = d.y0 + (d.y1 - d.y0) * kk * kk - (k > 1 ? Math.sin((k - 1) / .5 * Math.PI) * 3 : 0);
+    b.globalAlpha = k > 1.3 ? (1.5 - k) / .2 : 1; b.drawImage(itemPic(d.w), Math.round(X - cx), Math.round(Y - cy), 9, 9); b.globalAlpha = 1;
+  }
+}
+// A boulder you're facing, levered aside with your staff (roll): a rumble, the ground shaking, stones and earth flying.
+STEPS.roll = async () => { const [x, y] = facing(); SFX.rumble(); shakeT = performance.now(); burst(x, y, 'stone'); burst(x, y, 'earth'); await sleep(700); SFX.bump(); };
+Object.assign(STEP_OPTIONS, {drop:['n']});
+// The rope round you in the dream (the area's rope: while its if matches, in its place), tied by the officers of the
+// underworld, its end in the hand of the one leading you (by).
+function drawRope(cx, cy, now){
+  const r = AREA.rope; if (!r || r.place !== PLACE || !matches(r.if)) return;
+  const X = Math.round(pl.px - cx) + 8, Y = Math.round(pl.py - cy) + 10;
+  for (let i = 0; i < 20; i++){ const a = i / 20 * Math.PI * 2; R(b, Math.round(X + Math.cos(a) * 6), Math.round(Y + Math.sin(a) * 2), 1, 1, i % 3 ? '#B8925A' : '#7A5A32'); }
+  const n = NPCS.find(c => c.id === r.by); if (!n) return;
+  const k = n.mv ? clamp((now - n.mv.t0) / n.mv.dur, 0, 1) : 1, nx = ((n.mv ? n.mv.fx + (n.x - n.mv.fx) * k : n.x) * T) - cx + 8, ny = ((n.mv ? n.mv.fy + (n.y - n.mv.fy) * k : n.y) * T) - cy + 10;
+  const steps = Math.max(4, Math.round(Math.hypot(nx - X, ny - Y) / 2));
+  for (let i = 1; i < steps; i++){ const f = i / steps; R(b, Math.round(X + (nx - X) * f), Math.round(Y + (ny - Y) * f + Math.sin(f * Math.PI) * 3), 1, 1, '#A8824A'); }
+}
+// Something glinting where there's something to find, while the story says (the area's glimmers: {at, if}), such as the
+// jade on the little island in the meadow's pond.
+function drawGlimmers(cx, cy, now){
+  for (const g of AREA.glimmers || []){
+    if (placeOf(g.at) !== PLACE || (g.if && !matches(g.if))) continue;
+    const t = (now + g.at[0] * 977) % 1500;
+    if (t < 700) glint(g.at[0] * T - cx + 8, g.at[1] * T - cy + 9, Math.sin(t / 700 * Math.PI));
+  }
+}
+function drawHomeThings(cx, cy, sh, now){
+  drawDream(cx, cy, sh, now);
+  drawGlimmers(cx, cy, now);
+  drawRope(cx, cy, now);
+  drawDrops(cx, cy, now);
+  drawStaffOut(cx, cy, now);
+}
+// The staff lying across the meadow's pond, a bridge to the little island in it (the bridge's two squares: the island's end,
+// L, and the shore's, R), the water under it, a gold band at each end.
+function staffBridge(g, X, Y, x, y, end){
+  waterBase(g, X, Y, x, y);
+  R(g, X, Y + 11, T, 1, '#2C6B9E');                                          // its shadow on the water
+  R(g, X, Y + 6, T, 4, '#5A606A'); R(g, X, Y + 6, T, 1, '#8A929C'); R(g, X, Y + 9, T, 1, '#30343A');
+  if (end === 'L') R(g, X, Y + 5, 3, 6, '#E2B23A'); else R(g, X + 13, Y + 5, 3, 6, '#E2B23A');
+}
+Object.assign(LOOKS, {staffBridgeL:(g, X, Y, x, y) => staffBridge(g, X, Y, x, y, 'L'), staffBridgeR:(g, X, Y, x, y) => staffBridge(g, X, Y, x, y, 'R')});
+WATERY.push('staffBridgeL', 'staffBridgeR');
+// A thin crack in the Water Curtain Cave's wall, low down, where a little monkey's pearl has rolled
+LOOKS.caveCrack = (g, X, Y, x, y) => {
+  caveWall(g, X, Y, x, y);
+  for (const [px, py] of [[8, 1], [7, 3], [9, 5], [8, 7], [10, 9], [9, 11]]){ R(g, X + px, Y + py, 1, 2, '#0E0C0A'); R(g, X + px + 1, Y + py, 1, 1, '#5A5248'); }
+};
+
+/* ---- the dream: the underworld ---- */
+// A misty road of pale stone, lamps glowing beside it, up to a dim hall where the ten kings sit behind their long table;
+// all round, the dark mist of a dream. Over it all a violet dusk, the lamps' light glowing through it (drawDream: a place
+// that's a dream).
+function dreamFloor(g, X, Y, x, y){
+  R(g, X, Y, T, T, (x + y) % 2 ? '#3A3550' : '#3F3A57'); R(g, X, Y, T, 1, '#2C283E'); R(g, X, Y, 1, T, '#2C283E');
+  if (rnd(x, y, 970) < .25) R(g, X + 3 + Math.floor(rnd(x, y, 971) * 9), Y + 4 + Math.floor(rnd(x, y, 972) * 8), 3, 1, '#4A4566');
+}
+function dreamRoad(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#7C7892');
+  for (const [ox, oy] of [[0, 0], [8, 0], [0, 8], [8, 8]]){ R(g, X + ox, Y + oy, 8, 8, (x * 2 + ox / 8 + y * 3 + oy / 8) % 3 ? '#8A86A0' : '#827E98'); R(g, X + ox, Y + oy + 7, 8, 1, '#615D78'); R(g, X + ox + 7, Y + oy, 1, 8, '#615D78'); }
+}
+function dreamVoid(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#1C1830');
+  for (let i = 0; i < 3; i++) if (rnd(x, y, 980 + i) < .5) R(g, X + Math.floor(rnd(x, y, 983 + i) * 12), Y + Math.floor(rnd(x, y, 986 + i) * 14), 4 + Math.floor(rnd(x, y, 989 + i) * 4), 1, '#2A2544');
+}
+function dreamWall(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#2A2638');
+  for (let r = 0; r < 4; r++){ R(g, X, Y + r * 4 + 3, T, 1, '#1E1B2A'); R(g, X + (r % 2 ? 4 : 11), Y + r * 4, 1, 3, '#1E1B2A'); }
+  R(g, X, Y, T, 1, '#3E3A52');
+}
+Object.assign(LOOKS, {dreamFloor, dreamRoad, dreamVoid, dreamWall, dreamLamp:dreamRoad, kingTable:dreamFloor});
+// a stone lamp beside the road, its little window lit (its light glows over the dream's dusk: drawDream)
+OBJECT_ART.dreamLamp = (g, o) => {
+  const X = o.x * T, Y = o.y * T;
+  groundShadow(g, X + 8, Y + 14, 5, 2);
+  R(g, X + 4, Y + 11, 8, 4, '#5A566A'); R(g, X + 4, Y + 11, 8, 1, '#7A768E');                                     // its base
+  R(g, X + 6, Y + 2, 4, 9, '#5A566A'); R(g, X + 6, Y + 2, 1, 9, '#7A768E');                                       // its post
+  R(g, X + 3, Y - 6, 10, 8, '#4A4660'); R(g, X + 5, Y - 4, 6, 4, '#FFD27A'); R(g, X + 6, Y - 3, 4, 2, '#FFF2C0');   // its lamp, lit
+  R(g, X + 2, Y - 8, 12, 2, '#3A3650'); R(g, X + 5, Y - 10, 6, 2, '#3A3650');                                     // its little roof
+};
+// the ten kings' long table, dark red lacquer, the book of names lying shut on it, bound with string, and a brush beside it
+OBJECT_ART.kingTable = (g, o) => {
+  const X = o.x * T, Y = o.y * T, W = o.w * T;
+  groundShadow(g, X + W / 2, Y + 15, Math.round(W * .45), 2);
+  R(g, X + 1, Y + 3, W - 2, 6, '#7A2A22'); R(g, X + 1, Y + 3, W - 2, 1, '#A84A3A'); R(g, X + 1, Y + 8, W - 2, 1, '#4A1812');   // its top
+  for (const lx of [X + 2, X + W - 5]) R(g, lx, Y + 9, 3, 6, '#5A1E18');                                                       // its legs
+  const bx = X + Math.round(W / 2) - 8;
+  R(g, bx, Y - 1, 16, 6, '#2E3E6A'); R(g, bx, Y - 1, 16, 1, '#4A5C8E'); R(g, bx + 1, Y + 4, 15, 1, '#E8DCC0');                   // the book, shut: its blue cover, its pages' edge
+  for (const sx of [bx + 2, bx + 6]) R(g, sx, Y - 1, 1, 6, '#E8DCC0');                                                         // its binding string
+  R(g, bx + 20, Y + 2, 6, 1, '#6A4A2A'); R(g, bx + 26, Y + 1, 2, 3, '#1A1210');                                                // a brush
+};
+BLOCK_OBJECTS.push('kingTable');
+function drawDream(cx, cy, sh, now){
+  if (!PLACES[PLACE].dream) return;
+  const W = VW * T;
+  b.globalAlpha = .2; R(b, 0, 0, W, sh, '#3A2A6A'); b.globalAlpha = 1;   // a violet dusk over everything
+  b.save(); b.globalCompositeOperation = 'screen';
+  const x0 = Math.max(0, Math.floor(cx / T) - 2), x1 = Math.min(COLS - 1, Math.ceil((cx + W) / T) + 2), y0 = Math.max(0, Math.floor(cy / T) - 2), y1 = Math.min(ROWS - 1, Math.ceil((cy + sh) / T) + 2);
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++){
+    if (tileAt(x, y).look !== 'dreamLamp') continue;
+    const X = x * T + 8 - cx, Y = y * T - 2 - cy, k = .82 + Math.sin(now / 300 + x * 1.7 + y) * .12, r = 26;
+    const gl = b.createRadialGradient(X, Y, 1, X, Y, r); gl.addColorStop(0, `rgba(255,214,130,${.5 * k})`); gl.addColorStop(1, 'rgba(255,214,130,0)');
+    b.fillStyle = gl; b.fillRect(X - r, Y - r, r * 2, r * 2);
+  }
+  b.restore();
+}
+
+/* ---- the book of names ---- */
+// The book of names (the book step: one of the area's books), a card (decided 16 November 2026, the Area 3 plan: gentle,
+// with no word for death): everyone's name in it, written with a brush, three to a row (each with its pinyin; its English
+// once crossed out). Find yours and cross it out (you: the one that's yours), a stroke of the brush through it; then the
+// troop's, every name with 猴 in it (monkey), one by one, till they're all crossed out. One that isn't shakes, and the card
+// says why. A, with nothing chosen, shows the first name and never chooses it for you (its names are a question's answers).
+function bookCard(id){
+  const bk = AREA.books[id], names = bk.names, crossed = new Set();
+  return new Promise(res => {
+    let phase = 0;
+    openCard(`<p class="label">${esc(fill(bk.label))}</p><p class="note bookask">${esc(fill(bk.find))}</p>
+      <div class="opts bookpage" data-nav>${names.map((n, i) => `<button class="opt bname" data-i="${i}" data-label="Cross out"><span class="bz">${n.zh}</span>${S.pinyin ? `<span class="cap">${esc(n.py)}</span>` : ''}<span class="ben">${esc(n.en)}</span></button>`).join('')}</div>
+      <div class="actions"><button class="btn primary" data-a="ok" hidden>Done</button></div>`);
+    const ask = sheet.querySelector('.bookask'), ok = sheet.querySelector('[data-a=ok]');
+    const monkeysLeft = () => names.filter((n, i) => n.monkey && !crossed.has(i)).length;
+    sheet.querySelectorAll('.bname').forEach(btn => btn.onclick = () => {
+      const i = +btn.dataset.i, n = names[i];
+      if (crossed.has(i) || !ok.hidden) return;
+      if (!(phase === 0 ? n.you : n.monkey)){
+        SFX.wrong(); btn.classList.remove('nope'); void btn.offsetWidth; btn.classList.add('nope');
+        ask.textContent = fill(phase === 0 ? bk.notYours : bk.noMonkey); return;
+      }
+      crossed.add(i); btn.classList.add('crossed'); SFX.sweep();
+      if (phase === 0){ phase = 1; ask.textContent = fill(bk.troop); }
+      else if (monkeysLeft()) ask.textContent = fill(bk.more.replace('{n}', monkeysLeft()));
+      else { ask.textContent = fill(bk.done); ok.hidden = false; }
+    });
+    on('[data-a=ok]', () => { closeCard(); res(); });
+  });
+}
+STEPS.book = async s => { await bookCard(s.book); };
+
+/* ---- Chapter 6's scenes ---- */
+// The staff up to the sky at the home ground: you hold it up and it grows, up and up through the clouds, the troop round you
+// staring up at it; then it shrinks, smaller and smaller, to a needle, and you tuck it into your ear.
+function drawStaffSky(t, now){
+  const W = VW * T, H = VH * T, blink = now % 3200 < 130;
+  for (let y = 0; y < 104; y += 4) R(b, 0, y, W, 4, mix('#7FC4F0', '#D8F0FF', y / 104));
+  for (const [x0, y0, s] of [[30, 22, 1], [170, 14, 1.3], [110, 40, .9], [210, 58, .8]]){
+    const x = Math.round((x0 + now / 90 * s) % (W + 60)) - 30;
+    for (let k = 0; k < 4; k++) R(b, x + k * 7, y0 + (k % 2) * 2, 14 - k, 5, '#FFFFFF');
+  }
+  for (let x = 0; x < W; x += 2) R(b, x, 90 + Math.round(Math.sin(x / 23) * 3 + Math.sin(x / 9) * 1.5), 2, 20, '#7FA06A');   // the hills behind
+  for (let y = 104; y < H; y += T) for (let x = 0; x < W; x += T) LOOKS.grass(b, x, y, x / T, y / T + 50);
+  const grow = clamp((t - .6) / 2.6, 0, 1), shrink = clamp((t - 4.5) / 1.8, 0, 1), tuck = clamp((t - 6.5) / .7, 0, 1);
+  const len = Math.max(1, Math.round((20 + grow * 140) * (1 - shrink) + 3 * shrink)), w = Math.max(1, Math.round((3 + grow * 3) * (1 - shrink) + shrink));
+  [['elder', 34, 112, 'right'], ['troopA', 58, 106, 'right'], ['hungry', 76, 118, 'right'], ['big', 150, 108, 'left'], ['mother', 170, 118, 'left'], ['troopB', 194, 110, 'left'],
+    ['baby1', 92, 128, 'up'], ['baby3', 136, 130, 'up']].forEach(([id, x, y, d], i) => {
+    const k = id.startsWith('baby') ? SMALL_PX : T;
+    b.drawImage(monkeySprite(id, d, blink && i % 2 === 0), x + (T - k) / 2, y + (T - k) - (grow > .4 && shrink < 1 ? Math.round(Math.abs(Math.sin(now / 200 + i)) * 2) : 0), k, k);
+  });
+  if (grow > .3 && shrink < .6) for (const [x, y] of [[64, 96], [156, 98], [97, 117], [141, 119]]){ R(b, x, y, 1, 4, '#E2343A'); R(b, x, y + 5, 1, 1, '#E2343A'); }   // !s: the troop amazed
+  const mx = 112, my = 104;
+  b.drawImage(monkeySprite('player', 'down', false, 0, true), mx, my); drawPlumes(b, mx, my, 'down');
+  if (tuck < 1){
+    const sx = Math.round(mx + 8 + tuck * 5), base = Math.round(my + 10 - tuck * 6), L = sx - Math.floor(w / 2);
+    if (grow > 0 && grow < 1 || shrink > 0 && shrink < 1){ b.save(); b.globalCompositeOperation = 'screen'; b.globalAlpha = .4; R(b, L - 2, base - len - 2, w + 4, len + 4, '#FFD878'); b.restore(); }
+    R(b, L, base - len, w, len, '#5A606A'); R(b, L, base - len, 1, len, '#8A929C');
+    const bh = Math.max(1, Math.min(3, Math.round(len / 7)));
+    R(b, L - (w > 2 ? 1 : 0), base - bh, w + (w > 2 ? 2 : 0), bh, '#E2B23A'); R(b, L - (w > 2 ? 1 : 0), base - len, w + (w > 2 ? 2 : 0), bh, '#E2B23A');
+  } else { const k = clamp((t - 7.2) / .6, 0, 1); b.globalAlpha = 1 - k; glint(mx + 13, my + 4, 1 - k); b.globalAlpha = 1; }   // (in your ear: a twinkle)
+}
+// Falling asleep after the feast for the staff: you in a stone bed in the Water Curtain Cave, Zs floating up; then mist
+// swirls in, and you're somewhere else, on a misty road of pale stone, lamps glowing along it, up to a dark hall.
+function drawDreamIn(t, now){
+  const W = VW * T, H = VH * T, k = clamp((t - 2.6) / 1.6, 0, 1);
+  if (k < 1){
+    for (let y = 0; y < H; y += 4) R(b, 0, y, W, 4, mix('#1A1612', '#2E2620', y / H));
+    R(b, 84, 92, 72, 24, '#6E665C'); R(b, 84, 92, 72, 3, '#8E867A'); R(b, 84, 114, 72, 2, '#4A443C');   // the stone bed
+    R(b, 88, 94, 18, 8, '#C8B898');                                                                     // its pillow
+    b.drawImage(monkeySprite('player', 'down', true, 0, true), 0, 0, 16, 10, 90, 88, 16, 10);           // you, asleep
+    R(b, 104, 96, 48, 16, '#A8402B'); R(b, 104, 96, 48, 2, '#C8604A');                                  // a blanket
+    for (let i = 0; i < 3; i++){ const z = (now / 1100 + i / 3) % 1, zx = Math.round(108 + z * 16), zy = Math.round(84 - z * 34); b.globalAlpha = 1 - z;
+      R(b, zx, zy, 4, 1, '#E8E0FF'); R(b, zx + 2, zy + 1, 1, 1, '#E8E0FF'); R(b, zx + 1, zy + 2, 1, 1, '#E8E0FF'); R(b, zx, zy + 3, 4, 1, '#E8E0FF'); }
+    b.globalAlpha = 1;
+  }
+  if (k > 0){
+    b.globalAlpha = k;
+    for (let y = 0; y < H; y += 4) R(b, 0, y, W, 4, mix('#120E24', '#3A2E5A', y / H));
+    for (let y = 40; y < H; y++){ const f = (y - 40) / (H - 40), half = Math.round(8 + f * 44); R(b, 120 - half, y, half * 2, 1, (y % 6 < 1) ? '#615D78' : '#8A86A0'); }   // the road, up into the dark
+    for (const [f, side] of [[.15, -1], [.15, 1], [.45, -1], [.45, 1], [.85, -1], [.85, 1]]){   // lamps along it
+      const y = Math.round(40 + f * (H - 40)), half = 8 + f * 44, x = Math.round(120 + side * (half + 6 + f * 6)), s = .5 + f;
+      const gl = b.createRadialGradient(x, y - 10 * s, 1, x, y - 10 * s, 16 * s); gl.addColorStop(0, 'rgba(255,214,130,.6)'); gl.addColorStop(1, 'rgba(255,214,130,0)'); b.fillStyle = gl; b.fillRect(x - 16 * s, y - 26 * s, 32 * s, 32 * s);
+      R(b, Math.round(x - 2 * s), Math.round(y - 12 * s), Math.round(4 * s), Math.round(12 * s), '#4A4660'); R(b, Math.round(x - 1.5 * s), Math.round(y - 12 * s), Math.max(1, Math.round(3 * s)), Math.max(1, Math.round(3 * s)), '#FFD27A');
+    }
+    R(b, 96, 20, 48, 20, '#2A2638'); R(b, 90, 16, 60, 5, '#1E1B2A'); R(b, 114, 28, 12, 12, '#0E0C18');   // the hall at the top of the road
+    b.globalAlpha = 1;
+  }
+  const m = Math.sin(clamp((t - 2) / 2.6, 0, 1) * Math.PI);   // mist swirling in, then thinning
+  if (m > 0) for (let i = 0; i < 12; i++){ const x = Math.round((rnd(i, 1, 990) * W + now / (30 + i * 6)) % (W + 40)) - 20, y = Math.round(rnd(i, 2, 991) * H); b.globalAlpha = .55 * m; oval(b, x, y, 18 + (i % 3) * 6, 5, '#E8E4F4'); }
+  b.globalAlpha = 1;
+}
+// Trouble in Heaven: high above the clouds, the Jade Emperor on his throne in his golden hall; the Dragon King comes up on
+// a cloud to complain about you, then one of the ten kings; the Jade Emperor frowns, and the Great White Planet, with his
+// long white beard, steps forward: he'll go and find you.
+function drawJadeEmperor(X, Y, frown){
+  R(b, X - 24, Y - 6, 48, 50, '#B8302A'); R(b, X - 24, Y - 6, 48, 2, '#E2B23A'); R(b, X - 26, Y + 30, 52, 4, '#E2B23A');   // his throne
+  for (let y = 0; y < 26; y++){ const half = 8 + Math.round(y * .45); R(b, X - half, Y + 14 + y, half * 2, 1, y % 7 ? '#F2C230' : '#D8A41E'); }   // his yellow robe
+  R(b, X - 5, Y + 1, 10, 12, '#F2D2A8');                                                    // his face
+  R(b, X - 3, Y + 5, 2, 1, '#1A1210'); R(b, X + 1, Y + 5, 2, 1, '#1A1210');
+  if (frown){ R(b, X - 4, Y + 3, 2, 1, '#1A1210'); R(b, X - 2, Y + 4, 1, 1, '#1A1210'); R(b, X + 2, Y + 3, 2, 1, '#1A1210'); R(b, X + 1, Y + 4, 1, 1, '#1A1210'); }
+  R(b, X - 3, Y + 10, 6, 7, '#2A1E16'); R(b, X - 1, Y + 17, 2, 3, '#2A1E16');                 // his beard
+  R(b, X - 11, Y - 4, 22, 3, '#1A1A2A');                                                    // his crown's flat board
+  for (let i = 0; i < 7; i++) R(b, X - 10 + i * 3, Y - 1, 1, 5, '#E8C860');                // and its strings of beads
+}
+function seaCloudPuff(x, y, w){ for (let k = 0; k < 5; k++) oval(b, Math.round(x + (k - 2) * w / 5), Math.round(y + (k % 2) * 2), Math.round(w / 4), 4, k % 2 ? '#FFFFFF' : '#F2F4FA'); }
+function drawTroubleInHeaven(t, now){
+  const W = VW * T, H = VH * T, blink = now % 3200 < 130;
+  for (let y = 0; y < H; y += 4) R(b, 0, y, W, 4, mix('#F8D8A8', '#F4B8C8', y / H));
+  for (const x of [56, 176]){ R(b, x, 12, 8, 92, '#C8302A'); R(b, x, 12, 2, 92, '#E86050'); }   // the hall's red pillars
+  R(b, 40, 4, 160, 10, '#E2B23A'); R(b, 34, 2, 172, 3, '#B8862A');                             // its golden roof
+  R(b, 64, 96, 112, 8, '#E8D8B8');                                                             // the step of his throne
+  drawJadeEmperor(120, 44, t > 2.2);
+  for (let i = 0; i < 9; i++) seaCloudPuff(i * 30, 132 + (i % 2) * 6, 40);                        // clouds under it all
+  const up = (t0, t1) => clamp((t - t0) / (t1 - t0), 0, 1);
+  const dk = up(0, 2.4), dx = Math.round(18 + dk * 20), dy = Math.round(150 - dk * 62 + Math.sin(now / 400) * 2);   // the Dragon King, on a cloud
+  seaCloudPuff(dx + 10, dy + 18, 34); b.drawImage(mapSprite('龙王'), dx, dy - 4, 22, 22);
+  if (t > 3){ const kk = up(3, 5.4), kx = Math.round(200 - kk * 18), ky = Math.round(150 - kk * 62 + Math.sin(now / 450) * 2);   // then one of the ten kings
+    seaCloudPuff(kx + 8, ky + 16, 30); b.drawImage(monkeySprite('king1', 'left', blink), kx, ky); }
+  if (t > 6){ const pk = up(6, 7.2), px = Math.round(150 + (1 - pk) * 30);   // the Great White Planet steps forward
+    b.globalAlpha = pk; b.drawImage(monkeySprite('planet', 'left', blink), px, 80); b.globalAlpha = 1; }
+}
+// The Great White Planet coming down on his cloud to the home ground, the troop staring up at him.
+function drawPlanetCloud(t, now){
+  const W = VW * T, H = VH * T, blink = now % 3200 < 130;
+  for (let y = 0; y < 104; y += 4) R(b, 0, y, W, 4, mix('#8FCCF2', '#E2F4FF', y / 104));
+  for (let x = 0; x < W; x += 2) R(b, x, 90 + Math.round(Math.sin(x / 23) * 3 + Math.sin(x / 9) * 1.5), 2, 20, '#7FA06A');
+  for (let y = 104; y < H; y += T) for (let x = 0; x < W; x += T) LOOKS.grass(b, x, y, x / T, y / T + 50);
+  const k = clamp(t / 3.4, 0, 1), e = 1 - (1 - k) ** 2, py = Math.round(-30 + e * 104 + (k < 1 ? Math.sin(now / 300) * 2 : 0)), px = 112;
+  const glow = b.createRadialGradient(px + 8, py + 10, 2, px + 8, py + 10, 30); glow.addColorStop(0, 'rgba(255,240,190,.55)'); glow.addColorStop(1, 'rgba(255,240,190,0)'); b.fillStyle = glow; b.fillRect(px - 22, py - 20, 60, 60);
+  b.drawImage(monkeySprite('planet', 'down', blink), px, py); seaCloudPuff(px + 8, py + 16, 40);
+  [['elder', 40, 120, 'up'], ['troopA', 64, 126, 'up'], ['hungry', 160, 124, 'up'], ['big', 184, 120, 'up'], ['baby1', 88, 136, 'up']].forEach(([id, x, y, d], i) => {
+    const s = id.startsWith('baby') ? SMALL_PX : T; b.drawImage(monkeySprite(id, d, blink && i % 2 === 0), x + (T - s) / 2, y + (T - s), s, s); });
+  b.drawImage(monkeySprite('player', 'up', false, 0, true), 128, 134); drawPlumes(b, 128, 134, 'up');
+}
+Object.assign(SCENE_ART, {staffSky: drawStaffSky, dreamIn: drawDreamIn, heaven: drawTroubleInHeaven, planetCloud: drawPlanetCloud});

@@ -1433,7 +1433,7 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 我有八只脚！ | wǒ yǒu bā zhī jiǎo! | I’ve got eight feet! | 章鱼 (octopus) |  |
 | 我有几只脚？ | wǒ yǒu jǐ zhī jiǎo? | How many feet have I got? | 章鱼 (octopus) |  |
 | 这里有几只脚？ | zhèlǐ yǒu jǐ zhī jiǎo? | How many feet are here? | 章鱼 (octopus) |  |
-| 太好了！ | tài hǎo le! | Great! | 章鱼 (octopus) |  |
+| 太好了！ | tài hǎo le! | Great! | 大猴子 (Big monkey), 猴子 (Monkey), 章鱼 (octopus) |  |
 | 我们游吧！ | wǒmen yóu ba! | Let’s swim! | 海豚 (dolphin) |  |
 | 一，二，三，游！ | yī, èr, sān, yóu! | One, two, three, swim! |  |  |
 | 海豚很快！ | hǎitún hěn kuài! | The dolphin is fast! | 海龟 (sea turtle) |  |
@@ -1459,7 +1459,7 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 欢迎！欢迎！ | huānyíng! huānyíng! | Welcome! Welcome! | 东海龙王 (Dragon King of the Eastern Sea) |  |
 | 你要什么？ | nǐ yào shénme? | What would you like? |  |  |
 | 我要刀！ | wǒ yào dāo! | I want a broadsword! |  |  |
-| 太重了！ | tài zhòng le! | Too heavy! | 虾兵 (Shrimp soldier) |  |
+| 太重了！ | tài zhòng le! | Too heavy! | 虾兵 (Shrimp soldier), 小猴子 (Little monkey), 大猴子 (Big monkey) |  |
 | 太轻了！ | tài qīng le! | Too light! | 小猴子 (You) |  |
 | 你看这个！ | nǐ kàn zhège! | Look at this one! | 东海龙王 (Dragon King of the Eastern Sea) |  |
 | 这个多少斤？ | zhège duōshao jīn? | How many jin is this one? | 东海龙王 (Dragon King of the Eastern Sea) |  |
@@ -1470,7 +1470,7 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 变短！ | biàn duǎn! | Get shorter! |  |  |
 | 变长！ | biàn cháng! | Get longer! |  |  |
 | 变小！ | biàn xiǎo! | Get smaller! |  |  |
-| 变大！ | biàn dà! | Get bigger! |  |  |
+| 变大！ | biàn dà! | Get bigger! | 小猴子 (You) |  |
 | 金色的光！ | jīnsè de guāng! | A golden light! |  |  |
 | 一万三千五百斤！ | yī wàn sān qiān wǔ bǎi jīn! | Thirteen thousand five hundred jin! | 东海龙王 (Dragon King of the Eastern Sea) |  |
 | 给你！ | gěi nǐ! | Here you are! | 东海龙王 (Dragon King of the Eastern Sea), 南海龙王 (Dragon King of the South Sea), 西海龙王 (Dragon King of the West Sea), 北海龙王 (Dragon King of the North Sea) |  |
@@ -1480,7 +1480,7 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 打鼓吧！ | dǎ gǔ ba! | Beat the drum! | 东海龙王 (Dragon King of the Eastern Sea) |  |
 | 还有钟！ | hái yǒu zhōng! | And the bell! | 东海龙王 (Dragon King of the Eastern Sea) |  |
 | 他们来了！ | tāmen lái le! | They’re here! | 东海龙王 (Dragon King of the Eastern Sea) |  |
-| 好看！ | hǎokàn! | Lovely! | 南海龙王 (Dragon King of the South Sea), 西海龙王 (Dragon King of the West Sea), 北海龙王 (Dragon King of the North Sea) |  |
+| 好看！ | hǎokàn! | Lovely! | 南海龙王 (Dragon King of the South Sea), 西海龙王 (Dragon King of the West Sea), 北海龙王 (Dragon King of the North Sea), 老猴子 (Old monkey), 猴子 (Monkey), 小猴子 (Little monkey) |  |
 | 我们回家吧！ | wǒmen huíjiā ba! | Let’s go home! | 海龟 (sea turtle) |  |
 | 八百斤！ | bā bǎi jīn! | 800 jin! |  |  |
 | 一千！ | yī qiān! | 1,000! |  |  |
@@ -1504,17 +1504,49 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 三！ | sān! | Three! |  |  |
 | 四！ | sì! | Four! |  |  |
 | 五！ | wǔ! | Five! |  |  |
+| 你回来了！ | nǐ huílai le! | You’re back! |  |  |
+| 我看看！ | wǒ kànkan! | Let me see! | 小猴子 (Little monkey), 猴子 (Monkey) |  |
+| 金箍棒在哪里？ | Jīngū Bàng zài nǎlǐ? | Where’s the staff? | 小猴子 (Little monkey) |  |
+| 在我的耳朵里！ | zài wǒ de ěrduo lǐ! | In my ear! | 小猴子 (You) |  |
+| 树太高了！ | shù tài gāo le! | The tree’s too tall! | 小猴子 (Little monkey) |  |
+| 我的珍珠！ | wǒ de zhēnzhū! | My pearl! | 小猴子 (Little monkey) |  |
+| 谢谢你！ | xièxie nǐ! | Thank you! | 小猴子 (Little monkey) |  |
+| 你是孙悟空吗？ | nǐ shì Sūn Wùkōng ma? | Are you Sun Wukong? | 差人 (Officer of the underworld) |  |
+| 走吧！ | zǒu ba! | Come on! | 差人 (Officer of the underworld) |  |
+| 我们怕你！ | wǒmen pà nǐ! | We’re scared of you! | 十王 (The ten kings) |  |
+| 找你的名字！ | zhǎo nǐ de míngzi! | Find your name! | 十王 (The ten kings) |  |
+| 醒醒！ | xǐng xǐng! | Wake up! | 老猴子 (Old monkey) |  |
+| 是梦！ | shì mèng! | It was a dream! |  |  |
+| 我们不会老了！ | wǒmen bù huì lǎo le! | We won’t grow old now! | 猴子 (Monkey) |  |
+| 玉皇大帝请你去天宫。 | Yùhuáng Dàdì qǐng nǐ qù Tiāngōng. | The Jade Emperor invites you to Heaven. | 太白金星 (The Great White Planet) |  |
+| 好！我去！ | hǎo! wǒ qù! | All right! I’ll go! | 小猴子 (You) |  |
+| 我饿了！ | wǒ è le! | I’m hungry! | 饿猴子 (Hungry monkey) |  |
+| 你要买什么？ | nǐ yào mǎi shénme? | What do you want to buy? | 老板 (Shop owner) |  |
+| 你要卖什么？ | nǐ yào mài shénme? | What do you want to sell? |  |  |
+| 没关系！ | méi guānxi! | It doesn’t matter! | 老板 (Shop owner) |  |
+| 不客气！ | bú kèqi! | You’re welcome! | 老板 (Shop owner) |  |
 
 ### Sentences the player completes (one word missing)
 
 | Chinese | Pinyin | English | Said to | Notes |
 | --- | --- | --- | --- | --- |
+| 我要买桃子 | wǒ yào mǎi táozi | I want to buy a peach. | 老板 (Shop owner) |  |
+| 我要买篮子 | wǒ yào mǎi lánzi | I want to buy the basket. | 老板 (Shop owner) |  |
+| 我要买灯笼 | wǒ yào mǎi dēnglong | I want to buy the lantern. | 老板 (Shop owner) |  |
+| 我要买铲子 | wǒ yào mǎi chǎnzi | I want to buy the spade. | 老板 (Shop owner) |  |
+| 我要买花瓶 | wǒ yào mǎi huāpíng | I want to buy the vase. | 老板 (Shop owner) |  |
+| 我要买风铃 | wǒ yào mǎi fēnglíng | I want to buy the wind chime. | 老板 (Shop owner) |  |
+| 我要买鼓 | wǒ yào mǎi gǔ | I want to buy the drum. | 老板 (Shop owner) |  |
+| 我要买画 | wǒ yào mǎi huà | I want to buy the painting. | 老板 (Shop owner) |  |
+| 我要买鱼缸 | wǒ yào mǎi yúgāng | I want to buy the fish jar. | 老板 (Shop owner) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
 | 这是我的衣服 | zhè shì wǒ de yīfu | These are my clothes. | You, in the wardrobe |  |
 | 我戴帽子 | wǒ dài màozi | I wear my hat. | You, in the wardrobe |  |
 | 这是我的鞋 | zhè shì wǒ de xié | These are my shoes. | You, in the wardrobe |  |
 | 我有几只脚 | wǒ yǒu jǐ zhī jiǎo | How many feet have I got? | You, in a lesson at school |  |
 | 这个多少斤 | zhège duōshao jīn | How many jin is this one? | You, in a lesson at school |  |
+| 金箍棒在我的耳朵里 | Jīngū Bàng zài wǒ de ěrduo lǐ | The staff is in my ear. | You, in a lesson at school |  |
+| 玉皇大帝请你去天宫 | Yùhuáng Dàdì qǐng nǐ qù Tiāngōng | The Jade Emperor invites you to Heaven. | You, in a lesson at school |  |
 | 我戴红色的头带 | wǒ dài hóngsè de tóudài | I wear my red headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴黄色的头带 | wǒ dài huángsè de tóudài | I wear my yellow headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴白色的头带 | wǒ dài báisè de tóudài | I wear my white headband. | You, in the wardrobe (a headband in each colour) |  |
@@ -1536,6 +1568,15 @@ What a card shows when you pick a flower for the big monkey (a red flower, and s
 | --- | --- | --- | --- |
 | 粉色的珊瑚 | fěnsè de shānhú | A pink coral |  |
 | 橙色的珊瑚 | chéngsè de shānhú | An orange coral |  |
+| 白色的花 | báisè de huā | A white flower |  |
+| 红色的花 | hóngsè de huā | A red flower |  |
+| 黄色的花 | huángsè de huā | A yellow flower |  |
+| 橙色的花 | chéngsè de huā | An orange flower |  |
+| 蓝色的花 | lánsè de huā | A blue flower |  |
+| 粉色的花 | fěnsè de huā | A pink flower |  |
+| 红色的羽毛 | hóngsè de yǔmáo | A red feather |  |
+| 黄色的羽毛 | huángsè de yǔmáo | A yellow feather |  |
+| 蓝色的羽毛 | lánsè de yǔmáo | A blue feather |  |
 | 红色的海星 | hóngsè de hǎixīng | A red starfish |  |
 | 橙色的海星 | chéngsè de hǎixīng | An orange starfish |  |
 | 黄色的海星 | huángsè de hǎixīng | A yellow starfish |  |
@@ -1564,6 +1605,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 鲸鱼很大。 | jīngyú hěn dà. | The whale is very big. | 鲸鱼 |  |
 | 龙很大。 | lóng hěn dà. | The dragon is very big. | 龙 |  |
 | 龙虾是红色的。 | lóngxiā shì hóngsè de. | The lobster is red. | 龙虾 |  |
+| 这里有很多灯。 | zhèlǐ yǒu hěn duō dēng. | There are lots of lamps here. | 灯 |  |
+| 针很小。 | zhēn hěn xiǎo. | The needle is very small. | 针 |  |
+| 这是绳子。 | zhè shì shéngzi. | This is a rope. | 绳子 |  |
+| 我有毛笔。 | wǒ yǒu máobǐ. | I have a writing brush. | 毛笔 |  |
 
 ### Scene: the dive
 
@@ -1586,6 +1631,47 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | --- | --- | --- | --- |
 | 孙悟空回家了。 | Sūn Wùkōng huíjiā le. | Sun Wukong is going home. |  |
 | 我回来了！ | wǒ huílai le! | I’m back! |  |
+
+### Scene: the staff grow to the sky
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 变长！ | biàn cháng! | Get longer! |  |
+| 变小！变小！ | biàn xiǎo! biàn xiǎo! | Get smaller! Get smaller! |  |
+| 好！ | hǎo! | There! |  |
+
+### Scene: the feast for the staff
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 大家吃吧！ | dàjiā chī ba! | Let’s all eat! |  |
+
+### Scene: the trouble in Heaven
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 龙王去天宫。 | Lóngwáng qù Tiāngōng. | The Dragon King goes up to Heaven, to complain. |  |
+| 十王也去天宫。 | Shí Wáng yě qù Tiāngōng. | The ten kings go up to Heaven too. |  |
+| 我去找孙悟空！ | wǒ qù zhǎo Sūn Wùkōng! | The Great White Planet: “I’ll go and find Sun Wukong!” |  |
+
+### Scene: the Great White Planet come
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 有人来了！ | yǒu rén lái le! | Someone’s coming! |  |
+| 你是谁？ | nǐ shì shéi? | Who are you? |  |
+
+### Scenes after lessons (the class painting the school)
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 一，二，三，跳！ | yī, èr, sān, tiào! | One, two, three, jump! |  |
+| 孙悟空在海下面！ | Sūn Wùkōng zài hǎi xiàmiàn! | Sun Wukong is under the sea! |  |
+| 孙悟空睡觉了。 | Sūn Wùkōng shuìjiào le. | Sun Wukong falls asleep. |  |
+| 这是哪里？ | zhè shì nǎlǐ? | Where is this? |  |
+| 这里很好看！ | zhèlǐ hěn hǎokàn! | It’s lovely up here! |  |
+| 海很大！ | hǎi hěn dà! | The sea is so big! |  |
+| 这里很好看！ | zhèlǐ hěn hǎokàn! | It’s lovely up here! |  |
 
 ### Names
 
@@ -1620,6 +1706,32 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 虾兵 | xiābīng | Shrimp soldier |  |
 | 虾兵 | xiābīng | Shrimp soldier |  |
 | 虾兵 | xiābīng | Shrimp soldier |  |
+| 老猴子 | lǎo hóuzi | Old monkey |  |
+| 猴子 | hóuzi | Monkey |  |
+| 猴子 | hóuzi | Monkey |  |
+| 饿猴子 | è hóuzi | Hungry monkey |  |
+| 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 大猴子 | dà hóuzi | Big monkey |  |
+| 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 猴子 | hóuzi | Monkey |  |
+| 老板 | lǎobǎn | Shop owner |  |
+| 差人 | chāirén | Officer of the underworld |  |
+| 差人 | chāirén | Officer of the underworld |  |
+| 十王 | Shí Wáng | The ten kings |  |
+| 十王 | Shí Wáng | The ten kings |  |
+| 十王 | Shí Wáng | The ten kings |  |
+| 十王 | Shí Wáng | The ten kings |  |
+| 十王 | Shí Wáng | The ten kings |  |
+| 十王 | Shí Wáng | The ten kings |  |
+| 十王 | Shí Wáng | The ten kings |  |
+| 十王 | Shí Wáng | The ten kings |  |
+| 十王 | Shí Wáng | The ten kings |  |
+| 十王 | Shí Wáng | The ten kings |  |
+| 太白金星 | Tàibái Jīnxīng | The Great White Planet |  |
 | 牌子 | páizi | Sign |  |
 | 东海 | Dōng Hǎi | The Eastern Sea |  |
 | 海底 | hǎidǐ | The seabed |  |
@@ -1629,6 +1741,26 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 龙宫 | Lónggōng | The Dragon Palace |  |
 | 水晶宫 | Shuǐjīng Gōng | The Crystal Palace |  |
 | 海藏 | Hǎicáng | The Treasury |  |
+| 草地 | cǎodì | The meadow |  |
+| 山路 | shānlù | The mountain path |  |
+| 河谷 | hégǔ | The river valley |  |
+| 深山 | shēnshān | Deep in the mountains |  |
+| 水帘洞 | Shuǐlián Dòng | Water Curtain Cave |  |
+| 家园 | jiāyuán | Home ground |  |
+| 海边 | hǎibiān | The shore |  |
+| 山坡 | shānpō | The hillside |  |
+| 河边 | hébiān | The riverside |  |
+| 百花谷 | Bǎihuā Gǔ | Valley of a Hundred Flowers |  |
+| 南坡 | nánpō | The south slope |  |
+| 山崖 | shānyá | The cliffs |  |
+| 温泉谷 | wēnquán gǔ | The hot spring valley |  |
+| 瓜田 | guātián | The melon field |  |
+| 黑松林 | hēi sōnglín | The dark pines |  |
+| 牧场 | mùchǎng | The pasture |  |
+| 松林 | sōnglín | Pine wood |  |
+| 学校 | xuéxiào | School |  |
+| 操场 | cāochǎng | Sports ground |  |
+| 地府 | dìfǔ | The underworld |  |
 
 ### Words to collect
 
@@ -1667,8 +1799,20 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 金色 | jīnsè | golden |  |
 | 万 | wàn | ten thousand |  |
 | 钟 | zhōng | bell |  |
+| 针 | zhēn | needle |  |
+| 耳朵 | ěrduo | ear |  |
+| 高 | gāo | tall, high |  |
+| 绳子 | shéngzi | rope |  |
+| 灯 | dēng | lamp |  |
+| 毛笔 | máobǐ | writing brush |  |
+| 醒 | xǐng | to wake up |  |
+| 梦 | mèng | dream |  |
+| 请 | qǐng | to invite; please |  |
 | 多少 | duōshao | how many, how much |  |
+| 怕 | pà | to be scared |  |
 | 几 | jǐ | how many |  |
+| 在 | zài | at, in, on; doing now (在玩, playing) |  |
+| 找 | zhǎo | to look for |  |
 | 给 | gěi | to give |  |
 | 光 | guāng | light |  |
 
@@ -1684,6 +1828,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 海星 | hǎixīng | 海 hǎi (sea) + 星 xīng (star) = 海星 (starfish) |  |
 | 海马 | hǎimǎ | 海 hǎi (sea) + 马 mǎ (horse) = 海马 (seahorse) |  |
 | 龙虾 | lóngxiā | 龙 lóng (dragon) + 虾 xiā (shrimp) = 龙虾 (lobster) |  |
+| 毛笔 | máobǐ | 毛 máo (hair) + 笔 bǐ (pen) = 毛笔 (writing brush) |  |
 | 金色 | jīnsè | 金 jīn (gold) + 色 sè (colour) = 金色 (golden) |  |
 
 ### Two words side by side
@@ -1730,7 +1875,6 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 进去 | jìnqù | to go in |  |
 | 就 | jiù | then |  |
 | 能 | néng | can |  |
-| 怕 | pà | to be scared |  |
 | 里面 | lǐmiàn | inside |  |
 | 太 | tài | too, very |  |
 | 好 | hǎo | good |  |
@@ -1773,7 +1917,6 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 上 | shàng | on top of |  |
 | 一个 | yí gè | a, one |  |
 | 一只 | yì zhī | a, one (animal) |  |
-| 在 | zài | at, in, on; doing now (在玩, playing) |  |
 | 玩 | wán | to play |  |
 | 吗 | ma | (yes/no question) |  |
 | 花果山 | Huāguǒ Shān | Flower Fruit Mountain |  |
@@ -1788,6 +1931,12 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 南海龙王 | Nánhǎi Lóngwáng | the Dragon King of the South Sea |  |
 | 西海龙王 | Xīhǎi Lóngwáng | the Dragon King of the West Sea |  |
 | 北海龙王 | Běihǎi Lóngwáng | the Dragon King of the North Sea |  |
+| 差人 | chāirén | officers of the underworld |  |
+| 十王 | Shí Wáng | the ten kings of the underworld |  |
+| 地府 | dìfǔ | the underworld |  |
+| 太白金星 | Tàibái Jīnxīng | the Great White Planet |  |
+| 玉皇大帝 | Yùhuáng Dàdì | the Jade Emperor |  |
+| 天宫 | Tiāngōng | Heaven |  |
 | 这个 | zhège | this one |  |
 | 三十 | sānshí | thirty |  |
 | 四十 | sìshí | forty |  |
@@ -1796,7 +1945,6 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 七十 | qīshí | seventy |  |
 | 八十 | bāshí | eighty |  |
 | 九十 | jiǔshí | ninety |  |
-| 找 | zhǎo | to look for |  |
 | 考试 | kǎoshì | exam, test |  |
 | 等 | děng | to wait |  |
 | 对 | duì | right, correct |  |

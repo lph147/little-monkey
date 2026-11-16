@@ -77,7 +77,7 @@ function redress(){ for (const k in spriteCache) delete spriteCache[k]; for (con
 const HELD = {'棍子': {len:7, pal:{l:'#B5653A', k:'#3E2010'}}, '刀': {len:9, guard:true, pal:{l:'#DCE0E6', k:'#4A4E58', u:'#D8A838'}},
   '铲子': {len:8, blade:true, pal:{l:'#B98A55', k:'#5A3A1E', u:'#C9CED6'}},
   '金箍棒': {len:13, bands:true, art:'staff', pal:{l:'#6A707A', k:'#2A2E36', u:'#E8B83A'}}};   // (your staff, Area 3: iron, longer than the rest, a gold band, u, at each end; art: its picture in a battle, MAP_ART's)   // (the spade from the shop, for digging: a steel blade, u, at its end: js/trade.js)
-const inHand = () => weaponNow() && HELD[weaponNow()] && canBattle() ? weaponNow() : null;
+const inHand = () => weaponNow() && HELD[weaponNow()] && canBattle() && !(typeof staffInEar === 'function' && staffInEar()) ? weaponNow() : null;   // (not your staff while it's out at a spot at home, or in your ear: js/sea.js)
 // What a monkey holds (kind: 'player', or a character's id): your stick once you can fight, or a character's own (holds, in the
 // area's characters), such as the sticks of the little monkeys in training. empty: nothing, whatever it has.
 const HOLDS = Object.fromEntries(AREA.characters.filter(c => c.holds).map(c => [c.id, c.holds]));

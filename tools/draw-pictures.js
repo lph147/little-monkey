@@ -2081,6 +2081,81 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     for (const y of [10, 16.5]) for (const x of [10.5, 13.5, 16.5, 19.5, 22]) p.dot(Math.round(x - (y > 12 ? .5 : 0)), Math.round(y), '#D8BC6A');   // its knobs
     p.fill(O(16, 24, 2.4, 1.6), '#E2B23A', {light: '#F8DC80', edge: true});                       // where it's struck
   },
+  // Chapter 6 (Area 3): home with the staff, and the dream
+  '针': p => {   // needle: a long silver needle, slanting, its eye at the top, a red thread through it curling down (unlike 金箍棒's bands, or 长: a ruler)
+    p.fill(path([[6, 27], [25, 6]], 1.1), '#C8CED6', {light: '#F2F6FA', dark: '#7A828C', edge: true});   // the needle
+    p.flat(and(O(23.6, 7.6, 1.6, 1.6), not(O(23.6, 7.6, .7, .7))), '#5A626C');                        // its eye
+    p.fill(path([[24, 7], [27, 10], [26, 15], [21, 18], [19, 23], [22, 27]], .7), RED, {light: '#F27A7A'});   // the thread
+  },
+  '耳朵': p => {   // ear: a big ear, skin-coloured and pink inside, its curves and lobe (unlike 头: a whole head; 猴子: a monkey)
+    p.fill(and(O(16, 15, 9, 12.5), not(and(O(19.5, 13, 4.5, 6.5), (x, y) => x > 16))), '#F2C9A0', {light: '#FFE2C4', dark: '#C8946A', edge: true});   // its outer curve
+    p.fill(O(16, 26, 4.2, 3.6), '#F2C9A0', {light: '#FFE2C4', dark: '#C8946A', edge: true});               // its lobe
+    p.flat(and(O(14.5, 14, 4.5, 7.5), not(O(16.5, 13.5, 2.5, 4.5))), '#E89A8A');                           // pink inside
+    p.flat(path([[12, 9], [10.5, 15], [12.5, 21]], .55), '#C8946A');                                      // its fold
+  },
+  '高': p => {   // tall, high: a tall pagoda, roof upon roof up into the sky, a little bush at its foot (unlike 房子: a low house; 长: a ruler)
+    p.fill(Rc(9, 27, 14, 3), STONE, {edge: true});                                                         // its base
+    for (const [y, w] of [[23, 11], [17.5, 9.5], [12, 8], [6.5, 6.5]]){
+      p.fill(Rc(16 - w / 2 + 1.5, y, w - 3, 4.5), '#E8D8B8', {edge: true});                                 // each storey's wall
+      p.fill(Pg([[16 - w / 2 - 1.5, y + .5], [16 + w / 2 + 1.5, y + .5], [16 + w / 2 - 1, y - 1.5], [16 - w / 2 + 1, y - 1.5]]), '#B83A2A', {light: '#E06A50', edge: true});   // its roof
+    }
+    p.fill(path([[16, 4.5], [16, 1.5]], .6), GOLD);                                                         // its spire
+    p.fill(O(4.5, 28, 3, 2.4), LEAF, {edge: true});                                                         // a little bush, far below
+  },
+  '绳子': p => {   // rope: a coil of brown rope, its loose end trailing off (unlike 蛇: a snake, with a head)
+    for (const r of [10, 7.2, 4.4]) p.fill(and(O(15, 15, r + 1.4, (r + 1.4) * .8), not(O(15, 15, r - .6, (r - .6) * .8))), '#B8925A', {light: '#DCB880', dark: '#7A5A32', edge: true});   // its coils
+    p.fill(path([[24, 21], [27, 25], [24, 28], [28, 30]], 1.2), '#B8925A', {light: '#DCB880', dark: '#7A5A32', edge: true});   // its loose end
+    for (let i = 0; i < 6; i++) p.dot(8 + i * 3, 15 + (i % 2), '#7A5A32');                                // its twist
+  },
+  '灯': p => {   // lamp: an oil lamp, a little clay dish on a stand, its flame lit and glowing (unlike 灯笼: a round red paper lantern; 火: a fire)
+    p.flat(O(16, 11, 10, 9), '#FFF2C4');                                                                   // its glow
+    p.fill(Rc(13, 21, 6, 7), '#A8744A', {edge: true}); p.fill(Rc(9, 27, 14, 3), '#8A5A32', {edge: true});   // its stand
+    p.fill(and(O(16, 18, 8, 4.2), (x, y) => y >= 17), '#C8865A', {light: '#E8A878', dark: '#8A5A32', edge: true});   // its dish
+    p.fill(Pg([[16, 6], [19, 13], [16, 17], [13, 13]]), '#F2A030', {light: '#FFE070', edge: true}); p.flat(O(16, 13.5, 1.4, 2.2), '#FFF6C0');   // its flame
+  },
+  '毛笔': p => {   // writing brush: a bamboo brush, slanting, its black hair tip, a drop of ink (unlike 写: a hand writing; 毛: a tuft of fur)
+    p.fill(path([[25, 4], [12, 20]], 1.6), '#C8A060', {light: '#E8C888', dark: '#8A6A3A', edge: true});   // its bamboo handle
+    for (const [x, y] of [[21.5, 8.3], [17.5, 13.3]]) p.flat(path([[x - 1.2, y - 1.2], [x + 1.2, y + 1.2]], .5), '#8A6A3A');   // its joints
+    p.fill(Pg([[10, 19.5], [14, 23], [7, 29], [5.5, 27.5]]), '#1E1A16', {light: '#4A443C', edge: true});   // its hair tip, inked
+    p.fill(O(25, 26, 2.2, 2.6), '#1E1A16', {light: '#4A443C'});                                            // a drop of ink
+  },
+  '醒': p => {   // to wake up: a monkey sitting up in bed, eyes wide open, the sun coming up at the window (unlike 睡觉: eyes shut, Zs)
+    p.fill(O(25, 7, 4.5, 4.5), GOLD, {light: '#FFE38A', edge: true});                                      // the sun
+    for (const [a, b] of [[25, 0], [25, 14], [18, 7], [32, 7]]) p.flat(path([[25 + (a - 25) * .62, 7 + (b - 7) * .62], [a, b]], .5), '#F2A030');
+    p.fill(O(8.5, 13, 2.3, 2.4), FUR); p.fill(O(19.5, 13, 2.3, 2.4), FUR);                                 // ears
+    p.fill(O(14, 14, 6, 5.6), FUR, {edge: true});
+    p.flat(or(O(12.2, 14, 2.1, 2.3), O(15.8, 14, 2.1, 2.3), O(14, 16.8, 2.9, 1.8)), SKIN);
+    for (const x of [12, 16]){ p.flat(O(x, 13.6, 1.1, 1.3), '#FFFFFF'); p.dot(x, 14, '#1E1A16'); }         // eyes wide open
+    p.flat(O(14, 17.2, 1, .7), '#A86A48');
+    p.fill(Rc(1, 22, 30, 9), '#5A8FD0', {edge: true}); p.flat(Rc(1, 24, 30, 1), '#7FB0E8');                 // the blanket, thrown back
+    p.fill(O(8, 21.5, 2.5, 2), FUR, {edge: true}); p.fill(O(20, 21.5, 2.5, 2), FUR, {edge: true});          // its arms, out
+  },
+  '梦': p => {   // dream: a monkey asleep, a cloud of a dream over it, the moon and a star in it (unlike 睡觉: Zs; 醒: eyes open)
+    p.fill(or(O(21, 9, 8.5, 6.5), O(14.5, 10, 4, 3.5), O(26.5, 12, 4, 3)), '#E8E4F8', {light: '#FFFFFF', dark: '#B8B0D8', edge: true});   // the dream's cloud
+    p.flat(O(10.5, 17, 1.4, 1.4), '#E8E4F8'); p.flat(O(8.5, 20, 1, 1), '#E8E4F8');                          // and the little puffs up to it
+    p.fill(and(O(18.5, 9, 3.2, 3.2), not(O(20, 8, 2.8, 2.8))), GOLD, {light: '#FFE38A'});                   // the moon
+    p.fill(Pg([[25, 5.5], [26, 8], [28.5, 8.3], [26.5, 9.8], [27.2, 12.3], [25, 10.9], [22.8, 12.3], [23.5, 9.8], [21.5, 8.3], [24, 8]]), GOLD, {light: '#FFE38A'});   // a star
+    p.fill(O(4.5, 24, 2.1, 2.2), FUR); p.fill(O(15.5, 24, 2.1, 2.2), FUR);                                 // ears
+    p.fill(O(10, 25, 5.4, 5), FUR, {edge: true});
+    p.flat(or(O(8.4, 25, 1.9, 2.1), O(11.6, 25, 1.9, 2.1), O(10, 27.4, 2.6, 1.6)), SKIN);
+    [[7, 25], [8, 26], [9, 25], [11, 25], [12, 26], [13, 25]].forEach(([x, y]) => p.dot(x, y, '#1E1A16'));   // eyes closed
+  },
+  '怕': p => {   // to be scared: a pale face, eyes wide, eyebrows up, mouth a little o, a drop of sweat, shaking (unlike 哭: eyes shut, tears)
+    p.fill(O(16, 16.5, 11.5, 12), '#F4E8A8', {edge: true});
+    for (const sx of [-1, 1]){
+      p.flat(O(16 + sx * 4.5, 14, 2.4, 3), '#FFFFFF'); p.flat(O(16 + sx * 4.5, 14.6, 1.1, 1.3), '#1E1A16');   // eyes wide
+      p.flat(path([[16 + sx * 7, 8], [16 + sx * 2.5, 7]], .6), '#8A7A3A');                                  // eyebrows, up
+    }
+    p.fill(O(16, 22, 2.2, 2.6), '#7A2E1C');                                                               // a little o
+    p.fill(Pg([[26, 6], [28, 10], [26.5, 12], [24.5, 10]]), '#5FB4F0', {light: '#A8DCFA'});                // a drop of sweat
+    for (const sx of [-1, 1]) for (const y of [12, 17]) p.flat(path([[16 + sx * 13.5, y], [16 + sx * 15, y + 2.5]], .45), '#8A7A3A');   // shaking
+  },
+  '找': p => {   // to look for: a magnifying glass over the ground, a paw print showing big in its lens (unlike 看: an eye)
+    p.fill(path([[19, 19], [27, 27]], 1.9), '#8A5A32', {light: '#B98A55', edge: true});                      // its handle
+    p.fill(O(13, 13, 9.5, 9.5), '#C8E8F8', {light: '#F0FAFF', edge: true});                                 // its lens
+    p.flat(and(O(13, 13, 9.5, 9.5), not(O(13, 13, 8, 8))), GOLD);                                          // its rim
+    p.flat(O(13, 15.5, 3, 2.6), '#8A5A32'); for (const [x, y] of [[9, 11.5], [11.6, 9.5], [14.4, 9.5], [17, 11.5]]) p.flat(O(x, y, 1.2, 1.4), '#8A5A32');   // a paw print
+  },
   // a few words together: the dragon kings' gifts (Area 3), each in the colour it's called by (金色 的 帽子, a golden hat)
   '金色 的 帽子': p => {   // a golden hat: purple on top, a gold band with a red jewel at its front, gold wings at its sides, and two long red feathers curving up and out (unlike 帽子: a straw hat; 头带: a cloth band)
     for (const s of [1, -1]){ const X = x => 16 + s * (x - 16);

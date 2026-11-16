@@ -43,7 +43,8 @@ test('the game uses it for a word’s big characters in their grid, asks for it 
   const css = read('css/game.css'), page = read('index.html');
   assert.match(css, /@font-face\{font-family:"Little Monkey Kai";src:url\(\.\.\/fonts\/kai\.woff\) format\("woff"\);[^}]*font-display:swap\}/, 'shown in the ordinary font till it has loaded, never blank');
   assert.match(css, /\.word \.big \.ge\{[^}]*font-family:"Little Monkey Kai",var\(--text\)/, 'with the game’s ordinary font for a character it hasn’t got');
-  assert.equal((css.match(/Little Monkey Kai/g) || []).length, 2, 'nowhere else: sentences, questions and pinyin are as they were');
+  assert.match(css, /\.opts\.bookpage \.bz\{font-family:"Little Monkey Kai",var\(--text\)/,'and the names in the book of names, written with a brush (Area 3, Chapter 6: js/sea.js)');
+  assert.equal((css.match(/Little Monkey Kai/g) || []).length, 3, 'nowhere else: sentences, questions and pinyin are as they were');
   assert.match(page, /<link rel="preload" href="fonts\/kai\.woff" as="font" type="font\/woff" crossorigin>/, 'one of the page’s own files, so the offline copy has it (ownFiles, js/main.js)');
   assert.ok(page.indexOf('href="fonts/kai.woff"') < page.indexOf('href="css/game.css"'), 'asked for before the styles');
   assert.match(read('.gitignore'), /^tools\/fonts\/$/m, 'the whole font, 26 MB, isn’t kept with the game');

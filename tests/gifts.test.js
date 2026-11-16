@@ -135,6 +135,7 @@ test('the gifts on your monkey: the golden hat and its feathers, golden armour a
 
 test('home: a shark meets your staff in the seaweed forest; on the seabed the sea turtle takes you home, the end of Chapter 5', async () => {
   const g = game({gifts: 4, south: 1, west: 1, north: 1}, {pos: {place: 'forest', x: 24, y: 7, dir: 'left'}});
+  g.run("STEPS.chapter = async s => { here().chapter = s.chapter; __notes.push('chapter: ' + s.chapter); }");   // (Chapter 6's card)
   g.run("wildBattle = async (id, x, o) => { __notes.push('battle: ' + id + ' ' + o.meet); return 'won'; }");
   assert.deepEqual(tasks(g), ['home']);
   await play(g, 'runEvents()');
@@ -147,11 +148,12 @@ test('home: a shark meets your staff in the seaweed forest; on the seabed the se
   assert.equal(bubble(g, "turtle"), '!');
   goTo(g, 'seabed', 11, 6, 'right');
   await press(g, 11, 6, 'right');
-  assert.deepEqual(said(g), ['turtle: 我们回家吧！']);
+  assert.deepEqual(said(g), ['turtle: 我们回家吧！', 'elder: 你回来了！', 'elder: 好看！'], 'home, and the old monkey glad to see you (Chapter 6: tests/home-staff.test.js)');
   assert.deepEqual(get(g, '__scenes'), ['swimHome']);
-  assert.ok(notes(g).some(n => /The end of Chapter 5!/.test(n)));
-  assert.equal(p(g, 'home'), 2);
-  assert.deepEqual(tasks(g), ['chapter6']);
+  assert.ok(notes(g).includes('chapter: 1'), 'Chapter 6’s card');
+  assert.equal(get(g, 'PLACE'), 'ffmCave');
+  assert.equal(p(g, 'home'), 3);
+  assert.deepEqual(tasks(g), ['showTroop']);
 });
 
 test('the scenes: the dragon kings coming, and the swim home', () => {

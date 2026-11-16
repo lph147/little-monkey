@@ -430,7 +430,7 @@ test('every step does one thing, with settings that exist, using real lines and 
     if (a === 'request') assert.ok(AREA.requests[s.request] && AREA.requests[s.request].from === who, `${where}: "${s.request}" isn't a request from ${who}`);
     if (a === 'reply') assert.ok(BANK[s.reply] && BANK[s.reply].phrase && knownHere(s.reply), `${where}: ${s.reply} isn't a phrase you can learn here`);
     if (a === 'wordGame') assert.ok(s.wordGame.ask && s.wordGame.notYet && collectible.includes(s.wordGame.word), `${where}: wordGame needs ask, notYet and a word`);
-    if (a === 'bag') assert.ok((AREA.food || {})[s.bag], `${where}: ${s.bag} isn't one of the area's food`);
+    if (a === 'bag') assert.ok((AREA.food || {})[s.bag] || (BANK[s.bag] || {}).category === 'treasures', `${where}: ${s.bag} isn't one of the area's food, nor a treasure`);   // (a treasure: such as the gold under the boulder at home, Area 3's Chapter 6)
     if (a === 'follow') for (const id of s.follow) assert.ok(AREA.characters.some(c => c.id === id), `${where}: "${id}" can't follow you: they aren't a character`);
     if (a === 'stopsYou') assert.ok((AREA.characters.some(c => c.id === s.stopsYou) && AREA.talk[s.stopsYou]) || AREA.animals.some(x => x.id === s.stopsYou && x.at), `${where}: "${s.stopsYou}" isn't a character with something to say, or an animal at its spot`);
     if (a === 'talkTo') assert.ok(AREA.characters.some(c => c.id === s.talkTo) && AREA.talk[s.talkTo], `${where}: "${s.talkTo}" isn't a character with something to say`);
