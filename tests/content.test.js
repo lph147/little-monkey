@@ -803,6 +803,7 @@ test('a task that points its arrow at someone gives them a ! or ? too, so you ca
         if (k === 'new') delete S.w[v];
         else if (k === 'knows') S.w[v] = {lv: 1, ok: 0};
         else if (k === 'holding') for (const [id, want] of Object.entries(v)) h.holding[id] = want === true ? 'it' : want;
+        else if (k === 'place') setPlace(v);   // (such as the trench, where the turtle waits across the currents)
         else if (k === 'friends') for (const [id, want] of Object.entries(v)) S.friends = want ? [...S.friends, id] : S.friends.filter(f => f !== id);   // (such as the octopus, once it's your friend)
         else if (AREA.counters[k]){
           const cn = AREA.counters[k];

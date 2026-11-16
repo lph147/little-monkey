@@ -499,6 +499,8 @@ SAVES.a3forest = {...SAVES.a3forestIn, w: {...SAVES.a3forestIn.w, ...knows(1, A3
 SAVES.a3octopus = {...SAVES.a3forest, w: {...SAVES.a3forest.w, ...knows(1, ['章鱼', '脚', '几'])}, friends: [...SAVES.a3forest.friends, 'octopus'], pos: {place: 'forest', x: 13, y: 3, dir: 'up'}};   // (the octopus your friend)
 SAVES.a3reef = {...SAVES.a3octopus, areas: {...SAVES.a3octopus.areas, 3: {...SAVES.a3octopus.areas[3], part: 2, octopus: 1}}, pos: {place: 'reef', x: 6, y: 7, dir: 'down'}};   // (on the coral reef, the dolphin by its race track)
 SAVES.a3raced = {...SAVES.a3reef, w: {...SAVES.a3reef.w, ...knows(1, ['海豚'])}, areas: {...SAVES.a3reef.areas, 3: {...SAVES.a3reef.areas[3], dolphin: 1}}, pos: {place: 'reef', x: 14, y: 10, dir: 'left'}};   // (the first race over)
+SAVES.a3trench = {...SAVES.a3raced, w: {...SAVES.a3raced.w, ...knows(1, ['快', '慢'])}, areas: {...SAVES.a3raced.areas, 3: {...SAVES.a3raced.areas[3], part: 3, dolphin: 2}}, pos: {place: 'trench', x: 8, y: 4, dir: 'down'}};   // (at the trench's currents, the turtle across them)
+SAVES.a3deep = {...SAVES.a3trench, w: {...SAVES.a3trench.w, ...knows(1, ['深'])}, areas: {...SAVES.a3trench.areas, 3: {...SAVES.a3trench.areas[3], trench: 1}}, pos: {place: 'trench', x: 18, y: 12, dir: 'down'}};   // (down the slope, near the bottom)
 SAVES.a3seabed = {...SAVES.c2dive, area: 3, areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀'}}, pos: {place: 'seabed', x: 11, y: 6, dir: 'down'}};   // (home in autumn: on the hillside's lookout)
 SAVES.c2south = {...SAVES.c2end, pos: {place: 'ffmSouthSlope', x: 9, y: 15, dir: 'up'}};   // (and the south slope's)
 
@@ -1926,6 +1928,12 @@ SCREENS.push(
     S.pos = {place: 'reef', x: 2, y: 10, dir: 'right'}; placePlayer(); play(); await wait(100);
     for (const [id, x, y] of [['dolphin', 8, 9], ['turtle', 4, 11]]){ const n = ALL_NPCS.find(c => c.id === id); Object.assign(n, {place: 'reef', x, y, dir: 'right', mv: null}); inClass.add(id); }
     NPCS = ALL_NPCS.filter(n => n.place === PLACE); Object.assign(pl, {x: 6, px: 6 * T}); race = {to: 14}; await wait(500); }},
+  {id: 'a3-currents', title: 'Currents across the trench', save: 'a3trench', why: 'Currents flowing across the way down, every row at once (pale streaks and sand sweeping along): wait till they drop, then cross quickly. The turtle waits across them, at the edge of the deep.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'a3-deep', title: '这里很深！', save: 'a3trench', why: 'Across the currents, at the edge of the deep, the turtle: 这里很深！ (深, deep). The whale glides in the dark water below.', run: async () => {
+    S.pos = {place: 'trench', x: 5, y: 9, dir: 'left'}; placePlayer(); play(); await wait(100); showDialog(speaker('turtle'), L.deep, {teach: '深'}); await wait(500); }},
+  {id: 'a3-glow', title: 'The light far below', save: 'a3deep', why: 'At the very bottom of the trench, light shining up out of the dark from the Dragon King’s palace below: 下面有光！ (光, light).', run: async () => {
+    play(); await wait(500); }},
   {id: 'a3-shells', title: 'Your shells are 贝壳', save: 'a3stars', why: 'Once you know 贝壳, your money says so: 🐚 7 贝壳, in your bag, on the Tasks page and in the shop.', run: async () => {
     play(); await wait(100); pressBag(); await wait(400); }}
 );

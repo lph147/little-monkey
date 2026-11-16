@@ -65,8 +65,21 @@ LOOKS.tallSeaweed = (g, X, Y, x, y) => tallSeaweed(g, X, Y, x, y);
 function raceStart(g, X, Y, x, y){ seaSand(g, X, Y, x, y); for (let yy = 1; yy < T; yy += 3) R(g, X + 7, Y + yy, 2, 2, yy % 2 ? '#8E949A' : '#A8AEB4'); }
 function raceFinish(g, X, Y, x, y){ seaSand(g, X, Y, x, y); for (let yy = 0; yy < T; yy += 4){ R(g, X + 6, Y + yy, 4, 3, (yy / 4 + y) % 2 ? '#F7C8D4' : '#FFF6EC'); R(g, X + 7, Y + yy + 2, 2, 1, '#D8A8B4'); } }
 Object.assign(LOOKS, {raceStart, raceFinish});
+// The trench (step 5): where a current runs across (its sand combed into faint lines along its row, so you can see it even
+// while it's calm), and the glow at the very bottom, light shining up out of the dark from the Dragon King's palace below.
+function currentSand(g, X, Y, x, y){
+  seaSand(g, X, Y, x, y); R(g, X, Y, T, T, 'rgba(60,120,160,.16)');   // (a little bluer, where the water runs)
+  for (let i = 0; i < 2; i++){ const yy = Y + 4 + i * 7, xx = X + (x % 2 ? 2 : 7) + i * 3 - (i ? 6 : 0);   // flow marks, pointing the way it runs (east)
+    R(g, xx, yy, 6, 1, '#C4B286'); R(g, xx + 6, yy - 1, 1, 1, '#C4B286'); R(g, xx + 6, yy + 1, 1, 1, '#C4B286'); R(g, xx + 7, yy, 1, 1, '#C4B286'); }
+}
+function trenchGlow(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#0C1E30');
+  for (let i = 0; i < 4; i++) R(g, X + 2 + i * 4, Y + 4 + (i % 2) * 3, 1, T, 'rgba(242,193,78,.35)');
+  R(g, X, Y + T - 5, T, 5, '#E8B848'); R(g, X + 3, Y + T - 3, T - 6, 3, '#FFF2B0');
+}
+Object.assign(LOOKS, {currentSand, trenchGlow});
 STIR_LOOKS.tallSeaweed = ['#D8C79A', '#2E6A2E', '#8FCB6A']; STIR_DRAWS.tallSeaweed = tallSeaweed; TALL_LOOKS.push('tallSeaweed');   // (parting round you, and what flies up: js/draw.js)
-const UNLIT = new Set(['deepSea']);   // where the light doesn't ripple: down in the deep
+const UNLIT = new Set(['deepSea', 'trenchGlow']);   // where the light doesn't ripple: down in the deep
 
 /* ================= THE SEA'S THINGS ================= */
 // Each drawn standing at the bottom of its squares, in the middle, with a soft shadow on the sand under it.
@@ -144,7 +157,16 @@ function drawSea(cx, cy, sh, now){
     if (X < VW * T && Y < VH * T && X + pic.width > 0 && Y + pic.height > 0) b.drawImage(pic, X, Y);
   }
   if (foe && foe.colour) drawFoe(cx, cy, now);
-  drawJellies(cx, cy, now); drawInk(cx, cy, now);   // (jellyfish drifting, glowing at night; the octopus's ink)
+  drawJellies(cx, cy, now); drawInk(cx, cy, now);
+  for (let y = Math.floor(cy / T); y <= Math.floor(cy / T) + VH; y++) for (let x = Math.floor(cx / T); x <= Math.floor(cx / T) + VW; x++){   // (the palace's glow, far below, shining up through the water)
+    if (tileAt(x, y).look !== 'trenchGlow') continue;
+    const X = x * T - cx + 8, Y = y * T - cy + T, k = .75 + Math.sin(now / 700 + x) * .25;
+    b.save(); b.globalCompositeOperation = 'screen';
+    const glow = b.createRadialGradient(X, Y, 2, X, Y, 40); glow.addColorStop(0, `rgba(255,226,140,${.9 * k})`); glow.addColorStop(.5, `rgba(255,214,120,${.35 * k})`); glow.addColorStop(1, 'rgba(255,226,140,0)'); b.fillStyle = glow; b.fillRect(X - 40, Y - 40, 80, 48);
+    b.globalAlpha = .3 * k; b.fillStyle = '#FFF2B0';
+    for (const dx of [-14, -4, 6, 15]){ b.beginPath(); b.moveTo(X + dx - 2, Y); b.lineTo(X + dx + 2, Y); b.lineTo(X + dx * 2 + 4, Y - 60); b.lineTo(X + dx * 2 - 4, Y - 60); b.closePath(); b.fill(); }
+    b.restore();
+  }   // (jellyfish drifting, glowing at night; the octopus's ink)
   // bubbles rising
   for (let i = 0; i < 7; i++){
     const bx = Math.round((i * 61 + 23 - cx * .5) % W + W) % W, by = Math.round(H - ((now * .018 + i * 47) % (H + 24)));

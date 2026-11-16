@@ -42,7 +42,8 @@ test('the way east from the forest opens once you’ve counted the octopus’s f
   const g = game({}, {pos: {place: 'forest', x: 24, y: 7, dir: 'right'}});
   assert.equal(g.run(`isOpen(${way})`), true);
   assert.deepEqual(get(g, 'getTasks().map(t => t.id)'), ['toReef']);
-  assert.deepEqual(get(g, 'ALL_NPCS.find(n => n.id === "turtle").moves[0]'), {if: {octopus: {atLeast: 1}}, place: 'reef', x: 2, y: 6, facing: 'right'});
+  assert.deepEqual(get(g, 'ALL_NPCS.find(n => n.id === "turtle").moves.find(m => m.place === "reef")'), {if: {octopus: {atLeast: 1}}, place: 'reef', x: 2, y: 6, facing: 'right'});   // (after the later steps' places)
+  assert.equal(get(g, '(() => { placeCharacters(); return ALL_NPCS.find(n => n.id === "turtle").place; })()'), 'reef');
   assert.deepEqual(get(g, '[PLACES.reef.name.zh, PARTS[2].title]'), ['珊瑚礁', 'The coral reef']);
 });
 
@@ -92,8 +93,8 @@ test('race it again and win: faster than you walk, slower than you run; your fir
   assert.ok(told.some(n => /You beat the dolphin! \+5/.test(n)), 'you won, and its prize');
   assert.equal(g.run('S.shells'), 12, 'in shells, under the sea');
   assert.equal(p(g, 'dolphin'), 2);
-  assert.ok(told.some(n => /To be continued/.test(n)));
-  assert.deepEqual(get(g, 'getTasks().map(t => t.id)'), ['reef']);
+  assert.ok(told.some(n => /swims on east, towards the trench/.test(n)), 'and the turtle swims on (step 5: tests/trench.test.js)');
+  assert.deepEqual(get(g, 'getTasks().map(t => t.id)'), ['toTrench']);
   assert.deepEqual(speeds(g), {dolphin: 230, turtle: 450}, 'faster than you walk (270 ms a step), slower than you run');
   runAtOnce(g); g.run('lastTalk = null');
   await press(g, 4, 9, 'up');

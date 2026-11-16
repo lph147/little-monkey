@@ -616,7 +616,7 @@ const ACROSS_THE_SEA = {
     {id:'c1snowCave', if:{season:3, fire:2, snowCave:0, grown:0, place:'cave'}, text:'A pupil wants a snowball fight with you', arrow:'pupil4'},
     {id:'c1snowTown', if:{trip:{atLeast:1, below:3}, snowTown:0, place:'town'}, text:'A {孩子|child} in the town wants a snowball fight with you', arrow:'snowKid1'},
     {id:'c1snowFields', if:{trip:{atLeast:1, below:3}, snowFields:0, place:'fields'}, text:'A {孩子|child} in the fields wants a snowball fight with you', arrow:'snowKid2'},
-    {id:'c1snowVillage', if:{trip:{atLeast:1, below:3}, snowVillage:0, place:'village'}, text:'A {孩子|child} in the village wants a snowball fight with you', arrow:'kid2'},
+    {id:'c1snowVillage', if:{season:3, trip:{atLeast:1, below:3}, snowVillage:0, place:'village'}, text:'A {孩子|child} in the village wants a snowball fight with you', arrow:'kid2'},
     {id:'c1bed', main:true, if:{evening:1, any:[{season:0}, {season:1, knows:'叶子'}, {season:2, knows:'雪'}, {season:3}]}, text:'Time to {睡觉|sleep}: go to your room in the rock, face its door, and press A', arrow:[4, 3, 'cave']},
     {id:'c1lecture', main:true, if:{grown:1, lecture:0}, text:'Go to the {师父|master}’s lecture, in front of the hall', arrow:'master'},
     {id:'c1riddle', main:true, if:{lecture:1, riddle:0}, text:'The {师父|master} wants to see you', arrow:'master'},

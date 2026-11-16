@@ -40,7 +40,7 @@ test('the way east from the seabed opens once the starfish are found, and the se
   const g = game({}, {pos: {place: 'seabed', x: 22, y: 6, dir: 'right'}});
   assert.equal(g.run(`isOpen(${way})`), true);
   assert.deepEqual(get(g, 'getTasks().map(t => t.id)'), ['toForest']);
-  assert.deepEqual(get(g, 'ALL_NPCS.find(n => n.id === "turtle").moves[1]'), {if: {turtle: {atLeast: 3}}, place: 'forest', x: 3, y: 6, facing: 'right'});   // (after the reef's, step 4)
+  assert.deepEqual(get(g, 'ALL_NPCS.find(n => n.id === "turtle").moves.find(m => m.place === "forest")'), {if: {turtle: {atLeast: 3}}, place: 'forest', x: 3, y: 6, facing: 'right'});   // (after the later steps' places)
   assert.equal(get(g, '(() => { placeCharacters(); return ALL_NPCS.find(n => n.id === "turtle").place; })()'), 'forest', 'into the forest');
   assert.equal(get(g, 'PLACES.forest.name.zh'), '水草林');
 });

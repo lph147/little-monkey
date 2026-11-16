@@ -310,7 +310,10 @@ const WORD_BANK = {
   '海马': {py:'hǎimǎ', en:'seahorse', pic:'🌊🐴', area:3, category:'animals', alike:['马']},   // (among the coral reef's coral: a friend)
   '海豚': {py:'hǎitún', en:'dolphin', pic:'🐬', area:3, category:'animals', alike:['鲨鱼']},   // (on the coral reef, wanting a race)
   '快': {py:'kuài', en:'fast', pic:'🐆', area:3, category:'describing', alike:['跑']},   // (the sea turtle, after the dolphin's race: 海豚很快！)
-  '慢': {py:'màn', en:'slow', pic:'🐌', area:3, category:'describing', alike:['乌龟']},   // (and the sea turtle, last: 我很慢。)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
+  '慢': {py:'màn', en:'slow', pic:'🐌', area:3, category:'describing', alike:['乌龟']},   // (and the sea turtle, last: 我很慢。)
+  // the trench's
+  '深': {py:'shēn', en:'deep', pic:'🕳️', area:3, category:'describing', alike:['海']},   // (the sea turtle, at the trench's edge: 这里很深！)
+  '鲸鱼': {py:'jīngyú', en:'whale', pic:'🐋', area:3, category:'animals', alike:['海豚', '鲨鱼', '鱼']},   // (gliding in the trench's deep water: a friend, met from the edge)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
 
   // Heard in sentences
   '换': {py:'huàn', en:'to change, to swap'},
@@ -418,7 +421,7 @@ const WORD_BANK = {
   '动': {py:'dòng', en:'to move'},
   '它': {py:'tā', en:'it'},
   '眼睛': {py:'yǎnjing', en:'eyes'},
-  '光': {py:'guāng', en:'light'}
+  '光': {py:'guāng', en:'light', pic:'✨', area:3, category:'nature', alike:['星星', '火']}   // (heard all game, caught at last: the palace's glow at the bottom of the trench, 下面有光！)
 };
 
 // How a word is made, shown on its new-word card (with its English) and its page in the Word Scroll, for words where it

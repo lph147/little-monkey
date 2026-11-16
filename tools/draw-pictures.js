@@ -1938,6 +1938,30 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.dot(27, 16, '#3A2E24'); p.dot(30, 17, '#3A2E24');
     p.fill(O(17, 18, 8, 8), '#C0783C', {light: '#E0A060', dark: '#8A4E22', edge: true});     // its shell
     p.flat(path([[17, 18], [19, 18], [19, 20], [16, 21], [14, 18], [16, 14], [21, 15], [22, 20]], .55), '#7A4420');   // its spiral
+  },
+  // the trench's (step 5)
+  '深': p => {   // deep: the sand drops away at a cliff, and the water below gets darker and darker, a little fish far down (unlike 海: no sky, going down)
+    [['#7CC8E8', 0], ['#4E9CCC', 7], ['#2E70A4', 13], ['#1C4C7C', 19], ['#10304E', 25]].forEach(([c, y]) => p.flat(Rc(0, y, 32, 32 - y), c));   // the water, darker down
+    p.fill(Pg([[0, 6], [13, 6], [14, 9], [12, 13], [13, 18], [11, 24], [12, 32], [0, 32]]), '#D8C08A', {light: '#EAD6A4', dark: '#A88E5C', edge: true});   // the cliff of sand
+    p.flat(Rc(0, 5, 13, 2), '#EAD6A4');
+    p.fill(O(23, 28, 2, 1.2), '#F2C14E'); p.fill(Pg([[25, 28], [27, 26.6], [27, 29.4]]), '#F2C14E');   // a little fish, far down
+    [[20, 4], [25, 9], [19, 15]].forEach(([x, y]) => p.flat(O(x, y, .9, .9), '#D8F2FF'));   // bubbles
+  },
+  '鲸鱼': p => {   // a whale: huge and blue, side on, head to the left, a pale grooved throat, a spout of water from its back (unlike 海豚 and 鲨鱼: much bigger, a spout)
+    const body = or(O(14, 19, 12, 6.5), Pg([[2, 20], [6, 14], [10, 23]]));
+    p.fill(Pg([[24, 17], [31, 11], [29, 18], [31, 24]]), '#3E6E9E', {edge: true});         // its tail
+    p.fill(body, '#4F82B4', {light: '#76A2CC', edge: true});
+    p.flat(and(body, (x, y) => y >= 21 && x < 22), '#C8DCEA');                              // its pale throat
+    [22, 23.5, 25].forEach(y => p.flat(path([[4, y], [18, y]], .35), '#9AB8CE'));           // its grooves
+    p.fill(Pg([[11, 23], [17, 23], [12, 29]]), '#3E6E9E', {edge: true});                    // a flipper
+    p.eye(7, 17);
+    p.fill(path([[12, 12], [11, 8], [9, 4]], .8), '#D8F2FF'); p.fill(path([[12, 12], [13, 8], [15, 4]], .8), '#D8F2FF');   // its spout
+    p.flat(or(O(8.5, 3.5, 1.4, 1), O(15.5, 3.5, 1.4, 1)), '#FFFFFF');
+  },
+  '光': p => {   // light: a bright glow shining up from below, long rays spreading out from it (unlike 火: no flames; unlike 星星: no points)
+    for (let i = 0; i < 9; i++){ const a = Math.PI + (i + .5) * Math.PI / 9; p.flat(path([[16, 27], [16 + Math.cos(a) * 17, 27 + Math.sin(a) * 26]], .7 + (i % 2) * .4), i % 2 ? '#FFF2B0' : '#FFE27A'); }   // its rays
+    p.fill(O(16, 27, 9, 5.5), '#FFF6D0', {light: '#FFFFFF', dark: '#F2C14E'});              // the glow
+    p.flat(O(16, 27, 5, 3), '#FFFFFF');
   }
 };
 // A coral on the sand, branching up (body: its colour), its tips lighter (unlike seaweed: stiff branches)

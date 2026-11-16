@@ -407,6 +407,12 @@ const MAP_SPRITES = {
     faces: 'left',
     palette: {a:'#242B31', b:'#496983', c:'#3A4045', d:'#8EAAC2', e:'#424A4F', f:'#2C3339', g:'#A8C8E2', h:'#496074', i:'#62819C', j:'#7EA6C8', k:'#5E86A8', l:'#353F47', m:'#1E1A16', n:'#DCE8F0', o:'#535454', p:'#24282C'},
     rows: ["................","................","................","................","........a.......",".......aba......",".......cdba....a",".....eabbbaef.ab","...eegghhhggicdb","..eggjjjjjjjjhkb","legmjjjjjjjjihbb","jjjnnnnnnnnnopab","lfinnnnnoooo...a","..fooooo........","................","................"]
+  },
+  // the trench's (step 5)
+  '鲸鱼': {   // whale, side on, head to the left (gliding in the trench's deep water): big, on a 22 x 22 canvas, drawn with the shape kit
+    faces: 'left',
+    palette: {a:'#1C252E', b:'#323D48', c:'#202A34', d:'#30567B', e:'#76A2CC', f:'#3E658C', g:'#4F82B4', h:'#333B43', i:'#789ABB', j:'#2E4B68', k:'#3E6E9E', l:'#1E1A16', m:'#4C5052', n:'#C8DCEA', o:'#3E4449', p:'#9AB8CE'},
+    rows: ["......................","......................","......................","......................","......................","......................","......................",".....................a","....bbbbbbbbbbc.....ad","...beeeeeeeeeefc...ada","..begggggggggggfchhida",".begggggggggggggjiikda","begglggggggggggggjkda.","cfgggggggggggggggjdkda",".mnnnnnnnnnnnnngfcadda","..oppppiiidpnnnfc..ada","...mnnnikdnnnnnm....ad","....mmhidammmmm......a","......ada.............",".......a..............","......................","......................"]
   }
 };
 // A water buffalo (Area 2, in the fields: not a word of its own): the cow's drawing, dark slate grey all over, with no

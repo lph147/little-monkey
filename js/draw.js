@@ -440,6 +440,11 @@ function drawFlutter(a, X, Y, now, sq = a.at){
 }
 // An animal that swims on the water at its spot (swims), such as the duck on the home ground's stream: floating, bobbing
 // gently up and down, ripples spreading either side of it now and then; hopping as you meet it, and for joy (meetHop).
+// Gliding slowly to and fro in deep water (glides), such as the whale in the trench: no ripples, as it's under the sea.
+function drawGlide(a, X, Y, now){
+  const drift = Math.round(Math.sin(now / 3200 + a.at[0]) * 3), bob = Math.round(Math.sin(now / 1100) * 1.5);
+  drawFigure(towardsYou(a, a.at[0]), X + drift, Y + bob - meetHop(a, X, Y, now));
+}
 function drawSwimmer(a, X, Y, now){
   const bob = Math.floor(now / 520 + a.at[0]) % 2, up = meetHop(a, X, Y, now), k = Math.floor(now / 260) % 4;
   const wy = Y + 15 - figureBox(a.hz).up;   // (at its waterline)
@@ -1044,6 +1049,7 @@ function drawWorld(now){
     if (asleepNow(a) && a.hangs){ b.drawImage(upsideDown(a.spr), X, Y - 3); sleepZs(X + 11, Y + 1, now, a.at[0] * 731); continue; }   // hanging upside down, asleep, such as the bat in the Water Curtain Cave by day
     if (asleepNow(a)){ figureShadow(a.hz, X, Y); drawFigure(towardsYou(a, a.at[0]), X, Y - (ground || a.swims || a.flutters ? 0 : 3)); sleepZs(X + 10, Y - (a.spr.height - T) - 2, now, a.at[0] * 731); continue; }   // asleep: still, little Zs (a day animal at night, a night one by day: js/art.js)
     if (a.flutters){ drawFlutter(a, X, Y, now); continue; }
+    if (a.glides){ drawGlide(a, X, Y, now); continue; }
     if (a.swims){ drawSwimmer(a, X, Y, now); continue; }
     const up = (ground ? 0 : 3 + Math.floor(now/600 + a.at[0]) % 2) + meetHop(a, X, Y - (a.spr.height - T), now);   // (its heart over its head)
     figureShadow(a.hz, X, Y); drawFigure(towardsYou(a, a.at[0]), X, Y - up);   // (looking your way)
@@ -1206,7 +1212,14 @@ function drawSteam(cx, cy, now){
     const t = tileAt(x, y), X = x*T - cx, Y = y*T - cy;
     if (t.vent){
       const v = t.vent, vt = ventTime(v, now), k = ((vt % v.every) + v.every) % v.every, cyc = Math.floor(vt / v.every);
-      if (k < v.puff && v.wind){   // a gust of wind (a vent with wind, such as on the cliff road's walkway): streaks blowing across
+      if (k < v.puff && v.current){   // a current under the sea (a vent with current, such as across the trench): pale streaks and sand sweeping along its row
+        if (ventCycle[x + ',' + y] !== cyc){ ventCycle[x + ',' + y] = cyc; if (Math.abs(x - pl.x) + Math.abs(y - pl.y) <= 5) SFX.swish(); }
+        const p = k / v.puff, fade = p < .15 ? p / .15 : p < .8 ? 1 : (1 - p) / .2;
+        b.globalAlpha = .7 * fade;
+        for (let i = 0; i < 3; i++){ const wx = X - 10 + ((p * 56 + i * 11 + y * 5) % 36), wy = Y + 3 + i * 5; R(b, Math.round(wx), wy, 9, 1, '#D8F6FF'); R(b, Math.round(wx) + 9, wy, 3, 1, 'rgba(216,246,255,.5)'); }
+        for (let i = 0; i < 4; i++){ const sx = X + ((p * 90 + i * 7 + x * 3) % 20) - 2, sy = Y + 2 + ((i * 5 + y) % 13); R(b, Math.round(sx), sy, 1, 1, '#EADCB2'); }
+        b.globalAlpha = 1;
+      } else if (k < v.puff && v.wind){   // a gust of wind (a vent with wind, such as on the cliff road's walkway): streaks blowing across
         if (ventCycle[x + ',' + y] !== cyc){ ventCycle[x + ',' + y] = cyc; if (Math.abs(x - pl.x) + Math.abs(y - pl.y) <= 5) SFX.swish(); }
         const p = k / v.puff, fade = p < .8 ? 1 : (1 - p) / .2;
         b.globalAlpha = .85 * fade;
@@ -1219,7 +1232,7 @@ function drawSteam(cx, cy, now){
           const rise = ((p * 1.6 + i / 6) % 1), r = 3 + Math.round(rise * 5);
           steamCloud(X + 8 + Math.sin(i * 2.1 + now / 300) * 3, Y + 10 - rise * 20, r, (.85 - rise * .5) * fade);
         }
-      } else if (v.every - k < 450 && !v.wind){ const p = 1 - (v.every - k) / 450; steamCloud(X + 8, Y + 9 - p * 4, 2, .5 * p); }
+      } else if (v.every - k < 450 && !v.wind && !v.current){ const p = 1 - (v.every - k) / 450; steamCloud(X + 8, Y + 9 - p * 4, 2, .5 * p); }
     } else if (t.look === 'hotPool' && rnd(x, y, 640) < .3){
       const ph = (now / 2800 + rnd(x, y, 641)) % 1;
       steamCloud(X + 4 + rnd(x, y, 642) * 8 + Math.sin(now / 700 + x) * 2, Y + 8 - ph * 16, 2 + Math.round(ph * 2), .45 * (1 - ph));

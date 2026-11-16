@@ -1438,6 +1438,8 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 一，二，三，游！ | yī, èr, sān, yóu! | One, two, three, swim! |  |  |
 | 海豚很快！ | hǎitún hěn kuài! | The dolphin is fast! | 海龟 (sea turtle) |  |
 | 我很慢。 | wǒ hěn màn. | I’m slow. | 海龟 (sea turtle) |  |
+| 这里很深！ | zhèlǐ hěn shēn! | It’s deep here! |  |  |
+| 下面有光！ | xiàmiàn yǒu guāng! | There’s light down there! |  |  |
 | 我们玩吧！ | wǒmen wán ba! | Let’s play! |  |  |
 | 一！ | yī! | One! |  |  |
 | 二！ | èr! | Two! |  |  |
@@ -1497,6 +1499,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 章鱼有八只脚。 | zhāngyú yǒu bā zhī jiǎo. | An octopus has eight feet. | 章鱼 |  |
 | 海里有珊瑚。 | hǎi lǐ yǒu shānhú. | There’s coral in the sea. | 珊瑚 |  |
 | 海马很小。 | hǎimǎ hěn xiǎo. | The seahorse is small. | 海马 |  |
+| 鲸鱼很大。 | jīngyú hěn dà. | The whale is very big. | 鲸鱼 |  |
 
 ### Scene: the dive
 
@@ -1515,6 +1518,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 海底 | hǎidǐ | The seabed |  |
 | 水草林 | shuǐcǎo lín | The seaweed forest |  |
 | 珊瑚礁 | shānhú jiāo | The coral reef |  |
+| 海沟 | hǎigōu | The trench |  |
 
 ### Words to collect
 
@@ -1536,7 +1540,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 海豚 | hǎitún | dolphin |  |
 | 快 | kuài | fast |  |
 | 慢 | màn | slow |  |
+| 深 | shēn | deep |  |
+| 鲸鱼 | jīngyú | whale |  |
 | 几 | jǐ | how many |  |
+| 光 | guāng | light |  |
 
 ### How words are made
 
@@ -1665,7 +1672,6 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 动 | dòng | to move |  |
 | 它 | tā | it |  |
 | 眼睛 | yǎnjing | eyes |  |
-| 光 | guāng | light |  |
 
 ## The menu
 
@@ -1918,8 +1924,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 美猴王坐木筏走了。 | Měi Hóuwáng zuò mùfá zǒu le. | The Monkey King sailed away on his raft. | New on 29 October 2026 (in the game), the end of chapter 1: The scene of you sailing away, the troop waving from the shore, after 再见！ and 我们等你！ |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 | 这是我的地图。 | zhè shì wǒ de dìtú. | This is my map. | New on 31 October 2026 (in the game): the example on 地图 (dìtú, map)’s page. The big monkey gives you a map in chapter 1, as he sends you up to the pine wood, and you catch 地图 the first time you open it. Its How it’s made card says 地 (dì, ground) + 图 (tú, picture) = 地图, a picture of the ground: is that a fair way to explain it? |  |
-| 这里很深！ | Zhèlǐ hěn shēn! | It’s deep here! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the edge of the trench, teaching 深. Is it natural? |  |
-| 下面有光！ | Xiàmiàn yǒu guāng! | There’s light down there! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the palace’s glow at the bottom of the trench, teaching 光. Is it natural? |  |
 | 十，二十，三十……一百！ | Shí, èrshí, sānshí… yìbǎi! | Ten, twenty, thirty… a hundred! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the crab general, counting the shrimp soldiers in rows of ten, teaching 百. Is it natural? |  |
 | 一百个虾兵！ | Yìbǎi ge xiābīng! | A hundred shrimp soldiers! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the crab general. Is 个 right for soldiers here, or 名?. Is it natural? |  |
 | 欢迎！欢迎！ | Huānyíng! Huānyíng! | Welcome! Welcome! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon King, meeting you, teaching the phrase 欢迎. Is it natural? |  |
