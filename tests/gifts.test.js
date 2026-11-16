@@ -87,14 +87,14 @@ test('the three dragon kings’ gifts: 给你！, each put on as you watch, its 
   const g = game({gifts: 3});
   assert.deepEqual(get(g, 'S.wardrobe.wearing'), []);
   await press(g, 6, 6, 'up');
-  assert.deepEqual(said(g), ['southKing: 给你！', 'player: 我戴金色的帽子。']);
+  assert.deepEqual(said(g), ['southKing: 给你！', 'player: 我戴金色的帽子']);
   assert.ok(notes(g).includes('gift: 金色 的 帽子 / golden hat / A gift from the Dragon King of the South Sea'));
   assert.equal(get(g, 'lookOn("head")'), 'goldCap', 'on you at once');
   await press(g, 8, 6, 'up');
-  assert.deepEqual(said(g), ['westKing: 给你！', 'player: 这是金色的衣服。']);
+  assert.deepEqual(said(g), ['westKing: 给你！', 'player: 这是金色的衣服']);
   assert.equal(p(g, 'gifts'), 3, 'one still to come');
   await press(g, 10, 6, 'up');
-  assert.deepEqual(said(g), ['northKing: 给你！', 'player: 这是白色的鞋。', 'dragonQueen: 好看！']);
+  assert.deepEqual(said(g), ['northKing: 给你！', 'player: 这是白色的鞋', 'dragonQueen: 好看！']);
   assert.ok(notes(g).includes('gift: 白色 的 鞋 / white shoes / A gift from the Dragon King of the North Sea'));
   assert.deepEqual(get(g, 'S.wardrobe.wearing'), ['金色 的 帽子', '金色 的 衣服', '白色 的 鞋']);
   assert.deepEqual(get(g, 'S.wardrobe.owned'), ['金色 的 帽子', '金色 的 衣服', '白色 的 鞋']);

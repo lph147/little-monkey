@@ -547,14 +547,15 @@ STEPS.strike = async s => {
 };
 // A gift to wear, given you and put on at once (gift: its item in the wardrobe, such as the dragon kings' 金色 的 帽子, a
 // golden hat): on your monkey as you watch, then its card, its picture and what it's called, with what you're told (note);
-// then what your monkey says as it wears it, the wardrobe's sentence (我戴金色的帽子。), as when you put something on there.
+// then what your monkey says as it wears it, the wardrobe's sentence (我戴金色的帽子), as when you put something on there,
+// and as its voice clip says it (tests/playthrough-area3.test.js found it said with a full stop, which has no clip).
 STEPS.gift = async (s, who, last) => {
   const c = CLOTHES.find(x => x.item === s.gift), a = asSaid(c);
   if (!S.wardrobe.owned.includes(c.item)) S.wardrobe.owned.push(c.item);
   putOn(c.item); save(); redress(); SFX.right();
   await showPicked({zh:c.item, en:a.en}, fill(s.note), {label:s.label || 'A gift for you', pic:a.pic});
   toks(a.sentence).forEach(t => { if (WORDS[t]) useWord(t); });
-  await showDialog(speaker('player'), {t:[...toks(a.sentence), '。'], en:a.sentenceEn}, last ? {last:true} : {});
+  await showDialog(speaker('player'), {t:toks(a.sentence), en:a.sentenceEn}, last ? {last:true} : {});
 };
 Object.assign(STEP_OPTIONS, {strike:['times'], gift:['note', 'label']});
 
