@@ -1009,6 +1009,13 @@ rt.hid{visibility:hidden}
 .tens{display:flex;flex-direction:column;align-items:center;gap:1px;margin:.3rem 0}   /* counting the shrimp soldiers by tens: a row of ten at a time (js/sea.js) */
 .tenrow{display:flex}
 .tenrow img{width:.8rem;height:.8rem;image-rendering:pixelated;image-rendering:crisp-edges}
+.weigh{display:flex;align-items:center;justify-content:center;gap:.6rem;margin:.2rem 0}   /* the palace's great scale, weighing a weapon (js/sea.js) */
+.scalepic{width:9rem;height:auto;image-rendering:pixelated;image-rendering:crisp-edges}
+.wnum{min-width:8rem;text-align:center}
+.wbtns{display:flex;justify-content:center;gap:.6rem;margin:.3rem 0}
+.wbtns .btn{display:flex;flex-direction:column;align-items:center;min-width:7.5rem;line-height:1.2}
+.wbtns .wzh{font-size:1.6rem}
+.wbtns small{font-size:.7rem}
 .count.tower{flex-wrap:wrap-reverse;max-width:calc(4 * var(--pic-small) + 2rem);background:#D9BB8A;box-shadow:inset 0 -4px 0 #C6A473}   /* stones piled into a tower, on sand: from the bottom up, four to a row at most */
 .count .pix{width:var(--pic-small);height:var(--pic-small)}
 /* a counting question, listening: each answer is that many things, in rows of five, on a table (or grass) as big as each

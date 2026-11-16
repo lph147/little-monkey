@@ -495,7 +495,8 @@ test('every line is said somewhere', () => {
     ...(AREA.smallTalk || []).map(t => t.say),   // (what people say about the weather, js/world.js)
     ...(AREA.animalsPlay ? [AREA.animalsPlay.say] : []),   // (what an animal says as it comes out to play: wildAppears, js/world.js)
     ...Object.values(AREA.races || {}).flatMap(r => [r.start, r.end].filter(Boolean)),
-    ...allSteps().filter(([, s]) => s.countTens).flatMap(([, s]) => s.countTens)   // (counting by tens: each ten said, js/sea.js)   // (a race outside a lesson: who starts it, and at the finish, js/pe.js)
+    ...allSteps().filter(([, s]) => s.countTens).flatMap(([, s]) => s.countTens),   // (counting by tens: each ten said, js/sea.js)
+    ...Object.values(AREA.weighing || {}).flatMap(w => w.says)   // (weighing a weapon: each total said as the weights go on, js/sea.js)   // (a race outside a lesson: who starts it, and at the finish, js/pe.js)
   ]);
   for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);
 });

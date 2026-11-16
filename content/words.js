@@ -318,7 +318,15 @@ const WORD_BANK = {
   '龙': {py:'lóng', en:'dragon', pic:'🐉', area:3, category:'animals', alike:['蛇']},   // (the gold dragons coiled round the palace gate's pillars: press A at one; 龙王, the Dragon King, is dragon + king)
   '兵': {py:'bīng', en:'soldier', pic:'💂', area:3, category:'people', alike:['人']},   // (the crab general's shrimp soldiers: 他们是我的兵！)
   '百': {py:'bǎi', en:'hundred', pic:'💯', area:3, category:'numbers', alike:['十', '二十']},   // (counting the shrimp soldiers by tens with the crab general: 一百)
-  '龙虾': {py:'lóngxiā', en:'lobster', pic:'🦞', area:3, category:'animals', alike:['虾', '螃蟹']},   // (by the palace's door: a friend)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
+  '龙虾': {py:'lóngxiā', en:'lobster', pic:'🦞', area:3, category:'animals', alike:['虾', '螃蟹']},   // (by the palace's door: a friend)
+  // the throne hall's
+  '柱子': {py:'zhùzi', en:'pillar', pic:'🏛️', area:3, category:'places'},   // (the throne hall's pillars, gold dragons coiled round them: press A at one)
+  '欢迎': {py:'huānyíng', en:'welcome!', area:3, category:'phrases', phrase:true, use:'when someone comes to your home', cue:'has come to see you', situation:'A friend has come all the way to your home to see you.'},   // (the Dragon King, coming to meet you: 欢迎！欢迎！; you'll say it yourself at the end of Area 3)
+  '重': {py:'zhòng', en:'heavy', pic:'🏋️', area:3, category:'describing', alike:['斤', '石头']},   // (the shrimp soldiers, carrying in the great broadsword: 太重了！)
+  '斤': {py:'jīn', en:'jin (half a kilo)', pic:'⚖️', area:3, category:'numbers'},   // (the broadsword on the palace's scale: 八百斤)
+  '轻': {py:'qīng', en:'light (not heavy)', pic:'🎈', area:3, category:'describing', alike:['泡泡']},   // (you, lifting it in one paw: 太轻了！)
+  '千': {py:'qiān', en:'thousand', pic:'🧱', area:3, category:'numbers', alike:['百']},   // (weighing the fork with big weights: 三千六百斤)
+  '多少': {py:'duōshao', en:'how many, how much', area:3, category:'questions'},   // (the Dragon King: 这个多少斤？; 几 for a few, 多少 for any number: SIDE_BY_SIDE)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
 
   // Heard in sentences
   '换': {py:'huàn', en:'to change, to swap'},
@@ -397,6 +405,7 @@ const WORD_BANK = {
   '水脏洞': {py:'Shuǐzàng Dòng', en:'Water-Belly Cave (a name)'},   // (the Demon of Havoc's cave, over its mouth)
   '龙王': {py:'Lóngwáng', en:'the Dragon King'},   // (a name: Area 3's, under the sea)
   '虾兵': {py:'xiābīng', en:'shrimp soldiers'}, '蟹将': {py:'xièjiàng', en:'crab general'}, '夜叉': {py:'yèchā', en:'sea guard (a yaksha)'},   // (names: the Dragon Palace's folk)
+  '龙婆': {py:'Lóngpó', en:'the Dragon Queen'}, '这个': {py:'zhège', en:'this one'},   // (the Dragon Queen's name; and this one, as the Dragon King points at a weapon)
   '三十': {py:'sānshí', en:'thirty'}, '四十': {py:'sìshí', en:'forty'}, '五十': {py:'wǔshí', en:'fifty'}, '六十': {py:'liùshí', en:'sixty'},
   '七十': {py:'qīshí', en:'seventy'}, '八十': {py:'bāshí', en:'eighty'}, '九十': {py:'jiǔshí', en:'ninety'},   // (the tens, heard as the crab general counts his soldiers: made of words you know, not words to catch)
   '找': {py:'zhǎo', en:'to look for'},
@@ -551,5 +560,9 @@ const MADE = {
 const SIDE_BY_SIDE = [
   {words:['二', '两'], title:'二 or 两?', remember:'Counting? 二. How many? 两.',
     use:{'二':{for:'For counting', ex:[{zh:'一 ， 二 ， 三 ！', en:'One, two, three!'}]},
-      '两':{for:'For two of something', ex:[{zh:'两 个 桃子', en:'two peaches'}, {zh:'两 只 猴子', en:'two monkeys'}]}}}
+      '两':{for:'For two of something', ex:[{zh:'两 个 桃子', en:'two peaches'}, {zh:'两 只 猴子', en:'two monkeys'}]}}},
+  // (Area 3, the throne hall: 多少 the newer, after the octopus's 几)
+  {words:['几', '多少'], title:'几 or 多少?', remember:'A few? 几. Any number, a big one, or a price? 多少.',
+    use:{'几':{for:'For a few, usually fewer than ten', ex:[{zh:'我 有 几 只 脚 ？', en:'How many feet have I got?'}]},
+      '多少':{for:'For any number, often a big one, and prices', ex:[{zh:'这个 多少 斤 ？', en:'How many jin is this one?'}, {zh:'多少钱 ？', en:'How much is it?'}]}}}
 ];

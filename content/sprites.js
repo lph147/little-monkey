@@ -432,6 +432,15 @@ const MAP_SPRITES = {
     faces: 'left',
     palette: {a:'#421C12', b:'#A83A24', c:'#593629', d:'#411D12', e:'#F08A6A', f:'#A43E24', g:'#9C3624', h:'#3E1B12', i:'#563125', j:'#E87A5E', k:'#C8452E', l:'#111418', m:'#391810', n:'#8D2D1E'},
     rows: [".aba..aba.......",".aa..aba........","aba.aba.........","bacdaa..........","abefba..........","ebgfba..........","ffgghhiih.......","dabbjgjjghih....",".ijklkgkkjjgh...",".hgkkkgggkkkgh..","..hggghahggkkgh.","...hhhabbahgkkgh",".....abababmnkgh",".....abababmnnkg",".....abaa.a.hggh","......a......hh."]
+  },
+  // the throne hall's (step 7), names in the word bank
+  '龙王': {   // the Dragon King, facing you: a dragon’s head, antlers and whiskers, a yellow robe, his jade tablet: big, on a 22 × 22 canvas, from the mock-ups’ drawing
+    palette: {a:'#4E422E', b:'#CDB27A', c:'#2F483B', d:'#1C3025', e:'#6CC4A2', f:'#30785F', g:'#3E9A7A', h:'#FFF4A0', i:'#5A564D', j:'#8ADAB8', k:'#499075', l:'#F2EEDC', m:'#5DB896', n:'#413111', o:'#5B4D2E', p:'#24382C', q:'#544529', r:'#E1BB6A', s:'#A57B21', t:'#F6D27A', u:'#B8322A', v:'#F6F3E7', w:'#BDBAAC', x:'#D49E2A', y:'#E2B23A', z:'#A1B5A8', A:'#B08B2D', B:'#453615', C:'#1C212F', D:'#304A7D'},
+    rows: [".....aba......aba.....","......aba....aba......","......abacccdaba......","......abbeeefbba......",".......ceggggfd.......","......ceggggggfd......","......ceghggghfd......","......ceggggggfd......","....iidfgjjjkgfdii....","..iilllllmmmmlllllii..",".illinoopkkkkpooqilli.",".ilrrstttuvwutttrrsli.","ilrxxsyyyywwyyyyrxxsli",".qrxxxsyyyuzyyyrxxxsn.",".qrxxxsyyyyzyyyrxxxsn.",".qrxxxsyyyyzyyysxxxsn.",".nsxxsyyyyyzyyyysxxsn.","..nssyuuuuuzuuuuussn..","..otyyyyyyyyyyyyyyAB..",".otyyyyyyyyyyyyyyyyAB.",".CDDDDDDDDDDDDDDDDDDC.","..CCCCCCCCCCCCCCCCCC.."]
+  },
+  '龙婆': {   // the Dragon Queen, facing you: teal robes, grey hair, a gold crown, a pearl in her hands: big, on a 22 × 22 canvas
+    palette: {a:'#5C5030', b:'#453615', c:'#F8DC80', d:'#B08B2D', e:'#4F4B47', f:'#D0CCC8', g:'#A8A4A0', h:'#83807D', i:'#36322F', j:'#C2BFBD', k:'#5D5146', l:'#FBE0C4', m:'#F0C8A0', n:'#BB9C7D', o:'#483B2F', p:'#2A1A10', q:'#1A120C', r:'#C47A6A', s:'#2E3F48', t:'#1C2931', u:'#303B40', v:'#6AA6CC', w:'#F0A8B8', x:'#306383', y:'#19252B', z:'#719AB3', A:'#295672', B:'#3E7FA8', C:'#346E92', D:'#FAF7F2', E:'#C1BEB8', F:'#E2B23A'},
+    rows: ["........aaaaab........",".......acccccdb.......",".......bddddddb.......","......efgggggghi......","......ihjjjjjjhi......",".......ihhhhhhhi......",".......klmmmmno.......",".......klpmmmpq.......",".......onmmrmno.......","......ssonnnnost......","....usvvvwwwwvvxty....","...uzAvBBwwwwBBxzAy...","..uzCABBBBwwBBBBzCAy..","..uzCCABBBwwBBBzCCAy..",".yACCCABBBDEBBBzCCCAy.","..uzCCABBBDEBBBACCAy..","..yACAFFFFEEFFFFFCAy..","...yAABBBBBBBBBBAAy...","...svBBBBBBBBBBBBxt...","...svBBBBBBBBBBBBxt...","...txxxxxxxxxxxxxxt...","....tttttttttttttt...."]
   }
 };
 // A water buffalo (Area 2, in the fields: not a word of its own): the cow's drawing, dark slate grey all over, with no

@@ -99,6 +99,11 @@ OBJECT_ART.palaceGate = (g, o) => {
   write(g, '龙宫', X + 30, Y + 9, '#F2C14E');   // (its plaque: real Chinese, 龙宫, the Dragon Palace)
 };
 OBJECT_ART.dragonPillar = (g, o) => seaThing('dragonPillar')(g, o);   // (seaThing comes further down)
+// The throne hall's (step 7): the Dragon King's throne on its dais, and the palace's great scale.
+Object.assign(LOOKS, {throne: jadeFloor, greatScale: jadeFloor});
+OBJECT_ART.throne = (g, o) => seaThing('throne')(g, o);
+OBJECT_ART.greatScale = (g, o) => seaThing('greatScale')(g, o);
+BLOCK_OBJECTS.push('palaceGate', 'dragonPillar', 'throne', 'greatScale');   // (each a block of its letters, one object: the gate 5 × 4, a pillar 1 × 2, the throne 3 × 2, the scale 2 × 2)
 STIR_LOOKS.tallSeaweed = ['#D8C79A', '#2E6A2E', '#8FCB6A']; STIR_DRAWS.tallSeaweed = tallSeaweed; TALL_LOOKS.push('tallSeaweed');   // (parting round you, and what flies up: js/draw.js)
 const UNLIT = new Set(['deepSea', 'trenchGlow']);   // where the light doesn't ripple: down in the deep
 
@@ -263,6 +268,60 @@ function countTens(who, keys){
   });
 }
 STEPS.countTens = async (s, who) => { await countTens(who, s.countTens); };
+
+/* ================= TOO LIGHT: THE WEIGHING ================= */
+// The Dragon King's weapons on the palace's great scale (the weigh step: one of the area's weighing, by its id), a card
+// (decided 15 November 2026, the Eastern Sea's plan, from its mock-up): the weapon on one pan, weights on the other, big ones
+// (千, a thousand jin each) and small ones (百, a hundred), the beam tipping the weapon's way till it balances. One that's
+// shown (show) is weighed already, its weights on; otherwise you put them on, big ones first, then small ones (so each
+// number on the way is one the game can say, and A always puts on the one that's next), each total said as it grows (the
+// area's lines jin and the total), its last line, with 斤, as it balances; then Lift it.
+function drawScale(c, pic, big, small, balanced){
+  const g = c.getContext('2d'), cx = 48, top = 12, a = balanced ? 0 : .2;   // (not balanced yet: the weapon's side, the right, down)
+  g.clearRect(0, 0, c.width, c.height); g.imageSmoothingEnabled = false;
+  R(g, 46, top, 4, 42, '#B07A3A'); R(g, 47, top, 1, 42, '#D8A060'); R(g, 38, 53, 20, 5, '#8A5A2A');   // the post and its foot
+  g.save(); g.translate(cx, top); g.rotate(a); R(g, -36, -1, 72, 3, '#B07A3A'); R(g, -36, -1, 72, 1, '#D8A060'); g.restore();
+  R(g, cx - 2, top - 2, 4, 4, '#E2B23A');
+  const end = k => [Math.round(cx + k * 34 * Math.cos(a)), Math.round(top + k * 34 * Math.sin(a))], [lx, ly] = end(-1), [rx, ry] = end(1);
+  g.strokeStyle = '#5A3A1A'; g.lineWidth = 1;
+  for (const [x, y] of [[lx, ly], [rx, ry]]){ g.beginPath(); g.moveTo(x + .5, y); g.lineTo(x - 7.5, y + 16); g.moveTo(x + .5, y); g.lineTo(x + 8.5, y + 16); g.stroke(); R(g, x - 10, y + 16, 21, 3, '#C08A40'); R(g, x - 10, y + 16, 21, 1, '#E0B060'); }
+  for (let i = 0; i < big; i++){ const X = lx - 9 + (i % 3) * 6, Y = ly + 10 - Math.floor(i / 3) * 6; R(g, X, Y, 6, 6, '#3E444C'); R(g, X + 1, Y + 1, 2, 4, '#6A727E'); }   // the big weights (千)
+  const up = ly + 10 - Math.ceil(big / 3) * 6;
+  for (let i = 0; i < small; i++){ const X = lx - 9 + (i % 4) * 5, Y = up + 2 - Math.floor(i / 4) * 4; R(g, X, Y, 4, 4, '#5A626E'); R(g, X + 1, Y + 1, 1, 2, '#8A929E'); }   // and the small ones (百)
+  const p = mapArtPic(pic), w = 24, h = Math.max(1, Math.round(p.height * w / p.width));
+  g.drawImage(p, rx - 12, ry + 16 - h, w, h);   // the weapon, lying across its pan
+}
+function weighCard(id, who){
+  const wg = AREA.weighing[id];
+  return new Promise(res => {
+    let big = wg.show ? Math.floor(wg.target / 1000) : 0, small = wg.show ? Math.round(wg.target % 1000 / 100) : 0;
+    const total = () => big * 1000 + small * 100, done = () => total() === wg.target;
+    const canBig = () => !wg.show && total() + 1000 <= wg.target, canSmall = () => !wg.show && !canBig() && total() + 100 <= wg.target;
+    const show = () => {
+      const t = total(), line = t ? L['jin' + t] : null;
+      openCard(`${speaker(who)}<p class="label">${esc(wg.label)}</p>
+        <div class="weigh"><canvas class="scalepic" width="96" height="60"></canvas>
+          <div class="wnum">${line ? `<div class="talkline">${lineHTML(line.t, wg.teach)}</div><p class="sentence-en">${t.toLocaleString('en')} jin${done() ? ': it balances!' : ''}</p>` : '<p class="note">Big weights first, then small ones.</p>'}</div></div>
+        ${wg.show ? '' : `<div class="wbtns">
+          <button class="btn${canBig() ? ' primary' : ''}" data-a="big" ${canBig() ? '' : 'disabled'}><span class="wzh">千</span><small>qiān · 1,000</small><small>${big} on the scale</small></button>
+          <button class="btn${canSmall() ? ' primary' : ''}" data-a="small" ${canSmall() ? '' : 'disabled'}><span class="wzh">百</span><small>bǎi · 100</small><small>${small} on the scale</small></button></div>`}
+        <div class="actions"><button class="btn${done() ? ' primary' : ''}" data-a="lift" ${done() ? '' : 'disabled'}>Lift it</button></div>`);
+      drawScale($('#sheet .scalepic'), wg.pic, big, small, done());
+      on('[data-a=big]', () => add(true)); on('[data-a=small]', () => add(false)); on('[data-a=lift]', () => { if (done()){ closeCard(); res(); } });
+    };
+    const add = isBig => {
+      if (isBig ? !canBig() : !canSmall()) return;
+      if (isBig) big++; else small++;
+      SFX.tock(); show(); say(L['jin' + total()].t.join(''), null, who);
+    };
+    show(); if (wg.show) say(L['jin' + total()].t.join(''), null, who);
+  });
+}
+STEPS.weigh = async (s, who) => { await weighCard(s.weigh, who); };
+// Lifting a weapon off the scale, up over your head (the heave step: the weapon), to see how heavy it is: the pick-up you
+// already have, reaching into the scale's pan (decided 15 November 2026: every action is animated), then put back.
+STEPS.heave = async s => { await pickUpAct(s.heave, {reach:'in'}); };
+for (const n of ['broadsword', 'fork', 'halberd']) LIFTED[n] = (x, y) => { const p = mapArtPic(n); b.drawImage(p, Math.round(x - p.width / 2), Math.round(y - p.height)); };
 
 /* ================= FIGHTS UNDER THE SEA ================= */
 // The backdrop for battles and animals' questions under the sea (a place's backdrop, 'sea'): blue water, lighter above,

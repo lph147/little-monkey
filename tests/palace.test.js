@@ -92,13 +92,13 @@ test('the counting card: a row of ten soldiers at a time, each ten said, till te
   assert.deepEqual(get(g, '__spoke'), ['十！', '二十！', '三十！', '四十！', '五十！', '六十！', '七十！', '八十！', '九十！', '一百！']);
 });
 
-test('the lobster at the palace door (龙虾), and then To be continued; the palace drawn', async () => {
-  const g = game({palace: 2}, {pos: {place: 'palace', x: 12, y: 6, dir: 'up'}});
-  assert.equal(get(g, 'animalAt(12, 5).id'), 'lobster');
-  await press(g, 12, 6, 'up');
+test('the lobster beside the palace door (龙虾), and then the door opens; the palace drawn', async () => {
+  const g = game({palace: 2}, {pos: {place: 'palace', x: 11, y: 6, dir: 'up'}});
+  assert.equal(get(g, 'animalAt(11, 5).id'), 'lobster');
+  await press(g, 11, 6, 'up');
   const told = notes(g);
   assert.ok(told.includes('card: 龙虾'));
-  assert.ok(told.some(n => /To be continued/.test(n)));
+  assert.ok(told.some(n => /the palace door is open now/.test(n)), 'the way in (step 7: tests/hall.test.js)');
   assert.equal(p(g, 'palace'), 3);
   for (const t of [0, 700, 1400]) g.run(`drawWorld(${t})`);
   g.run('S.clock.t = DAY_MS * .9; drawWorld(3000)');

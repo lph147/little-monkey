@@ -503,6 +503,8 @@ SAVES.a3trench = {...SAVES.a3raced, w: {...SAVES.a3raced.w, ...knows(1, ['快', 
 SAVES.a3deep = {...SAVES.a3trench, w: {...SAVES.a3trench.w, ...knows(1, ['深'])}, areas: {...SAVES.a3trench.areas, 3: {...SAVES.a3trench.areas[3], trench: 1}}, pos: {place: 'trench', x: 18, y: 12, dir: 'down'}};   // (down the slope, near the bottom)
 SAVES.a3palaceIn = {...SAVES.a3deep, w: {...SAVES.a3deep.w, ...knows(1, ['鲸鱼', '光'])}, areas: {...SAVES.a3deep.areas, 3: {...SAVES.a3deep.areas[3], part: 3, trench: 2}}, pos: {place: 'palace', x: 12, y: 14, dir: 'up'}};   // (just down at the palace, the sea guard in your way)
 SAVES.a3palace = {...SAVES.a3palaceIn, areas: {...SAVES.a3palaceIn.areas, 3: {...SAVES.a3palaceIn.areas[3], part: 4, palace: 1}}, pos: {place: 'palace', x: 11, y: 6, dir: 'up'}};   // (past him: the gate, the soldiers, the crab general)
+SAVES.a3hall = {...SAVES.a3palace, w: {...SAVES.a3palace.w, ...knows(1, ['龙', '兵', '百', '龙虾'])}, friends: [...(SAVES.a3palace.friends || []), 'lobster'],
+  areas: {...SAVES.a3palace.areas, 3: {...SAVES.a3palace.areas[3], part: 5, palace: 3, hall: 1}}, pos: {place: 'hall', x: 8, y: 6, dir: 'up'}};   // (in the throne hall, the Dragon King by his throne)
 SAVES.a3seabed = {...SAVES.c2dive, area: 3, areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀'}}, pos: {place: 'seabed', x: 11, y: 6, dir: 'down'}};   // (home in autumn: on the hillside's lookout)
 SAVES.c2south = {...SAVES.c2end, pos: {place: 'ffmSouthSlope', x: 9, y: 15, dir: 'up'}};   // (and the south slope's)
 
@@ -1943,6 +1945,13 @@ SCREENS.push(
   {id: 'a3-tens', title: 'Counting by tens', save: 'a3palace', why: 'Counting the shrimp soldiers with the crab general, as the master counted on from ten: a row of ten at a time, 十, 二十, 三十… till ten rows, 一百 (百, hundred).', run: async () => {
     play(); await wait(100); countTens('crab', ['ten', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety', 'hundred']);
     for (let i = 0; i < 5; i++){ await wait(60); $('#sheet [data-a=next]').click(); } await wait(400); }},
+  {id: 'a3-hall', title: 'The throne hall', save: 'a3hall', why: 'The Crystal Palace: red pillars with gold dragons (柱子), the Dragon King and Queen by the throne, the great scale, and the shrimp soldiers who carried in his great broadsword.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'a3-welcome', title: '欢迎！欢迎！', save: 'a3hall', why: 'The Dragon King comes to meet you, in his own voice (Yunyang’s): 欢迎！欢迎！ (欢迎, welcome!).', run: async () => {
+    play(); await wait(100); showDialog(speaker('dragonKing'), L.welcome, {teach: '欢迎'}); await wait(500); }},
+  {id: 'a3-weigh', title: 'Weighing the fork', save: 'a3hall', why: 'The palace’s great scale: put the big weights (千) on first, then the small ones (百), each total said as it grows, till it balances: 三千六百斤. Then Lift it, and 太轻了！', run: async () => {
+    play(); await wait(100); weighCard('fork', 'dragonKing');
+    for (let i = 0; i < 5; i++){ await wait(60); $('#sheet .btn.primary').click(); } await wait(400); }},
   {id: 'a3-shells', title: 'Your shells are 贝壳', save: 'a3stars', why: 'Once you know 贝壳, your money says so: 🐚 7 贝壳, in your bag, on the Tasks page and in the shop.', run: async () => {
     play(); await wait(100); pressBag(); await wait(400); }}
 );

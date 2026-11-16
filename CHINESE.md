@@ -1456,6 +1456,31 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 一百！ | yī bǎi! | A hundred! |  |  |
 | 一百个兵！ | yī bǎi gè bīng! | A hundred soldiers! | 蟹将 (Crab general) |  |
 | 一，二！一，二！ | yī, èr! yī, èr! | One, two! One, two! | 虾兵 (Shrimp soldier) |  |
+| 欢迎！欢迎！ | huānyíng! huānyíng! | Welcome! Welcome! | 东海龙王 (Dragon King of the Eastern Sea) |  |
+| 你要什么？ | nǐ yào shénme? | What would you like? |  |  |
+| 我要刀！ | wǒ yào dāo! | I want a broadsword! |  |  |
+| 太重了！ | tài zhòng le! | Too heavy! | 虾兵 (Shrimp soldier) |  |
+| 太轻了！ | tài qīng le! | Too light! | 小猴子 (You) |  |
+| 你看这个！ | nǐ kàn zhège! | Look at this one! | 东海龙王 (Dragon King of the Eastern Sea) |  |
+| 这个多少斤？ | zhège duōshao jīn? | How many jin is this one? | 东海龙王 (Dragon King of the Eastern Sea) |  |
+| 没有了。 | méiyǒu le. | That’s all there is. | 东海龙王 (Dragon King of the Eastern Sea) |  |
+| 你好！ | nǐ hǎo! | Hello! | 龙婆 (Dragon Queen) |  |
+| 八百斤！ | bā bǎi jīn! | 800 jin! |  |  |
+| 一千！ | yī qiān! | 1,000! |  |  |
+| 两千！ | liǎng qiān! | 2,000! |  |  |
+| 三千！ | sān qiān! | 3,000! |  |  |
+| 三千一百！ | sān qiān yī bǎi! | 3,100! |  |  |
+| 三千二百！ | sān qiān èr bǎi! | 3,200! |  |  |
+| 三千三百！ | sān qiān sān bǎi! | 3,300! |  |  |
+| 三千四百！ | sān qiān sì bǎi! | 3,400! |  |  |
+| 三千五百！ | sān qiān wǔ bǎi! | 3,500! |  |  |
+| 三千六百斤！ | sān qiān liù bǎi jīn! | 3,600 jin! |  |  |
+| 四千！ | sì qiān! | 4,000! |  |  |
+| 五千！ | wǔ qiān! | 5,000! |  |  |
+| 六千！ | liù qiān! | 6,000! |  |  |
+| 七千！ | qī qiān! | 7,000! |  |  |
+| 七千一百！ | qī qiān yī bǎi! | 7,100! |  |  |
+| 七千二百斤！ | qī qiān èr bǎi jīn! | 7,200 jin! |  |  |
 | 我们玩吧！ | wǒmen wán ba! | Let’s play! |  |  |
 | 一！ | yī! | One! |  |  |
 | 二！ | èr! | Two! |  |  |
@@ -1472,6 +1497,7 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 我戴帽子 | wǒ dài màozi | I wear my hat. | You, in the wardrobe |  |
 | 这是我的鞋 | zhè shì wǒ de xié | These are my shoes. | You, in the wardrobe |  |
 | 我有几只脚 | wǒ yǒu jǐ zhī jiǎo | How many feet have I got? | You, in a lesson at school |  |
+| 这个多少斤 | zhège duōshao jīn | How many jin is this one? | You, in a lesson at school |  |
 | 我戴红色的头带 | wǒ dài hóngsè de tóudài | I wear my red headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴黄色的头带 | wǒ dài huángsè de tóudài | I wear my yellow headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴白色的头带 | wǒ dài báisè de tóudài | I wear my white headband. | You, in the wardrobe (a headband in each colour) |  |
@@ -1518,6 +1544,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 鲸鱼很大。 | jīngyú hěn dà. | The whale is very big. | 鲸鱼 |  |
 | 龙很大。 | lóng hěn dà. | The dragon is very big. | 龙 |  |
 | 龙虾是红色的。 | lóngxiā shì hóngsè de. | The lobster is red. | 龙虾 |  |
+| 这里有很多柱子。 | zhèlǐ yǒu hěn duō zhùzi. | There are lots of pillars here. | 柱子 |  |
 
 ### Scene: the dive
 
@@ -1533,6 +1560,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | --- | --- | --- | --- |
 | 夜叉 | yèchā | Sea guard |  |
 | 蟹将 | xièjiàng | Crab general |  |
+| 东海龙王 | Dōnghǎi Lóngwáng | Dragon King of the Eastern Sea |  |
+| 龙婆 | Lóngpó | Dragon Queen |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
+| 虾兵 | xiābīng | Shrimp soldier |  |
 | 虾兵 | xiābīng | Shrimp soldier |  |
 | 虾兵 | xiābīng | Shrimp soldier |  |
 | 虾兵 | xiābīng | Shrimp soldier |  |
@@ -1560,6 +1591,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 珊瑚礁 | shānhú jiāo | The coral reef |  |
 | 海沟 | hǎigōu | The trench |  |
 | 龙宫 | Lónggōng | The Dragon Palace |  |
+| 水晶宫 | Shuǐjīng Gōng | The Crystal Palace |  |
 
 ### Words to collect
 
@@ -1587,6 +1619,13 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 兵 | bīng | soldier |  |
 | 百 | bǎi | hundred |  |
 | 龙虾 | lóngxiā | lobster |  |
+| 柱子 | zhùzi | pillar |  |
+| 欢迎 | huānyíng | welcome! |  |
+| 重 | zhòng | heavy |  |
+| 斤 | jīn | jin (half a kilo) |  |
+| 轻 | qīng | light (not heavy) |  |
+| 千 | qiān | thousand |  |
+| 多少 | duōshao | how many, how much |  |
 | 几 | jǐ | how many |  |
 | 光 | guāng | light |  |
 
@@ -1602,6 +1641,14 @@ simply put. A part's pinyin is as it's said in the word.
 | 海星 | hǎixīng | 海 hǎi (sea) + 星 xīng (star) = 海星 (starfish) |  |
 | 海马 | hǎimǎ | 海 hǎi (sea) + 马 mǎ (horse) = 海马 (seahorse) |  |
 | 龙虾 | lóngxiā | 龙 lóng (dragon) + 虾 xiā (shrimp) = 龙虾 (lobster) |  |
+
+### Two words side by side
+
+Two words easily mixed up, side by side on a card of their own: what each is for, an example or two, and a line to remember (new on 9 November 2026, not checked yet).
+
+| Words | What each is for | Examples | To remember | Notes |
+| --- | --- | --- | --- | --- |
+| 几 / 多少 | 几: For a few, usually fewer than ten; 多少: For any number, often a big one, and prices | 我有几只脚？ wǒ yǒu jǐ zhī jiǎo? (How many feet have I got?); 这个多少斤？ zhège duōshao jīn? (How many jin is this one?); 多少钱？ duōshao qián? (How much is it?) | A few? 几. Any number, a big one, or a price? 多少. |  |
 
 ### Big and little wild creatures
 
@@ -1694,6 +1741,8 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 虾兵 | xiābīng | shrimp soldiers |  |
 | 蟹将 | xièjiàng | crab general |  |
 | 夜叉 | yèchā | sea guard (a yaksha) |  |
+| 龙婆 | Lóngpó | the Dragon Queen |  |
+| 这个 | zhège | this one |  |
 | 三十 | sānshí | thirty |  |
 | 四十 | sìshí | forty |  |
 | 五十 | wǔshí | fifty |  |
@@ -1980,12 +2029,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 美猴王坐木筏走了。 | Měi Hóuwáng zuò mùfá zǒu le. | The Monkey King sailed away on his raft. | New on 29 October 2026 (in the game), the end of chapter 1: The scene of you sailing away, the troop waving from the shore, after 再见！ and 我们等你！ |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 | 这是我的地图。 | zhè shì wǒ de dìtú. | This is my map. | New on 31 October 2026 (in the game): the example on 地图 (dìtú, map)’s page. The big monkey gives you a map in chapter 1, as he sends you up to the pine wood, and you catch 地图 the first time you open it. Its How it’s made card says 地 (dì, ground) + 图 (tú, picture) = 地图, a picture of the ground: is that a fair way to explain it? |  |
-| 欢迎！欢迎！ | Huānyíng! Huānyíng! | Welcome! Welcome! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon King, meeting you, teaching the phrase 欢迎. Is it natural? |  |
-| 太重了！ | Tài zhòng le! | Too heavy! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the shrimp soldiers, carrying a great broadsword in, teaching 重. Is it natural? |  |
-| 这把大刀，八百斤！ | Zhè bǎ dàdāo, bābǎi jīn! | This broadsword: eight hundred jin! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon King, as it’s weighed, teaching 斤 (the broadsword’s weight is the game’s own). Is it natural? |  |
-| 太轻了！ | Tài qīng le! | Too light! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: you, lifting it in one paw, teaching 轻. Is it natural? |  |
-| 这个多少斤？ | Zhège duōshao jīn? | How many jin is this one? | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon King, as you weigh the halberd yourself, teaching 多少. Is it natural? |  |
-| 三千六百斤！ | Sānqiān liùbǎi jīn! | Three thousand six hundred jin! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the nine-pronged fork, weighed, teaching 千 (3,600 and 7,200 jin are the book’s weights for the fork and the halberd, as I remember them: please check). Is it natural? |  |
 | 宝库里有一根铁柱子，它有光！ | Bǎokù li yǒu yì gēn tiě zhùzi, tā yǒu guāng! | In the treasury there’s an iron pillar, and it’s glowing! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon Queen, whispering. Is 宝库 right for the sea’s treasury (the book has 海藏)?. Is it natural? |  |
 | 太长了！ | Tài cháng le! | It’s too long! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the pillar, taller than the palace, teaching 长. Is it natural? |  |
 | 变短！变小！ | Biàn duǎn! Biàn xiǎo! | Get shorter! Get smaller! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: you, to the pillar, teaching 短. Is it natural? |  |

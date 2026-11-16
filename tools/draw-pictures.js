@@ -2008,6 +2008,45 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.flat(path([[6, 16], [2, 7], [5, 0]], .45), '#A83A24'); p.flat(path([[8, 16], [10, 6], [15, 1]], .45), '#A83A24');   // long feelers
     [[13, 22], [16, 22.5], [19, 23]].forEach(([x, y]) => p.flat(path([[x, y], [x - 1, y + 5]], .45), '#A83A24'));   // legs
     p.eye(9, 16);
+  },
+  // the throne hall's (step 7)
+  '柱子': p => {   // a pillar: a tall round red column, a gold top and a white stone base (unlike 龙: no dragon)
+    p.fill(Rc(10, 5, 12, 22), '#B8322A', {light: '#D8584A', dark: '#8E2620', edge: true});   // the column
+    p.flat(Rc(12, 6, 2, 20), '#E06A5A');                                                     // its shine
+    p.fill(Rc(8, 1, 16, 5, 1), '#E2B23A', {light: '#F8DC80', edge: true});                   // its gold top
+    p.fill(Rc(7, 26, 18, 5, 1), '#DDE8E4', {light: '#F6FCFA', dark: '#B8C8C2', edge: true}); // its stone base
+  },
+  '重': p => {   // heavy: a huge black iron weight, its handle on top, so heavy the ground cracks under it (unlike 石头: an iron weight)
+    p.fill(and(O(16, 31, 15, 3), Rc(0, 29, 32, 3)), '#9BC67E');                              // the ground
+    p.flat(or(path([[6, 29], [3, 31]], .5), path([[26, 29], [29, 31]], .5), path([[16, 30], [15, 31.5]], .5)), '#5A3A1A');   // cracks
+    p.fill(Pg([[6, 29], [9, 12], [23, 12], [26, 29]]), '#3E444C', {light: '#6A727E', dark: '#24282E', edge: true});   // the weight
+    p.fill(and(O(16, 10, 6, 5), not(O(16, 10, 3.4, 2.8))), '#3E444C', {light: '#6A727E', edge: true});   // its handle
+    [[3, 8], [29, 8], [2, 16], [30, 16]].forEach(([x, y]) => p.flat(path([[x, y], [x, y + 5]], .45), '#9FB8C8'));   // falling lines
+  },
+  '轻': p => {   // light: a balloon floating up on its string, lines under it as it rises (unlike 泡泡: on a string; unlike 羽毛: a balloon)
+    p.flat(path([[16, 18], [15, 22], [17, 26], [16, 31]], .4), '#8A7A6A');                   // its string
+    p.fill(O(16, 10, 7.5, 8.5), '#F2C14E', {light: '#FFE38A', dark: '#D49A2A', edge: true});  // the balloon
+    p.fill(Pg([[14.5, 18], [17.5, 18], [16, 20]]), '#D49A2A');                               // its knot
+    p.flat(O(13, 7, 1.8, 2.4), '#FFF6D0');                                                   // its shine
+    [[5, 18], [27, 18], [7, 24], [25, 24]].forEach(([x, y]) => p.flat(path([[x, y], [x, y + 3]], .45), '#9FB8C8'));   // rising
+  },
+  '斤': p => {   // jin, a weight: a steelyard, its long rod marked with dots, a basket of fish on its hook, its brass weight hanging on the other side (unlike 重: weighing something)
+    p.flat(path([[16, 1], [16, 7]], .5), '#7A5230');                                         // the cord it hangs from
+    p.fill(path([[3, 8], [29, 8]], 1), '#B98A55', {edge: true});                            // the rod
+    [12, 16, 20, 24].forEach(x => p.dot(x, 7, '#5A3A1A'));                                   // its marks
+    p.flat(path([[5, 9], [5, 15]], .4), '#5A3A1A');                                          // the hook's cord
+    p.fill(and(O(5, 20, 5, 5), (x, y) => y >= 17), '#C49461', {dark: '#8A5A32', edge: true}); // the basket
+    p.fill(O(4, 17.5, 2.4, 1.2), '#7EA6C8'); p.fill(O(7, 17, 2.2, 1.1), '#F2C14E');          // fish in it
+    p.flat(path([[25, 9], [25, 14]], .4), '#5A3A1A');                                        // the weight's cord
+    p.fill(or(O(25, 19, 4, 4.4), Rc(23, 14, 4, 3, 1)), '#C8A03A', {light: '#F2D27A', dark: '#8E6A1E', edge: true});   // the brass weight
+  },
+  '千': p => {   // a thousand: ten bundles of a hundred, seen end on, stacked four, three, two, one, tied round with a big red band (unlike 百: seen end on, stacked)
+    const block = (x, y) => {
+      p.fill(Rc(x, y, 7, 7, 1), '#B98A55', {dark: '#8A5A32', edge: true});
+      for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) p.dot(x + 1.5 + i * 2, y + 1.5 + j * 2, STICK_END);   // the sticks' ends
+    };
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 4 - r; c++) block(2 + r * 3.5 + c * 7, 24 - r * 7);
+    p.fill(Rc(1, 21, 30, 2), RED, {light: '#F06A5A', dark: '#A82828'});                      // the red band
   }
 };
 // A coral on the sand, branching up (body: its colour), its tips lighter (unlike seaweed: stiff branches)
@@ -2335,6 +2374,43 @@ const MAP_ART_DRAWINGS = {
     p.fill(O(hx + 1, 6.5, 3, 2.3), '#E2B23A', {light: '#F8DC80'});
     p.flat(path([[hx, 5], [hx - 2, 2]], .4), '#F8DC80');
     p.dot(Math.round(hx + 2), 6, '#7A2A1A');
+  }},
+  // the throne hall's (step 7): the Dragon King's throne on its dais, the palace's great scale, and the three weapons he
+  // offers you, lying flat (on the scale, and held up over your head as you lift each one)
+  throne: {size: 44, draw: p => {
+    p.fill(Rc(2, 34, 40, 10), '#DDE8E4', {light: '#F6FCFA'});
+    p.fill(Rc(6, 30, 32, 5), '#E8F0EC', {light: '#FFFFFF'});
+    p.fill(Rc(8, 4, 28, 22, 3), '#B8322A', {light: '#D8584A'});
+    p.flat(Rc(10, 6, 24, 18), '#C8452E');
+    p.fill(path([[14, 20], [22, 14], [16, 10], [26, 8], [30, 12]], 1.2), '#E2B23A', {light: '#F8DC80'});
+    p.fill(O(30, 12, 2, 1.6), '#E2B23A');
+    p.fill(Rc(10, 20, 24, 11, 2), '#E2B23A', {light: '#F8DC80'});
+    p.fill(Rc(8, 18, 4, 12, 1), '#D49E2A'); p.fill(Rc(32, 18, 4, 12, 1), '#D49E2A');
+  }},
+  greatScale: {size: 52, draw: p => {   // a beam on a post, two pans hanging from it, empty
+    p.fill(Rc(16, 46, 20, 5, 1), '#8A5A2A', {light: '#B07A3A'});
+    p.fill(Rc(24, 8, 4, 39), '#B07A3A', {light: '#D8A060'});
+    p.fill(Rc(3, 9, 46, 3, 1), '#B07A3A', {light: '#D8A060'});
+    p.fill(O(26, 9, 3, 3), '#E2B23A', {light: '#F8DC80'});
+    [[5, 12, 3, 28], [5, 12, 13, 28], [47, 12, 39, 28], [47, 12, 49, 28]].forEach(([a, b, c, d]) => p.flat(Cp(a, b, c, d, .35), '#5A3A1A'));
+    p.fill(and(O(8, 29, 7.5, 3.2), (x, y) => y >= 28), '#C08A40', {light: '#E0B060'});
+    p.fill(and(O(44, 29, 7.5, 3.2), (x, y) => y >= 28), '#C08A40', {light: '#E0B060'});
+  }},
+  broadsword: {size: 26, draw: p => {   // a great broadsword on a long pole: a broad curved blade, a red tassel
+    p.fill(path([[1, 10], [16, 10]], .9), '#7A5230');
+    p.fill(Pg([[15, 8], [22, 6], [25, 7], [25, 12], [15, 12]]), '#D8DDE0', {light: '#FFFFFF', dark: '#9AA4AA', edge: true});
+    p.flat(Rc(14, 8, 2, 5), '#E2B23A'); p.flat(Rc(12, 11, 2, 3), '#D8343A');
+  }},
+  fork: {size: 26, draw: p => {   // a fork with nine prongs on a long pole
+    p.fill(path([[1, 10], [17, 10]], .9), '#7A5230');
+    p.fill(Rc(16, 4, 3, 13, 1), '#9AA4AA', {light: '#D8DDE0', edge: true});
+    for (let i = 0; i < 9; i++) p.flat(Rc(19, 4 + i * 1.5, 6, 1), i % 2 ? '#B8C2C8' : '#D8DDE0');
+  }},
+  halberd: {size: 26, draw: p => {   // a halberd: a spear point and a crescent blade on a long red-banded pole
+    p.fill(path([[1, 10], [20, 10]], .9), '#7A5230');
+    p.flat(or(Rc(6, 9, 1, 3), Rc(12, 9, 1, 3)), '#D8343A');
+    p.fill(Pg([[19, 8.5], [25, 10], [19, 11.5]]), '#D8DDE0', {light: '#FFFFFF', edge: true});
+    p.fill(and(O(17, 10, 4, 6), not(O(15.5, 10, 3.6, 5))), '#B8C2C8', {light: '#E8EEF2', edge: true});
   }},
   rock: {size: 18, draw: p => {   // a sea rock, blue-grey, a little weed on top
     p.fill(or(O(7, 11, 6, 5), O(12, 12, 5, 4)), '#6F8590', {light: '#98ACB6'});
