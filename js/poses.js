@@ -114,6 +114,7 @@ const POSES = (() => {
   // with its dark edge; a sword's guard across it, just past your paws
   function weapon(g, a, z, held){
     shape(g, line(...a, ...z), 'g', 'G');
+    if (held.bands){ const cells = line(...a, ...z); for (const [x, y] of [...cells.slice(0, 2), ...cells.slice(-2)]) put(g, x, y, 'y'); return; }   // (the staff's gold bands, at each end)
     if (held.blade){   // a spade's blade at its end, across it: three wide and two long, steel (y)
       const d = Math.hypot(z[0] - a[0], z[1] - a[1]) || 1, ux = (z[0] - a[0]) / d, uy = (z[1] - a[1]) / d;
       for (let j = 0; j <= 1; j++) for (const k of [-1, 0, 1]) put(g, Math.round(z[0] + ux * j - uy * k), Math.round(z[1] + uy * j + ux * k), 'y');

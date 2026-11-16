@@ -2047,8 +2047,55 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     };
     for (let r = 0; r < 4; r++) for (let c = 0; c < 4 - r; c++) block(2 + r * 3.5 + c * 7, 24 - r * 7);
     p.fill(Rc(1, 21, 30, 2), RED, {light: '#F06A5A', dark: '#A82828'});                      // the red band
+  },
+  // Step 8 (16 November 2026): the iron pillar that shrinks into your staff
+  '长': p => {   // long: a long iron rod, a gold band at each end, a red arrow along all of it (unlike 短: a short one)
+    ironRod(p, 1, 30); measure(p, 2, 30);
+  },
+  '短': p => {   // short: a short iron rod, a gold band at each end, a red arrow along it (unlike 长: a long one)
+    ironRod(p, 11, 21); measure(p, 11, 21);
+  },
+  '金色': p => {   // golden: a round dab of gold paint, shining, with sparkles (unlike 黄色: plain yellow paint; 金子: nuggets of gold)
+    splat(p, '#D9A420');
+    p.flat(and(O(15.5, 17, 10.5, 9), (x, y) => x + y > 38), '#B48212');                        // its shadowed side
+    p.flat(and(O(15.5, 17, 10.5, 9), (x, y) => x + y < 22), '#F2CE5A');
+    for (const [x, y, n] of [[6, 8, 3], [27, 27, 2], [24, 14, 1]]){ p.flat(Rc(x, y - n, 1, 2 * n + 1), '#FFF6C8'); p.flat(Rc(x - n, y, 2 * n + 1, 1), '#FFF6C8'); }
+  },
+  '万': p => {   // ten thousand: a great wall of bundles, stacked four by four and seen end on, tied round both ways with red bands (unlike 千: a stack, one band)
+    p.fill(Pg([[2, 11], [8, 5], [30, 5], [24, 11]]), STICK_LIT, {edge: true});                 // its top
+    p.fill(Pg([[24, 11], [30, 5], [30, 25], [24, 31]]), STICK_SHADE, {edge: true});            // its side
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++){                                    // its front: the bundles' ends
+      const x = 2 + c * 5.5, y = 11 + r * 5;
+      p.fill(Rc(x, y, 5.5, 5, 1), STICK, {dark: STICK_SHADE, edge: true});
+      for (const [dx, dy] of [[1.5, 1.5], [3.5, 1.5], [1.5, 3.2], [3.5, 3.2]]) p.dot(Math.round(x + dx), Math.round(y + dy), STICK_END);
+    }
+    p.fill(Rc(12, 11, 3, 20), RED, {light: '#F06A5A', dark: '#A82828'});                       // the red bands
+    p.fill(Pg([[12, 11], [18, 5], [21, 5], [15, 11]]), RED, {light: '#F06A5A'});
+    p.fill(Rc(2, 19.5, 22, 3), RED, {light: '#F06A5A', dark: '#A82828'});
+    p.fill(Pg([[24, 19.5], [30, 13.5], [30, 16.5], [24, 22.5]]), '#B83228');
+  },
+  '给': p => {   // to give: a paw holding out a present to another paw, open to take it
+    p.fill(path([[0, 29], [9, 22]], 2.6), FUR, {dark: '#8A5428', edge: true});               // the giving arm
+    p.fill(O(11.5, 20.5, 3.4, 2.8), SKIN, {dark: '#D8A878', edge: true});                    // its paw
+    p.fill(Rc(8, 10, 10, 9, 1), RED, {light: '#F06A5A', dark: '#A82828', edge: true});        // the present
+    p.flat(Rc(12, 10, 2, 9), '#F2C14E'); p.flat(Rc(8, 13, 10, 2), '#F2C14E');
+    p.fill(O(11, 8.5, 2, 1.4), '#F2C14E'); p.fill(O(15, 8.5, 2, 1.4), '#F2C14E');
+    p.fill(path([[32, 27], [25, 24]], 2.6), FUR, {dark: '#8A5428', edge: true});              // the taking arm
+    p.fill(and(O(22, 23, 4.4, 2.6), (x, y) => y >= 22), SKIN, {dark: '#D8A878', edge: true}); // its paw, open
+    [[18, 21], [20, 20.5], [22, 20.5]].forEach(([x, y]) => p.fill(O(x, y, .9, 1.2), SKIN, {edge: true}));   // its fingers
+    p.flat(path([[20, 13], [23, 15], [24, 18]], .45), '#8A8A8A');                              // going over
   }
 };
+// An iron rod lying across (from x0 to x1), a gold band at each end: 长 and 短
+function ironRod(p, x0, x1){
+  p.fill(Rc(x0, 17, x1 - x0 + 1, 6, 1), '#5A606A', {light: '#8A929C', dark: '#30343A', edge: true});
+  for (const x of [x0, x1 - 3]) p.fill(Rc(x, 17, 4, 6, 1), '#E2B23A', {light: '#F8DC80', dark: '#A87A1A', edge: true});
+}
+// A red arrow with a head at each end, over it, measuring it (x0 to x1)
+function measure(p, x0, x1){
+  p.fill(path([[x0 + 2, 10], [x1 - 2, 10]], .7), RED);
+  p.fill(Pg([[x0 - .5, 10], [x0 + 3.5, 6.5], [x0 + 3.5, 13.5]]), RED); p.fill(Pg([[x1 + .5, 10], [x1 - 3.5, 6.5], [x1 - 3.5, 13.5]]), RED);
+}
 // A coral on the sand, branching up (body: its colour), its tips lighter (unlike seaweed: stiff branches)
 function coral(p, body, light, dark){
   p.fill(and(O(16, 30, 14, 2.6), Rc(0, 28, 32, 4)), '#E8C984');                             // the sand
@@ -2439,6 +2486,29 @@ const MAP_ART_DRAWINGS = {
   brain: {size: 16, draw: p => {   // a round brain coral
     p.fill(and(O(8, 11, 7, 5.5), (x, y) => y <= 13), '#D8A86A', {light: '#F0CC94'});
     [[4, 9], [6, 8], [8, 9], [10, 8], [12, 9], [5, 11], [7, 12], [9, 11], [11, 12]].forEach(([x, y]) => p.dot(x, y, '#B07E44'));
+  }},
+  // the treasury's (step 8): your staff (for battles, held up as your stick was), a treasure chest, a heap of gold, and a
+  // clam with a pearl in it
+  staff: {size: 32, draw: p => {   // the staff, 金箍棒: iron, a gold band at each end
+    p.fill(path([[4, 28], [28, 4]], 1.7), '#5A606A', {light: '#8A929C', dark: '#30343A', edge: true});
+    p.fill(path([[2.5, 29.5], [6.5, 25.5]], 2.1), '#E2B23A', {light: '#F8DC80', dark: '#A87A1A', edge: true});
+    p.fill(path([[25.5, 6.5], [29.5, 2.5]], 2.1), '#E2B23A', {light: '#F8DC80', dark: '#A87A1A', edge: true});
+  }},
+  chest: {size: 18, draw: p => {   // a treasure chest, shut, banded with gold
+    p.fill(Rc(2, 8, 14, 8, 1), '#7A4A24', {light: '#A06A3A', dark: '#4E2C14', edge: true});
+    p.fill(Rc(2, 4, 14, 5, 2), '#8A5630', {light: '#B07A44', edge: true});
+    p.flat(Rc(2, 8, 14, 1), '#E2B23A'); p.flat(Rc(8, 7, 2, 4), '#F2C14E');
+  }},
+  goldHeap: {size: 18, draw: p => {   // a heap of gold
+    p.fill(and(O(9, 15, 8, 6), (x, y) => y <= 15), '#E2B23A', {light: '#F8DC80', dark: '#B08420'});
+    [[5, 13], [9, 11], [12, 13], [8, 14], [14, 14]].forEach(([x, y]) => p.dot(x, y, '#FFF2B0'));
+  }},
+  pearlClam: {size: 18, draw: p => {   // a giant clam, open, a pearl in it
+    p.fill(and(O(9, 12, 8, 5), (x, y) => y >= 11), '#8FA8BC', {light: '#B8CCDC'});
+    p.fill(and(O(9, 10, 8, 5.5), (x, y) => y <= 10), '#9FB8CC', {light: '#C8DAE8'});
+    [3, 6, 12, 15].forEach(x => p.flat(Rc(x, 6, 1, 4), '#7A92A6'));
+    p.flat(Rc(3, 10, 13, 2), '#E8C0D4');
+    p.fill(O(9, 10, 2.2, 2), '#F4F0E8', {light: '#FFFFFF', edge: true});
   }},
   clam: {size: 18, draw: p => {   // a giant clam, open
     p.fill(and(O(9, 12, 8, 5), (x, y) => y >= 11), '#8FA8BC', {light: '#B8CCDC'});

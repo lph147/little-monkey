@@ -15,6 +15,8 @@ const canBattle = () => !!BATTLES.when && matches(BATTLES.when);   // you can fi
 // Your weapon: the area's (battles.weapon), or one the story has given you since (the weapon step, kept in the area's
 // progress), such as the Demon of Havoc's broadsword; and how hard it hits (its own, battles.weapons, or battles.hits).
 const weaponNow = () => (S && S.areas && here() && here().weapon) || BATTLES.weapon;
+// Your weapon's picture, held up in a battle: its word's (棍子, 刀), or for one that isn't a word, such as the staff, its own (HELD's art)
+const weaponPic = w => !w ? null : PICTURES[w] ? sprite(PICTURES[w].rows, PICTURES[w].palette) : HELD[w] && HELD[w].art ? mapArtPic(HELD[w].art) : null;
 const weaponHits = () => (BATTLES.weapons || {})[weaponNow()] || BATTLES.hits;
 // An enemy with a name rather than a word (name: {zh, py, en}; pic: its picture), such as the Demon of Havoc (names aren't
 // vocabulary: never a card to catch, decided 5 November 2026), or one with a word, taught as you meet it.
@@ -189,7 +191,7 @@ async function fight(id, opts = {}){
   // The scene: the enemy on its mound, you from behind with your stick, and what the animations use (js below, css
   // .scene.swing and .scene.strike): where it strikes from, the enemy leaping out, a burst, and a word (Hit! Miss!).
   // look: the enemy's (gone, when it runs off); act: what's happening (hiding, on its turn).
-  const stickImg = () => weaponNow() && PICTURES[weaponNow()] ? `<img class="stick" alt="" src="${sprite(PICTURES[weaponNow()].rows, PICTURES[weaponNow()].palette).toDataURL()}">` : '';
+  const stickImg = () => { const p = weaponPic(weaponNow()); return p ? `<img class="stick" alt="" src="${p.toDataURL()}">` : ''; };
   let stick = stickImg();
   const stagesDone = new Set();   // (a boss's stages: what happens at so much of its health left, each once)
   const stagesLeft = () => (f.stages || []).some((s, i) => !stagesDone.has(i));

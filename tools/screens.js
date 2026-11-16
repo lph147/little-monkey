@@ -505,6 +505,10 @@ SAVES.a3palaceIn = {...SAVES.a3deep, w: {...SAVES.a3deep.w, ...knows(1, ['鲸鱼
 SAVES.a3palace = {...SAVES.a3palaceIn, areas: {...SAVES.a3palaceIn.areas, 3: {...SAVES.a3palaceIn.areas[3], part: 4, palace: 1}}, pos: {place: 'palace', x: 11, y: 6, dir: 'up'}};   // (past him: the gate, the soldiers, the crab general)
 SAVES.a3hall = {...SAVES.a3palace, w: {...SAVES.a3palace.w, ...knows(1, ['龙', '兵', '百', '龙虾'])}, friends: [...(SAVES.a3palace.friends || []), 'lobster'],
   areas: {...SAVES.a3palace.areas, 3: {...SAVES.a3palace.areas[3], part: 5, palace: 3, hall: 1}}, pos: {place: 'hall', x: 8, y: 6, dir: 'up'}};   // (in the throne hall, the Dragon King by his throne)
+SAVES.a3queen = {...SAVES.a3hall, w: {...SAVES.a3hall.w, ...knows(1, ['柱子', '欢迎', '重', '斤', '轻', '千', '多少'])}, friends: [...new Set([...(SAVES.a3hall.friends || []), 'seahorse', 'whale'])], met: [...new Set([...(SAVES.a3hall.met || []), 'seahorse', 'whale'])], areas: {...SAVES.a3hall.areas, 3: {...SAVES.a3hall.areas[3], hall: 2}}, pos: {place: 'hall', x: 11, y: 4, dir: 'up'}};   // (every weapon too light: the Dragon Queen has an idea)
+SAVES.a3treasury = {...SAVES.a3queen, areas: {...SAVES.a3queen.areas, 3: {...SAVES.a3queen.areas[3], part: 6, hall: 3, staff: 0}}, pos: {place: 'treasury', x: 7, y: 9, dir: 'up'}};   // (in the treasury, the iron pillar glowing)
+SAVES.a3short = {...SAVES.a3treasury, w: {...SAVES.a3treasury.w, ...knows(1, ['长', '短'])}, areas: {...SAVES.a3treasury.areas, 3: {...SAVES.a3treasury.areas[3], staff: 1}}, pos: {place: 'treasury', x: 7, y: 6, dir: 'up'}};   // (told 变短: short, but still too thick)
+SAVES.a3staff = {...SAVES.a3short, w: {...SAVES.a3short.w, ...knows(1, ['金色', '万', '给'])}, areas: {...SAVES.a3short.areas, 3: {...SAVES.a3short.areas[3], staff: 4, weapon: '金箍棒'}}, pos: {place: 'treasury', x: 7, y: 7, dir: 'down'}};   // (the staff in your paws)
 SAVES.a3seabed = {...SAVES.c2dive, area: 3, areas: {...SAVES.c2dive.areas, 3: {chapter: 0, landed: 1, part: 0, weapon: '刀'}}, pos: {place: 'seabed', x: 11, y: 6, dir: 'down'}};   // (home in autumn: on the hillside's lookout)
 SAVES.c2south = {...SAVES.c2end, pos: {place: 'ffmSouthSlope', x: 9, y: 15, dir: 'up'}};   // (and the south slope's)
 
@@ -1952,6 +1956,20 @@ SCREENS.push(
   {id: 'a3-weigh', title: 'Weighing the fork', save: 'a3hall', why: 'The palace’s great scale: put the big weights (千) on first, then the small ones (百), each total said as it grows, till it balances: 三千六百斤. Then Lift it, and 太轻了！', run: async () => {
     play(); await wait(100); weighCard('fork', 'dragonKing');
     for (let i = 0; i < 5; i++){ await wait(60); $('#sheet .btn.primary').click(); } await wait(400); }},
+  {id: 'a3-queen', title: 'The Dragon Queen’s idea', save: 'a3queen', why: 'Every weapon too light: the Dragon Queen whispers, in her own voice (Xiaohan’s), about the iron pillar in the treasury, glowing (宝库里有一根铁柱子，它有光！).', run: async () => {
+    play(); await wait(100); showDialog(speaker('dragonQueen'), L.queenWhisper); await wait(500); }},
+  {id: 'a3-treasury', title: 'The treasury', save: 'a3treasury', why: 'Behind the throne hall: dim, chests, gold and pearls, and the iron pillar, glowing gold, up through the roof and off the top of the screen. The Dragon King and Queen beside it.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'a3-tell', title: 'What do you tell it?', save: 'a3treasury', why: 'A at the pillar: 太长了！ (长). Then a card: what you tell it, 变长 or 变短, each with its pinyin and English. Choose wrongly, and you see it do just that.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'treasury', x: 7, y: 6, dir: 'up'}; placePlayer(); S.w['长'] = {lv: 1, due: 0, ok: 0}; tellCard('shorter'); await wait(500); }},
+  {id: 'a3-short', title: '变短！', save: 'a3short', why: 'Told 变短 (短), the pillar shrinks as you watch, short now, but still too thick to hold: 变大 or 变小?', run: async () => {
+    play(); await wait(100); tellCard('smaller'); await wait(500); }},
+  {id: 'a3-writing', title: 'The staff’s writing', save: 'a3short', why: 'Its writing, in pixel characters: 如意金箍棒, its name, and 一万三千五百斤, all of which you can read but 万, which the Dragon King reads out for you.', run: async () => {
+    play(); await wait(100); writingCard('staff'); await wait(500); }},
+  {id: 'a3-staff', title: 'Your staff', save: 'a3staff', why: 'The staff in your paws: iron, a gold band at each end, longer than the broadsword, and twice as strong.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'a3-staff-fight', title: 'A shark meets the staff', save: 'a3staff', why: 'In a fight, the staff held up as your stick was, hitting for 30.', run: async () => {
+    play(); await wait(100); battle('shark'); await wait(1200); }},
   {id: 'a3-shells', title: 'Your shells are 贝壳', save: 'a3stars', why: 'Once you know 贝壳, your money says so: 🐚 7 贝壳, in your bag, on the Tasks page and in the shop.', run: async () => {
     play(); await wait(100); pressBag(); await wait(400); }}
 );

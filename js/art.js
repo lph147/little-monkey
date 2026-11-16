@@ -75,7 +75,8 @@ function redress(){ for (const k in spriteCache) delete spriteCache[k]; for (con
 // The Demon of Havoc's broadsword (刀, Area 2's chapter 2), once it's yours: longer, a steel blade, with a gold guard (u)
 // across it.
 const HELD = {'棍子': {len:7, pal:{l:'#B5653A', k:'#3E2010'}}, '刀': {len:9, guard:true, pal:{l:'#DCE0E6', k:'#4A4E58', u:'#D8A838'}},
-  '铲子': {len:8, blade:true, pal:{l:'#B98A55', k:'#5A3A1E', u:'#C9CED6'}}};   // (the spade from the shop, for digging: a steel blade, u, at its end: js/trade.js)
+  '铲子': {len:8, blade:true, pal:{l:'#B98A55', k:'#5A3A1E', u:'#C9CED6'}},
+  '金箍棒': {len:13, bands:true, art:'staff', pal:{l:'#6A707A', k:'#2A2E36', u:'#E8B83A'}}};   // (your staff, Area 3: iron, longer than the rest, a gold band, u, at each end; art: its picture in a battle, MAP_ART's)   // (the spade from the shop, for digging: a steel blade, u, at its end: js/trade.js)
 const inHand = () => weaponNow() && HELD[weaponNow()] && canBattle() ? weaponNow() : null;
 // What a monkey holds (kind: 'player', or a character's id): your stick once you can fight, or a character's own (holds, in the
 // area's characters), such as the sticks of the little monkeys in training. empty: nothing, whatever it has.
@@ -188,6 +189,7 @@ function monkeyRows(kind, dir, blink, step = 0, empty = false){
   if (stick){   // the stick in its hand
     const h = HAND[side ? 'side' : dir], top = h.y - HELD[stick].len + 1;
     for (let y = top; y <= h.y; y++){ rows[y][h.x] = y === top || y === h.y ? 'k' : 'l'; rows[y][h.edge] = 'k'; }
+    if (HELD[stick].bands) for (const y of [top, top + 1, h.y - 1, h.y]) rows[y][h.x] = 'u';   // (the staff's gold bands, at each end)
     if (HELD[stick].guard) for (const x of [h.x - 1, h.x + 1]) if (rows[h.y - 3] && x >= 0 && x < 16) rows[h.y - 3][x] = 'u';   // (a sword's guard, above your hand)
     for (const [x, y] of h.grip) rows[y][x] = 'f';
   }
@@ -807,6 +809,16 @@ function slabs(g, X, Y, x, y){
 // pine wood (松林) and the gate of heaven in the lookout's view (南天门). Each character is drawn by hand in pixels ('#' is
 // ink); writing something new needs its characters drawn here (a test checks).
 const HANZI = {
+  // the staff's writing, 如意金箍棒 一万三千五百斤 (Area 3, step 8: its numbers as small as the others, 一 三 五)
+  '如': ["..#........", "..#........", "#####..####", ".#..#..#..#", ".#..#..#..#", "..#.#..#..#", "...#...#..#", "..#.#..####", ".#...#.....", "#.........."],
+  '意': [".....#.....", "..#######..", "...#...#...", "###########", "..#######..", "..#.....#..", "..#######..", "..#.....#..", "..#######..", ".#..#...#..", "#...#..#.#.", "....#####.#"],
+  '金': [".....#.....", "....#.#....", "..##...##..", "##.#####.##", ".....#.....", "..#######..", ".....#.....", "..#..#..#..", "...#.#.#...", ".....#.....", "###########"],
+  '箍': [".#.....#...", "####..####.", "..#.....#..", ".#..#######", "####.#.....", ".#..#..#...", ".#..#.#####", "##..#.#.#.#", ".#..#.#.#.#", ".#..#...#..", "##..#######"],
+  '棒': [".#.....#...", ".#..######.", "####...#...", ".#...#####.", "###.#######", ".#....#.#..", "##...#...#.", ".#..#.#.#.#", ".#...#####.", ".#.....#...", ".#..#######"],
+  '万': ["#######", "..#....", "..#####", "..#...#", ".#....#", ".#....#", "#...##."],
+  '千': ["....##.", ".###...", "...#...", "#######", "...#...", "...#...", "...#..."],
+  '百': ["#######", "...#...", ".#####.", ".#...#.", ".#####.", ".#...#.", ".#####."],
+  '斤': ["....##.", ".###...", ".#.....", ".######", ".#..#..", "#...#..", "#...#.."],
   // the palace gate's plaque, 龙宫 (Area 3, step 6)
   '龙': [".....#..#..", ".....#...#.", "###########", "....#.#....", "....#.#..#.", "...#..#.#..", "...#..##...", "..#...#....", ".#....#....", "#.....#...#", "......#####"],
   '宫': [".....#.....", "###########", "#.........#", "...#####...", "...#...#...", "...#####...", "....#......", "..#######..", "..#.....#..", "..#.....#..", "..#######.."],

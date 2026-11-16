@@ -496,6 +496,7 @@ test('every line is said somewhere', () => {
     ...(AREA.animalsPlay ? [AREA.animalsPlay.say] : []),   // (what an animal says as it comes out to play: wildAppears, js/world.js)
     ...Object.values(AREA.races || {}).flatMap(r => [r.start, r.end].filter(Boolean)),
     ...allSteps().filter(([, s]) => s.countTens).flatMap(([, s]) => s.countTens),   // (counting by tens: each ten said, js/sea.js)
+    ...Object.values(AREA.telling || {}).flatMap(t => Object.values(t.says)),   // (telling the iron pillar what to do: what you say, js/sea.js)
     ...Object.values(AREA.weighing || {}).flatMap(w => w.says)   // (weighing a weapon: each total said as the weights go on, js/sea.js)   // (a race outside a lesson: who starts it, and at the finish, js/pe.js)
   ]);
   for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);
@@ -540,7 +541,7 @@ test('a sentence in your tasks, the checklist or hints that mentions words from 
   // and want and have, which are what 要 and 有 mean but aren't them in these sentences: the old monkey, the home ground, the
   // pine wood, Flower Fruit Mountain, three pieces of wood, things that sparkle have words.)
   const places = Object.values(AREA.places).map(p => p.name.en.replace(/^the /i, '')).filter(n => n.includes(' ')).join('|');   // (a place's name, such as the seaweed forest)
-  const names = new RegExp(String.raw`\b(big monkey|little monkeys?|a little|monkeys?|home ground|pine wood|Flower Fruit Mountain|Dragon King|${places ? places + '|' : ''}wants?|have|one|two|three|four|five|six|seven|eight|nine|ten)\b`, 'gi');
+  const names = new RegExp(String.raw`\b(big monkey|little monkeys?|a little|monkeys?|home ground|pine wood|Flower Fruit Mountain|Dragon King|Dragon Queen|${places ? places + '|' : ''}wants?|have|one|two|three|four|five|six|seven|eight|nine|ten)\b`, 'gi');
   const meanings = Object.entries(BANK).filter(([, b]) => b.area <= AREA.number).flatMap(([w, b]) => b.en.split(/,\s*/)
     .map(e => e.replace(/^(a|an|the|to) /, '')).filter(e => e.length > 2).map(e => [w, e]));
   const texts = [...AREA.tasks.map(t => t.text), ...AREA.hints.map(h => h.text), ...AREA.checklist.map(c => c.text)];

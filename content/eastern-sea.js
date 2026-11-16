@@ -27,6 +27,11 @@
 // you (欢迎！欢迎！), the great broadsword his soldiers stagger in with (太重了！ 重), weighed on the palace's great scale (八百斤：
 // 斤), and too light (太轻了！ 轻); the fork you weigh yourself, big weights and small (三千六百斤: 千); the halberd (这个多少斤？
 // 多少), still too light. The Dragon Queen's idea comes in the step after.
+// Step 8 (16 November 2026): the Dragon Queen's whisper (宝库里有一根铁柱子，它有光！), and the treasury behind the throne
+// hall, dim, the iron pillar glowing in it, up through the roof: 太长了！ (长). You tell it what to do, a card: 变短！ (短),
+// and it shrinks as you watch; 变小！, a staff in a flash of golden light (金色的光！ 金色); its writing, 如意金箍棒
+// 一万三千五百斤, read out by the Dragon King (万); and his 给你！ (给). The staff is your weapon from then on, twice as strong
+// as the broadsword. The drum, the bell and the dragon kings' gifts come in the step after.
 
 // The seabed's letters: sand, seaweed swaying up out of it, shells on the sand, and the sea's things (js/sea.js).
 // Each teaches its word as you press A at it (the sand, a shell, the seaweed). The seaweed is where the five starfish hide,
@@ -66,7 +71,34 @@ const HALL_LEGEND = {
   '#': {look:'jadeFloor', walk:true}, '.': {look:'jadeFloor', walk:true}, 'D': {look:'jadeFloor', walk:true},
   'X': {look:'palaceWall'},
   'P': {look:'dragonPillar', word:'柱子', newNote:'柱子 means pillar. The throne hall’s pillars are red, with gold dragons coiled round them.'},
-  'Y': {look:'throne', landmark:true}, 'S': {look:'greatScale', landmark:true}
+  'Y': {look:'throne', landmark:true}, 'S': {look:'greatScale', landmark:true},
+  'E': {look:'treasuryDoor', becomes:[{if:{hall:{atLeast:3}}, to:'e'}]}, 'e': {look:'treasuryDoorOpen', walk:true}   // (the treasury's door, at the back: open once the Dragon Queen opens it)
+};
+// The treasury's (step 8): its dark stone floor, the back wall, chests, gold and clams with pearls, and the iron pillar,
+// drawn glowing up through the roof (the place's pillar, its foot: js/sea.js), its squares walkable once it's shrunk away
+// from them. A at it: you tell it what to do, and the staff, picked up and read and given you.
+const STAFF_GIVEN = [
+  {writing:'staff'},
+  {say:'jin13500', by:'dragonKing', teach:'万'}, {newWord:'万', note:'万 means ten thousand: 一万 is 10,000. The staff weighs 13,500 jin!'},
+  {say:'hereYouAre', by:'dragonKing', teach:'给'}, {newWord:'给', note:'给 means to give. 给你！ Here you are! The Dragon King is giving you the staff.'},
+  {say:'yoursNow', by:'dragonQueen'}, {set:{staff:4}},
+  {message:'The staff hits twice as hard as the {刀|broadsword}! To be continued: the Dragon King’s brothers are on their way…'}];
+const STAFF_SMALL = [{pickUp:'金箍棒'}, {set:{staff:3}}, {weapon:'金箍棒'}, ...STAFF_GIVEN];
+const PILLAR_SMALLER = [{tell:'smaller'}, {set:{staff:2}},
+  {if:{new:'金色'}, say:'goldenLight', by:'player', teach:'金色'}, {newWord:'金色', note:'金色 means golden. The staff has a golden band at each end.'}, ...STAFF_SMALL];
+const PILLAR_LOOK = [
+  {if:{staff:0}, label:'Look', do:[
+    {say:'tooLong', by:'player', teach:'长'}, {newWord:'长', note:'长 means long. The pillar runs right up through the roof: 太长了！ It’s too long!'},
+    {tell:'shorter'}, {newWord:'短', note:'短 means short, the opposite of 长 (long). 变短！ Get shorter!'}, {set:{staff:1}}, ...PILLAR_SMALLER]},
+  {if:{staff:1}, label:'Tell', do:PILLAR_SMALLER},
+  {if:{staff:2}, label:'Pick up', do:STAFF_SMALL}];
+const TREASURY_LEGEND = {
+  '.': {look:'treasuryFloor', walk:true}, 'D': {look:'treasuryFloor', walk:true},
+  'X': {look:'palaceWall'},
+  'c': {look:'chest'}, '$': {look:'goldHeap'}, 'Q': {look:'pearlClam'},
+  'i': {look:'ironPillar', onLook:PILLAR_LOOK, becomes:[{if:{staff:{atLeast:1}}, to:'.'}]},
+  'I': {look:'ironPillar', onLook:PILLAR_LOOK, becomes:[{if:{staff:{atLeast:2}}, to:'.'}]},
+  'P': {look:'ironPillar', landmark:true, onLook:PILLAR_LOOK, becomes:[{if:{staff:{atLeast:3}}, to:'.'}]}
 };
 const SEA_LEGEND = {
   '.': SEA_FLOOR,
@@ -123,19 +155,25 @@ const EASTERN_SEA = {
       now:'Explore the palace gate.'},
     {id:'hall', chapter:0, name:'Part 6', title:'Too light!', when:{hall:1},
       text:'Inside the Crystal Palace, gold dragons curl round the pillars, and the Dragon King himself comes out to meet you. You ask him for a weapon worthy of you, and his soldiers bring out the finest he has…',
-      now:'Try the Dragon King’s weapons. The rest of the {海|sea} is on its way.'}
+      now:'Try the Dragon King’s weapons.'},
+    {id:'pillar', chapter:0, name:'Part 7', title:'The iron pillar', when:{hall:3},
+      text:'The Dragon Queen whispers: the iron pillar in the treasury has been glowing for days, as if it’s waiting for someone…',
+      now:'See the glowing pillar in the treasury. The rest of the {海|sea} is on its way.'}
   ],
 
   // The day goes round down here too: no rain under the sea, and no bed, so the night passes by itself, as in the human world.
   dayNight: {if:{}, morning:'Good morning! You wake up with your health full.', sleep:[]},
-  progress: {chapter:0, landed:0, turtle:0, starFriends:0, forest:0, octopus:0, dolphin:0, trench:0, palace:0, hall:0},
+  progress: {chapter:0, landed:0, turtle:0, starFriends:0, forest:0, octopus:0, dolphin:0, trench:0, palace:0, hall:0, staff:0},
   //   turtle   0 not met yet, 1 said hello (泡泡), 2 led you to the seaweed (游), 3 found all five starfish: off to the forest
   //   forest   0 not in the seaweed forest yet, 1 met your first shark there (小心, 鲨鱼)
   //   octopus  0 hasn't counted its feet with you yet, 1 has (脚, 几): off to the coral reef
   //   dolphin  0 hasn't raced you yet, 1 has, and won (快, 慢), 2 you've won a race: off to the trench
   //   trench   0 not across its currents yet, 1 across them, at the edge of the deep (深), 2 seen the light at the bottom (光)
   //   palace   0 not past the sea guard yet, 1 past him, 2 counted the soldiers with the crab general (兵, 百), 3 the lobster's friend too
-  //   hall     0 not in the throne hall yet, 1 the Dragon King has welcomed you (欢迎), 2 tried his weapons: all too light
+  //   hall     0 not in the throne hall yet, 1 the Dragon King has welcomed you (欢迎), 2 tried his weapons: all too light,
+  //            3 the Dragon Queen has whispered about the iron pillar: the treasury's open
+  //   staff    0 the iron pillar as tall as ever, 1 you've told it 变短 (长, 短), 2 变小: a staff, standing at its foot (金色),
+  //            3 you've picked it up, your weapon now, 4 the Dragon King has read its writing (万) and given it to you (给)
   counters: {
     seabedWords: {count:'known', words:['沙子', '贝壳', '水草'], called:{'沙子':'the sand', '贝壳':'a shell', '水草':'the seaweed'}},
     starCount: {count:'progress', key:'starFriends'}   // the starfish in the seaweed you've made friends with (of five)
@@ -171,7 +209,11 @@ const EASTERN_SEA = {
     {id:'toHall', main:true, if:{palace:3, hall:0, away:'hall'}, text:'Go in through the palace {门|door}', arrow:[12, 4, 'palace']},
     {id:'king', main:true, if:{hall:1}, text:'The Dragon King has weapons to show you', arrow:'dragonKing'},
     {id:'pillars', if:{hall:{atLeast:1}, new:'柱子'}, text:'Press A at one of the throne hall’s {柱子|pillars}', arrow:{sparkle:true}},
-    {id:'hall', main:true, if:{hall:2}, text:'The rest of the {海|sea} is on its way. Until then, practise your words', where:'hall'}
+    {id:'queen', main:true, if:{hall:2}, text:'The Dragon Queen has an idea', arrow:'dragonQueen'},
+    {id:'toTreasury', main:true, if:{hall:3, staff:{below:3}, away:'treasury'}, text:'Go into the treasury, at the back of the throne hall', arrow:[12, 0, 'hall']},
+    {id:'pillar', main:true, if:{hall:3, staff:{below:3}, place:'treasury'}, text:'Press A at the glowing iron {柱子|pillar}', arrow:[7, 5, 'treasury']},
+    {id:'given', main:true, if:{staff:3}, text:'The Dragon King has more for you', arrow:'dragonKing'},
+    {id:'staff', main:true, if:{staff:4}, text:'The rest of the {海|sea} is on its way. Until then, try your new staff in the seaweed forest', where:'forest'}
   ],
   hints: [
     {if:{turtle:0}, text:'You’re on the seabed, deep under the {海|sea}. A {海龟|sea turtle} is swimming towards you: walk up to it and press A.'},
@@ -187,7 +229,10 @@ const EASTERN_SEA = {
     {if:{palace:2}, text:'Something is guarding the palace {门|door}: walk up to it and press A.'},
     {if:{palace:3, hall:0}, text:'The palace {门|door} is open now: face it, in the middle of the gate, and press A.'},
     {if:{hall:1}, text:'The Dragon King, by his throne, has weapons to show you: go up to him and press A. On the scale, put the {千|thousands} on first, then the {百|hundreds}.'},
-    {if:{hall:2}, text:'None of the Dragon King’s weapons is {重|heavy} enough for you. The rest of the {海|sea} is on its way.'},
+    {if:{hall:2}, text:'None of the Dragon King’s weapons is {重|heavy} enough for you. But the Dragon Queen, by the throne, has an idea: go up to her and press A.'},
+    {if:{hall:3, staff:{below:3}}, text:'Go through the doorway at the back of the throne hall, into the treasury. Press A at the glowing {柱子|pillar}, and choose what to tell it.'},
+    {if:{staff:3}, text:'The Dragon King, in the treasury, has more for you: go up to him and press A.'},
+    {if:{staff:4}, text:'The staff is yours! Try it out on the {鲨鱼|sharks} in the seaweed forest. The rest of the {海|sea} is on its way.'},
     {if:{forest:1, octopus:0}, text:'{鲨鱼|Sharks} and jellyfish hide in the tall seaweed, and come out as you walk through it. The {章鱼|octopus} lives among the rocks in the north. The rest of the {海|sea} is on its way.'}
   ],
   checklist: [
@@ -212,7 +257,10 @@ const EASTERN_SEA = {
     {part:'palace', text:'Make friends with the guard at the palace {门|door}', show:{palace:{atLeast:2}}, done:{friends:{lobster:true}}},
     {part:'hall', text:'Meet the Dragon King', done:{hall:{atLeast:1}}},
     {part:'hall', text:'Press A at one of the throne hall’s {柱子|pillars}', done:{knows:'柱子'}},
-    {part:'hall', text:'Try the Dragon King’s weapons', show:{hall:{atLeast:1}}, done:{hall:2}}
+    {part:'hall', text:'Try the Dragon King’s weapons', show:{hall:{atLeast:1}}, done:{hall:{atLeast:2}}},
+    {part:'pillar', text:'Find the glowing {柱子|pillar} in the treasury', done:{staff:{atLeast:1}}},
+    {part:'pillar', text:'Make the {柱子|pillar} small enough to hold', show:{staff:{atLeast:1}}, done:{staff:{atLeast:2}}},
+    {part:'pillar', text:'Read the writing on your staff', show:{staff:{atLeast:2}}, done:{staff:4}}
   ],
   bubbles: {
     turtle: [{if:{landed:1, turtle:0}, show:'!'}, {if:{turtle:1, seabedWords:3}, show:'!'}, {if:{turtle:2, starFriends:5}, show:'!'}, {if:{dolphin:2, trench:0}, show:'!'}],
@@ -220,7 +268,8 @@ const EASTERN_SEA = {
     dolphin: [{if:{octopus:1, dolphin:0}, show:'!'}, {if:{dolphin:1}, show:'!'}],
     yaksha: [{if:{palace:0}, show:'!'}],
     crab: [{if:{palace:1}, show:'!'}],
-    dragonKing: [{if:{hall:1}, show:'!'}]
+    dragonKing: [{if:{hall:1}, show:'!'}, {if:{staff:3}, show:'!'}],
+    dragonQueen: [{if:{hall:2}, show:'!'}]
   },
   requests: {},
   events: [
@@ -414,9 +463,10 @@ const EASTERN_SEA = {
       music: 'sea',
       backdrop: 'sea',
       legend: HALL_LEGEND,
-      exits: [{at:[8, 11], to:'palace', arrive:[12, 5], facing:'down'}, {at:[9, 11], to:'palace', arrive:[12, 5], facing:'down'}],
+      exits: [{at:[8, 11], to:'palace', arrive:[12, 5], facing:'down'}, {at:[9, 11], to:'palace', arrive:[12, 5], facing:'down'},
+        {at:[12, 0], to:'treasury', arrive:[7, 10], facing:'up', if:{hall:{atLeast:3}}, closed:'The {门|door} at the back of the throne hall is shut.'}],
       map: [
-        "XXXXXXXXXXXXXXXXXX",
+        "XXXXXXXXXXXXEXXXXX",
         "X......YYY.......X",
         "X..P...YYY....P..X",
         "X..P..........P..X",
@@ -428,6 +478,34 @@ const EASTERN_SEA = {
         "X..P.............X",
         "X................X",
         "XXXXXXXXDDXXXXXXXX"
+      ]
+    },
+    // The treasury (海藏), through the door at the back of the throne hall once the Dragon Queen opens it: dim, chests, gold
+    // and pearls, and the iron pillar in the middle, glowing, up through the roof (pillar: its foot). Indoors.
+    treasury: {
+      name: {zh:'海藏', py:'Hǎicáng', en:'The Treasury'},
+      noMap: 'You’re inside the Dragon Palace.',
+      indoors: true,
+      underwater: true,
+      dim: true,
+      music: 'sea',
+      backdrop: 'sea',
+      pillar: [7, 5],
+      legend: TREASURY_LEGEND,
+      exits: [{at:[7, 11], to:'hall', arrive:[12, 1], facing:'down'}],
+      map: [
+        "XXXXXXXXXXXXXXX",
+        "Xcc...$i$...ccX",
+        "X$.....i.....$X",
+        "X..Q...I...Q..X",
+        "X......I......X",
+        "X.$...$P$...$.X",
+        "X.............X",
+        "X.............X",
+        "XQ...........QX",
+        "X.c.$.....$.c.X",
+        "X.............X",
+        "XXXXXXXDXXXXXXX"
       ]
     }
   },
@@ -455,8 +533,9 @@ const EASTERN_SEA = {
     // the throne hall's: the Dragon King (Yunyang's voice), who comes to meet you and stays where he met you; the Dragon
     // Queen (Xiaohan's); and two shrimp soldiers by the great scale, who carried the broadsword in
     {id:'dragonKing', place:'hall', x:8, y:3, facing:'down', look:'龙王', name:{zh:'东海龙王', py:'Dōnghǎi Lóngwáng', en:'Dragon King of the Eastern Sea'},
-      moves:[{if:{hall:{atLeast:1}}, parked:true}]},
-    {id:'dragonQueen', place:'hall', x:11, y:3, facing:'down', look:'龙婆', name:{zh:'龙婆', py:'Lóngpó', en:'Dragon Queen'}},
+      moves:[{if:{hall:{atLeast:3}}, place:'treasury', x:5, y:7, facing:'right'}, {if:{hall:{atLeast:1}}, parked:true}]},
+    {id:'dragonQueen', place:'hall', x:11, y:3, facing:'down', look:'龙婆', name:{zh:'龙婆', py:'Lóngpó', en:'Dragon Queen'},
+      moves:[{if:{hall:{atLeast:3}}, place:'treasury', x:9, y:7, facing:'left'}]},
     {id:'carrier1', place:'hall', x:12, y:8, facing:'right', look:'虾兵', name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
     {id:'carrier2', place:'hall', x:15, y:8, facing:'left', look:'虾兵', name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
     {id:'soldier1', place:'palace', x:8, y:8, facing:'down', look:'虾兵', drills:true, name:{zh:'虾兵', py:'xiābīng', en:'Shrimp soldier'}},
@@ -523,7 +602,12 @@ const EASTERN_SEA = {
     '斤': 'The great broadsword on the palace’s scale: 八百斤！',
     '轻': 'You, lifting the great broadsword in one paw: 太轻了！',
     '千': 'Weighing the fork on the palace’s scale: 三千六百斤！',
-    '多少': 'The Dragon King, as you weighed the halberd: 这个多少斤？'
+    '多少': 'The Dragon King, as you weighed the halberd: 这个多少斤？',
+    '长': 'The iron pillar in the Dragon King’s treasury, up through the roof: 太长了！',
+    '短': 'Telling the iron pillar what to do: 变短！',
+    '金色': 'The pillar, shrinking into a staff in a flash of golden light: 金色的光！',
+    '万': 'The staff’s writing, read out by the Dragon King: 一万三千五百斤！',
+    '给': 'The Dragon King, handing you the staff: 给你！'
   },
   practiceSentences: [
     {sentence:'我 有 几 只 脚', sentenceEn:'How many feet have I got?'},   // (几, which has no picture)
@@ -539,8 +623,7 @@ const EASTERN_SEA = {
     '海马': {zh:'海马 很 小 。', en:'The seahorse is small.'},
     '鲸鱼': {zh:'鲸鱼 很 大 。', en:'The whale is very big.'},
     '龙': {zh:'龙 很 大 。', en:'The dragon is very big.'},
-    '龙虾': {zh:'龙虾 是 红色 的 。', en:'The lobster is red.'},
-    '柱子': {zh:'这里 有 很多 柱子 。', en:'There are lots of pillars here.'}
+    '龙虾': {zh:'龙虾 是 红色 的 。', en:'The lobster is red.'}
   },
   // What hides in the seaweed forest's tall seaweed (step 3): sharks, and jellyfish, more of them at night
   enemies: {
@@ -550,7 +633,7 @@ const EASTERN_SEA = {
       hide:'The {水母} drifts out of sight…', attack:'The {水母} stings you!', away:'The {水母} drifts off into the seaweed.', sniff:'The {水母} drifts away from the smell!', reward:1}
   },
   // Your broadsword from Chapter 4, in your paw (the staff comes later in Chapter 5).
-  battles: {when:{knows:'妖怪'}, weapon:'棍子', hits:10, weapons:{'刀':15},
+  battles: {when:{knows:'妖怪'}, weapon:'棍子', hits:10, weapons:{'刀':15, '金箍棒':30},
     restAt:[{at:[11, 6, 'seabed'], facing:'down', lost:'You’re worn out. You rest on the sand until your health is full again.'}]},
   fish: [],
   dragonflies: [],
@@ -641,6 +724,14 @@ const EASTERN_SEA = {
     howManyJin: {zh:'这个 多少 斤 ？', en:'How many jin is this one?'},
     noMore: {zh:'没有 了 。', en:'That’s all there is.'},
     queenHello: {zh:'你好 ！', en:'Hello!'},
+    queenWhisper: {zh:'宝库 里 有 一 根 铁 柱子 ， 它 有 光 ！', en:'In the treasury there’s an iron pillar, and it’s glowing!'},
+    tooLong: {zh:'太 长 了 ！', en:'It’s too long!'},
+    getShorter: {zh:'变 短 ！', en:'Get shorter!'}, getLonger: {zh:'变 长 ！', en:'Get longer!'},
+    getSmaller: {zh:'变 小 ！', en:'Get smaller!'}, getBigger: {zh:'变 大 ！', en:'Get bigger!'},
+    goldenLight: {zh:'金色 的 光 ！', en:'A golden light!'},
+    jin13500: {zh:'一 万 三 千 五 百 斤 ！', en:'Thirteen thousand five hundred jin!'},
+    hereYouAre: {zh:'给 你 ！', en:'Here you are!'},
+    yoursNow: {zh:'金箍棒 是 你 的 了 ！', en:'The staff is yours now!'},
     jin800: {zh:'八 百 斤 ！', en:'800 jin!'},
     jin1000: {zh:'一 千 ！', en:'1,000!'},
     jin2000: {zh:'两 千 ！', en:'2,000!'},
@@ -723,9 +814,15 @@ const EASTERN_SEA = {
         {say:'noMore'}, {set:{hall:2}},
         {message:'None of the Dragon King’s weapons is heavy enough. To be continued: the Dragon Queen has an idea…'}]},
       {if:{hall:2}, do:[{say:'noMore'}]},
+      {if:{staff:3}, do:STAFF_GIVEN},
+      {if:{hall:3, staff:{below:3}}, do:[{say:'thisOne'}]},
       {do:[{say:'welcome'}]}
     ],
-    dragonQueen: [{do:[{say:'queenHello'}]}],
+    // the Dragon Queen's idea: the iron pillar in the treasury, glowing (her whisper), and she leads you to its door
+    dragonQueen: [
+      {if:{hall:2}, do:[{say:'queenWhisper'}, {leadTo:[12, 1], you:[12, 2, 'up']}, {set:{hall:3}},
+        {message:'The Dragon Queen opens the {门|door} at the back of the throne hall, and the Dragon King follows her in, to the treasury.'}]},
+      {do:[{say:'queenHello'}]}],
     carrier1: [{do:[{say:'tooHeavy'}]}], carrier2: [{do:[{say:'tooHeavy'}]}],
     // the crab general: his soldiers (兵), counted with you by tens to a hundred (百)
     crab: [
@@ -766,6 +863,21 @@ const EASTERN_SEA = {
     broadsword: {pic:'broadsword', target:800, show:true, teach:'斤', label:'The great broadsword, on the palace’s great scale', says:["jin800"]},
     fork: {pic:'fork', target:3600, teach:'千', label:'Weigh the fork: put weights on the scale till it balances.', says:["jin1000","jin2000","jin3000","jin3100","jin3200","jin3300","jin3400","jin3500","jin3600"]},
     halberd: {pic:'halberd', target:7200, label:'Weigh the halberd yourself: put weights on till it balances.', says:["jin1000","jin2000","jin3000","jin4000","jin5000","jin6000","jin7000","jin7100","jin7200"]}
+  },
+  // What you tell the iron pillar (the tell step, js/sea.js): what you could say, each your line, what it turns into as you
+  // watch, and what happens if it's not what's needed
+  telling: {
+    shorter: {ask:'The {柱子|pillar} is far too {长|long} to hold. What do you tell it?', choices:['变长', '变短'], right:'变短', teach:'短',
+      says:{'变长':'getLonger', '变短':'getShorter'}, morph:{'变长':'longer', '变短':'short'},
+      wrong:{'变长':'It strains to grow even {长|longer}, and the whole treasury shakes! That won’t help.'}},
+    smaller: {ask:'It’s {短|short} now, but still far too thick to hold. What do you tell it?', choices:['变大', '变小'], right:'变小',
+      says:{'变大':'getBigger', '变小':'getSmaller'}, morph:{'变大':'wide', '变小':'small'},
+      wrong:{'变大':'It grows even thicker! That won’t help.'}}
+  },
+  // The staff's writing, on a card (the writing step, js/sea.js): its name, and how heavy it is, which the Dragon King reads out
+  writing: {
+    staff: {label:'There’s writing on the staff', lines:[{zh:'如意金箍棒', name:true}, {zh:'一 万 三 千 五 百 斤'}],
+      note:'You can read how heavy it is, all but its second character. The Dragon King reads it out for you.'}
   },
   // The dolphin's races on the coral reef (the race step, js/pe.js): you in the middle lane, the dolphin above, the turtle
   // below (slow), from the pebbles to the line of shells. The first time the dolphin is far too fast; after that, it's

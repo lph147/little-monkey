@@ -171,9 +171,15 @@ function drawSea(cx, cy, sh, now){
   const deep = b.createLinearGradient(0, 0, 0, H); deep.addColorStop(0, 'rgba(16,64,96,0)'); deep.addColorStop(1, 'rgba(16,64,96,.24)'); b.fillStyle = deep; b.fillRect(0, 0, W, H);
   b.save(); b.globalCompositeOperation = 'screen';
   const top = b.createLinearGradient(0, 0, 0, 70); top.addColorStop(0, 'rgba(210,246,255,.26)'); top.addColorStop(1, 'rgba(210,246,255,0)'); b.fillStyle = top; b.fillRect(0, 0, W, 70);
-  b.globalAlpha = .09; b.fillStyle = '#E6FBFF';   // shafts of light, drifting a little as you move
+  b.globalAlpha = PLACES[PLACE].dim ? 0 : .09; b.fillStyle = '#E6FBFF';   // shafts of light, drifting a little as you move (not in the dim treasury)
   for (const [sx, w] of SEA_BEAMS){ const x = ((sx - cx * .25) % (W + 60) + W + 60) % (W + 60) - 30; b.beginPath(); b.moveTo(x, -2); b.lineTo(x + w, -2); b.lineTo(x + w + 46, H + 2); b.lineTo(x + 46, H + 2); b.closePath(); b.fill(); }
   b.restore();
+  if (PLACES[PLACE].dim){   // a dim place, such as the treasury: darker, its gold glinting through
+    R(b, 0, 0, W, H, 'rgba(6,14,26,.42)');
+    b.globalAlpha = .55;
+    for (const p of OBJECT_PIECES){ if (p.look !== 'goldHeap') continue; const pic = mapArtPic('goldHeap'), X = p.x * T + Math.round((p.w * T - pic.width) / 2) - cx, Y = p.y * T + p.h * T - pic.height - 2 - cy; b.drawImage(pic, X, Y); }
+    b.globalAlpha = 1;
+  }
   // what comes in colours, such as the starfish on the sand, drawn again over the water's blue, so each is the colour it's
   // called (decided 15 November 2026, after looking at it: under the haze the yellow one was green, the red one maroon)
   for (const o of outHere()) if (o.colour && o.a.lies) drawLying(o.a, o.x, o.y, o.x * T - cx, o.y * T - cy, now, o.colour);
@@ -193,6 +199,7 @@ function drawSea(cx, cy, sh, now){
     for (const dx of [-14, -4, 6, 15]){ b.beginPath(); b.moveTo(X + dx - 2, Y); b.lineTo(X + dx + 2, Y); b.lineTo(X + dx * 2 + 4, Y - 60); b.lineTo(X + dx * 2 - 4, Y - 60); b.closePath(); b.fill(); }
     b.restore();
   }   // (jellyfish drifting, glowing at night; the octopus's ink)
+  drawPillar(cx, cy, now);   // (the treasury's iron pillar, glowing)
   // bubbles rising
   for (let i = 0; i < 7; i++){
     const bx = Math.round((i * 61 + 23 - cx * .5) % W + W) % W, by = Math.round(H - ((now * .018 + i * 47) % (H + 24)));
@@ -322,6 +329,141 @@ STEPS.weigh = async (s, who) => { await weighCard(s.weigh, who); };
 // already have, reaching into the scale's pan (decided 15 November 2026: every action is animated), then put back.
 STEPS.heave = async s => { await pickUpAct(s.heave, {reach:'in'}); };
 for (const n of ['broadsword', 'fork', 'halberd']) LIFTED[n] = (x, y) => { const p = mapArtPic(n); b.drawImage(p, Math.round(x - p.width / 2), Math.round(y - p.height)); };
+
+/* ================= THE TREASURY, AND THE IRON PILLAR ================= */
+// The treasury's dark stone floor (step 8: dim, a gold heap glinting here and there), its chests, gold and pearls; and the
+// throne hall's door into it, at the back of the hall: shut, red double doors with gold studs, till the Dragon Queen
+// opens it; then open, warm light inside.
+function treasuryFloor(g, X, Y, x, y){
+  R(g, X, Y, T, T, (x + y) % 2 ? '#3E5A60' : '#43616A');
+  R(g, X, Y, T, 1, '#2E464C'); R(g, X, Y, 1, T, '#2E464C');
+  if (rnd(x, y, 960) < .3) R(g, X + 2 + Math.floor(rnd(x, y, 961) * 11), Y + 2 + Math.floor(rnd(x, y, 962) * 11), 2, 1, '#4E6E76');
+}
+function treasuryDoor(g, X, Y, x, y, open = false){
+  palaceWall(g, X, Y, x, y);
+  R(g, X + 2, Y + 5, 12, 11, '#E2B23A');   // its gold frame
+  if (open){ R(g, X + 3, Y + 6, 10, 10, '#2A1C10'); R(g, X + 3, Y + 12, 10, 4, '#6A4A1A'); R(g, X + 4, Y + 14, 8, 2, '#C89A3A'); return; }   // (the light inside)
+  R(g, X + 3, Y + 6, 5, 10, '#8E2620'); R(g, X + 8, Y + 6, 5, 10, '#8E2620'); R(g, X + 8, Y + 6, 1, 10, '#5E1812');
+  for (const dx of [4, 6, 9, 11]) for (const dy of [8, 11, 14]) R(g, X + dx, Y + dy, 1, 1, '#E2B23A');   // gold studs
+}
+Object.assign(LOOKS, {treasuryFloor, treasuryDoor:(g, X, Y, x, y) => treasuryDoor(g, X, Y, x, y), treasuryDoorOpen:(g, X, Y, x, y) => treasuryDoor(g, X, Y, x, y, true),
+  ironPillar:treasuryFloor, chest:treasuryFloor, goldHeap:treasuryFloor, pearlClam:treasuryFloor});
+Object.assign(OBJECT_ART, {chest:seaThing('chest', -1), goldHeap:seaThing('goldHeap', -2), pearlClam:seaThing('pearlClam', -2)});
+for (const k of ['treasuryFloor', 'ironPillar', 'chest', 'goldHeap', 'pearlClam']) UNLIT.add(k);   // (indoors and dim: no light rippling)
+// The iron pillar (a place's pillar: the square at its foot), taller than the palace, glowing gold, drawn over the water's
+// blue (so it glows) in the dim treasury, up through the roof and off the top of the screen, however near it you are. It
+// shrinks as you tell it to (the tell step, pillarTo): short (变短), then small (变小), a staff standing at its foot; once
+// you've picked it up, gone. What you tell it wrongly, you see it do too: straining to grow longer, the treasury shaking
+// (变长), or growing fatter (变大), and staying so till you tell it again.
+const PILLAR = {tall:{w:18, h:400}, longer:{w:22, h:400}, short:{w:18, h:46}, wide:{w:30, h:56}, small:{w:3, h:15}, gone:{w:0, h:0}};
+const pillarState = () => ['tall', 'short', 'small', 'gone'][Math.min(3, (here() && here().staff) || 0)];
+let pillarAnim = null, pillarHeld = null;   // (pillarAnim: its sizes, one after another, as it changes, from t0 for ms; pillarHeld: the size it's been told into, in this place)
+function pillarSize(now){
+  if (pillarHeld && pillarHeld.place !== PLACE) pillarHeld = pillarAnim = null;
+  if (!pillarAnim) return pillarHeld && pillarHeld.state === pillarState() ? pillarHeld.size : PILLAR[pillarState()];
+  const fr = pillarAnim.frames, k = Math.min(1, (now - pillarAnim.t0) / pillarAnim.ms) * (fr.length - 1), i = Math.min(fr.length - 2, Math.floor(k)), e = k - i, ease = e < .5 ? 2 * e * e : 1 - (-2 * e + 2) ** 2 / 2;
+  return {w:fr[i].w + (fr[i + 1].w - fr[i].w) * ease, h:fr[i].h + (fr[i + 1].h - fr[i].h) * ease};
+}
+async function pillarTo(shape){
+  const now = performance.now(), from = pillarSize(now), to = PILLAR[shape === 'longer' ? 'tall' : shape];
+  const frames = shape === 'longer' ? [from, PILLAR.longer, PILLAR.tall] : [from, to], ms = shape === 'longer' ? 1400 : 1700;
+  pillarAnim = {frames, t0:now, ms, place:PLACE}; SFX.rumble(); shakeT = now;
+  await sleep(ms + 150);
+  pillarAnim = null; pillarHeld = {place:PLACE, size:to, state:shape === 'wide' || shape === 'longer' ? pillarState() : null};   // (a size it was told into wrongly stays till you tell it again; a right one is its state's)
+}
+function drawPillar(cx, cy, now){
+  const at = PLACES[PLACE].pillar; if (!at) return;
+  const sz = pillarSize(now); if (sz.w < 1) return;
+  const w = Math.max(2, Math.round(sz.w)), h = Math.round(sz.h), X = at[0] * T + 8 - cx, Y = at[1] * T + T - 2 - cy, L = Math.round(X - w / 2), k = .8 + Math.sin(now / 600) * .2;
+  b.save(); b.globalCompositeOperation = 'screen';   // its glow, gold, round it
+  const mid = Y - Math.min(h, 70) / 2, r = 22 + w, glow = b.createRadialGradient(X, mid, 2, X, mid, r + 26);
+  glow.addColorStop(0, `rgba(255,226,140,${.55 * k})`); glow.addColorStop(.5, `rgba(255,214,120,${.2 * k})`); glow.addColorStop(1, 'rgba(255,226,140,0)');
+  b.fillStyle = glow; b.fillRect(X - r - 26, mid - r - 26, (r + 26) * 2, (r + 26) * 2);
+  if (h > 80){ b.globalAlpha = .18 * k; b.fillStyle = '#FFE6A0'; b.fillRect(L - 6, Y - h, w + 12, h); }   // (and all up it)
+  b.restore();
+  b.globalAlpha = .35; b.fillStyle = '#0A1418'; b.beginPath(); b.ellipse(X, Y + 1, w / 2 + 3, 2.5, 0, 0, Math.PI * 2); b.fill(); b.globalAlpha = 1;   // its shadow
+  R(b, L, Y - h, w, h, '#5A606A');                                                 // the iron
+  R(b, L + 1, Y - h, Math.max(1, Math.round(w * .25)), h, '#8A929C');
+  if (w >= 4) R(b, L + w - 2, Y - h, 2, h, '#30343A');
+  if (w >= 8) for (let y = Y - 12; y > Y - h + 8; y -= 12) R(b, L, y, w, 1, '#4A5058');
+  const bh = Math.max(2, Math.round(w * .4));                                     // a gold band at each end
+  for (const y of [Y - bh, Y - h]){ R(b, L - 1, y, w + 2, bh, '#E2B23A'); R(b, L - 1, y, w + 2, 1, '#F8DC80'); }
+  for (let i = 0; i < 6; i++){   // sparkles drifting up round it
+    const t = (now / 1800 + i / 6) % 1, sx = Math.round(X + (i % 2 ? 1 : -1) * (w / 2 + 5 + (i % 3) * 4)), sy = Math.round(Y - t * Math.min(h + 20, 90));
+    b.globalAlpha = Math.sin(t * Math.PI); R(b, sx, sy - 1, 1, 3, '#FFF2B0'); R(b, sx - 1, sy, 3, 1, '#FFF2B0');
+  }
+  b.globalAlpha = 1;
+}
+// Your staff, held up over your head as you pick it up: iron, a gold band at each end
+LIFTED['金箍棒'] = (x, y) => { x = Math.round(x); y = Math.round(y); R(b, x - 11, y - 3, 22, 3, '#5A606A'); R(b, x - 11, y - 3, 22, 1, '#8A929C'); for (const e of [x - 11, x + 8]) R(b, e, y - 3, 3, 3, '#E2B23A'); };
+
+/* ================= TELLING IT WHAT TO DO ================= */
+// What you tell the pillar (the tell step: one of the area's telling, by its id), a card (decided 15 November 2026, the
+// Eastern Sea's plan, from its mock-up): a picture of it, what's wrong, in plain English (ask), and what you could tell it,
+// 变 and a word (choices), each with its pinyin, and its English unless that's switched off in Settings, as your replies
+// are. You say the one you chose (its line, says), and see it do just that (morph: what the pillar turns into): the right
+// one (right, its line teaching teach), and on you go; any other, what happens (wrong, waiting for A), and you choose
+// again. Not now ends the conversation, to come back to. (The staff around the mountain, Chapter 6, will be told the same way.)
+const TELL_EN = {'变长':'Get longer', '变短':'Get shorter', '变大':'Get bigger', '变小':'Get smaller'};
+const pyOfWord = w => (WORDS[w] || {}).py || (GLOSS[w] || [])[0] || '';
+function drawTellPic(c){
+  if (!c) return;
+  const g = c.getContext('2d'), sz = pillarSize(performance.now()), w = Math.max(2, Math.round(Math.min(sz.w, 30) * .7)), h = Math.min(36, Math.round(sz.h * .7)), X = 24, Y = 38, L = Math.round(X - w / 2);
+  g.clearRect(0, 0, c.width, c.height);
+  const glow = g.createRadialGradient(X, Y - h / 2, 1, X, Y - h / 2, 22); glow.addColorStop(0, 'rgba(255,214,120,.7)'); glow.addColorStop(1, 'rgba(255,214,120,0)'); g.fillStyle = glow; g.fillRect(0, 0, c.width, c.height);
+  R(g, L, Y - h, w, h, '#5A606A'); R(g, L + 1, Y - h, Math.max(1, Math.round(w * .25)), h, '#8A929C'); if (w >= 4) R(g, L + w - 1, Y - h, 1, h, '#30343A');
+  const bh = Math.max(2, Math.round(w * .4)); R(g, L - 1, Y - bh, w + 2, bh, '#E2B23A'); if (h < 36) R(g, L - 1, Y - h, w + 2, bh, '#E2B23A');
+}
+function tellCard(id){
+  const t = AREA.telling[id];
+  return new Promise(res => {
+    openCard(`<div class="tell"><canvas class="tellpic" width="48" height="40"></canvas><p class="label">${esc(fill(t.ask))}</p></div>
+      <div class="opts tells" data-nav>${t.choices.map((c, i) => `<button class="opt" data-i="${i}" aria-label="${esc(TELL_EN[c] || c)}"><span class="hz">${c}</span>${S.pinyin ? `<span class="cap">${[...c].map(pyOfWord).join(' ')}</span>` : ''}${S.replyEn ? `<span class="ren">${esc(TELL_EN[c] || '')}</span>` : ''}</button>`).join('')}</div>
+      <div class="actions"><button class="btn" data-a="no" data-b>Not now</button></div>`);
+    drawTellPic($('#sheet .tellpic'));
+    sheet.querySelectorAll('.tells .opt').forEach(b => b.onclick = () => { closeCard(); res(t.choices[+b.dataset.i]); });
+    on('[data-a=no]', () => { closeCard(); res(null); });
+  });
+}
+STEPS.tell = async (s, who) => {
+  const t = AREA.telling[s.tell];
+  for (;;){
+    const c = await tellCard(s.tell);
+    if (!c) return STOP;
+    await STEPS.say({say:t.says[c], by:'player', ...(c === t.right && t.teach ? {teach:t.teach} : {})}, who);
+    await pillarTo(t.morph[c]);
+    if (c === t.right) return;
+    await showNarration(fill(t.wrong[c]));
+  }
+};
+
+/* ================= THE STAFF'S WRITING ================= */
+// Its writing (the writing step: one of the area's writing, by its id), on a card: the staff close up, the writing as it's
+// written on it, in pixel characters (real Chinese: HANZI in js/art.js), and under it what it says: a name, with its pinyin
+// and English, as names always are; then each character, its pinyin under it once you know it, ？ till then (万, which you
+// can't read yet: the Dragon King reads it out for you, the say step after it).
+function drawWriting(c, lines){
+  if (!c) return;
+  const g = c.getContext('2d'), W = c.width;
+  g.clearRect(0, 0, W, c.height);
+  R(g, 0, 3, W, 28, '#5A606A'); R(g, 0, 4, W, 3, '#8A929C'); R(g, 0, 29, W, 2, '#30343A');   // the iron
+  for (const x of [0, W - 9]){ R(g, x, 2, 9, 30, '#E2B23A'); R(g, x, 3, 9, 2, '#F8DC80'); R(g, x, 29, 9, 2, '#A87A1A'); }   // its gold bands
+  let y = 7;
+  for (const l of lines){ const text = l.zh.replace(/ /g, ''), [w, h] = writtenSize(text); write(g, text, Math.round((W - w) / 2), y, '#F2C14E'); y += h + 2; }
+}
+function writingCard(id){
+  const wr = AREA.writing[id];
+  return new Promise(res => {
+    const line = l => l.name ? `<p class="wname"><span class="zh">${l.zh}</span> <span class="py">${pyOfWord(l.zh)}</span> <span class="en">· ${esc(GLOSS[l.zh] ? GLOSS[l.zh][1] : '')}</span></p>`
+      : `<p class="wchars">${toks(l.zh).map(ch => `<span class="wch"><b>${ch}</b><small>${lvl(ch) >= 1 ? WORDS[ch].py : '？'}</small></span>`).join('')}</p>`;
+    openCard(`<p class="label">${esc(fill(wr.label))}</p><canvas class="writpic" width="120" height="34"></canvas>
+      <div class="writ">${wr.lines.map(line).join('')}</div><p class="note">${esc(fill(wr.note))}</p>
+      <div class="actions"><button class="btn primary" data-a="ok">${esc(wr.go || 'Next')}</button></div>`);
+    drawWriting($('#sheet .writpic'), wr.lines);
+    on('[data-a=ok]', () => { closeCard(); res(); });
+  });
+}
+STEPS.writing = async s => { await writingCard(s.writing); };
 
 /* ================= FIGHTS UNDER THE SEA ================= */
 // The backdrop for battles and animals' questions under the sea (a place's backdrop, 'sea'): blue water, lighter above,

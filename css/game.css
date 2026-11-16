@@ -1016,6 +1016,20 @@ rt.hid{visibility:hidden}
 .wbtns .btn{display:flex;flex-direction:column;align-items:center;min-width:7.5rem;line-height:1.2}
 .wbtns .wzh{font-size:1.6rem}
 .wbtns small{font-size:.7rem}
+.tell{display:flex;align-items:center;justify-content:center;gap:.6rem;margin:.1rem 0 .4rem}   /* telling the iron pillar what to do: a picture of it, then what you could tell it (js/sea.js) */
+.tellpic{width:4.5rem;height:auto;image-rendering:pixelated;image-rendering:crisp-edges}
+.tell .label{margin:0}
+.opts.tells .opt .hz{display:block;font-size:1.6rem;font-family:var(--text);font-weight:500}
+.opts.tells .opt .ren{display:block;margin-top:.1rem}
+.writpic{display:block;width:min(100%,24rem);height:auto;margin:.2rem auto .4rem;image-rendering:pixelated;image-rendering:crisp-edges}   /* the staff close up, its writing in pixel characters (js/sea.js) */
+.writ{text-align:center}
+.writ p{margin:.15rem 0}
+.wname .zh{font-size:1.3rem}
+.wname .py,.wname .en{font-size:.85rem}
+.wchars{display:flex;justify-content:center;gap:.35rem}
+.wch{display:flex;flex-direction:column;align-items:center;min-width:1.8rem}
+.wch b{font-size:1.4rem;font-weight:500}
+.wch small{font-size:.75rem;color:var(--ink)}
 .count.tower{flex-wrap:wrap-reverse;max-width:calc(4 * var(--pic-small) + 2rem);background:#D9BB8A;box-shadow:inset 0 -4px 0 #C6A473}   /* stones piled into a tower, on sand: from the bottom up, four to a row at most */
 .count .pix{width:var(--pic-small);height:var(--pic-small)}
 /* a counting question, listening: each answer is that many things, in rows of five, on a table (or grass) as big as each

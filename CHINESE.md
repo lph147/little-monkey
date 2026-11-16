@@ -1465,6 +1465,16 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 这个多少斤？ | zhège duōshao jīn? | How many jin is this one? | 东海龙王 (Dragon King of the Eastern Sea) |  |
 | 没有了。 | méiyǒu le. | That’s all there is. | 东海龙王 (Dragon King of the Eastern Sea) |  |
 | 你好！ | nǐ hǎo! | Hello! | 龙婆 (Dragon Queen) |  |
+| 宝库里有一根铁柱子，它有光！ | bǎokù lǐ yǒu yī gēn tiě zhùzi, tā yǒu guāng! | In the treasury there’s an iron pillar, and it’s glowing! | 龙婆 (Dragon Queen) |  |
+| 太长了！ | tài cháng le! | It’s too long! |  |  |
+| 变短！ | biàn duǎn! | Get shorter! |  |  |
+| 变长！ | biàn cháng! | Get longer! |  |  |
+| 变小！ | biàn xiǎo! | Get smaller! |  |  |
+| 变大！ | biàn dà! | Get bigger! |  |  |
+| 金色的光！ | jīnsè de guāng! | A golden light! |  |  |
+| 一万三千五百斤！ | yī wàn sān qiān wǔ bǎi jīn! | Thirteen thousand five hundred jin! | 东海龙王 (Dragon King of the Eastern Sea) |  |
+| 给你！ | gěi nǐ! | Here you are! | 东海龙王 (Dragon King of the Eastern Sea) |  |
+| 金箍棒是你的了！ | Jīngū Bàng shì nǐ de le! | The staff is yours now! | 龙婆 (Dragon Queen) |  |
 | 八百斤！ | bā bǎi jīn! | 800 jin! |  |  |
 | 一千！ | yī qiān! | 1,000! |  |  |
 | 两千！ | liǎng qiān! | 2,000! |  |  |
@@ -1544,7 +1554,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 鲸鱼很大。 | jīngyú hěn dà. | The whale is very big. | 鲸鱼 |  |
 | 龙很大。 | lóng hěn dà. | The dragon is very big. | 龙 |  |
 | 龙虾是红色的。 | lóngxiā shì hóngsè de. | The lobster is red. | 龙虾 |  |
-| 这里有很多柱子。 | zhèlǐ yǒu hěn duō zhùzi. | There are lots of pillars here. | 柱子 |  |
 
 ### Scene: the dive
 
@@ -1592,6 +1601,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 海沟 | hǎigōu | The trench |  |
 | 龙宫 | Lónggōng | The Dragon Palace |  |
 | 水晶宫 | Shuǐjīng Gōng | The Crystal Palace |  |
+| 海藏 | Hǎicáng | The Treasury |  |
 
 ### Words to collect
 
@@ -1625,8 +1635,13 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 斤 | jīn | jin (half a kilo) |  |
 | 轻 | qīng | light (not heavy) |  |
 | 千 | qiān | thousand |  |
+| 长 | cháng | long |  |
+| 短 | duǎn | short |  |
+| 金色 | jīnsè | golden |  |
+| 万 | wàn | ten thousand |  |
 | 多少 | duōshao | how many, how much |  |
 | 几 | jǐ | how many |  |
+| 给 | gěi | to give |  |
 | 光 | guāng | light |  |
 
 ### How words are made
@@ -1641,6 +1656,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 海星 | hǎixīng | 海 hǎi (sea) + 星 xīng (star) = 海星 (starfish) |  |
 | 海马 | hǎimǎ | 海 hǎi (sea) + 马 mǎ (horse) = 海马 (seahorse) |  |
 | 龙虾 | lóngxiā | 龙 lóng (dragon) + 虾 xiā (shrimp) = 龙虾 (lobster) |  |
+| 金色 | jīnsè | 金 jīn (gold) + 色 sè (colour) = 金色 (golden) |  |
 
 ### Two words side by side
 
@@ -1734,7 +1750,6 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 吗 | ma | (yes/no question) |  |
 | 花果山 | Huāguǒ Shān | Flower Fruit Mountain |  |
 | 吧 | ba | (let’s…) |  |
-| 给 | gěi | to give |  |
 | 混世魔王 | Hùnshì Mówáng | the Demon of Havoc |  |
 | 水脏洞 | Shuǐzàng Dòng | Water-Belly Cave (a name) |  |
 | 龙王 | Lóngwáng | the Dragon King |  |
@@ -1777,6 +1792,11 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 动 | dòng | to move |  |
 | 它 | tā | it |  |
 | 眼睛 | yǎnjing | eyes |  |
+| 宝库 | bǎokù | treasury |  |
+| 根 | gēn | (counts long things: 一根柱子, a pillar) |  |
+| 铁 | tiě | iron |  |
+| 金箍棒 | Jīngū Bàng | staff |  |
+| 如意金箍棒 | Rúyì Jīngū Bàng | the As-You-Will Gold-Banded Staff |  |
 
 ## The menu
 
@@ -2029,11 +2049,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 美猴王坐木筏走了。 | Měi Hóuwáng zuò mùfá zǒu le. | The Monkey King sailed away on his raft. | New on 29 October 2026 (in the game), the end of chapter 1: The scene of you sailing away, the troop waving from the shore, after 再见！ and 我们等你！ |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 | 这是我的地图。 | zhè shì wǒ de dìtú. | This is my map. | New on 31 October 2026 (in the game): the example on 地图 (dìtú, map)’s page. The big monkey gives you a map in chapter 1, as he sends you up to the pine wood, and you catch 地图 the first time you open it. Its How it’s made card says 地 (dì, ground) + 图 (tú, picture) = 地图, a picture of the ground: is that a fair way to explain it? |  |
-| 宝库里有一根铁柱子，它有光！ | Bǎokù li yǒu yì gēn tiě zhùzi, tā yǒu guāng! | In the treasury there’s an iron pillar, and it’s glowing! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon Queen, whispering. Is 宝库 right for the sea’s treasury (the book has 海藏)?. Is it natural? |  |
-| 太长了！ | Tài cháng le! | It’s too long! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the pillar, taller than the palace, teaching 长. Is it natural? |  |
-| 变短！变小！ | Biàn duǎn! Biàn xiǎo! | Get shorter! Get smaller! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: you, to the pillar, teaching 短. Is it natural? |  |
-| 一万三千五百斤！ | Yíwàn sānqiān wǔbǎi jīn! | Thirteen thousand five hundred jin! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon King, reading the staff’s writing, 如意金箍棒 一万三千五百斤, teaching 万. Is it natural? |  |
-| 给你！ | Gěi nǐ! | Here you are! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the Dragon King handing you the staff, and his three brothers their gifts, teaching 给. Is it natural? |  |
 | 金箍棒在哪里？ | Jīngūbàng zài nǎlǐ? | Where’s the staff? | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: a little monkey, once the staff has gone into your ear. Is it natural? |  |
 | 在我的耳朵里！ | Zài wǒ de ěrduo li! | In my ear! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: you, answering, teaching 在. Is it natural? |  |
 | 树太高了！ | Shù tài gāo le! | The tree’s too tall! | Planned for Area 3, the Eastern Sea (15 November 2026), not in the game yet: the troop, at the tallest peach tree, teaching 高. Is it natural? |  |

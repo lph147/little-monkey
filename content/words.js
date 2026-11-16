@@ -326,6 +326,10 @@ const WORD_BANK = {
   '斤': {py:'jīn', en:'jin (half a kilo)', pic:'⚖️', area:3, category:'numbers'},   // (the broadsword on the palace's scale: 八百斤)
   '轻': {py:'qīng', en:'light (not heavy)', pic:'🎈', area:3, category:'describing', alike:['泡泡']},   // (you, lifting it in one paw: 太轻了！)
   '千': {py:'qiān', en:'thousand', pic:'🧱', area:3, category:'numbers', alike:['百']},   // (weighing the fork with big weights: 三千六百斤)
+  '长': {py:'cháng', en:'long', pic:'📏', area:3, category:'describing', alike:['棍子']},   // (the iron pillar in the Dragon King's treasury, up through the roof: 太长了！)
+  '短': {py:'duǎn', en:'short', pic:'📐', area:3, category:'describing', alike:['棍子']},   // (you, telling the pillar: 变短！)
+  '金色': {py:'jīnsè', en:'golden', pic:'🏅', area:3, category:'colours', alike:['黄色', '金子']},   // (the staff, shrinking in a flash of golden light: 金色的光！)
+  '万': {py:'wàn', en:'ten thousand', pic:'🧮', area:3, category:'numbers', alike:['千', '百']},   // (the staff's writing, read out by the Dragon King: 一万三千五百斤！)
   '多少': {py:'duōshao', en:'how many, how much', area:3, category:'questions'},   // (the Dragon King: 这个多少斤？; 几 for a few, 多少 for any number: SIDE_BY_SIDE)   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
 
   // Heard in sentences
@@ -400,7 +404,7 @@ const WORD_BANK = {
   '吗': {py:'ma', en:'(yes/no question)'},
   '花果山': {py:'Huāguǒ Shān', en:'Flower Fruit Mountain'},
   '吧': {py:'ba', en:'(let’s…)'},
-  '给': {py:'gěi', en:'to give'},
+
   '混世魔王': {py:'Hùnshì Mówáng', en:'the Demon of Havoc'},   // (a name: Area 2's boss, never a word to catch)
   '水脏洞': {py:'Shuǐzàng Dòng', en:'Water-Belly Cave (a name)'},   // (the Demon of Havoc's cave, over its mouth)
   '龙王': {py:'Lóngwáng', en:'the Dragon King'},   // (a name: Area 3's, under the sea)
@@ -438,6 +442,9 @@ const WORD_BANK = {
   '动': {py:'dòng', en:'to move'},
   '它': {py:'tā', en:'it'},
   '眼睛': {py:'yǎnjing', en:'eyes'},
+  '给': {py:'gěi', en:'to give', pic:'🤲', area:3, category:'actions'},   // (heard all game, caught at last: the Dragon King, handing you the staff, 给你！)
+  '宝库': {py:'bǎokù', en:'treasury'}, '根': {py:'gēn', en:'(counts long things: 一根柱子, a pillar)'}, '铁': {py:'tiě', en:'iron'},   // (the Dragon Queen's whisper)
+  '金箍棒': {py:'Jīngū Bàng', en:'staff'}, '如意金箍棒': {py:'Rúyì Jīngū Bàng', en:'the As-You-Will Gold-Banded Staff'},   // (names: your staff, and the name written on it)
   '光': {py:'guāng', en:'light', pic:'✨', area:3, category:'nature', alike:['星星', '火']}   // (heard all game, caught at last: the palace's glow at the bottom of the trench, 下面有光！)
 };
 
@@ -543,7 +550,8 @@ const MADE = {
   '水草': {parts:[['水', 'shuǐ', 'water'], ['草', 'cǎo', 'grass']]},   // (grass that grows in the water)
   '海星': {parts:[['海', 'hǎi', 'sea'], ['星', 'xīng', 'star', '星星']]},   // (a star of the sea)
   '海马': {parts:[['海', 'hǎi', 'sea'], ['马', 'mǎ', 'horse']]},   // (its head looks like a horse's)
-  '龙虾': {parts:[['龙', 'lóng', 'dragon'], ['虾', 'xiā', 'shrimp']]},   // (a shrimp as big and fierce as a dragon)
+  '龙虾': {parts:[['龙', 'lóng', 'dragon'], ['虾', 'xiā', 'shrimp']]},
+  '金色': {parts:[['金', 'jīn', 'gold', '金子'], ['色', 'sè', 'colour', '红色']]},   // (the colour of gold)   // (a shrimp as big and fierce as a dragon)
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},
   '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not', '不客气'], ['要', 'yào', 'to want']]},
