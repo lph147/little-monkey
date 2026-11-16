@@ -85,9 +85,9 @@ test('the rocks rolling away waits till the conversation you’re in has ended (
   g.run("mode = 'play'; save = () => {}; globalThis.__log = []; showDialog = async () => {}; replyWith = async () => true; gapQ = async () => true; showNotice = async w => setSeen(w)");
   g.run("toast = m => __log.push(['toast', m, here().gate]); confirmBox = async () => { __log.push(['game', here().gate]); return false; }");
   let done = false; Promise.resolve(g.run("talk(ALL_NPCS.find(n => n.id === 'thirsty')).then(runEvents)")).then(() => { done = true; });
-  for (let i = 0; i < 200 && !done; i++){ await new Promise(r => setImmediate(r)); g.flush(); }
+  for (let i = 0; i < 3000 && !done; i++){ await new Promise(r => setImmediate(r)); g.flush(); }
   const log = get(g, '__log');
   assert.equal(get(g, 'here().gate'), true, 'the rocks roll away');
   assert.ok(log.some(e => e[0] === 'game' && e[1] === false), 'not while he’s still talking to you (his word game)');
-  assert.ok(log.some(e => e[0] === 'toast' && /rocks north of the meadow have rolled away/.test(e[1])), 'and you’re told');
+  assert.ok(log.some(e => e[0] === 'toast' && /rocks have tumbled into the/.test(e[1])), 'and you’re told');
 });

@@ -432,6 +432,30 @@ function meetHop(a, X, Y, now, sq = a.at){   // (sq: its square, as there can be
   heart(X + 6, Y - 6 - Math.round(e1 / 120));
   return Math.round(Math.abs(Math.sin(e1 / 130)) * 4);
 }
+// The animal at its own spot you're meeting there (foe), still drawn there once it's your friend, though it leaves its spot
+// (leaves), till its meeting is over and the one who takes its place is there (decided 16 November 2026, after playing
+// it: the goat beside the river valley's path vanished as it became your friend, then popped back a second later).
+const beingMet = a => !!foe && foe.a === a && foe.spot && !!a.at && a.place === PLACE && foe.x === a.at[0] && foe.y === a.at[1];
+// The animal a character stands in place of, on its spot, once it's your friend and leaves it (leaves), such as the goat
+// beside the river valley's path: drawn as the animal was there, a little up its rocks, looking your way, so nothing jumps.
+function inPlaceOf(n){
+  const a = animalOf(n.id);
+  return a && a.leaves && a.at && a.spr && !n.small && a.place === PLACE && n.x === a.at[0] && n.y === a.at[1] && a.hz === n.look ? a : null;
+}
+// An animal at its own spot (a), at (X, Y) on the screen: standing on open ground (the deer), or a little up a cliff,
+// bobbing, looking your way, hopping as you meet it (meetHop), with its heart over its head; one that flutters, glides or
+// swims, as it does; and asleep (unless it's a character standing in its place: sleeps false), still, with little Zs.
+function drawSpotAnimal(a, X, Y, now, sleeps = true){
+  const ground = !!tileAt(a.at[0], a.at[1]).walk;
+  if (sleeps && asleepNow(a) && a.hangs){ b.drawImage(upsideDown(a.spr), X, Y - 3); sleepZs(X + 11, Y + 1, now, a.at[0] * 731); return; }   // hanging upside down, asleep, such as the bat in the Water Curtain Cave by day
+  if (sleeps && asleepNow(a)){ figureShadow(a.hz, X, Y); drawFigure(towardsYou(a, a.at[0]), X, Y - (ground || a.swims || a.flutters ? 0 : 3)); sleepZs(X + 10, Y - (a.spr.height - T) - 2, now, a.at[0] * 731); return; }   // asleep: still, little Zs (a day animal at night, a night one by day: js/art.js)
+  if (a.flutters){ drawFlutter(a, X, Y, now); return; }
+  if (a.glides){ drawGlide(a, X, Y, now); return; }
+  if (a.swims){ drawSwimmer(a, X, Y, now); return; }
+  const up = spotLift(a, now) + meetHop(a, X, Y - (a.spr.height - T), now);   // (its heart over its head)
+  figureShadow(a.hz, X, Y); drawFigure(towardsYou(a, a.at[0]), X, Y - up);   // (looking your way)
+}
+const spotLift = (a, now) => { const [x, y] = a.at || [a.x, a.y]; return tileAt(x, y).walk ? 0 : 3 + Math.floor(now/600 + x) % 2; };   // (a little up a cliff, bobbing; a: an animal at its spot, or a character in its place)
 // An animal that flutters over its spot, such as the butterfly over the riverside's flowers: hovering, bobbing gently, its
 // wings beating (narrow every third moment, as they close), its shadow small on the ground below. (sq: its square, such as a character's that looks like it)
 function drawFlutter(a, X, Y, now, sq = a.at){
@@ -540,6 +564,8 @@ function drawEnergy(X, Y, now, moving, dir){
 // picture mirrored if that faces the other way), and as it steps, a pixel up, its front and back legs swinging in turn;
 // standing, a gentle bob (decided 27 October 2026: the cow slid along backwards when it walked right).
 function drawAnimal(n, X, Y, now, c){
+  const like = inPlaceOf(n);
+  if (like && !c.mid){ drawSpotAnimal(like, X, Y, now, false); return; }   // (standing where the animal it took the place of stood, as it stood there)
   const def = MAP_SPRITES[n.look], spr = mapSprite(n.look);
   if (n.dir === 'left' || n.dir === 'right') n.side = n.dir;
   const side = n.side || def.faces, img = def.faces && side !== def.faces ? mirrored(spr) : spr;
@@ -612,8 +638,41 @@ let talkTopEnd = -1e9;   // when a conversation last ended with the box at the t
 // such as the master's room, in the middle of it, with dark round it (the art review, decided 6 November 2026: it was in
 // the top left corner of the screen).
 const camAlong = (at, size, view) => size < view ? -Math.round((view - size) / 2) : Math.round(clamp(at, 0, size - view));
-const camX = () => camAlong(pl.px + 8 - VW*T/2, COLS*T, VW*T);   // the left of the view
-const camY = () => camAlong((pl.mv && pl.mv.slip ? pl.mv.fy*T : pl.py) + 8 - VH*T/2, ROWS*T, VH*T);   // the top of the view (still while you slip down a bank, so you can see yourself slip)
+const camX = () => camAlong(camAim()[0] + 8 - VW*T/2, COLS*T, VW*T);   // the left of the view
+const camY = () => camAlong(camAim()[1] + 8 - VH*T/2, ROWS*T, VH*T);   // the top of the view (still while you slip down a bank, so you can see yourself slip)
+// Where the view is centred (the map pixel of a square's top left): on you, or, while the ground quakes (quaking.look:
+// the quake, js/world.js), gliding over to what's moving there, and back to you once it's still (back: when it set off).
+let quaking = null;   // {until, look:{x, y, t0, back}}: the ground shaking hard till then, and where the view looks
+const GLIDE_MS = 700;   // the view gliding over, or back
+function camAim(){
+  const px = pl.px, py = pl.mv && pl.mv.slip ? pl.mv.fy*T : pl.py, L = quaking && quaking.look;
+  if (!L) return [px, py];
+  const now = performance.now(), e = k => { k = clamp(k, 0, 1); return k * k * (3 - 2 * k); };   // (easing in and out)
+  const k = L.back ? 1 - e((now - L.back) / GLIDE_MS) : e((now - L.t0) / GLIDE_MS);
+  return [px + (L.x*T - px) * k, py + (L.y*T - py) * k];
+}
+// The rocks tumbling off as the ground quakes (tumbling: the quake, js/world.js), each drawn as the map's rocks are: first
+// shuddering where it lay (till go), then rolling from square to square (path, each a step of ROCK_STEP ms), bumping, its
+// crack turning over as it goes, and at its end, if it's water, sinking in a splash.
+const tumbling = [];   // {i, x, y, path, go, sunk}: i, which of the row of rocks it was (the map draws them a little different)
+const ROCK_STEP = 300;
+function drawTumbling(cx, cy, now){
+  for (const r of tumbling){
+    const e = now - r.go, pts = [[r.x, r.y], ...r.path], steps = r.path.length, k = clamp(e / ROCK_STEP, 0, steps);
+    if (r.sunk && now > r.sunk + 350) continue;
+    const s = Math.min(steps - 1, Math.floor(k)), p = k - s, [fx, fy] = pts[s], [tx, ty] = pts[s + 1];
+    const mx = (fx + (tx - fx) * p) * T, my = (fy + (ty - fy) * p) * T;
+    const hop = e > 0 && k < steps ? Math.round(Math.sin(p * Math.PI) * 3) : 0, jig = e < 0 && Math.floor(now / 60) % 2 ? 1 : 0;   // (bumping from square to square; shuddering till it goes)
+    const rx = 10 - r.i % 2, ry = 8 - r.i % 2, X = Math.round(mx - cx) + 8 + jig, Y = Math.round(my - cy) + 15 - hop;
+    if (r.sunk){   // sinking into the water, smaller and smaller
+      const d = clamp((now - r.sunk) / 350, 0, 1);
+      b.globalAlpha = 1 - d; boulder(b, X, Y + Math.round(d * 4), Math.max(2, Math.round(rx * (1 - d * .6))), Math.max(2, Math.round(ry * (1 - d))), false, true); b.globalAlpha = 1;
+      continue;
+    }
+    if (shadows && !hop) blob(b, X, Y, rx + 1, 2, ROCK_SHADOW);
+    boulder(b, X, Y, rx, ry, e > 0 && Math.floor(k * 2) % 2 === 1, true);   // (its crack turning over as it rolls)
+  }
+}
 function drawLayer(c, cx, cy){   // one of the map's layers (mapCanvas, baseCanvas, topCanvas), as much of it as the view shows, where it shows
   const x = Math.max(0, cx), y = Math.max(0, cy), w = Math.min(c.width, cx + VW*T) - x, h = Math.min(c.height, cy + VH*T) - y;
   if (w > 0 && h > 0) b.drawImage(c, x, y, w, h, x - cx, y - cy, w, h);   // (never asking for anything off its edges, which some browsers won't draw)
@@ -1017,6 +1076,7 @@ function drawWorld(now){
   let cy = camY(); placeTalk(cy);
   bigSparkles = !!AREA.bigSparkles && matches(AREA.bigSparkles);
   if (now - shakeT < 600){ cx += Math.round((Math.random()-.5)*3); cy += Math.round((Math.random()-.5)*3); }
+  else if (quaking && now < quaking.until){ const k = Math.min(1, (quaking.until - now) / 500); cx += Math.round((Math.random()-.5) * 5 * k); cy += Math.round((Math.random()-.5) * 5 * k); }   // (the ground quaking: harder, and longer, fading out at its end)
   stirGrass(now);   // (the grass you're walking through, parting round you)
   const sh = Math.min(VH*T, ROWS*T - cy);   // the part of the view the map reaches down to (for the gloom, mist and night)
   R(b, 0, 0, VW*T, VH*T, '#1E2B26');   // dark where the map doesn't reach (and the frame cleared, so nothing ever smears)
@@ -1042,21 +1102,17 @@ function drawWorld(now){
   });
   drawThings(cx, cy, now);   // treasures, such as pine cones, and the things for the cave from the shop (js/trade.js)
   drawStaffLying(cx, cy, now);   // your staff, lying on the ground for the little monkeys to try to lift (js/sea.js)
+  drawTumbling(cx, cy, now);   // (the rocks tumbling off as the ground quakes: the quake, js/world.js)
   if (!GLOOM) drawSparkles(cx, cy, now);   // (in a gloomy place, over its shade instead, so they shine)
   // animals at their own spots, once animals appear: standing on open ground (the deer), or a little up a cliff, bobbing;
-  // those up a tree come after the leaves. While you're meeting one, it stays where it is (meetHop).
-  const spotAnimals = canWild() ? ANIMALS.filter(atSpot) : [];
+  // those up a tree come after the leaves. While you're meeting one, it stays where it is (meetHop), even once it's your
+  // friend and leaves its spot (beingMet), so it hops for joy there, till the one who takes its place is there.
+  const spotAnimals = canWild() ? ANIMALS.filter(a => atSpot(a) || beingMet(a)) : [];
   const inTree = a => tileAt(a.at[0], a.at[1]).look === 'tree' || a.perch;   // (up a tree, or perched up on something: over its top)
   for (const a of spotAnimals.filter(a => !inTree(a))){
-    const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, ground = !!tileAt(a.at[0], a.at[1]).walk;
+    const X = a.at[0]*T - cx, Y = a.at[1]*T - cy;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
-    if (asleepNow(a) && a.hangs){ b.drawImage(upsideDown(a.spr), X, Y - 3); sleepZs(X + 11, Y + 1, now, a.at[0] * 731); continue; }   // hanging upside down, asleep, such as the bat in the Water Curtain Cave by day
-    if (asleepNow(a)){ figureShadow(a.hz, X, Y); drawFigure(towardsYou(a, a.at[0]), X, Y - (ground || a.swims || a.flutters ? 0 : 3)); sleepZs(X + 10, Y - (a.spr.height - T) - 2, now, a.at[0] * 731); continue; }   // asleep: still, little Zs (a day animal at night, a night one by day: js/art.js)
-    if (a.flutters){ drawFlutter(a, X, Y, now); continue; }
-    if (a.glides){ drawGlide(a, X, Y, now); continue; }
-    if (a.swims){ drawSwimmer(a, X, Y, now); continue; }
-    const up = (ground ? 0 : 3 + Math.floor(now/600 + a.at[0]) % 2) + meetHop(a, X, Y - (a.spr.height - T), now);   // (its heart over its head)
-    figureShadow(a.hz, X, Y); drawFigure(towardsYou(a, a.at[0]), X, Y - up);   // (looking your way)
+    drawSpotAnimal(a, X, Y, now);
   }
   // several of a kind out where each came out (stays), such as the bees over the flowers in their valley, each hovering,
   // looking your way, and one that still wants to play (not your friend yet) with a ! over it; and those flying off
@@ -1114,7 +1170,7 @@ function drawWorld(now){
         const tw = (now / 200 + i) % 2 < 1; R(b, PX + dx, PY + dy, 1, 3, '#FFE27A'); R(b, PX + dx - 1, PY + dy + 1, 3, 1, tw ? '#FFFFFF' : '#FFE27A'); });
       continue;
     }
-    const n = e.n, scared = !!(foe && foe.big) && FOLLOWERS.includes(n);   // (whoever's following you, trembling, as a big one rears up: wildBattle, js/battle.js)
+    const n = e.n, scared = !!(foe && foe.big) && FOLLOWERS.includes(n) || now < (n.startled || 0);   // (whoever's following you, trembling, as a big one rears up: wildBattle, js/battle.js; or everyone, as the ground quakes: quake, js/world.js)
     const X = Math.round(e.c.x) - cx + (scared && Math.floor(now / 70) % 2 ? 1 : 0) + strainShake(n, now), Y = Math.round(e.c.y) - cy;   // (straining, trying to lift your staff: js/sea.js)
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
     if (n.asleep){ b.globalAlpha = fadeOf(n, now); drawSleeper(n, X, Y, now, n.bed); b.globalAlpha = 1; continue; }   // asleep for the night (js/daynight.js)
@@ -1158,7 +1214,7 @@ function drawWorld(now){
     // a ! while they're stopping you (the stopsYou step), a ? while they're puzzled (the shop's, when you've asked for something
     // you didn't point at: buy, in js/world.js), or a ! or ? from the area's bubbles
     const bub = inClass.has(n.id) ? null : talking ? {show:'speaker'} : scared ? {show:'!'} : n.puzzled ? {show:'?'} : now < (n.calls || 0) || keptFor(n) || sealFor(n) ? {show:'!'} : now < (n.callingT || 0) ? {show:'note'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (a note: calling out what they sell, callOut in js/world.js)   // (and something they kept for you; none in a lesson, such as PE's)
-    if (bub) bubbles.push([bub.show === 'speaker' ? X+4 : X+10, Y - (bub.show === 'speaker' ? 6 + Math.round(Math.sin(now / 220)) : 8) - (n.look && MAP_SPRITES[n.look] ? MAP_SPRITES[n.look].rows.length - T : 0), bub.show]);   // (over a big one's head, such as the cow's)
+    if (bub) bubbles.push([bub.show === 'speaker' ? X+4 : X+10, Y - (bub.show === 'speaker' ? 6 + Math.round(Math.sin(now / 220)) : 8) - (n.look && MAP_SPRITES[n.look] ? MAP_SPRITES[n.look].rows.length - T : 0) - (inPlaceOf(n) ? spotLift(n, now) : 0), bub.show]);   // (over a big one's head, such as the cow's; up its rocks with it, inPlaceOf)
   }
   drawGhosts(cx, cy, now);   // (anyone fading out, going to bed or getting up: js/daynight.js)
   drawDragonflies(cx, cy, now);

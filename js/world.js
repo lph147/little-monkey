@@ -651,7 +651,9 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async tour(s, who){
     for (const t of s.tour) if (lvl(t.word) === 0) await runSteps([{say:s.ask}, {newWord:t.word, ...(t.note ? {note:t.note} : {})}, {quiz:t.word, label:s.label}], who);
   },
-  rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
+  // The ground shakes a moment (rumble: true), and the map is drawn again; or it quakes, a big moment (rumble: {at, set,
+  // roll}: quake, below), such as the rocks north of the meadow tumbling off into the river.
+  rumble(s){ if (s.rumble !== true) return quake(s.rumble); buildMap(); SFX.rumble(); shakeT = performance.now(); },
   // The troop marks out ground for something they'll build, as you watch (markOut: what the story becomes then): a stake
   // hammered in at each corner of the plot, the string pulled tight round them, then the ground cleared, with its sign and
   // the path to it, and anything else the story changes then fading in too (decided 21 October 2026: the home ground had
@@ -1275,6 +1277,60 @@ function showsMore(steps, i){
   return false;
 }
 // The area's events: each happens by itself when its if matches (checked after anything you do).
+// The ground quakes, a big moment (the rumble step, with at, set and roll; decided 16 November 2026, after playing it: the
+// rocks north of the meadow just vanished, with a little shake, where once everything stopped and the ground shook):
+// everything stops, the music hushes, the ground shakes hard with a long, deep rumble, everyone here turns to look (at:
+// [x, y], where the view glides over to) with a !, trembling, and you turn too. The story moves on (set), but what was there
+// is still drawn, shuddering (roll: each rock of a row of them, at, and the squares it tumbles through, path), till each in
+// turn (after: so long after the one before) tumbles off, bumping from square to square, and sinks into the water at its
+// end with a splash. Then those the story has put somewhere new here run there, a step at a time, round you, and the view
+// glides back to you.
+const QUAKE_MS = 2600, RUN_UP_MS = 170;
+async function quake(q){
+  held = null; queued = null;
+  if (q.at[2] && q.at[2] !== PLACE){ Object.assign(here(), q.set || {}); save(); placeCharacters(); refreshMap(); return; }   // (somewhere else: it just happens)
+  const t0 = performance.now(), [ax, ay] = q.at, before = NPCS.filter(n => n.place === PLACE).map(n => ({n, x:n.x, y:n.y, dir:n.dir}));
+  const towards = (x, y) => Math.abs(ax - x) >= Math.abs(ay - y) ? (ax > x ? 'right' : 'left') : (ay > y ? 'down' : 'up');
+  hush(true); SFX.quake(QUAKE_MS / 1000);
+  quaking = {until:t0 + QUAKE_MS, look:{x:ax, y:ay, t0, back:0}};
+  before.forEach(({n}, i) => { n.startled = t0 + 1500 + i * 80; n.dir = towards(n.x, n.y); });
+  pl.dir = towards(pl.x, pl.y); pl.turnT = t0; S.pos = {...S.pos, dir:pl.dir};
+  const rocks = (q.roll || []).map(r => ({i:inRow(r.at), x:r.at[0], y:r.at[1], path:r.path, go:Infinity, sunk:0}));
+  tumbling.push(...rocks);   // (drawn where they lay, as the map goes on without them)
+  Object.assign(here(), q.set || {}); save(); refreshMap();
+  try { await quaked(q, rocks, before); }
+  finally { rocks.forEach(r => { if (tumbling.includes(r)) tumbling.splice(tumbling.indexOf(r), 1); }); quaking = null; hush(false); placeCharacters(); }   // (whatever happens, the view and the music come back)
+}
+async function quaked(q, rocks, before){
+  await sleep(QUAKE_MS * .45);
+  const tumble = async r => {
+    r.go = performance.now(); SFX.bump(); burst(r.x, r.y, 'earth');
+    for (let k = 0; k < r.path.length; k++){ await sleep(ROCK_STEP); if (k < r.path.length - 1) SFX.bump(); }
+    const [x, y] = r.path[r.path.length - 1], now = performance.now();
+    if (/water/i.test(tileAt(x, y).look)){ splashes.push({x:x*T + 8, y:y*T + 10, t0:now}, {x:x*T + 5, y:y*T + 12, t0:now + 90}); SFX.splash(.34); r.sunk = now; }
+    else SFX.bump();
+    await sleep(400);
+  };
+  let wait = 0;
+  await Promise.all(rocks.map((r, k) => { wait += k ? q.roll[k].after || 0 : 0; return sleep(wait).then(() => tumble(r)); }));
+  rocks.forEach(r => tumbling.splice(tumbling.indexOf(r), 1));
+  await sleep(350);
+  // those the story has put somewhere new here run there, from where they stood, round you
+  placeCharacters();
+  const runs = before.filter(({n, x, y}) => n.place === PLACE && (n.x !== x || n.y !== y)).map(({n, x, y}) => ({n, from:[x, y], to:[n.x, n.y]}));
+  runs.forEach(r => { [r.n.x, r.n.y] = r.from; r.n.mv = null; });   // (all back where they stood, then each finds its way)
+  runs.forEach(r => { r.path = pathTo(r.from, r.to, {free:r.n, blocked:[pl.x, pl.y]}); });
+  await Promise.all(runs.map(async ({n, to, path}, i) => {
+    await sleep(i * 120);
+    for (const [x, y] of path){ n.mv = {fx:n.x, fy:n.y, t0:performance.now(), dur:RUN_UP_MS}; n.dir = dirOf(x - n.x, y - n.y); n.parity = (n.parity || 0) ^ 1; n.x = x; n.y = y; await sleep(RUN_UP_MS); }
+    n.mv = null; [n.x, n.y] = to; n.dir = (n.move && n.move.facing) || n.dir;   // (no way there: just there)
+  }));
+  before.filter(b => !runs.some(r => r.n === b.n) && b.n.place === PLACE).forEach(b => { b.n.dir = b.dir; });   // (the rest turn back to what they were doing)
+  quaking.look.back = performance.now(); await sleep(GLIDE_MS);
+}
+// Which of a row of the same big object a square is (from its left), such as one of the meadow's rocks, as the map draws
+// each a little differently.
+function inRow([x, y]){ const row = PLACES[PLACE].map[y]; let i = 0; while (x - i > 0 && row[x - i - 1] === row[x]) i++; return i; }
 async function runEvents(){ for (const e of AREA.events) if (matches(e.if) && !speakerAsleep(e.do)) await runSteps(e.do); await partsCheck(); placeCharacters(); refreshMap(); }
 // An event where someone asleep for the night would speak waits till they're up (js/daynight.js), such as the hungry
 // monkey saying the fish is on the feast's table.

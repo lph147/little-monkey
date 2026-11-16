@@ -43,6 +43,15 @@ const SFX = {
   call: () => { tone(988, .06, 'square', .04); tone(1319, .12, 'square', .04, .08); },   // someone calls you over: a ! pops up over them
   fanfare: () => [523,659,784,1047,784,1047].forEach((f,i) => tone(f, .13, 'square', .04, i*.1)),
   rumble: () => noise(.9, .16),
+  quake: (d = 2.6) => {   // the ground shaking hard: a long, deep rumble that rolls on, swelling and fading (the quake, js/world.js)
+    const a = ac(); if (!a) return;
+    const buf = a.createBuffer(1, a.sampleRate * d, a.sampleRate), ch = buf.getChannelData(0);
+    for (let i = 0; i < ch.length; i++){ const k = i / ch.length; ch[i] = (Math.random() * 2 - 1) * Math.min(1, k * 5) * (1 - k) * (.7 + .3 * Math.sin(k * 38)); }
+    const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+    f.type = 'lowpass'; f.frequency.value = 170; g.gain.value = .34; s.buffer = buf;
+    s.connect(f); f.connect(g); g.connect(a.destination); s.start();
+    tone(55, d * .7, 'triangle', .05);
+  },
   scuffle: () => noise(.09, .03),   // crawling along inside a hollow log
   chime: () => [1047,1319,1568,2093].forEach((f,i) => tone(f, .35, 'triangle', .05, i*.08)),
   bigBell: () => { tone(196, 2.6, 'sine', .11); tone(98, 2.2, 'sine', .06); tone(394, 1.6, 'sine', .045); tone(588, 1, 'triangle', .02); },   // a great bronze bell, struck: DONG, ringing on (the Dragon King's)
@@ -598,6 +607,8 @@ function musicStop(){
   if (AC && mMain){ mMain.gain.cancelScheduledValues(AC.currentTime); mMain.gain.setTargetAtTime(0, AC.currentTime, .3); }
 }
 const musicLevel = () => speaking ? .28 : .7;
+// The music hushed (on), such as while the ground quakes, so you hear the rumble; and back again (off).
+function hush(on){ if (AC && mMain && mTimer){ mMain.gain.cancelScheduledValues(AC.currentTime); mMain.gain.setTargetAtTime(on ? .04 : musicLevel(), AC.currentTime, on ? .15 : .6); } }
 function duck(){ if (AC && mMain && mTimer){ mMain.gain.cancelScheduledValues(AC.currentTime); mMain.gain.setTargetAtTime(musicLevel(), AC.currentTime, .25); } }
 document.addEventListener('visibilitychange', () => { if (document.hidden) musicStop(); else if (mode !== 'title') musicStart(); });
 

@@ -95,9 +95,11 @@ test('the rocks roll away only once the rest of the prologue is done: the hungry
   const meadow = ['山', '河', '树', '鱼', '鸟', '朋友', '我'];
   const gate = async (area, met, words = meadow) => {
     const w = Object.fromEntries(words.map(hz => [hz, {lv: 1, due: 0, ok: 0}]));
-    const g = loadGame({save: {version: 24, started: true, met, w, areas: {1: {elder: 2, ...area}}}});
+    const g = loadGame({dom: true, save: {version: 24, started: true, met, w, areas: {1: {elder: 2, ...area}}}});   // (with a clock: the rocks tumble off as the ground quakes)
     g.run("showNarration = showNotice = async () => {}; toast = () => {}; SFX.rumble = () => {}");
-    await g.run('runEvents()');
+    let done = false; const p = Promise.resolve(g.run('runEvents()')).then(() => { done = true; });
+    for (let i = 0; i < 3000 && !done; i++){ await new Promise(r => setImmediate(r)); g.flush(); }
+    await p;
     return g.run('here().gate');
   };
   const all = ['rabbit', 'sheep', 'squirrel'], helped = {hungry: 'done', thirsty: 'done', meadowCheck: 1};

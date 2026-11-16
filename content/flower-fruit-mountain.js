@@ -1068,9 +1068,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // found, the words for the meadow learned, and the troop met: the little monkey (朋友) and the big monkey (我), since
     // 31 October 2026 (the big monkey's flowers wait for chapter 1, decided 22 October 2026)
     {if:{hungry:'done', thirsty:'done', hungry2:'done', animalsLeft:0, meadowWords:5, meadowCheck:1, knows:'朋友', any:[{knows:'我'}], gate:false}, do:[
-      {set:{gate:true}},
-      {rumble:true},   // the ground shakes and the map is redrawn
-      {message:'A rumble from the {山}! The rocks north of the meadow have rolled away, and the troop gathers there.'}
+      // the ground quakes, and the rocks tumble off into the river, one after the other, as you watch; the troop runs up to
+      // the way up (decided 16 November 2026, after playing it: the rocks just vanished, and the troop with them)
+      {rumble:{at:[15.5, 3.5, 'meadow'], set:{gate:true}, roll:[{at:[16, 4], path:[[17, 3], [18, 3]]}, {at:[15, 4], after:450, path:[[16, 3], [17, 2], [18, 2]]}]}},
+      {message:'A rumble from the {山}! The rocks have tumbled into the {河}, and the way up is open. The troop gathers there.'}
     ]},
     // once you know every part of your home's name, you can read it: the sign by your stone sparkles, and shows how the name
     // is made (decided 23 October 2026: Chinese is logical; a game past the meadow without 水果 learns it from the hungry
@@ -3156,7 +3157,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // Up the stream (drafts, not checked yet: see CHINESE.md)
     whereFrom: {zh:'水 从 哪里 来 ？', en:'Where does the water come from?'},
     snakes: {zh:'山 上 有 蛇 。', en:'There are snakes up the mountain.'},
+    // sending you off up the path (drafts for the native speaker, 16 November 2026): the big monkey won't go, the old monkey
+    // asks who will, and you will, on your own, not scared
+    notMe: {zh:'我 不 去 ！', en:'I’m not going!'},
+    whoWillGo: {zh:'谁 去 看看 ？', en:'Who will go and take a look?'},
+    iWillGo: {zh:'我 去 ！', en:'I’ll go!'},
+    onYourOwn: {zh:'你 一个 人 去 ？', en:'On your own?'},
+    notScared: {zh:'我 不 怕 ！', en:'I’m not scared!'},
     snakesOnPath: {zh:'路 上 有 蛇 ！', en:'There are snakes on the path!'},   // the rabbit by the long grass, after your first snake (a draft for the native speaker)
+    grassSnakes: {zh:'草 里 有 蛇 ！', en:'There are snakes in the grass!'},   // and before it (drafts, 16 November 2026)
     waterFromMountain: {zh:'水 从 山 上 来 。', en:'The water comes from up the mountain.'},
     foundFall: {zh:'山 上 有 瀑布 ！', en:'There’s a waterfall up the mountain!'},
     stickHere: {zh:'这 是 棍子 。', en:'This is a stick.'},
@@ -3362,14 +3371,21 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{elder:2, chapter:0, gate:false, meadowCheck:0}, do:[{say:'go', hint:'Learn the words for the meadow ({meadowWords}/5), then come back. Things that sparkle ✨ have words.'}]},
       // up the stream. Where does the water come from? You go alone, find the waterfall,
       // and come back to tell the troop, who follow you up.
+      // (decided 16 November 2026, after playing it: the old monkey said there were snakes and goodbye, and a long message
+      // in English told the story; now they tell it: the big monkey won't go, the old monkey asks who will, and you will,
+      // on your own, as the stone monkey says 我进去！ in the book)
       {if:{story:false, gate:true, climb:0}, do:[
         {say:'whereFrom', by:'playful'},
         {say:'snakes'},
-        {message:'The path up beside the river is wild, and nobody has been to the top. Someone brave should go and see where the water comes from.'},
+        {say:'notMe', by:'big'},
+        {say:'whoWillGo'},
+        {say:'iWillGo', by:'player'},
+        {say:'onYourOwn'},
+        {say:'notScared', by:'player'},
         {set:{climb:1}},
         {say:'bye'},
         {reply:'再见'},   // goodbye, as you set off (taught here, 19 October 2026: it means more now you're leaving)
-        {message:'You set off for the path, on your own.'}   // (the big monkey stops you on the way, with a stick: its own new word)
+        {message:'You set off up the path beside the {河}, on your own.'}   // (the big monkey stops you on the way, with a stick: its own new word)
       ]},
       {if:{hurt:true}, do:[{rest:true}, {message:'You rest with the old monkey. Your health is full again.'}]},
       {if:{story:false, climb:1}, do:[{say:'go', hint:'Follow the path up beside the river, and find where the water comes from.'}]},
@@ -3693,7 +3709,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{new:'睡觉'}, do:[{say:'tired', teach:'睡觉'}, {newWord:'睡觉', note:'Sleep in a {床} and your health is full again.'}]},
       {do:[{say:'tired', hint:'Face a {床} and press A to sleep. You wake up with your health full.'}]}
     ],
-    rabbit: [{if:{knows:'蛇', new:'路'}, do:[{say:'snakesOnPath', teach:'路'}, {newWord:'路', note:'The path up the mountain, beside the river.'}]}, {do:[{say:'snakesOnPath'}]}],
+    // the rabbit by the mountain path's long grass: a warning about the grass, till you've met a snake; then, with a !, it
+    // teaches 路 (decided 16 November 2026, after playing it: before your first snake it said the very line that then taught
+    // 路, so the word came in a line you'd heard already)
+    rabbit: [{if:{knows:'蛇', new:'路'}, do:[{say:'snakesOnPath', teach:'路'}, {newWord:'路', note:'The path up the mountain, beside the river.'}]}, {if:{knows:'蛇'}, do:[{say:'snakesOnPath'}]}, {do:[{say:'grassSnakes'}]}],
     sheep: [{do:[{say:'waterFromMountain'}]}],   // at the fork: follow the river up
     // the squirrel and the goat on the way up the stream want to play: a word game, with a present if you win (fruit for your
     // bag), till you've won it; then their games are just for practice, earning nothing, as the little monkeys in training's

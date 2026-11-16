@@ -63,6 +63,8 @@ test('the big monkey’s practice fight: his own picture on the mound, and he ne
 test('the rabbit by the mountain path’s long grass: once you’ve met a snake, a ! and 路上有蛇！, teaching 路', async () => {
   const before = game({elder: 2, gate: true, climb: 1}, {place: 'path', x: 15, y: 15, dir: 'left'}, [...BASICS, '棍子']);
   assert.equal(bubble(before, 'rabbit'), '', 'no snake met yet: nothing to warn you about');
+  await play(before, "talk(NPCS.find(n => n.id === 'rabbit'))");
+  assert.deepEqual([get(before, '__said'), get(before, '__cards')], [['草里有蛇！'], []], 'talk to it anyway, and it warns you about the grass: never the line that teaches 路 (decided 16 November 2026, after playing it: you heard that line before it taught you 路)');
   const g = game({elder: 2, gate: true, climb: 1}, {place: 'path', x: 15, y: 15, dir: 'left'}, [...BASICS, '棍子', '蛇']);
   assert.equal(get(g, 'tileAt(15, 15).look === "path" && lvl("路")'), 0, 'walking on the path teaches nothing');
   assert.equal(bubble(g, 'rabbit'), '!');

@@ -10,6 +10,13 @@ const {loadGame, ROOT} = require('../tests/fake-browser');
 // in it (py: its pinyin, for a name that isn't in the word bank). Once checked (and corrected), put any corrections
 // into the content and delete them from here.
 const DRAFTS = [
+  ...[['草 里 有 蛇 ！', 'There are snakes in the grass!', 'the rabbit by the long grass on the mountain path, before you’ve met your first snake (after it, 路上有蛇！ teaches 路)'],
+    ['我 不 去 ！', 'I’m not going!', 'the big monkey, as the troop wonders where the river comes from and the old monkey says there are snakes up the mountain'],
+    ['谁 去 看看 ？', 'Who will go and take a look?', 'the old monkey, next'],
+    ['我 去 ！', 'I’ll go!', 'your monkey, next (as the stone monkey says 我进去！ in the book)'],
+    ['你 一个 人 去 ？', 'On your own?', 'the old monkey, next'],
+    ['我 不 怕 ！', 'I’m not scared!', 'your monkey, next; then the old monkey’s 再见！, and you set off up the path']]
+    .map(([zh, en, where]) => ({zh, en, where:`New on 16 November 2026 (the start of the game, after playing it): ${where}. Is it natural?`})),
   ...[['一 ， 二 。 两 个 桃子 ！', 'One, two. Two peaches!', 'the teacher, teaching 两 (liǎng, two of something) as the second maths lesson at school: counting with 二, then how many there are with 两'],
     ['两 个 桃子', 'two peaches', 'an example on the card showing 二 and 两 side by side (二 for counting, 一，二，三！; 两 for two of something), whose line to remember is “Counting? 二. How many? 两”'],
     ['两 只 猴子', 'two monkeys', 'the card’s other example for 两'],

@@ -91,7 +91,13 @@ shown where the word list has them.
 | 草上有鸟。 | cǎo shàng yǒu niǎo. | There are birds on the grass. | 猴子 (Monkey) |  |
 | 水从哪里来？ | shuǐ cóng nǎlǐ lái? | Where does the water come from? | 小猴子 (Little monkey) |  |
 | 山上有蛇。 | shān shàng yǒu shé. | There are snakes up the mountain. | 老猴子 (Old monkey) |  |
+| 我不去！ | wǒ bù qù! | I’m not going! | 大猴子 (Big monkey) |  |
+| 谁去看看？ | shéi qù kànkan? | Who will go and take a look? | 老猴子 (Old monkey) |  |
+| 我去！ | wǒ qù! | I’ll go! | 小猴子 (You) |  |
+| 你一个人去？ | nǐ yí gè rén qù? | On your own? | 老猴子 (Old monkey) |  |
+| 我不怕！ | wǒ bù pà! | I’m not scared! | 小猴子 (You) |  |
 | 路上有蛇！ | lù shàng yǒu shé! | There are snakes on the path! | 兔子 (rabbit) |  |
+| 草里有蛇！ | cǎo lǐ yǒu shé! | There are snakes in the grass! | 兔子 (rabbit) |  |
 | 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | 羊 (sheep) |  |
 | 山上有瀑布！ | shān shàng yǒu pùbù! | There’s a waterfall up the mountain! | 小猴子 (You) |  |
 | 这是棍子。 | zhè shì gùnzi. | This is a stick. | 大猴子 (Big monkey) |  |
@@ -2061,6 +2067,12 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 
 | Chinese | Pinyin | English | Where | Notes |
 | --- | --- | --- | --- | --- |
+| 草里有蛇！ | cǎo lǐ yǒu shé! | There are snakes in the grass! | New on 16 November 2026 (the start of the game, after playing it): the rabbit by the long grass on the mountain path, before you’ve met your first snake (after it, 路上有蛇！ teaches 路). Is it natural? |  |
+| 我不去！ | wǒ bù qù! | I’m not going! | New on 16 November 2026 (the start of the game, after playing it): the big monkey, as the troop wonders where the river comes from and the old monkey says there are snakes up the mountain. Is it natural? |  |
+| 谁去看看？ | shéi qù kànkan? | Who will go and take a look? | New on 16 November 2026 (the start of the game, after playing it): the old monkey, next. Is it natural? |  |
+| 我去！ | wǒ qù! | I’ll go! | New on 16 November 2026 (the start of the game, after playing it): your monkey, next (as the stone monkey says 我进去！ in the book). Is it natural? |  |
+| 你一个人去？ | nǐ yí gè rén qù? | On your own? | New on 16 November 2026 (the start of the game, after playing it): the old monkey, next. Is it natural? |  |
+| 我不怕！ | wǒ bù pà! | I’m not scared! | New on 16 November 2026 (the start of the game, after playing it): your monkey, next; then the old monkey’s 再见！, and you set off up the path. Is it natural? |  |
 | 一，二。两个桃子！ | yī, èr. liǎng gè táozi! | One, two. Two peaches! | New on 9 November 2026 (二 and 两): the teacher, teaching 两 (liǎng, two of something) as the second maths lesson at school: counting with 二, then how many there are with 两. Is it natural? |  |
 | 两个桃子 | liǎng gè táozi | two peaches | New on 9 November 2026 (二 and 两): an example on the card showing 二 and 两 side by side (二 for counting, 一，二，三！; 两 for two of something), whose line to remember is “Counting? 二. How many? 两”. Is it natural? |  |
 | 两只猴子 | liǎng zhī hóuzi | two monkeys | New on 9 November 2026 (二 and 两): the card’s other example for 两. Is it natural? |  |
