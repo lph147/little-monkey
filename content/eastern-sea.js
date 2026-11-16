@@ -311,8 +311,11 @@ const EASTERN_SEA = {
   },
   legend: SEA_LEGEND,
 
-  // The sea turtle's own voice, Xiaorui (an older woman's: chosen by the owner from round 6 of the voice test, 15 November 2026)
-  voices: {words:{provider:'google', name:'cmn-CN-Standard-A'}, everyone:{name:'zh-CN-YunxiNeural', style:'chat'}, turtle:{name:'zh-CN-XiaoruiNeural'}},
+  // Its characters' own voices, chosen by the owner from round 6 of the voice test: the sea turtle's, Xiaorui (an older
+  // woman's, 15 November 2026); the Dragon King's, Yunyang (a deep, steady man's), and the Dragon Queen's, Xiaohan (a warm
+  // woman's), both 16 November 2026, for the palace (step 6 on)
+  voices: {words:{provider:'google', name:'cmn-CN-Standard-A'}, everyone:{name:'zh-CN-YunxiNeural', style:'chat'}, turtle:{name:'zh-CN-XiaoruiNeural'},
+    dragonKing:{name:'zh-CN-YunyangNeural'}, dragonQueen:{name:'zh-CN-XiaohanNeural'}},
   characters: [
     // the sea turtle from your shore (Area 1's friend), swimming over the sand: it greets you as you land, shows you round,
     // and swims ahead to the seaweed where the starfish hide
