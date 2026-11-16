@@ -200,6 +200,7 @@ const VOICE_CLIPS = {
   "海豚": "5f64feeecf",
   "海马": "609c57739b",
   "海龟": "cb24bb3c3b",
+  "深": "57c110f536",
   "混世魔王": "f1208a7ae1",
   "渴": "cd6ea0b63f",
   "游": "3b67615cc4",
@@ -337,6 +338,7 @@ const VOICE_CLIPS = {
   "鱼缸": "a5e067bc5c",
   "鱼饵": "6b5b164bc3",
   "鲨鱼": "8a9a499c69",
+  "鲸鱼": "223d2b334b",
   "鸟": "9cdeee92af",
   "鸡": "fd95ced7e2",
   "鸭子": "710bac2670",
@@ -375,6 +377,7 @@ const VOICE_CLIPS = {
   "下课！": "e9683c5e77",
   "下雨了！": "297ecce497",
   "下雪了！": "974968ad3f",
+  "下面有光！": "aa7e45801e",
   "不客气！": "574f8b4fc9",
   "不对。": "53c6dd1f7e",
   "东海": "d074e141ae",
@@ -848,6 +851,7 @@ const VOICE_CLIPS = {
   "海底": "8996bfd95e",
   "海很大！": "43a73e84f1",
   "海星在水草里。": "2646054257",
+  "海沟": "b4abd5cc32",
   "海的那边": "06f4175772",
   "海豚很快！": "503616a659",
   "海边": "2a1dbf150d",
@@ -1057,6 +1061,7 @@ const VOICE_CLIPS = {
   "这里很大！": "6b8e421b28",
   "这里很好看！": "7d992bdb70",
   "这里很好！": "2b07ae3abf",
+  "这里很深！": "dcd0497754",
   "这里是我们的家！": "1b170986d7",
   "这里有几个石头？": "52ab20f69c",
   "这里有几只兔子？": "ab2a842915",
@@ -1081,6 +1086,7 @@ const VOICE_CLIPS = {
   "马在吃草。": "eac351f04e",
   "鱼很大！": "ca6e6bc579",
   "鱼！太好了！": "8154b375a7",
+  "鲸鱼很大。": "4f1468e32d",
   "鸟在树上玩。": "d458a7a464",
   "鸟有羽毛。": "811b511e25",
   "鸡吃草。": "f69eea9cb2",
@@ -1158,7 +1164,8 @@ const VOICE_CLIPS = {
   "小心！有鲨鱼！": "3953c54164",
   "我很慢。": "1cb39f5cac",
   "我游，你走。": "57ebba2d13",
-  "海豚很快！": "6fbac35ea5"
+  "海豚很快！": "6fbac35ea5",
+  "这里很深！": "e9bb8674eb"
  }
 };
 const VOICE_OF = {"words":"google-standard-a","everyone":"yunxi","elder":"yunze","turtle":"xiaorui"};   // which voice says what: words on their own, everyone's lines, and characters with their own
