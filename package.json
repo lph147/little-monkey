@@ -10,6 +10,7 @@
     "font": "node tools/make-font.js",
     "pictures": "node tools/draw-pictures.js",
     "try-voices": "node tools/try-voices.js",
-    "voices": "node tools/make-voices.js"
+    "voices": "node tools/make-voices.js",
+    "starts": "node tools/make-starts.js"
   }
 }

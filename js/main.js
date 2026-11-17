@@ -336,7 +336,7 @@ function toTitle(){
   $('#gameName').innerHTML = GAME_NAME.zh.map(([w, py]) => `<ruby>${w}<rt${S.pinyin ? '' : ' class="hid"'}>${py}</rt></ruby>`).join('');
   $('#gameEn').textContent = GAME_NAME.en;
   $('#titleArea').innerHTML = `<span class="pzh">${AREA.name.zh}</span> <span class="ppy">${AREA.name.py}</span><span class="pen">${esc(AREA.name.en)}</span>`;
-  $('#version').textContent = 'v' + VERSION;
+  versionLabel(); $('#version').onclick = tapVersion;   // (tapped five times: testing, js/starts.js)
   const n = lastPlayed(), g = n && slotSummary(n), empty = SLOTS.find(k => !slotSummary(k));
   const qp = g && g.canPractise;   // quick practice, for the game you'd continue, once it knows enough words (js/scrolls.js)
   $('#titleButtons').classList.toggle('qp', !!qp);
@@ -380,10 +380,12 @@ function filesCard(full, pick){
 function slotCard(n){
   const g = slotSummary(n);
   if (!g){
-    openCard(`<div class="who" aria-hidden="true">💾</div><p class="label">Game ${n} · empty</p><p>Start a new game here, or load one from a file: a game copied from another phone, or a backup.</p>
+    const test = testing();   // (with testing on, Start at…: any part of the story, js/starts.js)
+    openCard(`<div class="who" aria-hidden="true">💾</div><p class="label">Game ${n} · empty</p><p>Start a new game here, or load one from a file: a game copied from another phone, or a backup.${test ? ' Or, for testing, start at any part of the story.' : ''}</p>
       <input type="file" accept=".json,application/json" hidden>
-      <div class="actions" data-nav><button class="btn" data-a="back" data-b>Back</button><button class="btn" data-a="load">Load from a file</button><button class="btn primary" id="newBtn">New game</button></div>`);
+      <div class="actions" data-nav><button class="btn" data-a="back" data-b>Back</button><button class="btn" data-a="load">Load from a file</button>${test ? '<button class="btn" data-a="startAt">Start at…</button>' : ''}<button class="btn primary" id="newBtn">New game</button></div>`);
     on('[data-a=back]', () => filesCard(null, n));
+    on('[data-a=startAt]', () => { SFX.blip(); startCard(n); });
     sheet.querySelector('#newBtn').onclick = go(() => { closeCard(); newGame(n); });
     sheet.querySelector('#newBtn').focus();
     const pick = sheet.querySelector('input[type=file]');

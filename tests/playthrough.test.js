@@ -8,10 +8,12 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
 const {watchBeside, besideTasks} = require('./beside');
+const {startsKeeper} = require('./starts');   // (the game just before each part begins: Start at…, js/starts.js)
 
 test('Flower Fruit Mountain can be played from start to finish', async () => {
   const game = loadGame({dom: true});
   watchBeside(game);   // (no task about someone as you finish with them, still beside them: they go straight on)
+  const starts = startsKeeper(game);
   const run = code => game.run(code);
   const get = expr => JSON.parse(run(`JSON.stringify(${expr})`));
   const sheet = game.el('#sheet'), talkBox = game.el('#talk');
@@ -68,6 +70,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     const before = caught();
     run('__talkedTo = []');
     let done = false, failed = null, last = '', same = 0;
+    starts.before(code, what);
     Promise.resolve(run(code)).then(() => { done = true; }, e => { failed = e; done = true; });
     for (let i = 0; i < 2000 && !done; i++){
       await settle();
@@ -81,6 +84,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     assert.ok(done, `stuck while ${what}: ${open() ? cardText() : 'no card open'}`);
     await settle();
     assert.ok(!open(), `a card was left open after ${what}: ${cardText()}`);
+    starts.after();
     const learned = caught().filter(w => !before.includes(w));
     assert.ok(learned.length <= most, `one new word at a time, but ${what} taught ${learned.join(' and ')}`);
     if (!get('getTasks().length') && /coming soon/.test(get('tasksHint()'))) deadEnds.push(what);   // nothing to do, it seems
@@ -1009,11 +1013,15 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   goTo('shore', 11, 11, 'down');
   await act('runEvents()', 'at the water’s edge: the troop builds your raft, and says goodbye');
   assert.ok(knows('木筏') && area().raft === 2 && run('tileAt(10, 13).look') === 'raft' && get('__said').includes('我们等你！'), 'your raft (木筏); we’ll wait for you!');
+  starts.nextIs('a2p0');   // (Chapter 2 begins as you sail away: the start for it is here, beside your raft)
   await pressAt(11, 12, 'down', 'sailing away on your raft');
   assert.deepEqual([area().raft, area().done], [3, true], 'chapter 1 is complete');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
   assert.deepEqual(get('__parts'), ['Part 1: The meadow', 'Part 2: Up the river', 'Part 3: The waterfall', 'Part 4: A home for the troop',
     'Part 1: A new home ground', 'Part 2: The school', 'Part 3: Food for the feast', 'Part 4: The feast', 'Part 5: Setting sail'], 'the story, part by part');
+  // The game just before each part begins, to start at for testing (npm run starts writes them to tools/starts/)
+  assert.deepEqual(Object.keys(starts.kept).sort(), ['a1p1', 'a1p2', 'a1p3', 'a1p4', 'a1p5', 'a1p6', 'a1p7', 'a1p8', 'a2p0'], 'a start for every part after the first (a new game), and for Chapter 2');
+  starts.write();
   // Till everything built is done, there's always a task to say what's next (28 October 2026: once the cow was home, the
   // garden waited with only a ! over the big monkey, and your tasks said the rest was coming soon)
   assert.deepEqual(deadEnds, [], 'your tasks were never empty while there was more to do');

@@ -11,11 +11,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 const {loadGame} = require('./fake-browser');
 const {watchBeside, besideTasks} = require('./beside');
+const {startsKeeper} = require('./starts');   // (the game just before each part begins: Start at…, js/starts.js)
 
 test('the Eastern Sea can be played from the dive to the end of Area 3', async () => {
   const start = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'tools', 'area3-start.json'), 'utf8'));
   const game = loadGame({dom: true, save: {...start, area: 3}});   // (as the dive leaves it: the sail step, then the page loads again in Area 3)
   watchBeside(game);
+  const starts = startsKeeper(game);
   const run = code => game.run(code);
   const get = expr => JSON.parse(run(`JSON.stringify(${expr})`));
   const sheet = game.el('#sheet'), talkBox = game.el('#talk');
@@ -70,6 +72,7 @@ test('the Eastern Sea can be played from the dive to the end of Area 3', async (
   async function act(code, what, most = 1){   // start something, then answer its cards until it's finished (teaching at most this many words)
     const before = caught();
     let done = false, failed = null, last = '', same = 0;
+    starts.before(code, what);
     Promise.resolve(run(code)).then(() => { done = true; }, e => { failed = e; done = true; });
     for (let i = 0; i < 3000 && !done; i++){
       await settle();
@@ -83,6 +86,7 @@ test('the Eastern Sea can be played from the dive to the end of Area 3', async (
     assert.ok(done, `stuck while ${what}: ${open() ? cardText() : 'no card open'}`);
     await settle();
     assert.ok(!open(), `a card was left open after ${what}: ${cardText()}`);
+    starts.after();
     const learned = caught().filter(w => !before.includes(w));
     assert.ok(learned.length <= most, `at most ${most} new word${most > 1 ? 's' : ''}, but ${what} taught ${learned.join(' and ')}`);
     if (!get('getTasks().length')) deadEnds.push(what);
@@ -267,6 +271,9 @@ test('the Eastern Sea can be played from the dive to the end of Area 3', async (
   assert.deepEqual(get('__parts'), ['Part 1: The seabed', 'Part 2: The seaweed forest', 'Part 3: The coral reef', 'Part 4: The trench', 'Part 5: The Dragon King’s palace', 'Part 6: Too light!',
     'Part 7: The iron pillar', 'Part 8: The drum and the bell', 'Part 1: Home with the staff', 'Part 2: The staff around the mountain', 'Part 3: The dream', 'Part 4: Trouble in Heaven'], 'the story, part by part');
   assert.deepEqual(get('__scenes'), ['dive', 'brothers', 'swimHome', 'staffSky', 'staffFeast', 'dreamIn', 'heaven', 'planetCloud']);
+  // The game just before each part begins, to start at for testing (npm run starts writes them to tools/starts/; the first, the dive, is Area 2's)
+  assert.deepEqual(Object.keys(starts.kept).sort(), Array.from({length: 11}, (_, i) => 'a3p' + (i + 1)).sort(), 'a start for every part after the dive');
+  starts.write();
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'every job on the checklist done');
   assert.deepEqual(deadEnds, [], 'your tasks were never empty');
   assert.deepEqual(besideTasks(game), [], 'no task ever sends you to someone you’re standing with, just as you finish talking to them');

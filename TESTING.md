@@ -53,6 +53,23 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] Opening the game, you never see it half-built (小猴子 on a black screen, an empty label in the corner and no buttons): until it's ready, the start-up screen shows the app's monkey and three dots, then the console appears all at once, its full size, with the whole title. On a weak signal, after 8 seconds on the start-up screen, it says Slow connection, still loading….
 - [ ] In Safari on an iPhone, once you have a game, the title screen says ⛶ Keep your games safe (instead of Play full screen). It opens the steps to add it to the home screen, which say Safari can delete games after a week away, and how to bring a game across (Copy to a file, then Load from a file). Copy to a file works even if you take a while to tap Download.
 
+### Starting at any part of the story (since v501)
+
+To test a part of the story without playing up to it:
+
+1. On the title screen, tap the little version number in the bottom corner (v501) **five times**, quickly. A message says **Testing is on**, and the version number says **· testing**. It stays on for this phone (or this home-screen app) only; five more taps turn it off. Players never see it.
+2. Tap **Save files**, then an **empty** game (Game 2 or 3), then **Start at…**.
+3. Choose a chapter, then one of its parts. That game starts just before the part begins, standing in front of what begins it (press A, or take a step if it begins as you walk in), with the words a player would know by then and every earlier job done. Your other games aren't touched.
+4. To use that game again for another part: Save files, choose it, **Delete** (the game keeps a copy), then Start at… again.
+
+It needs an internet connection (each part's game is downloaded only when you choose it). The very first part, the meadow, is just a new game. The games come from the automated playthroughs, which answer every question right, so every word you know is known well. After the story changes, `npm run starts` makes them again.
+
+- [ ] Five taps on the version number turn testing on, and five more turn it off; four do nothing.
+- [ ] With testing off, an empty game's card has only Back, Load from a file and New game.
+- [ ] Start at… lists Prologue and Chapters 1 to 6; each chapter lists its parts by the names on their cards.
+- [ ] Choosing a part plays straight away from there, with your sound and reading settings. A part in another area (Chapter 2, Part 1 is on the shore beside your raft; Chapter 5, Part 1 is at the iron bridge) loads the page again first.
+- [ ] With no connection, choosing a part says it needs one, and the game stays empty.
+
 ## Quick check (after every change, about 5 minutes)
 
 - [ ] The title screen (after the start-up screen, the app's monkey and three dots, for a moment) shows the night sky with the stone on the mountain on the right, 小猴子 on the left with its pinyin over it (xiǎo hóuzi, gone if you've switched pinyin off) and Little Monkey, what it means, under it; in the top-right corner, the area's name on its own label, as a place's name shows in the game: 花果山 Huāguǒ Shān, Flower Fruit Mountain. Then its buttons: a gold Continue, saying which game, how many words and when you last played (it carries on with the game you played last), then New game and Save files in white. The first time, there's just New game (gold) and Save files. The chosen one has a gold outline and the red A badge; the D-pad (or arrow keys) moves between them, and the A label says what it does.
