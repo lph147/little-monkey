@@ -58,7 +58,11 @@ async function startAt(n, point, ch){
   catch(e) { r = {error:'That part of the story couldn’t be fetched. Starting at a part needs an internet connection.'}; }
   if (r.error){ infoBox('💾', `<p>${esc(r.error)}</p>`).then(() => partsCard(n, ch)); return; }
   const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn, fps:S.fps, voiceSpeed:S.voiceSpeed, typed:S.typed};
-  useSave(Object.assign(r.save, keep), n);
-  if ((S.area || 1) !== AREA.number) return toArea(S.area, n, 'continue');   // (in another area: the page loads again for it)
-  setUpGame(); continueGame(n); musicStart();
+  const s = Object.assign(r.save, keep);
+  if ((s.area || 1) !== AREA.number){   // in another area: kept in that game as it is, never played on this page, which loads again for it
+    try { localStorage.setItem(slotKey(n), JSON.stringify(s)); } catch(e) {}
+    setSlotsInfo(d => ({...d, active:n, played:{...d.played, [n]:Date.now()}}));
+    return toArea(s.area, n, 'continue');
+  }
+  useSave(s, n); setUpGame(); continueGame(n); musicStart();
 }

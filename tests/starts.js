@@ -14,8 +14,15 @@ const OFF = `(([x, y]) => {
   for (const [dx, dy, dir] of [came, ...ways.filter(w => w !== came)]) if (walkable(x + dx, y + dy) && !npcAt(x + dx, y + dy) && !exitAt(x + dx, y + dy)) return {...S.pos, x:x + dx, y:y + dy, dir};
   return S.pos;
 })`;
+// The days in a game, as if it had been played on an earlier day (a line's English shows again the first time, as it does
+// coming back to a game), so a start only changes when the story does, not with the day it was made
+const PLAYED = '2026-01-01';
+const undated = s => ({...s, lineDay: Object.fromEntries(Object.keys(s.lineDay || {}).map(k => [k, PLAYED])), ...(s.today ? {today: {...s.today, d: PLAYED}} : {})});
 function startsKeeper(game){
   const kept = {}, labels = {}, get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
+  // (the game as each part is about to begin, in the middle of what began it: for a part begun by the same thing as the one
+  // before it, such as the Demon of Havoc coming out as you bring the cart back, then his fight and home)
+  game.run('globalThis.__partGames = {}; (() => { const p = partsCheck; partsCheck = async () => { const was = here().part, game = JSON.stringify(S); await p(); if (here().part !== was) __partGames[AREA.number + ":" + here().part] = game; }; })()');
   let snap = null, was = null, next = null, doing = '';
   return {
     kept, labels,   // (and what began each)
@@ -28,15 +35,19 @@ function startsKeeper(game){
     },
     after(){   // once it's finished: the parts it began
       const [area, part] = get('[AREA.number, here().part]');
-      if (next){ kept[next] = snap; labels[next] = doing; next = null; }
-      if (area === was[0]) for (let p = Math.max(1, was[1] + 1); p <= part; p++) if (!kept[`a${area}p${p}`]){ kept[`a${area}p${p}`] = snap; labels[`a${area}p${p}`] = doing; }
+      if (next && get('S.area') !== was[0]){ kept[next] = snap; labels[next] = doing; next = null; }   // (the act that took you on to the next area)
+      const mid = get('__partGames'); game.run('__partGames = {}');
+      if (area === was[0]) for (let p = Math.max(1, was[1] + 1), first = true; p <= part; p++, first = false){
+        const k = `a${area}p${p}`, inMid = mid[`${area}:${p}`];
+        if (!kept[k]){ kept[k] = first || !inMid ? snap : {...JSON.parse(inMid), tips: snap.tips, howto: true}; labels[k] = doing + (first ? '' : ' (as it began)'); }
+      }
     },
-    nextIs(key){ next = key; },   // the next act begins this part, in the next area
+    nextIs(key){ next = key; },   // the act that takes you on to the next area (sailing, diving) begins this part there
     write(){
       if (process.env.STARTS_SHOW) console.log(labels);
       if (!process.env.STARTS) return;
       fs.mkdirSync(DIR, {recursive: true});
-      for (const [k, s] of Object.entries(kept)) fs.writeFileSync(path.join(DIR, k + '.json'), JSON.stringify(s) + '\n');
+      for (const [k, s] of Object.entries(kept)) fs.writeFileSync(path.join(DIR, k + '.json'), JSON.stringify(undated(s)) + '\n');
     }
   };
 }

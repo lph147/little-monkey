@@ -144,7 +144,10 @@ const areaChecklist = () => shownItems().map(c => { const done = matches(c.done)
 const chapterDone = () => chapterItems().filter(c => !c.exitTest).every(c => matches(c.done));       // everything in this chapter done (apart from a test)
 function getTasks(){   // the tasks to show now: the area's tasks whose if matches
   return AREA.tasks.filter(t => matches(t.if)).map(t => {
-    if (t.arrow && t.arrow.sparkle) return {id:fill(t.id, true), text:fill(t.text, false, true), target:sparkleToFind(), arrow:true, main:!!t.main, where:whereText(t.where)};   // or {sparkle}: the nearest thing that sparkles
+    if (t.arrow && t.arrow.sparkle){   // or {sparkle}: the nearest thing that sparkles (where the task's done somewhere else, such as the harbour's sacks: the way there)
+      const away = PLACES[t.where] && t.where !== PLACE;
+      return {id:fill(t.id, true), text:fill(t.text, false, true), target:away ? wayTo(t.where) : sparkleToFind(), arrow:true, main:!!t.main, where:whereText(t.where)};
+    }
     const c = typeof t.arrow === 'string' ? ALL_NPCS.find(n => n.id === t.arrow) : t.arrow && t.arrow.nearest ? nearestOf(t.arrow.nearest) : null;   // an arrow to a character (or the nearest of several)
     const toPlace = t.arrow && t.arrow.place;   // or {place}: the way to a place, and none once you're there
     const at = c ? [c.x, c.y, c.place] : toPlace || (t.arrow && t.arrow.nearest) ? null : t.arrow || null, there = toPlace || (at && placeOf(at));
@@ -185,13 +188,18 @@ function followTask(id){ S.tasksSeen[id] = newestSeen() + 1; save(); }   // the 
 // Does a sparkle (AREA.sparkles) sparkle now? Until you know its word, while its if matches, and not on a square that
 // teaches another word first (such as the forest, which only sparkles once you know 树).
 const sparkling = s => !(s.word && lvl(s.word) > 0) && (!s.if || matches(s.if)) && !(tileAt(...s.at).learnFirst && lvl(tileAt(...s.at).learnFirst) === 0);
-// For a task's arrow {sparkle}, such as your first words: the nearest thing in this place that sparkles for a word you
-// don't know yet, or null if there's none. It stays on that one until you learn it, so it doesn't jump about as you walk.
+// For a task's arrow {sparkle}, such as your first words: the nearest thing in this place that sparkles, or null if
+// there's none: for a word you don't know yet, for the story (one with no word, such as the bush the big monkey's hiding
+// behind), or something to do now (an onLook part with sparkle, such as the harbour's sacks: till 17 November 2026 only
+// the first kind, so the others' tasks had no arrow, found by Area 2's playthrough). It stays on that one until it stops
+// sparkling, so it doesn't jump about as you walk.
 let sparkleAimed = null;
 function sparkleToFind(){
-  const left = SPARKLES.filter(s => s.word && sparkling(s)), far = s => Math.abs(s.at[0] - pl.x) + Math.abs(s.at[1] - pl.y);
+  const doNow = ([x, y]) => { const p = (tileAt(x, y).onLook || []).find(p => !p.if || matches(p.if)); return !!(p && p.sparkle); };
+  const left = [...SPARKLES.filter(sparkling).map(s => s.at), ...COLLECTABLE.filter(doNow)].map(([x, y]) => x + ',' + y);
+  const far = k => { const [x, y] = k.split(',').map(Number); return Math.abs(x - pl.x) + Math.abs(y - pl.y); };
   if (!left.includes(sparkleAimed)) sparkleAimed = left.sort((a, b) => far(a) - far(b))[0] || null;
-  return sparkleAimed && [sparkleAimed.at[0], sparkleAimed.at[1]];
+  return sparkleAimed && sparkleAimed.split(',').map(Number);
 }
 // The way out of the place you're in towards another place: the exit to take first on the shortest
 // route (through ways that are open), or null if there's none.

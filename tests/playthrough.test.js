@@ -1013,7 +1013,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   goTo('shore', 11, 11, 'down');
   await act('runEvents()', 'at the water’s edge: the troop builds your raft, and says goodbye');
   assert.ok(knows('木筏') && area().raft === 2 && run('tileAt(10, 13).look') === 'raft' && get('__said').includes('我们等你！'), 'your raft (木筏); we’ll wait for you!');
-  starts.nextIs('a2p0');   // (Chapter 2 begins as you sail away: the start for it is here, beside your raft)
+  starts.nextIs('a2p0');   // (Chapter 2 begins as you sail away: its start is here, beside your raft)
   await pressAt(11, 12, 'down', 'sailing away on your raft');
   assert.deepEqual([area().raft, area().done], [3, true], 'chapter 1 is complete');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');

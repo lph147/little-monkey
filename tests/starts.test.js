@@ -10,18 +10,17 @@ const {loadGame} = require('./fake-browser');
 const {DIR} = require('./starts');
 
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
-const WAITING = p => p.area === 2 && p.i > 0;   // (Area 2's come with its playthrough)
 const POINTS = get(loadGame(), 'startPoints().map(p => ({area: p.area, i: p.i, file: p.file, name: p.chapter.name + ", " + p.name + ": " + p.title}))');
 const read = file => fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
 
 test('a start for every part of the story but the very first (a new game), and nothing else in tools/starts/', () => {
   assert.equal(POINTS[0].file, null, 'the meadow, the very first part: a new game');
-  const files = POINTS.filter(p => p.file && !WAITING(p)).map(p => path.basename(p.file)).sort();
+  const files = POINTS.filter(p => p.file).map(p => path.basename(p.file)).sort();
   assert.deepEqual(fs.readdirSync(DIR).sort(), files, 'run npm run starts to make them again');
   assert.ok(POINTS.length >= 39, 'every part, of every area');
 });
 
-for (const p of POINTS.filter(p => p.file && !WAITING(p))) test(`starting at ${p.name}: a game just before it begins, there to play`, () => {
+for (const p of POINTS.filter(p => p.file)) test(`starting at ${p.name}: a game just before it begins, there to play`, () => {
   const text = read(p.file), g = loadGame({dom: true, save: text}), s = JSON.parse(text);
   assert.deepEqual(get(g, `readSaveFile(${JSON.stringify(text)}).error || null`), null, 'it reads as a save');
   const area = s.area || 1, prev = POINTS[POINTS.indexOf(p) - 1];
@@ -90,6 +89,7 @@ test('the very first part is a new game; a part in another area loads the page a
   await settle(h);
   assert.equal(h.reloads.count, 1, 'Chapter 5 begins in Area 2, at the iron bridge: the page loads again for it');
   assert.deepEqual(JSON.parse(h.session.get('xiaohouzi-v2-go')), {area: 2, slot: 2, action: 'continue'});
+  assert.deepEqual([get(h, 'SLOT'), JSON.parse(h.storage.get('xiaohouzi-v2-game2')).area], [1, 2], 'kept in Game 2 as it is, never played on this page (its area isn’t this one)');
   const k = title();
   k.run("localStorage.setItem(TESTING_KEY, '1')");
   k.run('slotCard(2)'); press(k, 'Start at'); press(k, 'Chapter 6'); press(k, 'Part 2');

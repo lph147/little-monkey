@@ -53,7 +53,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] Opening the game, you never see it half-built (小猴子 on a black screen, an empty label in the corner and no buttons): until it's ready, the start-up screen shows the app's monkey and three dots, then the console appears all at once, its full size, with the whole title. On a weak signal, after 8 seconds on the start-up screen, it says Slow connection, still loading….
 - [ ] In Safari on an iPhone, once you have a game, the title screen says ⛶ Keep your games safe (instead of Play full screen). It opens the steps to add it to the home screen, which say Safari can delete games after a week away, and how to bring a game across (Copy to a file, then Load from a file). Copy to a file works even if you take a while to tap Download.
 
-### Starting at any part of the story (since v501)
+### Starting at any part of the story (since v501; Area 2's parts since v502)
 
 To test a part of the story without playing up to it:
 
@@ -674,6 +674,13 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 15j. **The Demon of Havoc.** Pull the cart back to the little monkeys by the cages: it stops just behind you, and they jump for joy, 我们很快乐！ The ground shakes, the two guards jump into the cave, and the Demon of Havoc walks down out of it towards you, step by heavy step, the screen shaking (all on the screen), and stops beside you: 你是谁？, finish 我是花果山的王, his name across the screen, 我不怕你！ Fight: at half his health he's angry (two attacks a turn); a little after, the hair trick (a scene: your hairs turn into little monkeys and swarm him, 毛), and he drops his broadsword (刀): from then on your hits take 15, not 10, and you hold the broadsword on the map. Beaten: 我走了！ If he beats you: Try again, or Not now (you step back down the path; talk to him again).
 15k. **Home.** 我们回家吧！, and a wind carries you home (a scene: swirling gusts, the cart and the little monkeys tumbling round it, 有风了！). At the home ground, you're beside the cart by the feast's tables, bare; each little one runs to its mother, and the hungry monkey wants the troop's things off the cart: 我要碗。 (only Chinese). A at the cart: what's on it, as pictures; choose the wrong one and she says 不对。 and asks again; the right one, and your monkey leans in and lifts it off, carrying it over its head. A at the big table (the milk: at the table right of it; try the wrong table) and it's put down, and goes on the table as you watch. All five back (the bowls, peaches, apples, honey, the milk jug), the troop puts everything else back on the tables and celebrates, 我们很快乐！ The little monkey in training on the left (a !): 给你！, your stick, and it practises with it. The old monkey: 海下面有龙王。, and the end card: The end of Area 2, to be continued.
 16. **Saves.** Close the page halfway through and open it again: Continue goes straight back to Area 2. Your Word Scroll has both areas' words; the Friends page shows your friends from both; the wardrobe has your headbands, the coat, the hat and the shoes (the hat or a headband, one at a time).
+
+**Found by Area 2's playthrough (since v502).**
+- [ ] Once the farmer has asked for his lunch, there's no ! over him any more.
+- [ ] Reaching the cave's stone door after dark: the doors open and the boy comes out and asks who you are, as by day.
+- [ ] At the harbour, the sacks' arrow points at the sacks; in the town, it points the way to the harbour. At home in Chapter 4 the arrow points at the sparkling bush; in the demon's lair, at each locked cage.
+- [ ] Changed into a little demon behind the boulder, the arrow moves to the guard.
+- [ ] Pulling the cart back to the little monkeys, the card **Part 4: The Demon of Havoc** shows as he comes out of his cave.
 
 ## Area 3: the Eastern Sea (built a step at a time from 15 November 2026)
 

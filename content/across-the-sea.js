@@ -641,7 +641,8 @@ const ACROSS_THE_SEA = {
     {id:'c2cries', main:true, if:{place:'lair', knows:'火', new:'救命'}, text:'Someone is calling out, near the {火|fire}', arrow:[6, 6, 'lair']},
     {id:'c2cage', main:true, if:{place:'lair', knows:'救命', new:'笼子'}, text:'Little {猴子|monkeys} are locked in {笼子|cages}!', arrow:[6, 5, 'lair']},
     {id:'c2key', main:true, if:{place:'lair', knows:'笼子', new:'钥匙'}, text:'Who has the {钥匙|key}? Ask the guard at the cave’s {门|door}', arrow:'guard'},
-    {id:'c2change', main:true, if:{place:'lair', knows:'钥匙', key:0}, text:'The guard won’t give a monkey the {钥匙|key}. Hide behind a boulder, {变|change} into a little {妖怪|demon}, and ask him again', arrow:[12, 11, 'lair']},
+    {id:'c2change', main:true, if:{place:'lair', knows:'钥匙', key:0, form:null}, text:'The guard won’t give a monkey the {钥匙|key}. Hide behind a boulder, {变|change} into a little {妖怪|demon}, and ask him again', arrow:[12, 11, 'lair']},
+    {id:'c2keyAgain', main:true, if:{place:'lair', key:0, form:'妖怪'}, text:'You look just like a little {妖怪|demon}! Ask the guard for the {钥匙|key} again', arrow:'guard'},   // (once you've changed, the arrow to him, not the boulder: found by Area 2's playthrough, 17 November 2026)
     {id:'c2free', main:true, if:{place:'lair', key:1, freed:{below:5}}, text:'Open the {笼子|cages} with the {钥匙|key} ({freed}/5)', arrow:{sparkle:true}},
     {id:'c2cart', main:true, if:{place:'lair', freed:5, cartWon:0}, text:'The troop’s things are on a {车|cart}, over on the right. Beat the little {妖怪|demon} guarding it', arrow:'cartGuard'},
     {id:'c2pull', main:true, if:{place:'lair', cartWon:1, loot:0, following:{cart:false}}, text:'Pull the {车|cart} back to the little monkeys', arrow:[24, 5, 'lair']},   // (it's where it was till you pull it)
@@ -735,7 +736,8 @@ const ACROSS_THE_SEA = {
     fisher1: [{if:{back:1, oldFisher:1, pierFish:'not asked'}, show:'!'}, {if:{pierFish:'asked', holding:{pierFish:true}}, show:'?'}],
     kid2: [{if:{child:3, hidesFound:0}, show:'!'}, {if:{season:3, trip:{atLeast:1, below:5}, snowVillage:0}, show:'!'}],
     planter: [{if:{planter:0}, show:'!'}],
-    farmer: [{if:{farmer:0}, show:'!'}, {if:{farmer:1, birdsShooed:5}, show:'!'}, {if:{lunch:'asked', holding:{lunch:true}}, show:'?'}, {if:{lunch:'done', askFarmer:0}, show:'!'}],
+    farmer: [{if:{farmer:0}, show:'!'}, {if:{farmer:1, birdsShooed:5, lunch:'not asked'}, show:'!'},   // (only till he asks for lunch: it stayed for good, found by Area 2's playthrough, 17 November 2026)
+      {if:{lunch:'asked', holding:{lunch:true}}, show:'?'}, {if:{lunch:'done', askFarmer:0}, show:'!'}],
     fruitSeller: [{if:{exchanged:1, new:'买'}, show:'!'}, {if:{exchanged:1, new:'多少钱'}, show:'!'}, {if:{exchanged:1, new:'两'}, show:'!'}],   // (两: for a game that doesn't know it yet, TWO_WEN)
     changer: [{if:{exchanged:0}, show:'!'}, {if:{new:'卖', treasures:true}, show:'!'}],
     boss: [{if:{new:'卖', treasures:true}, show:'!'}, {if:{new:'两'}, show:'!'}, {if:{canBuy:'home'}, show:'?'}],   // (? only for his own shop at home, not the town's stalls; 两 for a game that doesn't know it yet, TWO_WEN)
@@ -750,6 +752,7 @@ const ACROSS_THE_SEA = {
     teacher: [{if:{knows:'说', new:'听'}, show:'!'}, {if:{knows:'听', new:'孩子'}, show:'!'}, {if:{knows:'孩子', new:'学'}, show:'!'}],
     teacherOld: [{if:{new:'听'}, show:'!'}, {if:{knows:'听', new:'孩子'}, show:'!'}, {if:{knows:'孩子', new:'学'}, show:'!'}],
     boatman: [{if:{asked:8, toldSea:0}, show:'!'}, {if:{toldSea:1, boat:0}, show:'!'}, {if:{boat:1}, show:'!'}, {if:{trip:2}, show:'!'}],
+    doorBoy: [{if:{door:1}, show:'!'}],   // (once the doors are open, till he's asked who you are: so he's up to come out, even at night, found by Area 2's playthrough, 17 November 2026)
     master: [{if:{door:2, teacher:0}, show:'!'}, {if:{teacher:1, named:0}, show:'!'}, {if:{named:1, class1:0}, show:'!'}, {if:{season:1, waterFetch:2, class2:0}, show:'!'},
       {if:{season:1, spar1:1, herbs:0}, show:'!'}, {if:{season:2, wrote:1, class3:0}, show:'!'}, {if:{herbs:1, herbsFound:{atLeast:3}}, show:'?'}, {if:{season:3, wrapped:1, class4:0, grown:0}, show:'!'}, {if:{season:3, bigMatch:1, newYear:0, grown:0}, show:'!'}, {if:{grown:1, lecture:0}, show:'!'}, {if:{lecture:1, riddle:0}, show:'!'},
       {if:{riddle:2}, show:'!'}, {if:{riddle:3, tests:0}, show:'!'}, {if:{tests:1, fly:0}, show:'!'}, {if:{pine:1, sentHome:0}, show:'!'}],
@@ -980,7 +983,7 @@ const ACROSS_THE_SEA = {
     {if:{place:'lair', following:{cart:true}, around:[7, 6, 'lair', 3]}, do:[{follow:[], park:true}, {sound:'chime'},
       {leap:'baby1'}, {leap:'baby3'}, {leap:'baby5'}, {say:'veryHappy', by:'baby2'},
       {sound:'rumble'}, {message:'The ground shakes! The little demons run into the cave, shouting. Something big is coming out…'},
-      {leap:'guard', to:[14, 3]}, {leap:'guard2', to:[15, 3]}, {set:{loot:1, king:1}},
+      {leap:'guard', to:[14, 3]}, {leap:'guard2', to:[15, 3]}, {set:{loot:1, king:1}}, {nextPart:true},   // (Part 4's card, as he comes: with none here, the story went on to Part 5 before its card could show, found by Area 2's playthrough, 17 November 2026)
       {walk:'king', from:[14, 3], to:'you', ms:420, stomp:true}, {talkTo:'king'}]},
     // home with the little monkeys and the cart: the hungry monkey wants the troop's things off it, for the feast's tables
     {if:{place:'ffmHomeGround', homeAgain:1, unload:0, party:0}, do:[{talkTo:'hungry'}]},
